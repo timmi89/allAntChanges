@@ -93,10 +93,6 @@ def merge_desktop_mobile(desktop, mobile, depth):
 
         
     merged['dailies'] = dailies
-
-    # for key in sorted(dailies):
-        # print "%s: %s" % (key, dailies[key])
-
     merged['totals'] = totals
 
     merged['sorted_content'] = []

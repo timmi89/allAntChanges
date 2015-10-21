@@ -28,19 +28,35 @@
       </div>
     </div>
     <div class="row no-ant">
-      <div class="col s12 m9 center-align">
+      <div class="col s12">
         <h4>Reactions</h4>
         <div class="reactions-chart"></div>
         <h4>Reaction Views</h4>
         <div class="reaction-views-chart"></div>
       </div>
-      <div class="col s12 m3 center-align">
+    </div>
+    <div class="row no-ant">
+      <div class="col s12 m6 ">
+        <em class="right right-align">Manage Reactions</em>
+        <h4>Top Reactions</h4>
+        {% for tag in sorted_tag_cloud %}
+            <div class="top-reaction {% if forloop.counter < 5 %}large{%endif%}{% if forloop.counter >= 5 and forloop.counter < 9 %}medium{%endif%}{% if forloop.counter >= 9 %}small{%endif%}"><a href="/group/{{group.short_name}}/?s={{tag.0}}" target="_blank">{{tag.0}} <span>({{tag.1}})</span></a></div>
+        {% endfor %}
+      </div>
+      <div class="col s12 m6 center-align">
         <h4>Reactions by Platform</h4>
         <div class="reactions-by-platform-chart"></div>
+        <hr/>
         <h4>Reaction Views by Platform</h4>
         <div class="reaction-views-by-platform-chart"></div>
       </div>
     </div>
+    <div class="row no-ant">
+      <div class="col s12">
+        <h4></h4>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -53,9 +69,15 @@ var report = {{ aggregate_data|safe }};
     
 
 <style>
+.top-reaction  { display:inline-block; margin:0 1.5rem 0.5rem 0; padding:0.25rem 0.5rem; xbackground:#f0f0f0;}
+.top-reaction:hover  { background:#ff9; }
+.top-reaction span { font-size: 1rem; }
+.top-reaction.large { font-size: 2rem; }
+.top-reaction.medium { font-size: 1.25rem; }
+.top-reaction.small { font-size: 0.75rem; }
 .reaction-views-chart,
 .reactions-chart { position:relative; }
-.ct-chart-donut { width:150% !important; height:150% !important; margin-left:-55%;}
+/*.ct-chart-donut { width:150% !important; height:150% !important; margin-left:-55%;}*/
 .chartist-tooltip{ position:absolute;display:inline-block;min-width:5em;padding:.5em;background:#fff;color:#555;font-weight:300;text-align:center;pointer-events:none;z-index:1;box-shadow:0px 0px 15px #666;margin-top:5px;font-size:0.8rem; }
 .chartist-tooltip:after{ content:"";position:absolute;top:100%;left:50%;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top-color:#fff; }
 

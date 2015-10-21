@@ -55,8 +55,9 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         
         context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']
-        print context['dailies']
         context['totals'] = merged['totals']
+        context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
+        context['group'] = group
 
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
