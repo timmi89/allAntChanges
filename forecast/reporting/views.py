@@ -28,7 +28,9 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']
         context['totals'] = merged['totals']
-
+        context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
+        context['sorted_content'] = merged['sorted_content']
+        
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(
@@ -48,6 +50,8 @@ def weekly_group_event_email(request, short_name, year = None, month = None, day
         context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']
         context['totals'] = merged['totals']
+        context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
+        context['sorted_content'] = merged['sorted_content']
 
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
@@ -82,4 +86,7 @@ def get_merged_report_json(short_name, year = None, month = None, day = None):
     mobile  = utils.aggregate_reports(mobile_latest_reports, 20)
     desktop = utils.aggregate_reports(desktop_latest_reports, 20)
     merged = utils.merge_desktop_mobile(desktop, mobile, 20)
+    merged['group_id'] = group.id
+    merged['group_short_name'] = group.short_name
+    
     return merged

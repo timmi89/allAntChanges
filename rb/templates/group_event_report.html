@@ -44,12 +44,40 @@
   </div>
 </section>
 
-{% for key, value in dailies.items|sort %}
-      {{ key }} {{ value }}
+<div>
+{% for tg in sorted_tag_cloud %}
+    <div>
+    {{ tg.0 }} {{tg.1}}    
+    </div>
 {% endfor %}
+</div>
 
+<table border="1">
+<tr>
+{% for sc in sorted_content %}
+      <td>
+      <div>
+          <a href="http://www.antenna.is/i/{{ sc.1.interaction_id }}/">
+          {% if sc.1.type == 'med' %}
+            <iframe class="contentBody" width="300" height="250" frameborder="0" src="{{ sc.1.body|escape }}"></iframe>
+          {% elif sc.1.type == 'img' %}
+            <img class="contentBody" src="{{ sc.1.body|escape }}" />
+          {% elif sc.1.type == 'txt' %}
+            {{ sc.1.body }}
+          {% endif %}
+          </a> 
+      </div>
+      </td>
+    {% if forloop.counter|divisibleby:4 %}
+    </tr>
+    <tr>
+    {% endif %} 
+{% endfor %}
+</table>
+
+<script type="text/javascript">
 var report = {{ aggregate_data|safe }};
-
+</script>
     
 
 <style>
