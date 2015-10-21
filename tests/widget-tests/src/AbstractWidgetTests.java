@@ -38,6 +38,16 @@ public class AbstractWidgetTests {
         return element;
     }
 
+    public WebElement findByXpath(String xpath, WebElement parent) {
+        WebElement element = null;
+        try {
+            element = parent.findElement(By.xpath(xpath));
+        } catch (NoSuchElementException e) {
+            // Do nothing!
+        }
+        return element;
+    }
+
     /**
      * Attempts to find an element and returns either the element or null.
      */

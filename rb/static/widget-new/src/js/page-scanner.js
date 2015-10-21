@@ -16,6 +16,12 @@ var SummaryWidget = require('./summary-widget');
 var TextIndicatorWidget = require('./text-indicator-widget');
 var TextReactions = require('./text-reactions');
 
+var TYPE_TEXT = "text";
+var TYPE_IMAGE = "image";
+var TYPE_MEDIA = "media";
+
+var ATTR_HASH = "ant-hash";
+
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
@@ -67,9 +73,7 @@ function scanPage($page, groupSettings) {
 function scanActiveElement($element, pageData, groupSettings) {
     // CTAs have to go first. Text/images/media involved in CTAs will be tagged no-ant.
     scanForCallsToAction($element, pageData, groupSettings); // must be first
-    scanForText($element, pageData, groupSettings);
-    scanForImages($element, pageData, groupSettings);
-    scanForMedia($element, pageData, groupSettings);
+    scanForContent($element, pageData, groupSettings);
 }
 
 function scanForSummaries($element, pageData, groupSettings) {
@@ -144,59 +148,105 @@ var generateAntItemAttribute = function(index) {
     }
 }(0);
 
-function scanForText($element, pageData, groupSettings) {
-    var $textElements = find($element, groupSettings.textSelector(), true);
-    // TODO: only select "leaf" elements
-    $textElements.each(function() {
-        var $textElement = $(this);
-        if (shouldHashText($textElement, groupSettings)) {
-            var hash = computeHash($textElement, pageData, groupSettings);
-            if (hash) {
-                var containerData = PageData.getContainerData(pageData, hash);
-                containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
-                var defaultReactions = groupSettings.defaultReactions($textElement);
-                var $indicatorElement = TextIndicatorWidget.create({
-                        containerData: containerData,
-                        containerElement: $textElement,
-                        defaultReactions: defaultReactions,
-                        pageData: pageData,
-                        groupSettings: groupSettings
-                    }
-                );
-                $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
-
-                // TODO: Do we need to wait until the reaction data is loaded before making this active?
-                //       What happens if someone reacts before the data is loaded?
-                TextReactions.createReactableText({
-                    containerData: containerData,
-                    containerElement: $textElement,
-                    defaultReactions: defaultReactions,
-                    pageData: pageData,
-                    groupSettings: groupSettings,
-                    excludeNode: $indicatorElement.get(0)
-                });
-            }
+function scanForContent($element, pageData, groupSettings) {
+    var $contentElements = find($element, groupSettings.contentSelector(), true);
+    $contentElements.each(function() {
+        var $contentElement = $(this);
+        var type = computeElementType($contentElement);
+        switch(type) {
+            case TYPE_IMAGE:
+                scanImage($contentElement, pageData, groupSettings);
+                break;
+            case TYPE_MEDIA:
+                // TODO
+                break;
+            case TYPE_TEXT:
+                scanText($contentElement, pageData, groupSettings);
+                break;
         }
     });
 }
 
+function scanText($textElement, pageData, groupSettings) {
+    if (shouldHashText($textElement, groupSettings)) {
+        var hash = computeHash($textElement, pageData, groupSettings);
+        if (hash) {
+            var containerData = PageData.getContainerData(pageData, hash);
+            containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
+            var defaultReactions = groupSettings.defaultReactions($textElement);
+            var $indicatorElement = TextIndicatorWidget.create({
+                    containerData: containerData,
+                    containerElement: $textElement,
+                    defaultReactions: defaultReactions,
+                    pageData: pageData,
+                    groupSettings: groupSettings
+                }
+            );
+            var lastNode = lastContentNode($textElement.get(0));
+            if (lastNode.nodeType !== 3) {
+                $(lastNode).before($indicatorElement);
+            } else {
+                $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
+            }
+
+            TextReactions.createReactableText({
+                containerData: containerData,
+                containerElement: $textElement,
+                defaultReactions: defaultReactions,
+                pageData: pageData,
+                groupSettings: groupSettings,
+                excludeNode: $indicatorElement.get(0)
+            });
+        }
+    }
+}
+
+// We use this to handle the simple case of text content that ends with some media/image as in
+// <p>My text. <img src="whatever"></p>.
+// This is a simplistic algorithm, not a general solution:
+// We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
+// text or some image/media.  If the last content node is not text, we want to insert the text indicator before the image/media.
+function lastContentNode(node) {
+    var lastNode;
+    var childNodes = node.childNodes;
+    for (var i = 0; i < childNodes.length; i++) {
+        var child = childNodes[i];
+        if (child.nodeType === 3) {
+            lastNode = child;
+        } else {
+            var tagName = child.tagName.toLowerCase();
+            switch (tagName) {
+                case 'img':
+                case 'iframe':
+                case 'video':
+                case 'iframe':
+                    lastNode = child;
+            }
+        }
+        lastNode = lastContentNode(child) || lastNode;
+    }
+    return lastNode;
+}
+
 function shouldHashText($textElement, groupSettings) {
+    if ((isCta($textElement, groupSettings))) {
+        // Don't hash the text if it is the target of a CTA.
+        return false;
+    }
     // Don't create an indicator for text elements that contain other text nodes.
-    return $textElement.find(groupSettings.textSelector()).length == 0 &&
-        !isCta($textElement, groupSettings); // TODO: also consider whether we should hash text elements that *contain* a CTA.
+    var $nestedElements = find($textElement, groupSettings.contentSelector());
+    $nestedElements.each(function() {
+        if ((computeElementType($(this)) === TYPE_TEXT)) {
+            // Don't hash a text element if it contains any other matched text elements
+            return false;
+        }
+    });
+    return true;
 }
 
 function isCta($element, groupSettings) {
     var compositeSelector = groupSettings.generatedCtaSelector() + ',[ant-item]';
     return $element.is(compositeSelector);
-}
-
-function scanForImages($element, pageData, groupSettings) {
-    var compositeSelector = groupSettings.imageSelector() + ',[ant-item-type="image"]';
-    var $imageElements = find($element, compositeSelector, true);
-    $imageElements.each(function() {
-        scanImage($(this), pageData, groupSettings);
-    });
 }
 
 function scanImage($imageElement, pageData, groupSettings) {
@@ -270,21 +320,21 @@ function computeHash($element, pageData, groupSettings) {
     // TODO: make sure we generate unique hashes using an ordered index in case of collisions
     var hash;
     switch (computeElementType($element)) {
-        case 'image':
+        case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
             hash = Hash.hashImage(imageUrl);
             break;
-        case 'media':
+        case TYPE_MEDIA:
             // todo
             break;
-        case 'text':
+        case TYPE_TEXT:
             hash = Hash.hashText($element);
             break;
     }
     if (hash) {
         HashedElements.set(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
         if (AppMode.debug) {
-            $element.attr('ant-hash', hash);
+            $element.attr(ATTR_HASH, hash);
         }
     }
     return hash;
@@ -293,7 +343,7 @@ function computeHash($element, pageData, groupSettings) {
 function computeContentData($element, groupSettings) {
     var contentData;
     switch (computeElementType($element)) {
-        case 'image':
+        case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
             var dimensions = {
                 height: $element.height(), // TODO: review how we get the image dimensions
@@ -304,10 +354,10 @@ function computeContentData($element, groupSettings) {
                 body: imageUrl,
                 dimensions: dimensions
             };
-        case 'media':
+        case TYPE_MEDIA:
             // TODO
             break;
-        case 'text':
+        case TYPE_TEXT:
             contentData = { type: 'text' };
     }
     return contentData;
@@ -321,13 +371,13 @@ function computeElementType($element) {
     var tagName = $element.prop('tagName').toLowerCase();
     switch (tagName) {
         case 'img':
-            return 'image'; // TODO: use constants for these strings?
+            return TYPE_IMAGE;
         case 'video':
         case 'iframe':
         case 'embed':
-            return 'media';
+            return TYPE_MEDIA;
         default:
-            return 'text';
+            return TYPE_TEXT;
     }
 }
 
