@@ -44,6 +44,15 @@
   </div>
 </section>
 
+
+<div>
+{% for page in sorted_pages %}
+    <div>
+     <u><a href="{{page.1.url}}">Page Title: {{page.1.title}} </a></u> with {{page.1.reactions}} reactions     
+    </div>
+{% endfor %}
+</div>
+
 <div>
 {% for tg in sorted_tag_cloud %}
     <div>

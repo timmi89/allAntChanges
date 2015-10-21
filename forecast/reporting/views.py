@@ -30,6 +30,7 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         context['totals'] = merged['totals']
         context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
         context['sorted_content'] = merged['sorted_content']
+        context['sorted_pages'] = merged['sorted_pages']
         
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
