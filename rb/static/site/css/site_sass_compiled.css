@@ -8346,6 +8346,11 @@ section.big-beta-form .learn-more-boxes {
 .admin .analytics img.contentBody {
   width: 100%;
   max-width: 300px; }
+.admin .analytics em.right {
+  font-size: 0.85rem;
+  bottom: -1.25rem;
+  position: relative;
+  right: 1rem; }
 .admin .analytics .legend {
   text-align: left;
   font-size: 0.8rem;
@@ -8356,9 +8361,9 @@ section.big-beta-form .learn-more-boxes {
     margin: 0 0.25rem;
     height: 15px;
     width: 15px; }
-    .admin .analytics .legend .swatch .desktop {
+    .admin .analytics .legend .swatch.desktop {
       background: #4B7185; }
-    .admin .analytics .legend .swatch .mobile {
+    .admin .analytics .legend .swatch.mobile {
       background: #EA9971; }
 .admin .analytics .popular {
   box-shadow: none !important; }

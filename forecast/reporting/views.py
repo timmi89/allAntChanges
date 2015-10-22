@@ -23,7 +23,7 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
     try:
         
         merged = get_merged_report_json(short_name, year, month, day)
-
+        context['group'] = Group.objects.get(short_name=short_name)
                 
         context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']

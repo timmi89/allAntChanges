@@ -40,7 +40,7 @@
     </div>
     <div class="row no-ant">
       <div class="col s12 m6 ">
-        <em class="right right-align">Manage Reactions</em>
+        <em class="right right-align"><a href="/group/{{ group.short_name }}/all_reactions/" target="_blank">Manage Reactions</a></em>
         <h4>Top Reactions</h4>
         {% for tag in sorted_tag_cloud %}
             <div class="top-reaction {% if forloop.counter < 5 %}large{%endif%}{% if forloop.counter >= 5 and forloop.counter < 9 %}medium{%endif%}{% if forloop.counter >= 9 %}small{%endif%}"><a href="/group/{{group.short_name}}/?s={{tag.0}}" target="_blank">{{tag.0}} <span>({{tag.1}})</span></a></div>
