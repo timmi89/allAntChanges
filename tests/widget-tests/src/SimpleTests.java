@@ -1,6 +1,11 @@
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class SimpleTests extends AbstractWidgetTests {
 
@@ -28,6 +33,45 @@ public class SimpleTests extends AbstractWidgetTests {
 
         element = findByXpath(String.format("//p/span[contains(@class,'%s')]", AntennaConstants.CLASS_TEXT_INDICATOR));
         Assert.assertNotNull("text indicator not found in expected location", element);
+    }
+
+    @Test
+    public void testImageIndicatorLocation() {
+        driver.get(url);
+        WebElement image = findByXpath("//img");
+        Assert.assertNotNull("img tag not found", image);
+
+        assertMediaIndicatorOverElement(image, null);
+    }
+
+    @Test
+    public void testVideoIndicatorLocation() {
+        driver.get(url);
+
+        WebElement video = findByXpath("//iframe");
+        Assert.assertNotNull("iframe tag not found", video);
+
+        assertMediaIndicatorOverElement(video, null);
+    }
+
+    @Test
+    public void testMediaIndicatorCorner() {
+        driver.get(url);
+
+        WebElement image = findByXpath("//img");
+        Assert.assertNotNull("img tag not found", image);
+
+        doTestMediaCorner(image, "bottom right", "bottom-right");
+        doTestMediaCorner(image, "top right", "top-right");
+        doTestMediaCorner(image, "top left", "top-left");
+        doTestMediaCorner(image, "bottom left", "bottom-left");
+    }
+
+    public void doTestMediaCorner(WebElement element, String corner, String buttonId) {
+        WebElement button = findById(buttonId);
+        Assert.assertNotNull("button not found", button);
+        button.click();
+        assertMediaIndicatorOverElement(element, corner);
     }
 
 }

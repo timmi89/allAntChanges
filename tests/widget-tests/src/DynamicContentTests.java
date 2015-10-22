@@ -16,7 +16,7 @@ public class DynamicContentTests extends AbstractWidgetTests {
     @Test
     public void testAddSummary() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-summary";
         WebElement button = findById(buttonId);
@@ -59,7 +59,7 @@ public class DynamicContentTests extends AbstractWidgetTests {
     @Test
     public void testAddImage() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-image";
         WebElement button = findById(buttonId);
@@ -67,13 +67,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(2);
+        assertMediaIndicatorCount(2);
     }
 
     @Test
     public void testAddImageNested() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-image-nested";
         WebElement button = findById(buttonId);
@@ -81,13 +81,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::div/img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(2);
+        assertMediaIndicatorCount(2);
     }
 
     @Test
     public void testAddImageNoAnt() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-image-noant";
         WebElement button = findById(buttonId);
@@ -95,13 +95,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::div[contains(@class, 'no-ant')]/img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
     }
 
     @Test
     public void testAddInsideExcluded() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-inside-excluded";
         WebElement button = findById(buttonId);
@@ -109,13 +109,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//div[contains(@class, 'ant-exclude')]/button[@id='%s']/following-sibling::div/img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
     }
 
     @Test
     public void testAddNestedExclude() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-nested-exclude";
         WebElement button = findById(buttonId);
@@ -123,13 +123,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::div[contains(@class, 'ant-exclude')]/img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
     }
 
     @Test
     public void testAddExcluded() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-excluded";
         WebElement button = findById(buttonId);
@@ -137,13 +137,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::img[contains(@class, 'ant-exclude')]", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
     }
 
     @Test
     public void testAddDelayedSrcImage() {
         driver.get(url);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
 
         String buttonId = "add-delayed-src-image";
         WebElement button = findById(buttonId);
@@ -151,13 +151,13 @@ public class DynamicContentTests extends AbstractWidgetTests {
         button.click();
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
-        assertImageIndicatorCount(1);
+        assertMediaIndicatorCount(1);
         // The image gets a 'src' attribute after a 1 second delay...
         (new WebDriverWait(driver, 2)).withMessage("wrong number of image indicators").until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver webDriver) {
                 try {
-                    assertImageIndicatorCount(2);
+                    assertMediaIndicatorCount(2);
                 } catch (AssertionError e) {
                     return false;
                 }
@@ -166,18 +166,4 @@ public class DynamicContentTests extends AbstractWidgetTests {
         });
     }
 
-    public void assertImageIndicatorCount(int count) {
-        WebElement bucket = findById(AntennaConstants.ID_WIDGET_BUCKET);
-        Assert.assertNotNull("widget bucket not found", bucket);
-
-        List<WebElement> imageIndicators = bucket.findElements(By.className(AntennaConstants.CLASS_IMAGE_INDICATOR));
-        // TODO: consider retrying this a few times to account for any delay
-        Assert.assertEquals("wrong number of image indicators", count, imageIndicators.size());
-    }
-
-    public void assertTextIndicatorCount(int count) {
-        List<WebElement> textIndicators = driver.findElements(By.className(AntennaConstants.CLASS_TEXT_INDICATOR));
-        // TODO: consider retrying this a few times to account for any delay
-        Assert.assertEquals("wrong number of text indicators", count, textIndicators.size());
-    }
 }

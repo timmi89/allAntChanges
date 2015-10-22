@@ -140,6 +140,7 @@ function createFromJSON(json) {
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
         contentSelector: data('anno_whitelist'),
+        mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),

@@ -19,8 +19,27 @@ function addAdditionListener(callback) {
         characterData: false,
         subtree: true,
         attributeOldValue: false,
-        characterDataOldValue: false,
-        attributeFilter: undefined
+        characterDataOldValue: false
+    });
+}
+
+function addRemovalListener(callback) {
+    var observer = new MutationObserver(function(mutationRecords) {
+        for (var i = 0; i < mutationRecords.length; i++) {
+            var removedElements = filteredElements(mutationRecords[i].removedNodes);
+            if (removedElements.length > 0) {
+                callback(removedElements);
+            }
+        }
+    });
+    var body = document.getElementsByTagName('body')[0];
+    observer.observe(body, {
+        childList: true,
+        attributes: false,
+        characterData: false,
+        subtree: true,
+        attributeOldValue: false,
+        characterDataOldValue: false
     });
 }
 
@@ -58,5 +77,6 @@ function addOneTimeAttributeListener(node, attributes, callback) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     addAdditionListener: addAdditionListener,
+    addRemovalListener: addRemovalListener,
     addOneTimeAttributeListener: addOneTimeAttributeListener
 };

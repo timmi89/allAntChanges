@@ -6,7 +6,7 @@
       {
         "text":"Like",
         "id":"node1",
-        "count":"3"
+        "count":3
       }
     ],
     "containers":{
@@ -17,10 +17,10 @@
           {
             "text":"Like",
             "id":"node1",
-            "count":"3",
+            "count":3,
             "parentID":"interaction1",
             "content":{
-              "location":":0:1",
+              "location":":0,:1",
               "id":"content1",
               "kind":"text"
             }

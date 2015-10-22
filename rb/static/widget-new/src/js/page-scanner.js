@@ -9,7 +9,7 @@ var WidgetBucket = require('./utils/widget-bucket');
 var AutoCallToAction = require('./auto-call-to-action');
 var CallToActionIndicator = require('./call-to-action-indicator');
 var HashedElements = require('./hashed-elements');
-var ImageIndicatorWidget = require('./image-indicator-widget');
+var MediaIndicatorWidget = require('./media-indicator-widget');
 var PageData = require('./page-data');
 var PageDataLoader = require('./page-data-loader');
 var SummaryWidget = require('./summary-widget');
@@ -155,10 +155,8 @@ function scanForContent($element, pageData, groupSettings) {
         var type = computeElementType($contentElement);
         switch(type) {
             case TYPE_IMAGE:
-                scanImage($contentElement, pageData, groupSettings);
-                break;
             case TYPE_MEDIA:
-                // TODO
+                scanMedia($contentElement, type, pageData, groupSettings);
                 break;
             case TYPE_TEXT:
                 scanText($contentElement, pageData, groupSettings);
@@ -201,11 +199,11 @@ function scanText($textElement, pageData, groupSettings) {
     }
 }
 
-// We use this to handle the simple case of text content that ends with some media/image as in
+// We use this to handle the simple case of text content that ends with some media as in
 // <p>My text. <img src="whatever"></p>.
 // This is a simplistic algorithm, not a general solution:
 // We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
-// text or some image/media.  If the last content node is not text, we want to insert the text indicator before the image/media.
+// text or some media.  If the last content node is not text, we want to insert the text indicator before the media.
 function lastContentNode(node) {
     var lastNode;
     var childNodes = node.childNodes;
@@ -249,23 +247,22 @@ function isCta($element, groupSettings) {
     return $element.is(compositeSelector);
 }
 
-function scanImage($imageElement, pageData, groupSettings) {
+// The "image" and "media" paths converge here, because we use the same indicator module for them both.
+function scanMedia($mediaElement, type, pageData, groupSettings) {
     var indicator;
-    var hash = computeHash($imageElement, pageData, groupSettings);
+    var hash = computeHash($mediaElement, pageData, groupSettings);
     if (hash) {
-        var imageUrl = URLs.computeImageUrl($imageElement, groupSettings);
         var containerData = PageData.getContainerData(pageData, hash);
-        containerData.type = 'image'; // TODO: revisit whether it makes sense to set the type here
-        var defaultReactions = groupSettings.defaultReactions($imageElement);
-        var contentData = computeContentData($imageElement, groupSettings);
+        containerData.type = type === TYPE_IMAGE ? 'image' : 'media';
+        var defaultReactions = groupSettings.defaultReactions($mediaElement);
+        var contentData = computeContentData($mediaElement, groupSettings);
         if (contentData && contentData.dimensions) {
-            if (contentData.dimensions.height >= 100 && contentData.dimensions.width >= 100) { // Don't create indicator on images that are too small
-                indicator = ImageIndicatorWidget.create({
+            if (contentData.dimensions.height >= 100 && contentData.dimensions.width >= 100) { // Don't create indicator on elements that are too small
+                indicator = MediaIndicatorWidget.create({
                         element: WidgetBucket.get(),
-                        imageUrl: imageUrl,
                         containerData: containerData,
                         contentData: contentData,
-                        containerElement: $imageElement,
+                        containerElement: $mediaElement,
                         defaultReactions: defaultReactions,
                         pageData: pageData,
                         groupSettings: groupSettings
@@ -275,18 +272,14 @@ function scanImage($imageElement, pageData, groupSettings) {
         }
     }
     // Listen for changes to the image attributes which could indicate content changes.
-    MutationObserver.addOneTimeAttributeListener($imageElement.get(0), ['src','ant-item-content'], function() {
+    MutationObserver.addOneTimeAttributeListener($mediaElement.get(0), ['src','ant-item-content','data'], function() {
         if (indicator) {
             // TODO: update HashedElements to remove the previous hash->element mapping. Consider there could be multiple
             //       instances of the same element on a page... so we might need to use a counter.
             indicator.teardown();
         }
-        scanImage($imageElement, pageData, groupSettings);
+        scanMedia($mediaElement, type, pageData, groupSettings);
     });
-}
-
-function scanForMedia($element, pageData, groupSettings) {
-    // TODO
 }
 
 function find($element, selector, addBack) {
@@ -325,7 +318,8 @@ function computeHash($element, pageData, groupSettings) {
             hash = Hash.hashImage(imageUrl);
             break;
         case TYPE_MEDIA:
-            // todo
+            var mediaUrl = URLs.computeMediaUrl($element, groupSettings);
+            hash = Hash.hashMedia(mediaUrl);
             break;
         case TYPE_TEXT:
             hash = Hash.hashText($element);
@@ -345,20 +339,31 @@ function computeContentData($element, groupSettings) {
     switch (computeElementType($element)) {
         case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
-            var dimensions = {
+            var imageDimensions = {
                 height: $element.height(), // TODO: review how we get the image dimensions
                 width: $element.width()
             };
             contentData = {
                 type: 'img',
                 body: imageUrl,
-                dimensions: dimensions
+                dimensions: imageDimensions
             };
+            break;
         case TYPE_MEDIA:
-            // TODO
+            var mediaUrl = URLs.computeMediaUrl($element, groupSettings);
+            var mediaDimensions = {
+                height: $element.height(), // TODO: review how we get the media dimensions
+                width: $element.width()
+            };
+            contentData = {
+                type: 'med',
+                body: mediaUrl,
+                dimensions: mediaDimensions
+            };
             break;
         case TYPE_TEXT:
             contentData = { type: 'text' };
+            break;
     }
     return contentData;
 }
