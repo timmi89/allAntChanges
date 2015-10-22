@@ -83,12 +83,11 @@
         table {
             font-size:0.85rem;
 
-            iframe.contentBody,
-            img.contentBody {
-                width:100%;
-                max-width:300px;
-                max-height:250px;
-            }
+        }
+        iframe.contentBody,
+        img.contentBody {
+            width:100%;
+            max-width:300px;
         }
     }
 
