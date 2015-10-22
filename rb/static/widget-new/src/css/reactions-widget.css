@@ -23,9 +23,11 @@
     border-bottom: 1px solid #f0f0f0;
     background-color: white;
     color: #8fb3f2;
-    text-align: left;
     padding: 5px 0 0 6px;
     cursor: move;
+}
+
+.antenna-reactions-title {
     font-size: 12px;
     font-weight: 700;
 }

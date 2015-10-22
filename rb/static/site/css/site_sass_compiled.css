@@ -2243,7 +2243,7 @@ thead {
   border-bottom: 1px solid #d0d0d0; }
 
 td, th {
-  padding: 15px 5px;
+  padding: 3px 0;
   display: table-cell;
   text-align: left;
   vertical-align: middle;
@@ -7699,6 +7699,13 @@ section.big-beta-form .learn-more-boxes {
 .admin .analytics h4 {
   font-weight: 900;
   text-align: left; }
+.admin .analytics table {
+  font-size: 0.85rem; }
+  .admin .analytics table iframe.contentBody,
+  .admin .analytics table img.contentBody {
+    width: 100%;
+    max-width: 300px;
+    max-height: 250px; }
 
 .ct-label {
   fill: rgba(0, 0, 0, 0.4);

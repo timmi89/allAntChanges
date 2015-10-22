@@ -1,6 +1,6 @@
 ARRAY="array-1 array-2 array-4 array-5 array-6 array-7 array-8 array-9 array-10 array-11 array-12 array-13 array-14 array-15 array-16 array-17 array-18 array-19 array-20 array-21 array-22 array-23"
 UTIL="utility-1"
-DBS="db-proto-1 db-proto-2"
+DBS="db-proto-1 db-proto-2 db-proto-3"
 EVENTS="events2 events3 events4 events5 events6 events7 events8 events9"
 CACHES="cache-1 cache-2"
 
@@ -16,11 +16,11 @@ DBRESTART='service mysql restart'
 TEST='touch testfile;'
 
 #UTIL can update and push
-#PUSHSYNC='rsync -vlor --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@array-2:/home/broadcaster/'
+#PUSHSYNC='rsync -qlor --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@array-2:/home/broadcaster/'
 
 push_sync() {
     local host
-    for host in $1 ; do echo -n "$host - "; rsync -vlor --exclude ".git/*" --exclude "rb/static/grunt/*" --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@$host:/home/broadcaster/  ; done
+    for host in $1 ; do echo -n "$host - "; rsync -qlor --exclude ".git/*" --exclude "rb/static/grunt/*" --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@$host:/home/broadcaster/  ; done
 }
 
 foreach() {

@@ -16,7 +16,7 @@ logger = logging.getLogger('rb.standard')
 
 
 @periodic_task(name='reporting.group.page.scores', ignore_result=True, 
-               run_every=(crontab(hour="23", minute="30", day_of_week="*")))
+               run_every=(crontab(hour="20", minute="30", day_of_week="*")))
 def all_group_page_scores():
     
     start_date = timezone.now() - datetime.timedelta(days=1)
@@ -111,7 +111,9 @@ def group_event_report(group, mobile, start_date = None, end_date = None):
 
 
 
-
-
+@periodic_task(name='reporting.weekly.email.report', ignore_result=True, 
+               run_every=(crontab(hour="5", minute="30", day_of_week="1")))
+def weekly_email_report():
+    pass
 
 

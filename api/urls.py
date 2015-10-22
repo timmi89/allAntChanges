@@ -10,6 +10,7 @@ PageDataNew = Resource(handler=PageDataHandlerNew)
 PageDataNewer = Resource(handler=PageDataHandlerNewer)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
+ContentBodies = Resource(handler=ContentBodiesHandler)
 Tag = Resource(handler=TagHandler)
 MeToo = Resource(handler=MeTooHandler)
 TagRemove = Resource(handler=TagRemoveHandler)
@@ -44,6 +45,8 @@ BlockedPromoTag = Resource(handler=BlockedPromoTagHandler)
 CachePageRefresh = Resource(handler=CachePageRefreshHandler)
 CachePageRefreshNewer = Resource(handler=CachePageRefreshHandlerNewer)
 CacheSettingsRefresh = Resource(handler=CacheSettingsRefreshHandler)
+Uptime = Resource(handler=UptimeHandler)
+
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -75,12 +78,14 @@ urlpatterns = patterns('',
     url(r'^cache/page/refresh/(?P<page_id>\d+)/(?P<hash>\d+)', CachePageRefresh),
     url(r'^cache/page/newer/refresh/(?P<page_id>\d+)', CachePageRefreshNewer),
     url(r'^cache/settings/refresh/(?P<group_id>\d+)', CacheSettingsRefresh),
+    url(r'^uptime_check/', Uptime),
 
     # Widget
     url(r'^pagenewer/', PageDataNewer),
     url(r'^pagenew/', PageDataNew),
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
+    url(r'^content/bodies/', ContentBodies),
     url(r'^summary/containers/', Containers),
     url(r'^summary/container/content', Content),
     url(r'^metoo', MeToo),

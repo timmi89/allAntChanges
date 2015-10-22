@@ -1,4 +1,4 @@
-<div on-keydown="pagekeydown" class="antenna-page antenna-defaults-page" tabindex="0">
+<div on-keydown="pagekeydown" class="antenna-page antenna-defaults-page" tabindex="0" decorator="cssreset">
     <div class="antenna-body">
         {{#defaultReactions:index}}
             <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}" style="background-color:{{ defaultBackgroundColor(index) }}">

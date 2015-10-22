@@ -186,7 +186,7 @@ def aggregate_reports(group_reports, depth):
                     agg_dict['pages'][page_id]['reaction_views'] = 0
                     agg_dict['pages'][page_id]['reactions'] = 0
                     
-                agg_dict['pages'][page_id]['score']             += gr.count_map[str(page_id)+'_score']
+                agg_dict['pages'][page_id]['score']             += round((gr.count_map[str(page_id)+'_score'])*100, 2)
                 agg_dict['pages'][page_id]['views']             += int(gr.count_map[str(page_id)+'_pageviews'])
                 agg_dict['pages'][page_id]['reaction_views']    += int(gr.count_map[str(page_id)+'_reaction_views'])
                 agg_dict['pages'][page_id]['reactions']         += int(gr.count_map[str(page_id)+'_reactions'])
@@ -197,10 +197,10 @@ def aggregate_reports(group_reports, depth):
                 
             for (cid,pid) in gr.content_page.items():
                 if 'cid' in agg_dict['content']:
-                    agg_dict['content'][cid]['score'] += agg_dict['pages'][pid]['score']
+                    agg_dict['content'][cid]['score'] += round((agg_dict['pages'][pid]['score'])*100, 2)
                 else:
                     agg_dict['content'][cid] = {}
-                    agg_dict['content'][cid]['score']   = agg_dict['pages'][pid]['score']
+                    agg_dict['content'][cid]['score']   = round((agg_dict['pages'][pid]['score'])*100, 2)
                     agg_dict['content'][cid]['type']    = gr.pop_content_type[cid]
                     agg_dict['content'][cid]['body']    = gr.pop_content[cid]                                    
       

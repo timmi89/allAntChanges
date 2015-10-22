@@ -23,6 +23,11 @@ function loaded() {
                     // For JSONP requests, jQuery doesn't call it's error callback. It calls success instead.
                     error(response.message || response.data.message);
                 }
+            },
+            error: function(xhr, textStatus, message) {
+                // Okay, apparently jQuery *does* call its error callback for JSONP requests sometimes...
+                // Specifically, when the response status is OK but an error occurs client-side processing the response.
+                error (message);
             }
         };
         if (data) {

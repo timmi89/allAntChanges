@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
+var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 
 
@@ -12,9 +13,7 @@ function createIndicatorWidget(options) {
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
-    var coords = options.coords;
-    var imageUrl = options.imageUrl;
-    var imageDimensions = options.imageDimensions;
+    var contentData = options.contentData;
     var ractive = Ractive({
         el: element,
         append: true,
@@ -29,11 +28,7 @@ function createIndicatorWidget(options) {
         reactionsData: containerData.reactions,
         containerData: containerData,
         containerElement: $containerElement,
-        contentData: {
-            type: 'img',
-            body: imageUrl,
-            dimensions: imageDimensions
-        },
+        contentData: contentData,
         defaultReactions: defaultReactions,
         pageData: pageData,
         groupSettings: groupSettings
@@ -74,6 +69,10 @@ function createIndicatorWidget(options) {
         }, 100); // We get a mouseleave event when the user hovers the indicator. Pause long enough that the reaction window can open if they hover.
     });
     setupPositioning($containerElement, ractive);
+
+    return {
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 function setupPositioning($imageElement, ractive) {
@@ -86,6 +85,17 @@ function setupPositioning($imageElement, ractive) {
     ThrottledEvents.on('resize', reposition);
     ractive.on('teardown', function() {
         ThrottledEvents.off('resize', reposition);
+    });
+
+    MutationObserver.addAdditionListener(function($elements) {
+        // Reposition the image if elements are added to the DOM which might adjust the image's position.
+        for (var i = 0; i < $elements.length; i++) {
+            var $element = $elements[i];
+            if ($element.height() > 0 && $element.offset().top <= $imageElement.offset().top) {
+                reposition();
+                return;
+            }
+        }
     });
 
     function positionIndicator() {

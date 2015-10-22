@@ -1,8 +1,10 @@
-var offline = require('./offline');
+var AppMode = require('./app-mode');
 
 function antennaHome() {
-    if (offline) {
-        return window.location.protocol + "//local.antenna.is:8081";
+    if (AppMode.test) {
+        return window.location.protocol + '//localhost:3000';
+    } else if (AppMode.offline) {
+        return window.location.protocol + "//localhost:8081";
     }
     return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
 }
@@ -29,6 +31,10 @@ function getFetchCommentUrl() {
     return '/api/comment/replies/';
 }
 
+function getFetchContentBodiesUrl() {
+    return '/api/content/bodies/';
+}
+
 function computeImageUrl($element, groupSettings) {
     if (groupSettings.legacyBehavior()) {
         return legacyComputeImageUrl($element);
@@ -38,7 +44,12 @@ function computeImageUrl($element, groupSettings) {
         if (content.indexOf('/') === 0) { // domain-relative url, e.g. /foo/bar.png => domain.com/foo/bar.png
             content = window.location.origin + content;
         } else { // path-relative url, e.g. bar.png => domain.com/baz/bar.png
-            content = window.location.origin + window.location.pathname + content;
+            var path = window.location.pathname;
+            var index = path.lastIndexOf('/') + 1;
+            if (path.length > index) {
+                path = path.substring(0, index);
+            }
+            content = window.location.origin + path + content;
         }
     }
     return content;
@@ -67,5 +78,6 @@ module.exports = {
     createReactionUrl: getCreateReactionUrl,
     createCommentUrl: getCreateCommentUrl,
     fetchCommentUrl: getFetchCommentUrl,
+    fetchContentBodiesUrl: getFetchContentBodiesUrl,
     computeImageUrl: computeImageUrl
 };
