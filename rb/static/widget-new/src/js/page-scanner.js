@@ -61,6 +61,9 @@ function scanPage($page, groupSettings) {
         var $section = $(this);
         createAutoCallsToAction($section, pageData, groupSettings);
     });
+    // Scan for CTAs across the entire page (they can be outside an active section). CTAs have to go before scans for
+    // content because content involved in CTAs will be tagged no-ant.
+    scanForCallsToAction($page, pageData, groupSettings);
     // Then scan for everything else
     $activeSections.each(function() {
         var $section = $(this);
@@ -71,8 +74,6 @@ function scanPage($page, groupSettings) {
 // Scans the given element, which appears inside an active section. The element can be the entire active section,
 // some container within the active section, or a leaf node in the active section.
 function scanActiveElement($element, pageData, groupSettings) {
-    // CTAs have to go first. Text/images/media involved in CTAs will be tagged no-ant.
-    scanForCallsToAction($element, pageData, groupSettings); // must be first
     scanForContent($element, pageData, groupSettings);
 }
 
@@ -421,11 +422,14 @@ function elementsAdded(groupSettings) {
                             scanActiveElement($section, pageData, groupSettings);
                         });
                     } else {
-                        // Finally, scan inside the element for content (as long as we're inside an active section)
+                        // Finally, scan inside the element for content
                         var $activeSection = $element.closest(groupSettings.activeSections());
                         if ($activeSection.length > 0) {
                             createAutoCallsToAction($element, pageData, groupSettings);
                             scanActiveElement($element, pageData, groupSettings);
+                        } else {
+                            // If the element is added outside an active section, just check it for CTAs
+                            scanForCallsToAction($element, pageData, groupSettings);
                         }
                     }
                 }
