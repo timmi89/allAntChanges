@@ -24,6 +24,7 @@ module.exports = function(grunt) {
                         rootDir + '/rb/static/site/js/polyfills/matchMedia.addListener.js',
                         rootDir + '/rb/static/site/bower_components/chartist/dist/chartist.min.js',
                         rootDir + '/rb/static/site/bower_components/chartist/dist/chartist-plugin-tooltip.min.js',
+                        // rootDir + '/rb/static/site/bower_components/chartist/dist/chartist-plugin-tooltip.js',
                         rootDir + '/rb/static/site/bower_components/chartist/dist/chartist-plugin-axistitle.min.js',
                         rootDir + '/rb/static/site/js/materialize/global.js',
                         rootDir + '/rb/static/site/js/materialize/jquery.easing.1.3.js',
@@ -48,8 +49,8 @@ module.exports = function(grunt) {
                         // rootDir + '/rb/static/site/js/materialize/toasts.js',
                         // rootDir + '/rb/static/site/js/materialize/tooltip.js',
                         // rootDir + '/rb/static/site/js/materialize/transitions.js',
-                        // rootDir + '/rb/static/site/js/materialize/date_picker/picker.js',
-                        // rootDir + '/rb/static/site/js/materialize/date_picker/picker.date.js',
+                        rootDir + '/rb/static/site/js/materialize/date_picker/picker.js',
+                        rootDir + '/rb/static/site/js/materialize/date_picker/picker.date.js',
                         rootDir + '/rb/static/site/js/materialize/velocity.min.js',
                         rootDir + '/rb/static/widget/js/ant_user.js'],
         web_js_dest: rootDir + '/rb/static/site/js/antenna-web.min.js'

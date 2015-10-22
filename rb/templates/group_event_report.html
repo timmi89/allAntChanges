@@ -19,11 +19,9 @@
     <div class="row">
       <div class="col m12">
         <div class="right datepickers">
-            <!-- <label>Start Date</label> -->
-            <!-- <input type="date" class="datepicker" name="start_date" /> -->
-            <label>Data for last 31 days</label>
-            <!-- <label>Show data for 31 days ending:</label> -->
-            <!-- <input type="date" class="datepicker" name="end_date" value="12/12/2015"/> -->
+            <!-- <label>Data for last 31 days</label> -->
+            <label>Show data for 31 days ending:</label>
+            <input type="date" class="datepicker" name="end_date" value="{{ selected_date }}" />
         </div>
         <h1>{{group.name}} Analytics</h1>
       </div>
@@ -114,198 +112,168 @@
 
   </div>
 </section>
-
-<style>
-.legend { text-align: left; font-size:0.8rem; margin-right: 15px; color:#999;}
-.legend .swatch { display:inline-block; margin: 0 0.25rem; height:15px; width:15px; }
-.legend .swatch.desktop { background:#4B7185; }
-.legend .swatch.mobile { background:#EA9971; }
-
-
-.popular { box-shadow: none !important; }
-.popular.content .col.s12 { margin-bottom: 1rem; }
-.popular.content .col a { position: relative; display: block; padding:10px; }
-.popular.content .col a div.overlay { position: absolute; width:100%; height:100%; top:0; left:0; background:rgba(0,0,0,0.05); }
-.popular .title { width:55%; }
-.popular .reactions { width:15%; }
-.popular .views { width:15%; }
-.popular .score { width:15%; }
-
-.mobile-instruction {display:none;}
-@media screen and (max-width: 480px) {
-    .chart-container {width:100%; overflow-x:scroll; overflow-y:visible;}
-    .chart-container .wide-chart {min-width:800px; }
-    .mobile-instruction {display:block; font-size:0.75rem;}
-}
-</style>
-
-
-<script type="text/javascript">
-var report = {{ aggregate_data|safe }};
-</script>
     
-
-<style>
-.top-reaction  { display:inline-block; margin:0 1.5rem 0.5rem 0; padding:0.25rem 0.5rem; xbackground:#f0f0f0;}
-.top-reaction:hover  { background:#ff9; }
-.top-reaction span { font-size: 1rem; }
-.top-reaction.large { font-size: 2rem; }
-.top-reaction.medium { font-size: 1.25rem; }
-.top-reaction.small { font-size: 0.75rem; }
-
-
-.chart-donut-container { max-height:200px; }
-.chart-donut { height:300px; }
-
-.chartist-tooltip{ position:absolute;display:inline-block;min-width:5em;padding:.5em;background:#fff;color:#555;font-weight:300;text-align:center;pointer-events:none;z-index:1;box-shadow:0px 0px 15px #666;margin-top:5px;font-size:0.8rem; margin-bottom:-2rem;}
-.chartist-tooltip:after{ content:"";position:absolute;top:100%;left:50%;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top-color:#fff; }
-
-.ct-labels foreignobject { display:none; }
-.ct-labels foreignobject:nth-child(3n+1) { display:block; }
-
-/*.sticky.contain-to-grid{box-shadow:0 3px 0 rgba(0,0,0,.3)}
-.page-content .sticky.contain-to-grid .top-bar .name h1 a:before,.sticky.contain-to-grid.fixed .top-bar .name h1 a:before{content:"";display:inline-block;width:34px;height:34px;margin-top:-4px;margin-right:10px;vertical-align:middle;border-radius:50%;border:2px solid #F4C63D;background:url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnIGlkPSJoZWFkIj48cGF0aCBmaWxsPSIjNzU1NDNCIiBkPSJNMTMuOCAyMC42czEuNiA1LTMuOSA1bDQuOSAxLjUgNC00LjItNS0yLjN6Ii8+PHBhdGggZmlsbD0iI0IyNDk0OSIgZD0iTTE3LjEgMjVzLTQuMS0xLjUtNS45IDEuMWwzLjcuOSAyLjItMnoiLz48cGF0aCBmaWxsPSIjRDM5Qzc2IiBkPSJNOS45IDI1LjRjMi4xIDEuMSA1IC42IDYgMCAxLjUtLjggMS41LTMgMS4xLTMuMi0uMi0uMS0yLjIgMS4zLTUuOS4xbC40LTMuMy01LjktLjJMOS43IDguNHM3LTIuOSAxNCAwVjE5Yy40LS4xLjgtLjIgMS4xIDAgLjkuMyAxLjEgMS40LjYgMi41LS40LjctMSAxLjMtMS43IDEuNHY2LjJzLTcuMiA0LjgtMTUuMSAyLjFjMCAwLTIuNS0uOC0yLjMtMy40IDAtLjItLjItMS45IDMuNi0yLjR6Ii8+PGcgZmlsbD0iIzYzNDEyOCI+PHBhdGggZD0iTTE1LjEgMTQuNGMwIC41LjkgMSAxLjkgMSAxLjEgMCAxLjktLjQgMS45LTEgMC0uNS0uOS0xLTEuOS0xLTEgMC0xLjkuNS0xLjkgMXpNOS43IDE0LjRjMCAuNS44IDEgMS45IDEgMSAwIDEuOS0uNCAxLjktMXMtLjgtMS0xLjktMWMtMS4xLjEtMS45LjUtMS45IDF6Ii8+PC9nPjxwYXRoIGZpbGw9IiMyMzFGMjAiIGQ9Ik0yMy44IDEwLjVWNmMuMS0zLjYgMS40LTUuMS40LTUuMy0xLS4yLTMuMi0uNi03LjgtLjYtNC4xIDAtNy4yLjUtOC4yLjZDNy4zIDEgOSAzLjkgOS4zIDZjLjEgMSAuMSAyLjUuMSAzLjgtMy4zLjUtNS4zIDEuNy01LjcgMi44aDI2LjZzLS4zLTEuMS02LjUtMi4xeiIvPjxwYXRoIGZpbGw9IiMzNTM0MzMiIGQ9Ik0xMi44IDIyLjRjMy4xIDIuOCAxMC40IDIuMyAxMC45LTIuMS4xLTEuMy0uNS0uMy0xLjEuMS0uOS42LTIuNS42LTMuNCAwLTEuNS0xLTQuMS00LjEtNi40LTEuOC0yLjQtMi4zLTUgLjgtNi41IDEuOC0uOS42LTIuNi42LTMuNSAwLS42LS40LTEuMi0xLjMtMS4xLS4xLjUgNC40IDcuOSA0LjkgMTEuMSAyLjF6Ii8+PC9nPjwvc3ZnPg==)center no-repeat #F4C63D}.ct-chart{margin-bottom:1rem}.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{font-size:1em}@media only screen and (max-width:40em){.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{fill:rgba(255,255,255,.8)}}.main{margin:0 auto;max-width:75rem;width:100%}.main:after,.main:before{content:" ";display:table}@media only screen and (min-width:40.063em){.main{margin-top:3.1604938272rem}}.main>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left;margin-top:1.3333333333rem}.page-content .main>header{margin-bottom:3.1604938272rem}.main>.side-navigation{display:none}@media only screen and (min-width:40.063em){.main>.side-navigation{display:block;padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}.main>.side-navigation>nav{max-width:250px}.main>.side-navigation>nav>.side-nav{background-color:#ded0ba;box-shadow:3px 3px 0 rgba(0,0,0,.1)}.main>.side-navigation>nav>.side-nav>.heading{font-size:1rem;text-transform:uppercase;font-weight:600;margin-top:2.3703703704rem;margin-bottom:1rem;color:#453D3F}.main>.side-navigation>nav>.side-nav>.heading:first-child{margin-top:0}.main>.side-navigation>nav>.side-nav>li:not(.heading)>a:before{content:"\2013\00A0"}.main>.side-navigation>nav>.side-nav>li a:not(.button){padding:0}.main>.side-navigation>nav>.side-nav>li a:not(.button):hover{background:0 0}}.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}.main>.content>.documentation-section{margin:1rem -1.5625rem 1.7777777778rem;max-width:none;width:auto}.main>.content>.documentation-section:after,.main>.content>.documentation-section:before{content:" ";display:table}.main>.content>.documentation-section:first-child{margin-top:0}.main>.content>.documentation-section>.content,.main>.content>.documentation-section>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section{margin-top:1.7777777778rem;margin-bottom:3.1604938272rem}.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:75%;float:left}}.main>.content>.documentation-section>.content .sub-section{margin-bottom:3rem}.main>.content>.documentation-section>.content>.ct-chart.dark{background-color:#453D3F}.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:25%;float:left}}@media only screen and (min-width:40.063em){.main>.content>.documentation-section.full>.content,.main>.content>.documentation-section.full>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}}.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:100%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(1n+1){clear:both}@media only screen and (min-width:40.063em){.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery:after{clear:both}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:50%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(2n+1){clear:both}}.full .main>.content,.full .main>.side-navigation{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@-webkit-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-moz-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-ms-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-webkit-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-moz-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-ms-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-webkit-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-moz-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-ms-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}*/
-</style>
-    <script>
-    (function() {
-        new Chartist.Pie('.reactions-by-platform-chart', {
-          series: [
-              {meta: 'Desktop', value: {{ totals.reactions.desktop }} },
-              {meta: 'Mobile', value: {{ totals.reactions.mobile }} }
-          ]
-        }, {
-          donut: true,
-          donutWidth: 45,
-          startAngle: 270,
-          total: {{ totals.reactions.total }} * 2,
-          plugins: [
-            Chartist.plugins.tooltip()
-            ],
-          showLabel: false
-        });
-    })();
-    (function() {
-        new Chartist.Pie('.reaction-views-by-platform-chart', {
-          series: [
-              {meta: 'Desktop', value: {{ totals.reaction_views.desktop }} },
-              {meta: 'Mobile', value: {{ totals.reaction_views.mobile }} }
-          ]
-        }, {
-          donut: true,
-          donutWidth: 45,
-          startAngle: 270,
-          total: {{ totals.reaction_views.total }} * 2,
-          plugins: [
-            Chartist.plugins.tooltip()
-            ],
-          showLabel: false
-        });
-    })();
-    (function() {
-        var chart = new Chartist.Line('.reactions-chart', {
-          labels: [
-            {% for day, values in dailies.items|sort %}
-                '{{ day }}' {% if not forloop.last %}, {%endif%}
-            {% endfor %}
-          ],
-          series: [
-            [
-            {% for day, values in dailies.items|sort %}
-                {meta: 'Desktop on {{ day }}', value: {{ values.reactions.desktop }} }{% if not forloop.last %}, {%endif%}
-            {% endfor %}
-            ],
-            [
-            {% for day, values in dailies.items|sort %}
-                {meta: 'Mobile on {{ day }}', value: {{ values.reactions.mobile }} }{% if not forloop.last %}, {%endif%}
-            {% endfor %}
-            ]
-          ]
-        }, {
-          low: 0,
-          // high: 8,
-          fullWidth: true,
-          chartPadding: {
-              right: 40
+<script>
+(function() {
+    new Chartist.Pie('.reactions-by-platform-chart', {
+      series: [
+          {meta: 'Desktop', value: {{ totals.reactions.desktop }} },
+          {meta: 'Mobile', value: {{ totals.reactions.mobile }} }
+      ]
+    }, {
+      donut: true,
+      donutWidth: 45,
+      startAngle: 270,
+      total: {{ totals.reactions.total }} * 2,
+      plugins: [
+        Chartist.plugins.tooltip()
+        ],
+      showLabel: false
+    });
+})();
+(function() {
+    new Chartist.Pie('.reaction-views-by-platform-chart', {
+      series: [
+          {meta: 'Desktop', value: {{ totals.reaction_views.desktop }} },
+          {meta: 'Mobile', value: {{ totals.reaction_views.mobile }} }
+      ]
+    }, {
+      donut: true,
+      donutWidth: 45,
+      startAngle: 270,
+      total: {{ totals.reaction_views.total }} * 2,
+      plugins: [
+        Chartist.plugins.tooltip()
+        ],
+      showLabel: false
+    });
+})();
+(function() {
+    var chart = new Chartist.Line('.reactions-chart', {
+      labels: [
+        {% for day, values in dailies.items|sort %}
+            '{{ day }}' {% if not forloop.last %}, {%endif%}
+        {% endfor %}
+      ],
+      series: [
+        [
+        {% for day, values in dailies.items|sort %}
+            {meta: '{{ day }}', value: {{ values.reactions.desktop }} }{% if not forloop.last %}, {%endif%}
+        {% endfor %}
+        ],
+        [
+        {% for day, values in dailies.items|sort %}
+            {meta: '{{ day }}', value: {{ values.reactions.mobile }} }{% if not forloop.last %}, {%endif%}
+        {% endfor %}
+        ]
+      ]
+    }, {
+      low: 0,
+      // high: 8,
+      fullWidth: true,
+      chartPadding: {
+          right: 40
+        },
+      plugins: [
+        Chartist.plugins.tooltip(),
+        Chartist.plugins.ctAxisTitle({
+          axisX: {
+            axisTitle: 'Date',
+            axisClass: 'ct-axis-title',
+            offset: {
+              x: 0,
+              y: 35
             },
-          plugins: [
-            Chartist.plugins.tooltip(),
-            Chartist.plugins.ctAxisTitle({
-              axisX: {
-                axisTitle: 'Date',
-                axisClass: 'ct-axis-title',
-                offset: {
-                  x: 0,
-                  y: 35
-                },
-                textAnchor: 'middle'
-              },
-              axisY: {
-                axisTitle: 'Count',
-                axisClass: 'ct-axis-title',
-                offset: {
-                  x: 0,
-                  y: 0
-                },
-                textAnchor: 'middle',
-                flipTitle: false
-              }
-            })
-
-          ]
-        });
-    })();
-    (function() {
-        var chart = new Chartist.Line('.reaction-views-chart', {
-          labels: [
-            {% for day, values in dailies.items|sort %}
-                '{{ day }}' {% if not forloop.last %}, {%endif%}
-            {% endfor %}
-          ],
-          series: [
-            [
-            {% for day, values in dailies.items|sort %}
-                {meta: 'Desktop on {{ day }}', value: {{ values.reaction_views.desktop }} }{% if not forloop.last %}, {%endif%}
-            {% endfor %}
-            ],
-            [
-            {% for day, values in dailies.items|sort %}
-                {meta: 'Mobile on {{ day }}', value: {{ values.reaction_views.mobile }} }{% if not forloop.last %}, {%endif%}
-            {% endfor %}
-            ]
-          ]
-        }, {
-          low: 0,
-          // high: 8,
-          fullWidth: true,
-          chartPadding: {
-              right: 40
+            textAnchor: 'middle'
+          },
+          axisY: {
+            axisTitle: 'Count',
+            axisClass: 'ct-axis-title',
+            offset: {
+              x: 0,
+              y: 0
             },
-          plugins: [
-            Chartist.plugins.tooltip(),
-            Chartist.plugins.ctAxisTitle({
-              axisX: {
-                axisTitle: 'Date',
-                axisClass: 'ct-axis-title',
-                offset: {
-                  x: 0,
-                  y: 35
-                },
-                textAnchor: 'middle'
-              },
-              axisY: {
-                axisTitle: 'Count',
-                axisClass: 'ct-axis-title',
-                offset: {
-                  x: 0,
-                  y: 0
-                },
-                textAnchor: 'middle',
-                flipTitle: false
-              }
-            })
+            textAnchor: 'middle',
+            flipTitle: false
+          }
+        })
 
-          ]
-        });
-    })();
-    </script>
+      ]
+    });
+})();
+(function() {
+    var chart = new Chartist.Line('.reaction-views-chart', {
+      labels: [
+        {% for day, values in dailies.items|sort %}
+            '{{ day }}' {% if not forloop.last %}, {%endif%}
+        {% endfor %}
+      ],
+      series: [
+        [
+        {% for day, values in dailies.items|sort %}
+            {meta: '{{ day }}', value: {{ values.reaction_views.desktop }} }{% if not forloop.last %}, {%endif%}
+            // {meta: '{{ day }}', value: {{ values.reaction_views.desktop }} }{% if not forloop.last %}, {%endif%}
+        {% endfor %}
+        ],
+        [
+        {% for day, values in dailies.items|sort %}
+            {meta: '{{ day }}', value: {{ values.reaction_views.mobile }} }{% if not forloop.last %}, {%endif%}
+        {% endfor %}
+        ]
+      ]
+    }, {
+      low: 0,
+      // high: 8,
+      fullWidth: true,
+      chartPadding: {
+          right: 40
+        },
+      plugins: [
+        Chartist.plugins.tooltip(),
+        Chartist.plugins.ctAxisTitle({
+          axisX: {
+            axisTitle: 'Date',
+            axisClass: 'ct-axis-title',
+            offset: {
+              x: 0,
+              y: 35
+            },
+            textAnchor: 'middle'
+          },
+          axisY: {
+            axisTitle: 'Count',
+            axisClass: 'ct-axis-title',
+            offset: {
+              x: 0,
+              y: 0
+            },
+            textAnchor: 'middle',
+            flipTitle: false
+          }
+        })
+
+      ]
+    });
+})();
+</script>
+
 {% endblock %}
+
+
+{% block page_js %}
+<script>
+$('.datepicker').pickadate({
+    format: 'mm/dd/yyyy',
+    onClose: function() {
+        // necessary to prevent datepicker from opening unexpectedly from keyboard strokes or browser tab switching:
+        $(document.activeElement).blur();  
+
+        var selectedDate = $('.datepicker').pickadate('get').split('/');
+        window.location.href = '/group/dlisted.com/analytics/' + selectedDate[2] + '/' + selectedDate[0] + '/' + selectedDate[1];
+    }
+});
+</script>
+{% endblock %}
+
+
+

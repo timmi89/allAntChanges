@@ -32,9 +32,10 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         context['sorted_content'] = merged['sorted_content']
         context['sorted_pages'] = merged['sorted_pages']
 
-        context['year'] = year
-        context['month'] = month
-        context['day'] = day
+        if (year and month and day ):
+            context['selected_date'] = month + "/" + day + "/" + year
+        else:
+            context['selected_date'] = "Today"
         
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
