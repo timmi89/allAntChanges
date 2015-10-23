@@ -16,7 +16,7 @@ import re
 import time
 import string
 from threading import Thread
-from exceptions import FBException, JSONException
+from antenna.api.exceptions import JSONException
 from urlparse import urlsplit, urlunsplit
 import traceback
 import logging

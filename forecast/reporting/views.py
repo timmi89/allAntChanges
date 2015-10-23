@@ -23,7 +23,7 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
     try:
         
         merged = get_merged_report_json(short_name, year, month, day)
-
+        context['group'] = Group.objects.get(short_name=short_name)
                 
         context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']
@@ -31,6 +31,11 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
         context['sorted_content'] = merged['sorted_content']
         context['sorted_pages'] = merged['sorted_pages']
+
+        if (year and month and day ):
+            context['selected_date'] = month + "/" + day + "/" + year
+        else:
+            context['selected_date'] = "Today"
         
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
@@ -45,11 +50,12 @@ def weekly_group_event_email(request, short_name, year = None, month = None, day
     context = {}
     try:
         
-        merged = get_merged_report_json(short_name, year, month, day)
+        merged = get_merged_report_json(short_name, int(year), int(month), int(day))
 
         context['dailies'] = merged['dailies']
         context['totals'] = merged['totals']
         context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
+        context['group'] = group
         context['sorted_content'] = merged['sorted_content']
         context['sorted_pages'] = merged['sorted_pages']
         
@@ -66,8 +72,11 @@ def weekly_group_event_email(request, short_name, year = None, month = None, day
     
 def get_merged_report_json(short_name, year = None, month = None, day = None):    
     group = Group.objects.filter(short_name = short_name)[0]
+    print year
+    print month
+    print day
     if year and month and day:
-        report_date = datetime.datetime(year = year, month = month, day = day, hour = 23, minute = 59)
+        report_date = datetime.datetime(year = int(year), month = int(month), day = int(day), hour = 23, minute = 59)
     else:
         report_date = timezone.now()# - datetime.timedelta(days=120)
         
