@@ -11,6 +11,7 @@ var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var LocationsPage = require('./locations-page');
+var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
 
 var pageReactions = 'reactions';
@@ -18,7 +19,6 @@ var pageDefaults = 'defaults';
 var pageAuto = 'auto';
 
 var openInstances = [];
-var hasClearedIndicatorLimit = false;
 
 function openReactionsWidget(options, elementOrCoords) {
     closeAllWindows();
@@ -49,7 +49,7 @@ function openReactionsWidget(options, elementOrCoords) {
     openWindow();
 
     function openWindow() {
-        clearTextIndicatorLimit();
+        PageData.clearIndicatorLimit(pageData);
         var coords;
         if (elementOrCoords.top && elementOrCoords.left) {
             coords = elementOrCoords;
@@ -180,15 +180,6 @@ function openReactionsWidget(options, elementOrCoords) {
 
     function setWindowTitle(title) {
         $(ractive.find('.antenna-reactions-title')).html(title);
-    }
-
-    function clearTextIndicatorLimit() {
-        // The first time we open any reactions window on the page, we remove the flag that enforces the text indicator
-        // limit.
-        if (!hasClearedIndicatorLimit) {
-            $('.antenna-suppress').removeClass('antenna-suppress');
-            hasClearedIndicatorLimit = true; // We only need to do this once.
-        }
     }
 
 }

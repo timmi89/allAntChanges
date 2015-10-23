@@ -47,9 +47,12 @@ function addRemovalListener(callback) {
 function filteredElements(nodeList) {
     var filtered = [];
     for (var i = 0; i < nodeList.length; i++) {
-        var $element = $(nodeList[i]);
-        if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
-            filtered.push($element);
+        var node = nodeList[i];
+        if (node.nodeType !== 3) { // Don't process text nodes
+            var $element = $(node);
+            if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
+                filtered.push($element);
+            }
         }
     }
     return filtered;

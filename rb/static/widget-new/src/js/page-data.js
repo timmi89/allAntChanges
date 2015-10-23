@@ -119,6 +119,16 @@ function setContainers(pageData, jsonContainers) {
     }
 }
 
+function clearIndicatorLimit(pageData) {
+    var containers = pageData.containers;
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var container = containers[hash];
+            container.suppress = false;
+        }
+    }
+}
+
 // Returns the locations where the given reaction occurs on the page. The return format is:
 // {
 //   <content_id> : {
@@ -225,5 +235,6 @@ module.exports = {
     getContainerData: getContainerData,
     getReactionLocationData: getReactionLocationData,
     updateReactionLocationData: updateReactionLocationData,
-    registerReaction: registerReaction
+    registerReaction: registerReaction,
+    clearIndicatorLimit: clearIndicatorLimit
 };

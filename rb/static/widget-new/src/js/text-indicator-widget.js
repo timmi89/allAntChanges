@@ -17,7 +17,8 @@ function createIndicatorWidget(options) {
         append: true,
         magic: true,
         data: {
-            containerData: containerData
+            containerData: containerData,
+            extraClasses: groupSettings.enableTextHelper() ? "" : "antenna-nohint"
         },
         template: require('../templates/text-indicator-widget.hbs.html')
     });

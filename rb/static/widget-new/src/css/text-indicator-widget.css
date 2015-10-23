@@ -11,14 +11,6 @@
     visibility: hidden;
 }
 
-.antenna-text-indicator-widget.hasreactions {
-    opacity: 0.33;
-}
-
-.antenna-text-indicator-widget.antenna-suppress {
-    opacity: 0;
-}
-
 .antenna-text-indicator-widget .ant-antenna-logo {
     color: #666666 !important;
     transition: color 300ms ease;
@@ -31,6 +23,18 @@
 .antenna-text-indicator-widget.active {
     color: #8fb3f2 !important;
     opacity: 0.66;
+}
+
+.antenna-text-indicator-widget.antenna-nohint {
+    opacity: 0;
+}
+
+.antenna-text-indicator-widget.hasreactions {
+    opacity: 0.33;
+}
+
+.antenna-text-indicator-widget.antenna-suppress {
+    opacity: 0;
 }
 
 .antenna-text-indicator-widget.hasreactions.active {
