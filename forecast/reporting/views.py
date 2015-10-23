@@ -47,13 +47,12 @@ def weekly_group_event_email(request, short_name, year = None, month = None, day
         
         merged = get_merged_report_json(short_name, year, month, day)
 
-                
-        context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
         context['dailies'] = merged['dailies']
         context['totals'] = merged['totals']
         context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
         context['sorted_content'] = merged['sorted_content']
-
+        context['sorted_pages'] = merged['sorted_pages']
+        
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(
