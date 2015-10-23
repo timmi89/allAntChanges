@@ -41,7 +41,7 @@ public class SimpleTests extends AbstractWidgetTests {
         WebElement image = findByXpath("//img");
         Assert.assertNotNull("img tag not found", image);
 
-        assertMediaIndicatorOverElement(image, null);
+        assertMediaIndicatorOverElement(image);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SimpleTests extends AbstractWidgetTests {
         WebElement video = findByXpath("//iframe");
         Assert.assertNotNull("iframe tag not found", video);
 
-        assertMediaIndicatorOverElement(video, null);
+        assertMediaIndicatorOverElement(video);
     }
 
     @Test
