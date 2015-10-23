@@ -15,6 +15,10 @@
     opacity: 0.33;
 }
 
+.antenna-text-indicator-widget.antenna-suppress {
+    opacity: 0;
+}
+
 .antenna-text-indicator-widget .ant-antenna-logo {
     color: #666666 !important;
     transition: color 300ms ease;

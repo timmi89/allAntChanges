@@ -18,6 +18,7 @@ var pageDefaults = 'defaults';
 var pageAuto = 'auto';
 
 var openInstances = [];
+var hasClearedIndicatorLimit = false;
 
 function openReactionsWidget(options, elementOrCoords) {
     closeAllWindows();
@@ -48,6 +49,7 @@ function openReactionsWidget(options, elementOrCoords) {
     openWindow();
 
     function openWindow() {
+        clearTextIndicatorLimit();
         var coords;
         if (elementOrCoords.top && elementOrCoords.left) {
             coords = elementOrCoords;
@@ -178,6 +180,15 @@ function openReactionsWidget(options, elementOrCoords) {
 
     function setWindowTitle(title) {
         $(ractive.find('.antenna-reactions-title')).html(title);
+    }
+
+    function clearTextIndicatorLimit() {
+        // The first time we open any reactions window on the page, we remove the flag that enforces the text indicator
+        // limit.
+        if (!hasClearedIndicatorLimit) {
+            $('.antenna-suppress').removeClass('antenna-suppress');
+            hasClearedIndicatorLimit = true; // We only need to do this once.
+        }
     }
 
 }

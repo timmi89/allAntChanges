@@ -140,6 +140,8 @@ function createFromJSON(json) {
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
         contentSelector: data('anno_whitelist'),
+        textIndicatorLimit: data('initial_pin_limit'),
+        enableTextHelper: data('paragraph_helper'),
         mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
