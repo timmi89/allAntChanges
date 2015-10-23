@@ -3,6 +3,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +29,11 @@ public class AbstractWidgetTests {
         driver.quit();
     }
 
+    public void hover(WebElement element) {
+        Actions action = new Actions(driver);
+        action.moveToElement(element).build().perform();
+    }
+
     /**
      * Attempts to find an element and returns either the element or null.
      */
@@ -40,6 +48,9 @@ public class AbstractWidgetTests {
     }
 
     public WebElement findByXpath(String xpath, WebElement parent) {
+        if (parent != null && xpath.startsWith("//")) {
+            throw new IllegalArgumentException("A parent element was passed with an xpath that searches the entire document ('//'). Scoped xpath expressions should start with './/' instead.");
+        }
         WebElement element = null;
         try {
             element = parent.findElement(By.xpath(xpath));
@@ -134,4 +145,23 @@ public class AbstractWidgetTests {
             }
         }
     }
+
+    public void assertTextIndicatorOpacityOnHover(WebElement container, WebElement indicator, double expectedOpacity) {
+        // Hover the paragraph and make sure the opacity changes as expected
+        hover(container);
+        // The indicator opacity fades in over 300ms...
+        (new WebDriverWait(driver, 1)).withMessage("indicator opacity didn't change").until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                try {
+                    float opacity = Float.parseFloat(indicator.getCssValue("opacity"));
+                    Assert.assertEquals("incorrect opacity on text indicator", expectedOpacity, opacity, 0.1);
+                } catch (AssertionError e) {
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+
 }
