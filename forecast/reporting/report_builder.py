@@ -24,9 +24,7 @@ class GroupEventsReportBuilder(object):
                                                            report_end__gte = self.end_date  - datetime.timedelta(hours=12), 
                                                            report_end__lte = self.end_date + datetime.timedelta(hours=12))
         group_page_scores.order_by('-created_at')  #maybe unnecessary?
-        for g in group_page_scores:
-            print g.created_at
-            
+        
         gps = group_page_scores[0]
         sorted_pages_by_scores = gps.scores.items()
         sorted_pages_by_scores.sort(key = lambda entry : entry[1])
@@ -56,7 +54,7 @@ class GroupEventsReportBuilder(object):
                 count_map[str(page_id) + '_reactions'] = gps.reactions[page_id]
                 
                 pop_page_interactions = page.tags().filter(created__gte = self.start_date, created__lte = self.end_date)
-                print page, len(pop_page_interactions), score
+                #print page, len(pop_page_interactions), score
                 for ppi in pop_page_interactions:
                     pop_content[ppi.content.id]         = ppi.content.body
                     pop_content_type[ppi.content.id]    = ppi.content.kind
@@ -91,7 +89,6 @@ class GroupEventsReportBuilder(object):
         count_map['total_page_views'] = total_page_views
         count_map['total_reaction_views'] = total_reaction_views
         count_map['total_reactions'] = total_reactions
-        
         logger.info('Saving report')
         report = LegacyGroupEventsReport.objects.create(group_id = self.group.id, 
                                                         created_at = timezone.now(),

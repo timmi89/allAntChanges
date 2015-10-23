@@ -89,6 +89,7 @@ def group_page_scores(group, start_date, end_date):
             gpm_views[page_id] = page_views
             gpm_rviews[page_id] = reaction_views
             gpm_reacts[page_id] = reactions
+            
         
         logger.warn('Creating Group PageScores for : ' + str(group) + ' at ' + str(timezone.now()))
         GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = False, report_start = start_date, report_end = end_date,

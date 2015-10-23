@@ -89,20 +89,21 @@ def aggregate_counts(group, start_date, end_date, mobile):
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['count(pid) as pvcounts']).set_clause(PV_QUERY).build_query()
     b.run_query()
-    #print b.get_result_rows()
-    page_views = int(b.get_result_rows()[0]['f'][0]['v'][0])
+    page_views = int(b.get_result_rows()[0]['f'][0]['v'])
 
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['count(et) as rvcounts']).set_clause(RV_QUERY).build_query()
     b.run_query()
-    reaction_views = int(b.get_result_rows()[0]['f'][0]['v'][0])
+    
+    reaction_views = int(b.get_result_rows()[0]['f'][0]['v'])
     
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['count(et) as rscounts']).set_clause(RS_QUERY).build_query()
+    
     b.run_query()
-    reactions = int(b.get_result_rows()[0]['f'][0]['v'][0])
+    reactions = int(b.get_result_rows()[0]['f'][0]['v'])
     return page_views, reaction_views, reactions
     
 def rough_score_joined(group, start_date, end_date, mobile):

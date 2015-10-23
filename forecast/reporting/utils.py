@@ -75,22 +75,6 @@ def merge_desktop_mobile(desktop, mobile, depth):
             dailies[formatted_date]['reaction_views']['mobile'] += day['total_reaction_views']
             totals['reaction_views']['mobile'] += day['total_reaction_views']
             totals['reaction_views']['total'] += day['total_reaction_views']
-
-
-        # {
-        #     "total_reactions": 1,
-        #     "uniques": 5.0,
-        #     "engagement": 5.0,
-        #     "created_at": "2015-10-12T19:05:48Z",
-        #     "report_start": "2015-10-05T19:05:21Z",
-        #     "top_reaction_views_count": 0,
-        #     "total_pageviews": 4,
-        #     "top_reactions_count": 0,
-        #     "total_reaction_views": 8,
-        #     "top_views_count": 0,
-        #     "report_end": "2015-10-06T19:05:21Z"
-        # },
-
         
     merged['dailies'] = dailies
     merged['totals'] = totals
@@ -190,7 +174,7 @@ def aggregate_reports(group_reports, depth):
                 agg_dict['pages'][page_id]['views']             += int(gr.count_map[str(page_id)+'_pageviews'])
                 agg_dict['pages'][page_id]['reaction_views']    += int(gr.count_map[str(page_id)+'_reaction_views'])
                 agg_dict['pages'][page_id]['reactions']         += int(gr.count_map[str(page_id)+'_reactions'])
-                
+                #print agg_dict['pages'][page_id]['reactions'], int(gr.count_map[str(page_id)+'_reactions'])
                 daily['total_pageviews']        = int(gr.count_map['total_page_views'])
                 daily['total_reactions']        = int(gr.count_map['total_reactions'])
                 daily['total_reaction_views']   = int(gr.count_map['total_reaction_views'])
