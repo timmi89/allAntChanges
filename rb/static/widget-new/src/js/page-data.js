@@ -48,6 +48,7 @@ function updatePageData(json, groupSettings) {
 
     // We add up the container reaction totals client-side
     var total = 0;
+    var containerCounts = [];
     var containers = pageData.containers;
     for (var hash in containers) {
         if (containers.hasOwnProperty(hash)) {
@@ -60,6 +61,15 @@ function updatePageData(json, groupSettings) {
                 }
             }
             container.reactionTotal = total;
+            containerCounts.push({ count: total, container: container });
+        }
+    }
+    var indicatorLimit = groupSettings.textIndicatorLimit();
+    if (indicatorLimit) {
+        // If an indicator limit is set, sort the containers and mark only the top N to be visible.
+        containerCounts.sort(function(a, b) { return b.count - a.count; }); // sort largest count first
+        for (var i = indicatorLimit; i < containerCounts.length; i++) {
+            containerCounts[i].container.suppress = true;
         }
     }
 
@@ -79,7 +89,8 @@ function getContainerData(pageData, containerHash) {
             hash: containerHash,
             reactionTotal: 0,
             reactions: [],
-            loaded: pageData.summaryLoaded // TODO: should this just be a live function that delegates to summaryLoaded?
+            loaded: pageData.summaryLoaded, // TODO: should this just be a live function that delegates to summaryLoaded?
+            suppress: false
         };
         pageData.containers[containerHash] = containerData;
     }
@@ -104,6 +115,16 @@ function setContainers(pageData, jsonContainers) {
         if (allContainers.hasOwnProperty(hash)) {
             var container = allContainers[hash];
             container.loaded = true;
+        }
+    }
+}
+
+function clearIndicatorLimit(pageData) {
+    var containers = pageData.containers;
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var container = containers[hash];
+            container.suppress = false;
         }
     }
 }
@@ -214,5 +235,6 @@ module.exports = {
     getContainerData: getContainerData,
     getReactionLocationData: getReactionLocationData,
     updateReactionLocationData: updateReactionLocationData,
-    registerReaction: registerReaction
+    registerReaction: registerReaction,
+    clearIndicatorLimit: clearIndicatorLimit
 };

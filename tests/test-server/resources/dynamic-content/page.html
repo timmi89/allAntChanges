@@ -13,6 +13,8 @@
         <p id="p1">This is a block of text. Does it have a reaction? You better believe it does!</p>
 
 
+        <div><button id="add-text">Add Text</button></div>
+        <div><button id="add-text-noant">Add Text .no-ant</button></div>
         <div><button id="add-image">Add Image</button></div>
         <div><button id="add-image-nested">Add Image Nested</button></div>
         <div><button id="add-image-noant">Add Image Inside .no-ant</button></div>
@@ -23,6 +25,12 @@
         <div><button id="add-delayed-src-image">Add Delayed Src Image</button></div>
         <script>
             $(document).on('ready', function() {
+                $('#add-text').on('click', function() {
+                   $('#add-text').after('<p>Text added dynamically.</p>');
+                });
+                $('#add-text-noant').on('click', function() {
+                   $('#add-text-noant').after('<p class="no-ant">Text added dynamically.</p>');
+                });
                 $('#add-image').on('click', function() {
                    $('#add-image').after('<img src="headphones.jpg" alt="image">');
                 });

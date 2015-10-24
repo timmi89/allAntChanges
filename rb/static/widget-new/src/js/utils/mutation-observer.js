@@ -19,8 +19,27 @@ function addAdditionListener(callback) {
         characterData: false,
         subtree: true,
         attributeOldValue: false,
-        characterDataOldValue: false,
-        attributeFilter: undefined
+        characterDataOldValue: false
+    });
+}
+
+function addRemovalListener(callback) {
+    var observer = new MutationObserver(function(mutationRecords) {
+        for (var i = 0; i < mutationRecords.length; i++) {
+            var removedElements = filteredElements(mutationRecords[i].removedNodes);
+            if (removedElements.length > 0) {
+                callback(removedElements);
+            }
+        }
+    });
+    var body = document.getElementsByTagName('body')[0];
+    observer.observe(body, {
+        childList: true,
+        attributes: false,
+        characterData: false,
+        subtree: true,
+        attributeOldValue: false,
+        characterDataOldValue: false
     });
 }
 
@@ -28,9 +47,12 @@ function addAdditionListener(callback) {
 function filteredElements(nodeList) {
     var filtered = [];
     for (var i = 0; i < nodeList.length; i++) {
-        var $element = $(nodeList[i]);
-        if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
-            filtered.push($element);
+        var node = nodeList[i];
+        if (node.nodeType !== 3) { // Don't process text nodes
+            var $element = $(node);
+            if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
+                filtered.push($element);
+            }
         }
     }
     return filtered;
@@ -58,5 +80,6 @@ function addOneTimeAttributeListener(node, attributes, callback) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     addAdditionListener: addAdditionListener,
+    addRemovalListener: addRemovalListener,
     addOneTimeAttributeListener: addOneTimeAttributeListener
 };

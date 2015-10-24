@@ -1,4 +1,5 @@
 {
-  "id":"simple",
-  "summary_widget_selector": ".summary"
+  "id": "simple",
+  "summary_widget_selector": ".summary",
+  "anno_whitelist": "p,img,li,blockquote,iframe"
 }

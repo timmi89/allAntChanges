@@ -4,6 +4,7 @@ from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
 from antenna.antenna_celery import app as celery_app
 from antenna.analytics.tasks import update_page_newer_cache, update_page_cache, update_page_container_hash_cache
+from antenna.api.exceptions import FBException, JSONException
 from django.db.models import Q
 from django.core.cache import cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -16,7 +17,6 @@ import re
 import time
 import string
 from threading import Thread
-from antenna.api.exceptions import JSONException
 from urlparse import urlsplit, urlunsplit
 import traceback
 import logging

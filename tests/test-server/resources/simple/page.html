@@ -3,13 +3,49 @@
         <div id="div1" class="summary">Simple page.</div>
         <img id="img1" src="headphones.jpg" style="width:200px;">
         <p id="p1">This is a block of text. Does it have a reaction? You better believe it does!</p>
+        <iframe width="560" height="315" src="http://www.youtube.com/embed/sGbxmsDFVnE" frameborder="0" allowfullscreen></iframe>
 
-        <button id="add-">Add</button>
+        <div>
+            <button id="top-right">top right</button>
+            <button id="top-left">top left</button>
+            <button id="bottom-right">bottom right</button>
+            <button id="bottom-left">bottom left</button>
+        </div>
         <script>
             (function() {
                 window.antenna_host = 'simple';
                 window.antenna_extend = {
                 };
+            })();
+        </script>
+        <script>
+            (function() {
+                document.getElementById('top-right').onclick = function(e){
+                    setMediaCorner('top right');
+                }
+                document.getElementById('top-left').onclick = function(e){
+                    setMediaCorner('top left');
+                }
+                document.getElementById('bottom-right').onclick = function(e){
+                    setMediaCorner('bottom right');
+                }
+                document.getElementById('bottom-left').onclick = function(e){
+                    setMediaCorner('bottom left');
+                }
+                function setMediaCorner(corner) {
+                    window.antenna_extend['img_indicator_show_side'] = corner;
+                    // After settings the group setting property, add/remove a spacer element at the top of the body
+                    // element. This causes all of the indicators to update their position.
+                    var spacer = document.getElementById('spacer');
+                    if (spacer) {
+                        document.body.removeChild(spacer);
+                    } else {
+                        var spacer = document.createElement('div');
+                        spacer.setAttribute('id','spacer');
+                        spacer.setAttribute('style', 'width:10px; height:10px; background-color:blue;');
+                        document.body.insertBefore(spacer, document.body.firstChild);
+                    }
+                }
             })();
         </script>
         <script src="http://localhost:3000/static/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>

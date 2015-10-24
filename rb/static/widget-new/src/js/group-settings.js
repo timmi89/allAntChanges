@@ -139,8 +139,10 @@ function createFromJSON(json) {
         pageLinkSelector: data('post_href_selector'),
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
-        textSelector: data('anno_whitelist'),
-        imageSelector: data('img_selector'),// TODO: this is wrong. currently, anno_whitelist contains all tags including 'img'
+        contentSelector: data('anno_whitelist'),
+        textIndicatorLimit: data('initial_pin_limit'),
+        enableTextHelper: data('paragraph_helper'),
+        mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),

@@ -11,6 +11,7 @@ var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var LocationsPage = require('./locations-page');
+var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
 
 var pageReactions = 'reactions';
@@ -48,6 +49,7 @@ function openReactionsWidget(options, elementOrCoords) {
     openWindow();
 
     function openWindow() {
+        PageData.clearIndicatorLimit(pageData);
         var coords;
         if (elementOrCoords.top && elementOrCoords.left) {
             coords = elementOrCoords;

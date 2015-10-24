@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <style>
+            img {
+                max-width: 500px;
+            }
+            p, blockquote {
+                color: white;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1" class="summary">Simple page.</div>
+        <p id="p1">Paragraph text.</p>
+        <p id="p2">Paragraph text.<img src="headphones.jpg"></p>
+        <p id="p3">Paragraph text. <img src="headphones.jpg"> More text.</p>
+        <p id="p4">Paragraph text. <span><img src="headphones.jpg"> More text.</span></p>
+        <p id="p5">Paragraph text. <img src="headphones.jpg"><strong>More text.</strong></p>
+        <p id="p6">Paragraph text. <img src="headphones.jpg"><img src="headphones.jpg"></p>
+        <p id="p7">Paragraph text. <span><img src="headphones.jpg"></span><span><img src="headphones.jpg"></span></p>
+        <p id="p8"><span>Paragraph text.</span><span>More text.</span></p>
+        <p id="p9"><blockquote>Blockquote text.</blockquote></p>
+        <script>
+            (function() {
+                window.antenna_host = 'nested-text';
+                window.antenna_extend = {
+                };
+            })();
+        </script>
+        <script src="http://localhost:3000/static/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>
+    </body>
+</html>

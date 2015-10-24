@@ -55,13 +55,17 @@ function hashImage(imageUrl) {
     }
 }
 
-function hashMedia(element) {
-
+function hashMedia(mediaUrl) {
+    if (mediaUrl && mediaUrl.length > 0) {
+        var hashText = 'rdr-media-' + mediaUrl;
+        return MD5.hex_md5(hashText);
+    }
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     hashText: hashText,
     hashImage: hashImage,
+    hashMedia: hashMedia,
     hashUrl: hashUrl
 };
