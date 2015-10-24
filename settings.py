@@ -237,8 +237,31 @@ else:
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
         }
+      },
+      'cassandra': {
+            'ENGINE': 'django_cassandra_engine',
+            'NAME': 'event_reports',
+            'USER': 'root', #TODO
+            'PASSWORD': '', #TODO
+            'TEST_NAME': 'test_event_reports',
+            'HOST': '10.240.0.3,10.240.0.4,10.240.0.5',
+            'OPTIONS': {
+                'replication': {
+                    'strategy_class': 'SimpleStrategy',
+                    'replication_factor': 2
+                },
+                'connection': {
+                    'consistency': ConsistencyLevel.ONE,
+                    'retry_connect': True
+                    # + All connection options for cassandra.cluster.Cluster()
+                },
+                'session': {
+                    'default_timeout': 10,
+                    'default_fetch_size': 10000
+                    # + All options for cassandra.cluster.Session()
+                }
+            }
       }
-      
     }
     
     CACHES = {
