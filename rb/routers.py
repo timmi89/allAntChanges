@@ -50,13 +50,19 @@ class CassandraRouter(object):
     """A router that sets up a simple master/slave configuration"""
 
     def db_for_read(self, model, **hints):
-        if model.CASSANDRA_MODEL:
-            return 'cassandra'
+        try:
+            if model.CASSANDRA_MODEL:
+                return 'cassandra'
+        except:
+            return None
         return None
 
     def db_for_write(self, model, **hints):
-        if model.CASSANDRA_MODEL:
-            return 'cassandra'
+        try:
+            if model.CASSANDRA_MODEL:
+                return 'cassandra'
+        except:
+            return None
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -67,7 +73,10 @@ class CassandraRouter(object):
         return None
 
     def allow_syncdb(self, db, model):
-        if model.CASSANDRA_MODEL:
-            return True
+        try:
+            if model.CASSANDRA_MODEL:
+                return True
+        except:
+            return None
         return None
 
