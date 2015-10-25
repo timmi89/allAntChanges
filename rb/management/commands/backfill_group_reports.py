@@ -14,11 +14,14 @@ class Command(BaseCommand):
         try:
             groups = Group.objects.filter(activated = True, approved = True)
             for group in groups:
-                for x in range(0,30):
+                for x in range(1,60):
                     start_date = timezone.now() - datetime.timedelta(days=1 + x)
                     end_date = timezone.now() - datetime.timedelta(days=x)
-                    group_page_scores(group, start_date, end_date)
-            
+                    try:
+                        group_page_scores(group, start_date, end_date)
+                    except Exception, ex:
+                        traceback.print_exc(50)
+                        print 'Exception for group: ', group
             
             
             
