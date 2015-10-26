@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            groups = Group.objects.filter(activated = True, approved = True)
+            groups = Group.objects.filter(activated = True, approved = True, id = 2471)
             for group in groups:
                 for x in range(1,60):
                     start_date = timezone.now() - datetime.timedelta(days=1 + x)

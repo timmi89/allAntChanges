@@ -8,24 +8,28 @@ import logging
 logger = logging.getLogger('rb.standard')
 
 class GroupEventsReportBuilder(object):
-    def __init__(self, group, mobile, start_date, end_date, depth = 50):
+    def __init__(self, group, mobile, start_date, end_date, depth = 50, group_page_score = None):
         self.group = group
         self.mobile = mobile
         self.start_date = start_date
         self.end_date = end_date
         self.depth = depth
+        self.group_page_score = group_page_score
         
     def build(self):
         #get  GroupPageScores for dates
         logger.warn('BUILDING REPORT FROM GPS ' +str( self.mobile ) + ' ' + str(self.start_date) + ' ' + str(self.end_date))
-        group_page_scores = GroupPageScores.objects.filter(group_id = self.group.id, mobile = self.mobile, 
-                                                           report_start__gte = self.start_date - datetime.timedelta(hours=12), 
-                                                           report_start__lte = self.start_date + datetime.timedelta(hours=12),
-                                                           report_end__gte = self.end_date  - datetime.timedelta(hours=12), 
-                                                           report_end__lte = self.end_date + datetime.timedelta(hours=12))
-        group_page_scores.order_by('-created_at')  #maybe unnecessary?
-        
-        gps = group_page_scores[0]
+        if self.group_page_score:
+            gps = self.group_page_score
+        else:
+            group_page_scores = GroupPageScores.objects.filter(group_id = self.group.id, mobile = self.mobile, 
+                                                               report_start__gte = self.start_date - datetime.timedelta(hours=12), 
+                                                               report_start__lte = self.start_date + datetime.timedelta(hours=12),
+                                                               report_end__gte = self.end_date  - datetime.timedelta(hours=12), 
+                                                               report_end__lte = self.end_date + datetime.timedelta(hours=12))
+            group_page_scores.order_by('-created_at')  #maybe unnecessary?
+            gps = group_page_scores[0]
+            
         sorted_pages_by_scores = gps.scores.items()
         sorted_pages_by_scores.sort(key = lambda entry : entry[1])
         #sort pages by page scores, cut to depth

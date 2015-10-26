@@ -59,10 +59,10 @@ def group_page_scores(group, start_date, end_date):
                 gpm_rviews[page_id] = reaction_views
                 gpm_reacts[page_id] = reactions
             
-            GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = True, report_start = start_date, report_end = end_date,
+            gps = GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = True, report_start = start_date, report_end = end_date,
                                            scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
             
-            group_event_report(group, True, start_date=start_date, end_date=end_date)
+            group_event_report(group, True, start_date=start_date, end_date=end_date, group_page_score = gps)
     except Exception, ex:
         logger.warn('HERE I AM')
         logger.warn(ex)
@@ -92,10 +92,10 @@ def group_page_scores(group, start_date, end_date):
             
         
         logger.warn('Creating Group PageScores for : ' + str(group) + ' at ' + str(timezone.now()))
-        GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = False, report_start = start_date, report_end = end_date,
+        gps = GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = False, report_start = start_date, report_end = end_date,
                                        scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
         logger.warn('calling group_event_report')
-        group_event_report(group, False, start_date=start_date, end_date=end_date)
+        group_event_report(group, False, start_date=start_date, end_date=end_date, group_page_score = gps)
     except Exception, ex:
         logger.warn('THIS SPACE NOT BLANK IS BAD')
         logger.warn(traceback.format_exc(50))
@@ -103,8 +103,8 @@ def group_page_scores(group, start_date, end_date):
     
 
 @task(name='reporting.group.page.scores')
-def group_event_report(group, mobile, start_date = None, end_date = None):
-    gerb = GroupEventsReportBuilder(group, mobile, start_date, end_date) 
+def group_event_report(group, mobile, start_date = None, end_date = None, group_page_score = None):
+    gerb = GroupEventsReportBuilder(group, mobile, start_date, end_date, group_page_score = group_page_score) 
     logger.info('bulding gerb')
     gerb.build()
     logger.info('gerb built')
