@@ -112,9 +112,11 @@ def merge_desktop_mobile(desktop, mobile, depth):
     if 'sorted_pages' in mobile:
         for sp in mobile['sorted_pages']:
             if sp[0] in sp_holding:
-                sp_holding[sp[0]]['score'] += sp[1]['score']    
+                sp_holding[sp[0]]['score'] += sp[1]['score']
+                print 'ADDING???', sp[1]   
             else:
                 sp_holding[sp[0]] = sp[1]
+                print sp[1]
     
  
     merged['sorted_content'].extend(sc_holding.items())
@@ -152,6 +154,7 @@ def aggregate_reports(group_reports, depth):
         
         
         for gr in group_reports:
+            logger.info('aggregating group report ' + str(gr.report_start) + ' ' + str(gr.mobile))
             daily = {}
             daily['created_at'] = gr.created_at
             daily['report_start'] = gr.report_start
@@ -160,7 +163,7 @@ def aggregate_reports(group_reports, depth):
             daily['top_reactions_count'] = 0
             daily['top_reaction_views_count'] = 0 
             for page_id in gr.sorted_pages:
-                if not 'page_id' in agg_dict['pages']:
+                if not page_id in agg_dict['pages']:
                     agg_dict['pages'][page_id] = {}
                     agg_dict['pages'][page_id]['score'] = 0
                     page = Page.objects.get(id=page_id)
@@ -180,7 +183,7 @@ def aggregate_reports(group_reports, depth):
                 daily['total_reaction_views']   = int(gr.count_map['total_reaction_views'])
                 
             for (cid,pid) in gr.content_page.items():
-                if 'cid' in agg_dict['content']:
+                if cid in agg_dict['content']:
                     agg_dict['content'][cid]['score'] += round((agg_dict['pages'][pid]['score'])*100, 2)
                 else:
                     agg_dict['content'][cid] = {}
@@ -193,7 +196,7 @@ def aggregate_reports(group_reports, depth):
             agg_dict['dailies'].append(daily)
             #TAG_CLOUD aggregation
             for pop_tag in gr.tag_cloud.keys():
-                if not 'pop_tag' in agg_dict['tag_cloud']:
+                if not pop_tag in agg_dict['tag_cloud']:
                     agg_dict['tag_cloud'][pop_tag] = 0
                 agg_dict['tag_cloud'][pop_tag] += gr.tag_cloud[pop_tag]
         
@@ -215,7 +218,7 @@ def aggregate_reports(group_reports, depth):
             agg_dict['sorted_pages'].sort(key = lambda entry : entry[1]['score'])
             agg_dict['sorted_pages'].reverse()
             agg_dict['sorted_pages'] = agg_dict['sorted_pages'][0:depth]
-            
+          
         agg_dict.pop('pages')    
         agg_dict.pop('content')
         agg_dict.pop('tag_cloud')
