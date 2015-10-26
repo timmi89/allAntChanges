@@ -102,7 +102,7 @@ def merge_desktop_mobile(desktop, mobile, depth):
     if 'sorted_tag_cloud' in mobile:
         for tc in mobile['sorted_tag_cloud']:
             if tc[0] in tc_holding:
-                tc_holding[tc[0]]['score'] += tc[1]['score']
+                tc_holding[tc[0]] += tc[1]
             else:
                 tc_holding[tc[0]]  = tc[1]
     
