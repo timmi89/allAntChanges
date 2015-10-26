@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SimpleTests extends AbstractWidgetTests {
 
-    public static String url = "http://localhost:3000/pages/simple/page.html";
+    public static final String url = "http://localhost:3000/pages/simple/page.html";
 
     @Test
     public void testSummaryWidgetLocation() {
