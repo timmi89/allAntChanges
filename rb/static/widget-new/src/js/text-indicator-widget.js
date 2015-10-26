@@ -20,7 +20,10 @@ function createIndicatorWidget(options) {
             containerData: containerData,
             extraClasses: groupSettings.enableTextHelper() ? "" : "antenna-nohint"
         },
-        template: require('../templates/text-indicator-widget.hbs.html')
+        template: require('../templates/text-indicator-widget.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
 
     var reactionWidgetOptions = {

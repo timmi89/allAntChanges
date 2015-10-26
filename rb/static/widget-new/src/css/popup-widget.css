@@ -38,14 +38,16 @@
     border-bottom: 5px solid transparent;
 }
 
-.antenna-popup-body .ant-antenna-logo {
-    font-size:18px;
-    vertical-align: middle;
-    transition: color 500ms;
-    color: #8fb3f2;
+.antenna-popup-body .antenna-logo svg {
+    width: 18px;
+    height: 18px;
 }
-.antenna-popup-body:hover .ant-antenna-logo {
-    color:#FFFFFF;
+.antenna-popup-body .antenna-logo-path {
+    fill: #8fb3f2;
+    transition: fill 500ms;
+}
+.antenna-popup-body:hover .antenna-logo-path {
+    fill: #ffffff;
 }
 
 .antenna-popup-text {
@@ -55,7 +57,3 @@
     margin-left: 8px;
     text-decoration: underline;
 }
-
-/*.antenna-popup-body:hover .antenna-popup-text {*/
-    /*display: inline-block;*/
-/*}*/

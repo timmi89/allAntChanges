@@ -23,7 +23,10 @@ function createIndicatorWidget(options) {
             containerData: containerData,
             extraAttributes: AppMode.debug ? 'ant-hash="' + containerData.hash + '"' : '' // TODO: this about making this a decorator handled by a "Debug" module
         },
-        template: require('../templates/media-indicator-widget.hbs.html')
+        template: require('../templates/media-indicator-widget.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
 
     var reactionWidgetOptions = {

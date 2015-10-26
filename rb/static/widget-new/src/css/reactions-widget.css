@@ -27,9 +27,14 @@
     cursor: move;
 }
 
+.antenna-header .antenna-logo-path {
+    fill: #8fb3f2;
+}
+
 .antenna-reactions-title {
     font-size: 12px;
     font-weight: 700;
+    vertical-align: middle;
 }
 
 .antenna-page-container {

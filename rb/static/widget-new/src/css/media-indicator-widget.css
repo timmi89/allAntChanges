@@ -22,8 +22,8 @@
     visibility: hidden;
 }
 
-.antenna-media-indicator-widget .ant-antenna-logo {
-    color: #ffffff !important;
+.antenna-media-indicator-widget .antenna-logo-path {
+    fill: #ffffff;
 }
 
 .antenna-media-indicator-widget.active { /* todo qualify active class */

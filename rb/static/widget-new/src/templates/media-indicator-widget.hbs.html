@@ -5,7 +5,7 @@
             {{^containerData.loaded}}notloaded{{/containerData.loaded}}
             {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}"
             {{extraAttributes}}>
-        <span class="ant-antenna-logo"></span>
+        {{>logo}}
         {{#if containerData.reactionTotal }}
             <span class="antenna-reaction-total">
                 {{containerData.reactionTotal}}

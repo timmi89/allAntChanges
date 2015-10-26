@@ -13,8 +13,10 @@
     left: 0;
 }
 
-.ant-antenna-logo {
-    font-size: 12px;
+.antenna-logo svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
 }
 
 .ant-social-facebook {

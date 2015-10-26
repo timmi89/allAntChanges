@@ -39,7 +39,10 @@ function openReactionsWidget(options, elementOrCoords) {
         el: WidgetBucket.get(),
         append: true,
         data: {},
-        template: require('../templates/reactions-widget.hbs.html')
+        template: require('../templates/reactions-widget.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
     openInstances.push(ractive);
     var $rootElement = $(rootElement(ractive));

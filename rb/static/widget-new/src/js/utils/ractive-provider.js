@@ -23,8 +23,10 @@ function cssResetDecorator(node) {
 }
 
 function tagChildren(element, clazz) {
-    for (var i = 0; i < element.children.length; i++) {
-        tagChildren(element.children[i], clazz);
+    if (element.children) { // Safari returns undefined when asking for children on an SVG element
+        for (var i = 0; i < element.children.length; i++) {
+            tagChildren(element.children[i], clazz);
+        }
     }
     $(element).addClass(clazz);
 }

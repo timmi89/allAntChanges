@@ -14,7 +14,10 @@ function getRootElement() {
         ractive = Ractive({
             el: bucket,
             append: true,
-            template: require('../templates/popup-widget.hbs.html')
+            template: require('../templates/popup-widget.hbs.html'),
+            partials: {
+                logo: require('../templates/logo-svg.hbs.html')
+            }
         });
         var $element = $(ractive.find('.antenna-popup'));
         $element.on('mousedown', false); // Prevent mousedown from propagating, so the browser doesn't clear the text selection.
