@@ -59,7 +59,7 @@ function createIndicatorWidget(options) {
             if (containerData.reactions.length > 0) {
                 openReactionsWindow(reactionWidgetOptions, ractive);
             } else {
-                var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
+                var $icon = $(rootElement(ractive)).find('.antenna-logo');
                 var offset = $icon.offset();
                 var coordinates = {
                     top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
