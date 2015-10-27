@@ -64,14 +64,14 @@
                 <th class="title">Title</th>
                 <th class="reactions">Reactions</th>
                 <th class="views">Reaction Views</th>
-                <th class="score">Engagement Score</th>
+                <!-- <th class="score">Engagement Score</th> -->
             </tr>
             {% for page in sorted_pages %}
             <tr>
                 <td><a href="{{page.1.url}}" target="_blank">{{page.1.title}}</a></td>
                 <td>{{page.1.reactions}}</td>
                 <td>{{page.1.reaction_views}}</td>
-                <td>{{page.1.score}}</td>
+                <!-- <td>{{page.1.score}}</td> -->
             </tr>
             {% endfor %}
         </table>
