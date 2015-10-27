@@ -92,9 +92,9 @@ def get_merged_report_json(short_name, year = None, month = None, day = None):
                                                             report_end__lte = report_date)
                                                             
 
-    mobile  = utils.aggregate_reports(mobile_latest_reports, 20)
-    desktop = utils.aggregate_reports(desktop_latest_reports, 20)
-    merged = utils.merge_desktop_mobile(desktop, mobile, 20)
+    mobile  = utils.aggregate_reports(mobile_latest_reports, 50)
+    desktop = utils.aggregate_reports(desktop_latest_reports, 50)
+    merged = utils.merge_desktop_mobile(desktop, mobile, 50)
     merged['group_id'] = group.id
     merged['group_short_name'] = group.short_name
     

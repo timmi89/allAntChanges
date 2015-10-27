@@ -84,10 +84,14 @@ class GroupEventsReportBuilder(object):
         #STUFF ABOVE HERE NEEDS BIG REFACTOR
         total_page_views, total_reaction_views, total_reactions = prefab_queries.aggregate_counts(self.group, self.start_date, self.end_date, self.mobile)
         tag_cloud = {}
-        tag_cloud_rows = prefab_queries.get_popular_reactions(self.group, self.start_date, self.end_date, self.mobile)
-        for tcr in tag_cloud_rows:
-            tag_cloud[tcr['f'][0]['v']] = tcr['f'][1]['v']
-         
+        try:
+            tag_cloud_rows = prefab_queries.get_popular_reactions(self.group, self.start_date, self.end_date, self.mobile)
+            for tcr in tag_cloud_rows:
+                tag_cloud[tcr['f'][0]['v']] = tcr['f'][1]['v']
+        except Exception, ex:
+            logger.warn(ex)
+            logger.warn(traceback.format_exc(50))
+            
         count_map['uniques'] = uniques
         count_map['engagement'] = engagement
         count_map['total_page_views'] = total_page_views
