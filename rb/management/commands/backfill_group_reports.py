@@ -12,11 +12,25 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            groups = Group.objects.filter(activated = True, approved = True, id = 2471)
+            if len(args) > 0:
+                gids = []
+                for arg in args:
+                    print arg
+                    gids.append(int(arg))
+                groups = Group.objects.filter(activated = True, approved = True, id__in = gids)
+                for group in groups:
+                    print group
+                    
+            else:
+                groups = Group.objects.filter(activated = True, approved = True)
+                
+            from_date = timezone.now()
+            from_date.replace(hour=0,minute=0,second=0, microsecond = 0)
             for group in groups:
-                for x in range(1,60):
-                    start_date = timezone.now() - datetime.timedelta(days=1 + x)
-                    end_date = timezone.now() - datetime.timedelta(days=x)
+                print 'Starting backfill for: ', group
+                for x in range(0,60):
+                    start_date = from_date - datetime.timedelta(days=1 + x)
+                    end_date = from_date - datetime.timedelta(days=x)
                     try:
                         group_page_scores(group, start_date, end_date)
                     except Exception, ex:

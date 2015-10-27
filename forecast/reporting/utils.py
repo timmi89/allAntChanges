@@ -29,10 +29,10 @@ def init_day(dailies, formatted_date):
 
 def merge_desktop_mobile(desktop, mobile, depth):
     merged = {}
-    # merged['mobile_dailies'] = mobile.get('dailes',[])
+    # merged['mobile_dailies'] = mobile.get('dailies',[])
     # merged['desktop_dailies'] = desktop.get('dailies',[])
 
-    mobile_dailies = mobile.get('dailes',[])
+    mobile_dailies = mobile.get('dailies',[])
     desktop_dailies = desktop.get('dailies',[])
     dailies = {}
     totals = {
