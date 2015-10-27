@@ -113,10 +113,13 @@ def merge_desktop_mobile(desktop, mobile, depth):
         for sp in mobile['sorted_pages']:
             if sp[0] in sp_holding:
                 sp_holding[sp[0]]['score'] += sp[1]['score']
-                print 'ADDING???', sp[1]   
+                sp_holding[sp[0]]['reactions'] += sp[1]['reactions']
+                sp_holding[sp[0]]['reaction_views'] += sp[1]['reaction_views']
+                sp_holding[sp[0]]['views'] += sp[1]['views']
+                #print 'ADDING???', sp[1]   
             else:
                 sp_holding[sp[0]] = sp[1]
-                print sp[1]
+                #print sp[1]
     
  
     merged['sorted_content'].extend(sc_holding.items())
