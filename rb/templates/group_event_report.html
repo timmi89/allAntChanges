@@ -269,7 +269,7 @@ $('.datepicker').pickadate({
         $(document.activeElement).blur();  
 
         var selectedDate = $('.datepicker').pickadate('get').split('/');
-        window.location.href = '/group/dlisted.com/analytics/' + selectedDate[2] + '/' + selectedDate[0] + '/' + selectedDate[1];
+        window.location.href = '/group/{{ group.short_name }}/analytics/' + selectedDate[2] + '/' + selectedDate[0] + '/' + selectedDate[1];
     }
 });
 </script>
