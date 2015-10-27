@@ -77,7 +77,10 @@ def main():
   if queue_size > 10:
     inspect_proc = os.popen("/home/broadcaster/antenna/inspect_celery.sh")
     inspect_proc.close()
-  
+    if queue_size > 25:
+      res_proc = os.popen("/home/broadcaster/antenna/restart_celery.sh")
+      res_proc.close()
+
 
 if __name__ == "__main__":
   main()

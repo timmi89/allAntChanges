@@ -1,16 +1,12 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
 from os import uname
-
+from cassandra import ConsistencyLevel
 if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
-if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
-else: ANTENNA_ARRAY = False
-#if not DEBUG:
-#    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
-    
+
 # Server e-mail account
 if DEBUG:
     SERVER_EMAIL = "devserver@antenna.is"
@@ -102,7 +98,31 @@ if DEBUG:
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
+        },
+        'cassandra': {
+            'ENGINE': 'django_cassandra_engine',
+            'NAME': 'event_reports',
+            'USER': 'root', #TODO
+            'PASSWORD': '', #TODO
+            'TEST_NAME': 'test_event_reports',
+            'HOST': '127.0.0.1',
+            'OPTIONS': {
+                'replication': {
+                    'strategy_class': 'SimpleStrategy',
+                    'replication_factor': 1
+                },
+                'connection': {
+                    'consistency': ConsistencyLevel.ONE,
+                    'retry_connect': True
+                    # + All connection options for cassandra.cluster.Cluster()
+                },
+                'session': {
+                    'default_timeout': 10,
+                    'default_fetch_size': 10000
+                    # + All options for cassandra.cluster.Session()
+                }
         }
+    }
     }
     # To use sqlite instead of mysql, uncomment this block and comment the one above.
     # DATABASES = {
@@ -166,10 +186,6 @@ if DEBUG:
             },
             'query_cache': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-                # 'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-                # 'LOCATION': ['127.0.0.1:11211'],
-                # 'TIMEOUT':86400,
-                # 'JOHNNY_CACHE':True,
             }
         }
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
@@ -182,7 +198,7 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
+    DATABASE_ROUTERS = ['rb.routers.CassandraRouter', 'rb.routers.MasterSlaveRouter']    
     
         
     DATABASES = {
@@ -221,8 +237,31 @@ else:
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
         }
+      },
+      'cassandra': {
+            'ENGINE': 'django_cassandra_engine',
+            'NAME': 'event_reports',
+            'USER': 'root', #TODO
+            'PASSWORD': '', #TODO
+            'TEST_NAME': 'test_event_reports',
+            'HOST': '10.240.0.3,10.240.0.4,10.240.0.5',
+            'OPTIONS': {
+                'replication': {
+                    'strategy_class': 'SimpleStrategy',
+                    'replication_factor': 2
+                },
+                'connection': {
+                    'consistency': ConsistencyLevel.ONE,
+                    'retry_connect': True
+                    # + All connection options for cassandra.cluster.Cluster()
+                },
+                'session': {
+                    'default_timeout': 10,
+                    'default_fetch_size': 10000
+                    # + All options for cassandra.cluster.Session()
+                }
+            }
       }
-      
     }
     
     CACHES = {
@@ -339,10 +378,8 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
-if not ANTENNA_ARRAY:
-    ROOT_URLCONF = 'antenna.urls'
-else:
-    ROOT_URLCONF = 'antenna.urls'
+
+ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
     "antenna/rb/templates"
@@ -370,6 +407,7 @@ else:
 SEEDERS=[119507,119500,119495,119494,119493,119492,11940,119487,119485,119483]
 
 INSTALLED_APPS = [
+    'django_cassandra_engine',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -380,6 +418,7 @@ INSTALLED_APPS = [
     'rb',
     'chronos',
     'analytics',
+    'forecast.cassandra',
     # 'piston',
     'south',
     'storages',
@@ -449,16 +488,16 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'django.utils.log.NullHandler',
         },
         'console':{
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.StreamHandler',
             'formatter': 'simple'
         },
         'rb_standard':{
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': 'logs/rb_standard.log',
             'maxBytes': 1024*1024*10, # 10 MB

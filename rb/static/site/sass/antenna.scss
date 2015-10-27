@@ -34,9 +34,9 @@
 @import "materialize_components/sideNav";
 // @import "materialize_components/preloader";
 // @import "materialize_components/slider";
-// @import "materialize_components/date_picker/default.scss";
-// @import "materialize_components/date_picker/default.date.scss";
-// @import "materialize_components/date_picker/default.time.scss";
+@import "materialize_components/date_picker/default.scss";
+@import "materialize_components/date_picker/default.date.scss";
+@import "materialize_components/date_picker/default.time.scss";
 
 
 @import "antenna_components/mixins";
@@ -54,5 +54,7 @@
 @import "antenna_components/retailers";
 @import "antenna_components/gallery";
 @import "antenna_components/admin";
+
+@import "../bower_components/chartist/dist/scss/chartist.scss";
 
 

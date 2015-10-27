@@ -183,7 +183,8 @@ function antenna($A){
                 img_indicator_show_side: 'left',
                 // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
                 // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                tag_box_bg_colors: '#18414c;#376076;78,122,146;215,179,69;#e6885c;#e46156',
+                // tag_box_bg_colors: '#376076;215,179,69;#e6885c;#e46156',
                 // tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
                 // tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
                 tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
@@ -7313,7 +7314,7 @@ if ( sendData.kind=="page" ) {
 
                                     _doPageUpdates(args);
                                     
-                                }else{
+                                // }else{
 
                                 //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
@@ -8408,7 +8409,7 @@ if ( sendData.kind=="page" ) {
                                 $indicator_body = summary.$indicator_body,
                                 $actionbar = $('ant_actionbar_'+hash);
 
-                            // $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+
                             // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
 
                             if (showIndicator === false) {
@@ -9445,9 +9446,9 @@ if ( sendData.kind=="page" ) {
                     ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
                     
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
-                    if(!isCrossPageContainer){
+                    // if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                    }
+                    // }
 
                 } );
                 
