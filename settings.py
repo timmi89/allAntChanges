@@ -419,6 +419,7 @@ INSTALLED_APPS = [
     'chronos',
     'analytics',
     'forecast.cassandra',
+    'forecast.reporting',
     # 'piston',
     'south',
     'storages',
