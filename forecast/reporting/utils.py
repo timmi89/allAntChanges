@@ -136,7 +136,7 @@ def merge_desktop_mobile(desktop, mobile, depth):
         merged['sorted_tag_cloud'].reverse()
         merged['sorted_tag_cloud'] = merged['sorted_tag_cloud'][0:depth]
     if len(merged['sorted_pages']):
-        merged['sorted_pages'].sort(key = lambda entry : entry[1]['score'])
+        merged['sorted_pages'].sort(key = lambda entry : entry[1]['reactions'])
         merged['sorted_pages'].reverse()
         merged['sorted_pages'] = merged['sorted_pages'][0:depth]
 
@@ -218,7 +218,7 @@ def aggregate_reports(group_reports, depth):
             agg_dict['sorted_tag_cloud'].reverse()
             agg_dict['sorted_tag_cloud'] = agg_dict['sorted_tag_cloud'][0:depth]
         if len(agg_dict['sorted_pages']):
-            agg_dict['sorted_pages'].sort(key = lambda entry : entry[1]['score'])
+            agg_dict['sorted_pages'].sort(key = lambda entry : entry[1]['reactions'])
             agg_dict['sorted_pages'].reverse()
             agg_dict['sorted_pages'] = agg_dict['sorted_pages'][0:depth]
           
