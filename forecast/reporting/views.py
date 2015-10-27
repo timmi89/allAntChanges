@@ -18,7 +18,7 @@ import logging, json
 logger = logging.getLogger('rb.standard')
 
 @requires_admin
-def group_event_report(request, short_name, year = None, month = None, day = None):
+def group_event_report(request, short_name, year = None, month = None, day = None, **kwargs):
 
     context = {}
     try:
