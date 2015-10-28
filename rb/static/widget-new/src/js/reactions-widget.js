@@ -3,6 +3,7 @@ var AjaxClient = require('./utils/ajax-client');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
+var TouchSupport = require('./utils/touch-support');
 var TransitionUtil = require('./utils/transition-util');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
@@ -269,6 +270,12 @@ function setupWindowClose(pages, ractive) {
             closeAllWindows();
         }
     });
+    var tapListener = TouchSupport.setupTap(document, function(event) {
+        if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
+            event.preventDefault();
+            closeAllWindows();
+        }
+    });
     ractive.on('closeWindow', closeWindow);
 
     var closeTimer;
@@ -293,6 +300,7 @@ function setupWindowClose(pages, ractive) {
         });
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
+        tapListener.teardown();
         Range.clearHighlights();
         for (var i = 0; i < pages.length; i++) {
             pages[i].teardown();
@@ -306,6 +314,10 @@ function closeAllWindows() {
         openInstances[i].fire('closeWindow');
     }
     openInstances = [];
+}
+
+function isOpenWindow() {
+    return openInstances.length > 0;
 }
 
 // Prevent scrolling of the document after we scroll to the top/bottom of the reactions window
@@ -350,6 +362,7 @@ function preventExtraScroll($rootElement) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     open: openReactionsWidget,
+    isOpen: isOpenWindow,
     PAGE_REACTIONS: pageReactions,
     PAGE_DEFAULTS: pageDefaults,
     PAGE_AUTO: pageAuto
