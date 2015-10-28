@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 groups = Group.objects.filter(activated = True, approved = True)
                 
             from_date = timezone.now()
-            from_date.replace(hour=0,minute=0,second=0, microsecond = 0)
+            from_date = from_date.replace(hour=0,minute=0,second=0, microsecond = 0)
             for group in groups:
                 print 'Starting backfill for: ', group
                 for x in range(0,60):
