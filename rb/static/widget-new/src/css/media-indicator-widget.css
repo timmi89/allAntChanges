@@ -16,14 +16,15 @@
     opacity: 0.6;
     white-space: nowrap;
     z-index: 998; /* TODO: compute programatically (e.g. container element z-index + 1) */
+    pointer-events: auto;
 }
 
 .antenna-media-indicator-widget.notloaded {
     visibility: hidden;
 }
 
-.antenna-media-indicator-widget .ant-antenna-logo {
-    color: #ffffff !important;
+.antenna-media-indicator-widget .antenna-logo-path {
+    fill: #ffffff;
 }
 
 .antenna-media-indicator-widget.active { /* todo qualify active class */
@@ -34,10 +35,10 @@
 }
 
 .antenna-media-indicator-widget .antenna-reaction-total {
-    /* TODO: the layout of the text is not right */
     visibility: hidden;
     font-size: 11px;
     line-height: 16px;
+    vertical-align: middle;
 }
 
 .antenna-media-indicator-widget.active .antenna-reaction-total {
@@ -47,6 +48,7 @@
 .antenna-media-indicator-widget .antenna-reaction-prompt {
     display: inline-block;
     font-size: 11px;
+    vertical-align: middle;
     visibility: hidden;
     max-width: 0;
     white-space: pre; /* don't wrap */

@@ -1,6 +1,8 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
+
+var AppMode = require('./utils/app-mode');
 var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 
@@ -18,9 +20,13 @@ function createIndicatorWidget(options) {
         append: true,
         magic: true,
         data: {
-            containerData: containerData
+            containerData: containerData,
+            extraAttributes: AppMode.debug ? 'ant-hash="' + containerData.hash + '"' : '' // TODO: this about making this a decorator handled by a "Debug" module
         },
-        template: require('../templates/media-indicator-widget.hbs.html')
+        template: require('../templates/media-indicator-widget.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
 
     var reactionWidgetOptions = {

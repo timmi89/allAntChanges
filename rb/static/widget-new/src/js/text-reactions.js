@@ -2,6 +2,7 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var PopupWidget = require('./popup-widget');
 var Range = require('./utils/range');
 var ReactionsWidget = require('./reactions-widget');
+var TouchSupport = require('./utils/touch-support');
 
 
 function createReactableText(options) {
@@ -19,6 +20,7 @@ function createReactableText(options) {
         groupSettings: options.groupSettings
     };
 
+    setupTouchEvents($containerElement.get(0), reactionsWidgetOptions);
     $containerElement.on('mouseup', function(event) {
         if (containerData.loaded) {
             var node = $containerElement.get(0);
@@ -39,6 +41,29 @@ function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, exclude
             ReactionsWidget.open(reactionsWidgetOptions, coordinates);
         }, excludeNode);
     }
+}
+
+function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
+    Range.grabNode(node, function(text, location) {
+        reactionsWidgetOptions.contentData.location = location;
+        reactionsWidgetOptions.contentData.body = text;
+        ReactionsWidget.open(reactionsWidgetOptions, coords);
+    });
+}
+
+function setupTouchEvents(element, reactionsWidgetOptions) {
+    TouchSupport.setupTap(element, function(event) {
+        if (!ReactionsWidget.isOpen()) {
+            event.preventDefault();
+            var touch = event.changedTouches[0];
+            var coords = { top: touch.pageY, left: touch.pageX };
+            setTimeout(function() { // Let this event finish processing before opening the reactions window so the window doesn't also process the event.
+                grabNodeAndOpen(element, reactionsWidgetOptions, coords);
+                element.removeEventListener('touchend', touchEnd);
+                element.addEventListener('touchend', touchEnd);
+            }, 0);
+        }
+    });
 }
 
 //noinspection JSUnresolvedVariable

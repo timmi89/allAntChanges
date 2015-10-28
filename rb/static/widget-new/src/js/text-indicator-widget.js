@@ -1,8 +1,10 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var Range = require('./utils/range');
+
 var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
-var Range = require('./utils/range');
+var SVGs = require('./svgs');
 
 
 function createIndicatorWidget(options) {
@@ -20,7 +22,10 @@ function createIndicatorWidget(options) {
             containerData: containerData,
             extraClasses: groupSettings.enableTextHelper() ? "" : "antenna-nohint"
         },
-        template: require('../templates/text-indicator-widget.hbs.html')
+        template: require('../templates/text-indicator-widget.hbs.html'),
+        partials: {
+            logo: SVGs.logo()
+        }
     });
 
     var reactionWidgetOptions = {
@@ -56,7 +61,7 @@ function createIndicatorWidget(options) {
             if (containerData.reactions.length > 0) {
                 openReactionsWindow(reactionWidgetOptions, ractive);
             } else {
-                var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
+                var $icon = $(rootElement(ractive)).find('.antenna-logo');
                 var offset = $icon.offset();
                 var coordinates = {
                     top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character

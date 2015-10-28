@@ -3,6 +3,7 @@ var AjaxClient = require('./utils/ajax-client');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
+var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-reactions-page';
 
@@ -34,6 +35,10 @@ function createPage(options) {
         },
         decorators: {
             sizetofit: sizeToFit
+        },
+        partials: {
+            locationIcon: SVGs.location(),
+            commentsIcon: SVGs.comments()
         }
     });
 

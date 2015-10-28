@@ -3,6 +3,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +29,11 @@ public class AbstractWidgetTests {
         driver.quit();
     }
 
+    public void hover(WebElement element) {
+        Actions action = new Actions(driver);
+        action.moveToElement(element).build().perform();
+    }
+
     /**
      * Attempts to find an element and returns either the element or null.
      */
@@ -40,6 +48,9 @@ public class AbstractWidgetTests {
     }
 
     public WebElement findByXpath(String xpath, WebElement parent) {
+        if (parent != null && xpath.startsWith("//")) {
+            throw new IllegalArgumentException("A parent element was passed with an xpath that searches the entire document ('//'). Scoped xpath expressions should start with './/' instead.");
+        }
         WebElement element = null;
         try {
             element = parent.findElement(By.xpath(xpath));
@@ -62,6 +73,18 @@ public class AbstractWidgetTests {
         return element;
     }
 
+    /**
+     * Returns the media indicator widget that corresponds to the given media element or <code>null</code> if none is
+     * found.
+     */
+    public WebElement findMediaIndicator(WebElement mediaElement, int count) {
+        WebElement bucket = findById(AntennaConstants.ID_WIDGET_BUCKET);
+        Assert.assertNotNull("widget bucket not found", bucket);
+
+        String mediaHash = mediaElement.getAttribute(AntennaConstants.ATTR_ANT_HASH);
+        return findByXpath(String.format("(//span[@ant-hash='%s'])[%s]", mediaHash, count), bucket);
+    }
+
     public void assertMediaIndicatorCount(int count) {
         WebElement bucket = findById(AntennaConstants.ID_WIDGET_BUCKET);
         Assert.assertNotNull("widget bucket not found", bucket);
@@ -75,38 +98,70 @@ public class AbstractWidgetTests {
         Assert.assertEquals("wrong number of text indicators", count, textIndicators.size());
     }
 
+    public void assertMediaIndicatorOverElement(WebElement mediaElement) {
+        assertMediaIndicatorOverElement(mediaElement, null, 1);
+    }
+
+    public void assertMediaIndicatorOverElement(WebElement mediaElement, String corner) {
+        assertMediaIndicatorOverElement(mediaElement, corner, 1);
+    }
+
+    public void assertMediaIndicatorOverElement(WebElement mediaElement, int instanceCount) {
+        assertMediaIndicatorOverElement(mediaElement, null, instanceCount);
+    }
+
     /**
      * Asserts that there is an indicator positioned on top of the given element. This verifies the actual coordinates
      * of the elements on the page. An optional corner description can be passed in (a String containing the words "top",
-     * "left", "bottom", or "right").
+     * "left", "bottom", or "right"). instanceCount is for the case where the same media, with the same hash, can appear
+     * multiple times on the page. In this case, instanceCount lets us pick the Nth indicator. instanceCount follows the
+     * xpath spec and is ONE-BASED.
      */
-    public void assertMediaIndicatorOverElement(WebElement mediaElement, String corner) {
-        List<WebElement> indicators = driver.findElementsByClassName(AntennaConstants.CLASS_MEDIA_INDICATOR);
-        for (Iterator<WebElement> iterator = indicators.iterator(); iterator.hasNext();) {
-            WebElement indicator = iterator.next();
-            Point indicatorLocation = indicator.getLocation();
-            Point mediaTopLeft = mediaElement.getLocation();
-            Dimension mediaSize = mediaElement.getSize();
-            Point mediaBottomRight = new Point(mediaTopLeft.getX() + mediaSize.getWidth(), mediaTopLeft.getY() + mediaSize.getHeight());
-            if (indicatorLocation.getX() >= mediaTopLeft.getX() && indicatorLocation.getX() <= mediaBottomRight.getX() &&
-                    indicatorLocation.getY() >= mediaTopLeft.getY() && indicatorLocation.getY() <= mediaBottomRight.getY()) {
-                if (corner != null) {
-                    Dimension indicatorSize = indicator.getSize();
-                    Point indicatorBottomRight = new Point(indicatorLocation.getX() + indicatorSize.getWidth(), indicatorLocation.getY() + indicatorSize.getHeight());
-                    if (corner.contains("top")) {
-                        Assert.assertEquals("wrong indicator top location", mediaTopLeft.getY(), indicatorLocation.getY());
-                    } else {
-                        Assert.assertEquals("wrong indicator bottom location", mediaBottomRight.getY(), indicatorBottomRight.getY());
-                    }
-                    if (corner.contains("left")) {
-                        Assert.assertEquals("wrong indicator left location", mediaTopLeft.getX(), indicatorLocation.getX());
-                    } else {
-                        Assert.assertEquals("wrong indicator right location", mediaBottomRight.getX(), indicatorBottomRight.getX());
-                    }
-                }
-                return;
+    public void assertMediaIndicatorOverElement(WebElement mediaElement, String corner, int instanceCount) {
+        WebElement indicator = findMediaIndicator(mediaElement, instanceCount);
+        Assert.assertNotNull("indicator not found for media", indicator);
+
+        Point indicatorLocation = indicator.getLocation();
+        Point mediaTopLeft = mediaElement.getLocation();
+        Dimension mediaSize = mediaElement.getSize();
+        Point mediaBottomRight = new Point(mediaTopLeft.getX() + mediaSize.getWidth(), mediaTopLeft.getY() + mediaSize.getHeight());
+
+        Assert.assertTrue("media indicator is too far left", indicatorLocation.getX() >= mediaTopLeft.getX());
+        Assert.assertTrue("media indicator is too far right", indicatorLocation.getX() <= mediaBottomRight.getX());
+        Assert.assertTrue("media indicator is too high", indicatorLocation.getY() >= mediaTopLeft.getY());
+        Assert.assertTrue("media indicator is too low", indicatorLocation.getY() <= mediaBottomRight.getY());
+        if (corner != null) {
+            Dimension indicatorSize = indicator.getSize();
+            Point indicatorBottomRight = new Point(indicatorLocation.getX() + indicatorSize.getWidth(), indicatorLocation.getY() + indicatorSize.getHeight());
+            if (corner.contains("top")) {
+                Assert.assertEquals("wrong indicator top location", mediaTopLeft.getY(), indicatorLocation.getY());
+            } else {
+                Assert.assertEquals("wrong indicator bottom location", mediaBottomRight.getY(), indicatorBottomRight.getY());
+            }
+            if (corner.contains("left")) {
+                Assert.assertEquals("wrong indicator left location", mediaTopLeft.getX(), indicatorLocation.getX());
+            } else {
+                Assert.assertEquals("wrong indicator right location", mediaBottomRight.getX(), indicatorBottomRight.getX());
             }
         }
-        Assert.fail("no media indicator found positioned over media");
     }
+
+    public void assertTextIndicatorOpacityOnHover(WebElement container, WebElement indicator, double expectedOpacity) {
+        // Hover the paragraph and make sure the opacity changes as expected
+        hover(container);
+        // The indicator opacity fades in over 300ms...
+        (new WebDriverWait(driver, 1)).withMessage("indicator opacity didn't change").until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                try {
+                    float opacity = Float.parseFloat(indicator.getCssValue("opacity"));
+                    Assert.assertEquals("incorrect opacity on text indicator", expectedOpacity, opacity, 0.1);
+                } catch (AssertionError e) {
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+
 }

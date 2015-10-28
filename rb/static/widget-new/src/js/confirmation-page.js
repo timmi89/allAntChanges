@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var CommentAreaPartial = require('./comment-area-partial');
+var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-confirmation-page';
 
@@ -13,7 +14,9 @@ function createPage(reactionText, reactionProvider, containerData, pageData, ele
         },
         template: require('../templates/confirmation-page.hbs.html'),
         partials: {
-            commentArea: require('../templates/comment-area-partial.hbs.html')
+            commentArea: require('../templates/comment-area-partial.hbs.html'),
+            facebookIcon: SVGs.facebook(),
+            twitterIcon: SVGs.twitter()
         }
     });
     CommentAreaPartial.setup(reactionProvider, containerData, pageData, null, ractive);
