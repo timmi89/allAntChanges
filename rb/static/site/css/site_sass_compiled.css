@@ -8434,10 +8434,6 @@ section.big-beta-form .learn-more-boxes {
     margin-left: -7px;
     border: 7px solid transparent;
     border-top-color: #fff; }
-.admin .analytics .ct-labels foreignobject {
-  display: none; }
-  .admin .analytics .ct-labels foreignobject:nth-child(3n+1) {
-    display: block; }
 .admin .analytics .tooltip-row.value {
   font-weight: bold;
   color: #4b7185;

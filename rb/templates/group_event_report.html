@@ -64,14 +64,14 @@
                 <th class="title">Title</th>
                 <th class="reactions">Reactions</th>
                 <th class="views">Reaction Views</th>
-                <th class="score">Engagement Score</th>
+                <!-- <th class="score">Engagement Score</th> -->
             </tr>
             {% for page in sorted_pages %}
             <tr>
                 <td><a href="{{page.1.url}}" target="_blank">{{page.1.title}}</a></td>
                 <td>{{page.1.reactions}}</td>
                 <td>{{page.1.reaction_views}}</td>
-                <td>{{page.1.score}}</td>
+                <!-- <td>{{page.1.score}}</td> -->
             </tr>
             {% endfor %}
         </table>
@@ -152,7 +152,8 @@
     var chart = new Chartist.Line('.reactions-chart', {
       labels: [
         {% for day, values in dailies.items|sort %}
-            '{{ day }}' {% if not forloop.last %}, {%endif%}
+            // '{{ day }}' {% if not forloop.last %}, {%endif%}
+            {% if forloop.counter0|divisibleby:"3" %}'{{day}}'{%else%}''{%endif%}{% if not forloop.last %}, {%endif%}
         {% endfor %}
       ],
       series: [
@@ -175,29 +176,7 @@
           right: 40
         },
       plugins: [
-        Chartist.plugins.tooltip(),
-        Chartist.plugins.ctAxisTitle({
-          axisX: {
-            axisTitle: 'Date',
-            axisClass: 'ct-axis-title',
-            offset: {
-              x: 0,
-              y: 35
-            },
-            textAnchor: 'middle'
-          },
-          axisY: {
-            axisTitle: 'Count',
-            axisClass: 'ct-axis-title',
-            offset: {
-              x: 0,
-              y: 0
-            },
-            textAnchor: 'middle',
-            flipTitle: false
-          }
-        })
-
+        Chartist.plugins.tooltip()
       ]
     });
 })();
@@ -205,7 +184,11 @@
     var chart = new Chartist.Line('.reaction-views-chart', {
       labels: [
         {% for day, values in dailies.items|sort %}
-            '{{ day }}' {% if not forloop.last %}, {%endif%}
+            // {% if forloop.first %}'{{day}}' {% if not forloop.last %}, {%endif%}{%endif%}
+            {% if forloop.counter0|divisibleby:"3" %}'{{day}}'{%else%}''{%endif%}{% if not forloop.last %}, {%endif%}
+            
+            // '' {% if not forloop.last %}, {%endif%}
+            // '{{ day }}' {% if not forloop.last %}, {%endif%}
         {% endfor %}
       ],
       series: [
@@ -229,29 +212,7 @@
           right: 40
         },
       plugins: [
-        Chartist.plugins.tooltip(),
-        Chartist.plugins.ctAxisTitle({
-          axisX: {
-            axisTitle: 'Date',
-            axisClass: 'ct-axis-title',
-            offset: {
-              x: 0,
-              y: 35
-            },
-            textAnchor: 'middle'
-          },
-          axisY: {
-            axisTitle: 'Count',
-            axisClass: 'ct-axis-title',
-            offset: {
-              x: 0,
-              y: 0
-            },
-            textAnchor: 'middle',
-            flipTitle: false
-          }
-        })
-
+        Chartist.plugins.tooltip()
       ]
     });
 })();
