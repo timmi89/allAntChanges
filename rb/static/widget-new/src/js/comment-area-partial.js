@@ -4,12 +4,11 @@ var User = require('./utils/user');
 
 function setupCommentArea(reactionProvider, containerData, pageData, callback, ractive) {
     $(ractive.find('.antenna-comment-input')).focus(); // TODO: decide whether we really want to start with focus in the textarea
-    ractive.on('inputchanged', updateInputCounter(ractive));
-    ractive.on('addcomment', addComment(reactionProvider, containerData, pageData, callback, ractive));
-}
+    ractive.on('inputchanged', updateInputCounter);
+    ractive.on('addcomment', addComment);
+    updateInputCounter();
 
-function addComment(reactionProvider, containerData, pageData, callback, ractive) {
-    return function() {
+    function addComment() {
         var comment = $(ractive.find('.antenna-comment-input')).val().trim(); // TODO: additional validation? input sanitizing?
         if (comment.length > 0) {
             $(ractive.find('.antenna-comment-widgets')).hide();
@@ -30,15 +29,13 @@ function addComment(reactionProvider, containerData, pageData, callback, ractive
             });
         }
     }
-}
 
-function updateInputCounter(ractive) {
-    return function(ractiveEvent) {
-        var $textarea = $(ractiveEvent.original.target);
+    function updateInputCounter() {
+        var $textarea = $(ractive.find('.antenna-comment-input'));
         var max = parseInt($textarea.attr('maxlength'));
         var length = $textarea.val().length;
         $(ractive.find('.antenna-comment-count')).html(Math.max(0, max - length));
-    };
+    }
 }
 
 //noinspection JSUnresolvedVariable

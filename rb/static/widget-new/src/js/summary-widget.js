@@ -5,7 +5,9 @@ var ReactionsWidget = require('./reactions-widget');
 function createSummaryWidget(containerData, pageData, defaultReactions, groupSettings) {
     var ractive = Ractive({
         el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
-        data: pageData,
+        data: {
+            pageData: pageData
+        },
         magic: true,
         template: require('../templates/summary-widget.hbs.html'),
         partials: {
@@ -20,7 +22,6 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
 }
 
 function rootElement(ractive) {
-    // TODO: gotta be a better way to get this
     return ractive.find('.ant-summary-widget');
 }
 

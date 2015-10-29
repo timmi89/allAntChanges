@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AjaxClient = require('./utils/ajax-client');
+var Messages = require('./utils/messages');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
@@ -124,7 +125,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showConfirmation(reactionData, reactionProvider) {
-        setWindowTitle('Thanks for your reaction!');
+        setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
         var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, pageContainer(ractive));
         pages.push(page);
 

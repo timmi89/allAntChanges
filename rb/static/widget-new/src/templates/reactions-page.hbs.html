@@ -36,9 +36,9 @@
     </div>
     <div class="antenna-footer antenna-reactions-footer">
         {{#if reactions}}
-            <span on-click="showdefault" class="antenna-think">What do you think?</span>
+            <span on-click="showdefault" class="antenna-think">{{getMessage('reactions-page_think')}}</span>
         {{else}}
-            <span class="antenna-no-reactions">No reactions yet!</span>
+            <span class="antenna-no-reactions">{{getMessage('reactions-page_no_reactions')}}</span>
         {{/if}}
     </div>
 </div>

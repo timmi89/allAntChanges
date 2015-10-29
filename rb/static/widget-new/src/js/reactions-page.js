@@ -82,10 +82,6 @@ function sizeToFit(node) {
     return ReactionsWidgetLayoutUtils.sizeToFit(node);
 }
 
-function rootElement(ractive) {
-    return ractive.find(pageSelector);
-}
-
 function highlightContent(containerData, pageData, $containerElement) {
     return function(event) {
         var reactionData = event.context;

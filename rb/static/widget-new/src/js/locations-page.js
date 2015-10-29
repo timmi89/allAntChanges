@@ -17,7 +17,6 @@ function createPage(options) {
         data: {
             locationData: reactionLocationData,
             pageReactionCount: pageReactionCount(reactionLocationData),
-            contentCountLabel: computeContentCountLabel,
             canLocate: function(containerHash) {
                 // TODO: is there a better way to handle reactions to hashes that are no longer on the page?
                 //       should we provide some kind of indication when we fail to locate a hash or just leave it as is?
@@ -62,14 +61,6 @@ function pageReactionCount(reactionLocationData) {
                 return contentLocationData.count;
             }
         }
-    }
-}
-
-function computeContentCountLabel(count) {
-    if (count === 1) {
-        return '<div class="antenna-content-count number">1</div><div class="antenna-content-count">reaction</div>';
-    } else {
-        return '<div class="antenna-content-count number">' + count + '</div><div class="antenna-content-count">reactions</div>';
     }
 }
 
