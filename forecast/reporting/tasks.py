@@ -14,17 +14,6 @@ from antenna.forecast.reporting import prefab_queries
 
 logger = logging.getLogger('rb.standard')
 
-@periodic_task(name='reporting.test.task', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/1", day_of_week="*")))
-def test_task():
-    start_date = timezone.now() - datetime.timedelta(days=1)
-    end_date = timezone.now()
-    start_date, end_date = adjust_start_end_dates(start_date, end_date)
-    groups = Group.objects.filter(approved=True, activated=True) 
-        
-    for group in groups:
-        logger.info('TEST TASK FOR GROUP: ' + str(group))
-
 
 @periodic_task(name='reporting.group.page.scores', ignore_result=True, 
                run_every=(crontab(hour="3", minute="30", day_of_week="*")))
@@ -113,7 +102,6 @@ def group_page_scores(group, start_date, end_date):
     
     
 
-@task(name='reporting.group.page.scores')
 def group_event_report(group, mobile, start_date = None, end_date = None, group_page_score = None):
     gerb = GroupEventsReportBuilder(group, mobile, start_date, end_date, group_page_score = group_page_score) 
     logger.info('bulding gerb')
