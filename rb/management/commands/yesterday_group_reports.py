@@ -28,8 +28,8 @@ class Command(BaseCommand):
             from_date.replace(hour=0,minute=0,second=0, microsecond = 0)
             for group in groups:
                 print 'Starting yesterday group report for: ', group
-                start_date = from_date - datetime.timedelta(days=1)
-                end_date = from_date
+                start_date = from_date - datetime.timedelta(days=2)
+                end_date = from_date  - datetime.timedelta(days=1)
                 try:
                     group_page_scores(group, start_date, end_date)
                 except Exception, ex:
