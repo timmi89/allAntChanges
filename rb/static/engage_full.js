@@ -715,6 +715,7 @@ function antenna($A){
                         left: animWidth
                     });
 
+                ANT.util.stayInWindow( $aWindow, true );
                 $aWindow.data('panelState', 2);
                 $showPanel.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
                 $hidePanel.addClass('ant_hiddenPanel').removeClass('ant_visiblePanel');
@@ -734,8 +735,6 @@ function antenna($A){
                       } else {
                           $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                       }
-
-                      ANT.util.stayInWindow( $aWindow, true );
                   }
                 );
             },
@@ -3032,6 +3031,7 @@ function antenna($A){
                 });
             },
             stayInWindow: function($aWindow, animate) {
+                var animate = false;
                 //ANT.util.stayInWindow:
                 if (isMobile) { return; }
                var rWin = $(window),
@@ -10396,7 +10396,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv29"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv30"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

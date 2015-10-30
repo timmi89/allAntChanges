@@ -91,6 +91,7 @@ div.ant.ant_window {
     width:111px;
     opacity: 0.0;
     /*transform: scale(0.5) translate3d(50%,100%,0);*/
+    background:#fff;
     transition: opacity 200ms ease;
       
 }
