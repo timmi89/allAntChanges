@@ -7,7 +7,8 @@ from django.utils import timezone
 #from celery.utils.log import get_task_logger
 from django.db.models import Count
 from django.core.cache import cache, get_cache
-import traceback, logging
+from django.core.mail import send_mail
+import traceback, logging, httplib
 from antenna.rb.models import * 
 from antenna.forecast.reporting.report_builder import *
 from antenna.forecast.reporting import prefab_queries
@@ -114,6 +115,38 @@ def group_event_report(group, mobile, start_date = None, end_date = None, group_
 @periodic_task(name='reporting.weekly.email.report', ignore_result=True, 
                run_every=(crontab(hour="5", minute="30", day_of_week="1")))
 def weekly_email_report():
-    pass
+    #SCRAPE HTML
+    groups = Group.objects.filter(approved=True, activated=True) 
+    fail_silently = False
+    auth_user = 'broadcast@antenna.is'
+    auth_password = 'br04dc45t'
+    message = 'Testing django email lib'
+    from_email = 'broadcast@antenna.is'
+    
+    for group in groups:
+        group_weekly_email(group, fail_silently, auth_user, auth_password, message, from_email)
+  
+def group_weekly_email(group, fail_silently, auth_user, auth_password, message, from_email):
+    try:
+        subject = 'Test Weekly Broadcast'
+        recipient_list = ['michael@antenna.is']
+        url = '/group/' + group.short_name + '/analytics_email/'
+        hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=30)
+        #hcon.connect()
+        hcon.request('GET', url)
+        resp = hcon.getresponse()
+        message = resp.read()
+        if message is not None:
+            logger.info("PAGE GENERATED: " + url)
+        else:
+            logger.info("NONE PAGE" + url)
+        hcon.close()   
+        print 'sending message?'
+         
+        send_mail(subject, message, from_email, recipient_list, fail_silently, auth_user, auth_password)
+        print 'sent message'    
+    except Exception, ex:
+        logger.warn('Nothing easy in this world')
+        logger.warn(traceback.format_exc(50))
 
 
