@@ -2259,6 +2259,14 @@ require (['http://wwwcache.wral.com/presentation/v3/scripts/main.min.js?v=201508
 <script>
 window.antenna_host = 'wral.com';
 
+window.antenna_extend = {
+    summary_widget_expanded_mobile:true,
+    tag_box_bg_colors: '#E1192C;#DE3040;#DC4F5C;#DC6570',
+    tag_box_text_colors:'#fff;#fff;#fff;#fff',
+    default_reactions: ['Great','Meh']
+    };
+
+
 var antennaJqueryTimer = 0;
 function initAntennaVideo() {
     if (typeof jQuery != 'undefined') {

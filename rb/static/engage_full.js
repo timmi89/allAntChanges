@@ -734,6 +734,8 @@ function antenna($A){
                       } else {
                           $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                       }
+
+                      ANT.util.stayInWindow( $aWindow, true );
                   }
                 );
             },
@@ -3029,7 +3031,7 @@ function antenna($A){
                     });
                 });
             },
-            stayInWindow: function($aWindow) {
+            stayInWindow: function($aWindow, animate) {
                 //ANT.util.stayInWindow:
                 if (isMobile) { return; }
                var rWin = $(window),
@@ -3051,13 +3053,22 @@ function antenna($A){
                     var aWin_bottom_difference = (aWinHeight + aWinTop) - (winHeight + winScroll);
 
                             if ( aWin_bottom_difference > 0 ) {
-                                $aWindow.css('top', aWinTop - aWin_bottom_difference );
+                                if (animate) {
+                                    $aWindow.animate({'top': aWinTop - aWin_bottom_difference },333 );
+                                } else {
+                                    $aWindow.css('top', aWinTop - aWin_bottom_difference );
+                                }
+                                
                             }
 
                     var aWin_right_difference = (aWinRight) - winWidth;
 
                             if ( aWin_right_difference > 0 ) {
-                                $aWindow.css('left', aWinLeft - aWin_right_difference );
+                                if (animate) {
+                                    $aWindow.animate({'left': aWinLeft - aWin_right_difference},333 );
+                                } else {
+                                    $aWindow.css('left', aWinLeft - aWin_right_difference );
+                                }
                             }
 
                             if ( aWinLeft < 0 ) {
@@ -6814,7 +6825,8 @@ if ( sendData.kind=="page" ) {
 
                             //clear loader
                             if ( $aWindow ) {
-                                $aWindow.find('div.ant_loader').css('visibility','hidden');                                
+                                $aWindow.find('div.ant_loader').css('visibility','hidden');
+                                ANT.util.stayInWindow( $aWindow, true );
 
                                 //messy fixes for success responses in crossPageHash containers.
                                 ANT.actions.content_nodes.quickFixReset(hash);
