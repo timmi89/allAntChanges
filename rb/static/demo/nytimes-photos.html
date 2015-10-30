@@ -213,8 +213,8 @@ window.magnum.processFlags(["limitFabrikSave","facebookOauthButton","videoVHSCov
 <script>
 window.antenna_extend = {
 	default_reactions: ['Incredible','Surprising','Inspiring','Provocative','Challenging','Problematic'],
-	tag_box_bg_colors: '#fff',
-	tag_box_text_colors: '#333',
+	tag_box_bg_colors: '#121212',
+	tag_box_text_colors: '#fff',
 	tag_box_font_family: 'georgia, times new roman, times, serif'
 };
 
@@ -266,6 +266,44 @@ body .media-viewer.theme-dark {
 
 body .media-viewer.theme-dark .media-viewer-asset .caption {
 	bottom:200px !important;
+}
+
+/* paint it black */
+body div.ant_loader,
+body div.ant .ant_shareLinks ul i,
+body div.ant_window div.ant_view_more,
+body div.ant div.ant_view_success,
+body div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions,
+body div.ant div.ant_footer,
+body div.ant div.ant_header {
+	background-color:#121212;
+	border-color:#121212;
+}
+
+body div.ant div.ant_comment textarea.ant_default_msg {
+    color: #bbb;
+    background: #444;
+    border-color: #121212;;
+   }
+
+body div.ant div.ant_view_success .ant_subheader {
+    padding: 12px 0;
+    border-top: 1px solid #121212;
+    border-bottom: 1px solid #121212;
+    text-align: center;
+    background: #3E3E3E;
+}
+
+body div.ant div.ant_view_success h1,
+body div.ant div.ant_header h1,
+body span.ant-antenna-logo span.ant_count,
+body span.ant-antenna-logo {
+	color:#fff;
+	font-weight:100;
+}
+
+body div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag:hover {
+	background:#333;
 }
 
 </style>
