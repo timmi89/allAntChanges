@@ -7,7 +7,10 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
         el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
         data: pageData,
         magic: true,
-        template: require('../templates/summary-widget.hbs.html')
+        template: require('../templates/summary-widget.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
     var $rootElement = $(rootElement(ractive));
     $rootElement.on('mouseenter', function(event) {

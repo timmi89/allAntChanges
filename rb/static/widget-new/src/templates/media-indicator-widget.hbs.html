@@ -1,8 +1,11 @@
 
 
 <span class="antenna antenna-media-indicator-wrapper">
-    <span class="antenna antenna-media-indicator-widget {{^containerData.loaded}}notloaded{{/containerData.loaded}} {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}" decorator="cssreset">
-        <span class="ant-antenna-logo"></span>
+    <span decorator="cssreset" class="antenna antenna-media-indicator-widget
+            {{^containerData.loaded}}notloaded{{/containerData.loaded}}
+            {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}"
+            {{extraAttributes}}>
+        {{>logo}}
         {{#if containerData.reactionTotal }}
             <span class="antenna-reaction-total">
                 {{containerData.reactionTotal}}

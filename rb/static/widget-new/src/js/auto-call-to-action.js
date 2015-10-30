@@ -5,7 +5,10 @@ function createCallToAction(antItemId) {
     var ractive = Ractive({
         el: $('div'),
         data: { antItemId: antItemId },
-        template: require('../templates/auto-call-to-action.hbs.html')
+        template: require('../templates/auto-call-to-action.hbs.html'),
+        partials: {
+            logo: require('../templates/logo-svg.hbs.html')
+        }
     });
     return $(ractive.find('.antenna-auto-cta'));
 }

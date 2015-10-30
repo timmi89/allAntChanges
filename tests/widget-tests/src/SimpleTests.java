@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SimpleTests extends AbstractWidgetTests {
 
-    public static String url = "http://localhost:3000/pages/simple/page.html";
+    public static final String url = "http://localhost:3000/pages/simple/page.html";
 
     @Test
     public void testSummaryWidgetLocation() {
@@ -41,7 +41,7 @@ public class SimpleTests extends AbstractWidgetTests {
         WebElement image = findByXpath("//img");
         Assert.assertNotNull("img tag not found", image);
 
-        assertMediaIndicatorOverElement(image, null);
+        assertMediaIndicatorOverElement(image);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SimpleTests extends AbstractWidgetTests {
         WebElement video = findByXpath("//iframe");
         Assert.assertNotNull("iframe tag not found", video);
 
-        assertMediaIndicatorOverElement(video, null);
+        assertMediaIndicatorOverElement(video);
     }
 
     @Test

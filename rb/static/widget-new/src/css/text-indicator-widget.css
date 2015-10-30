@@ -1,23 +1,25 @@
 
 .antenna-text-indicator-widget {
     display: inline-block;
-    margin-left: 5px;
+    padding-left: 5px;
     cursor: pointer;
     opacity: 0;
     transition: opacity 300ms ease;
+    line-height: inherit;
+    vertical-align: top;
 }
 
 .antenna-text-indicator-widget.notloaded {
     visibility: hidden;
 }
 
-.antenna-text-indicator-widget .ant-antenna-logo {
-    color: #666666 !important;
-    transition: color 300ms ease;
+.antenna-text-indicator-widget .antenna-logo-path {
+    fill: #666666;
+    transition: fill 300ms ease;
 }
 
-.antenna-text-indicator-widget.active .ant-antenna-logo {
-    color: #8fb3f2 !important;
+.antenna-text-indicator-widget.active .antenna-logo-path {
+    fill: #8fb3f2;
 }
 
 .antenna-text-indicator-widget.active {
@@ -43,13 +45,12 @@
 }
 
 .antenna-text-indicator-widget .antenna-reaction-total {
-    /* TODO: the layout of the text is not right */
     visibility: hidden;
     font-size: 11px;
     font-weight: 700;
     color: #888888;
     line-height: 16px;
-    padding: 0 8px 0 3px;
+    padding: 0 8px 0 1px;
 }
 
 .antenna-text-indicator-widget.active .antenna-reaction-total {

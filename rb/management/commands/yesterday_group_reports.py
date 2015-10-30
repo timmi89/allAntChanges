@@ -27,15 +27,16 @@ class Command(BaseCommand):
             from_date = timezone.now()
             from_date = from_date.replace(hour=0,minute=0,second=0, microsecond = 0)
             for group in groups:
-                print 'Starting backfill for: ', group
-                for x in range(0,60):
-                    start_date = from_date - datetime.timedelta(days=1 + x)
-                    end_date = from_date - datetime.timedelta(days=x)
-                    try:
-                        group_page_scores(group, start_date, end_date)
-                    except Exception, ex:
-                        traceback.print_exc(50)
-                        print 'Exception for group: ', group
+                print 'Starting yesterday group report for: ', group
+                start_date = from_date - datetime.timedelta(days=2)
+                start_date = start_date.replace(hour=14,minute=32,second=23, microsecond = 0)
+                end_date = from_date  - datetime.timedelta(days=1)
+                try:
+                    print start_date, end_date
+                    #group_page_scores(group, start_date, end_date)
+                except Exception, ex:
+                    traceback.print_exc(50)
+                    print 'Exception for group: ', group
             
             
             

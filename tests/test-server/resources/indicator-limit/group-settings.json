@@ -1,0 +1,6 @@
+{
+  "id": "indicator-limit",
+  "summary_widget_selector": ".summary",
+  "anno_whitelist": "p,img,li,blockquote,iframe",
+  "initial_pin_limit": 2
+}

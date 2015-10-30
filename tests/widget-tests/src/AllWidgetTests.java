@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     SimpleTests.class,
     DynamicContentTests.class,
-    NestedTextTests.class
+    NestedTextTests.class,
+    IndicatorLimitTests.class
 })
 public class AllWidgetTests {
 

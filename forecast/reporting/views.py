@@ -21,6 +21,7 @@ logger = logging.getLogger('rb.standard')
 def group_event_report(request, short_name, year = None, month = None, day = None, **kwargs):
 
     context = {}
+    context['cookie_user'] = kwargs['cookie_user']
     try:
         
         merged = get_merged_report_json(short_name, year, month, day)

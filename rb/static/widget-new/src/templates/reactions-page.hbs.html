@@ -15,17 +15,17 @@
                         </div>
                         {{#if isSummary}}
                             <div on-click="showlocations" class="antenna-reaction-location">
-                                <span class="ant-search"></span>
+                                {{>locationIcon}}
                             </div>
                         {{else}}
                             {{#if this.commentCount}}
                                 <div on-click="showcomments" class="antenna-reaction-comments hascomments">
-                                    <span class="ant-comment"></span>
+                                    {{>commentsIcon}}
                                     {{this.commentCount}}
                                 </div>
                             {{else}}
                                 <div class="antenna-reaction-comments">
-                                    <span class="ant-comment"></span>
+                                    {{>commentsIcon}}
                                 </div>
                             {{/if}}
                         {{/if}}

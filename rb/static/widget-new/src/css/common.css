@@ -13,8 +13,29 @@
     left: 0;
 }
 
-.ant-antenna-logo {
-    font-size: 12px;
+.antenna-logo svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+.antenna-facebook svg, .antenna-twitter svg {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+.antenna-facebook-path {
+    fill: #3b5998;
+}
+
+.antenna-twitter-path {
+    fill: #55acee;
+}
+
+.ant-social-twitter {
+    font-size: 24px;
+    color: #55acee;
 }
 
 .ant-social-facebook {

@@ -68,6 +68,7 @@ public class DynamicContentTests extends AbstractWidgetTests {
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
         assertMediaIndicatorCount(2);
+        assertMediaIndicatorOverElement(insertedImage, 2);
     }
 
     @Test
@@ -82,6 +83,7 @@ public class DynamicContentTests extends AbstractWidgetTests {
         WebElement insertedImage = findByXpath(String.format("//button[@id='%s']/following-sibling::div/img", buttonId));
         Assert.assertNotNull("inserted image not found in expected location", insertedImage);
         assertMediaIndicatorCount(2);
+        assertMediaIndicatorOverElement(insertedImage, 2);
     }
 
     @Test
@@ -158,6 +160,7 @@ public class DynamicContentTests extends AbstractWidgetTests {
             public Boolean apply(WebDriver webDriver) {
                 try {
                     assertMediaIndicatorCount(2);
+                    assertMediaIndicatorOverElement(insertedImage, 2);
                 } catch (AssertionError e) {
                     return false;
                 }
