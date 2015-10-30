@@ -1896,10 +1896,8 @@ function antenna($A){
                         /* START modify the aWindow size */
                         var contentWidth = $bodyWrap.width(),
                             contentHeight = $bodyWrap.height();
-           
-                        var newCoords = ANT.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-                        $aWindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
+                        $aWindow.css('left', coords.left + 'px').css('top', coords.top + 'px');
 
                         $aWindow.animate({
                             width:contentWidth
@@ -1958,7 +1956,9 @@ function antenna($A){
                     // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
                     setTimeout(function() {
                         $aWindow.addClass('ant_show');
+
                     }, 1);
+                        ANT.util.stayInWindow( $aWindow );
                 
                     // return $aWindow to whatever called ANT.aWindow.make
                     return $aWindow;
@@ -2404,11 +2404,6 @@ function antenna($A){
                 if (coords.top < 0 || coords.left < 0) {return false;}
 
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
-                if (kind == 'text') {
-                    //rewrite coords if needed
-                    coords = ANT.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});
-                }
-
                 // TODO use settings check for certain features and content types to determine which of these to disable
                 var $new_actionbar = $('<div class="ant ant_actionbar ant_widget ant_widget_bar" id="' + actionbar_id + '" ></div>');
                 $new_actionbar.css({
@@ -3034,33 +3029,42 @@ function antenna($A){
                     });
                 });
             },
-            stayInWindow: function(settings) {
-
+            stayInWindow: function($aWindow) {
+                //ANT.util.stayInWindow:
+                if (isMobile) { return; }
                var rWin = $(window),
                     winWidth = rWin.width(),
                     winHeight = rWin.height(),
                     winScroll = rWin.scrollTop(),
-                    w = settings.width,
-                    h = settings.height,
-                    coords = settings.coords,
-                    paddingY = settings.paddingY || 10,
-                    paddingX = settings.paddingX || 10,
-                    ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
+                    aWinOffsets = $aWindow.offset(),
+                    aWinTop = aWinOffsets.top,
+                    aWinLeft = aWinOffsets.left,
+                    aWinRight = aWinOffsets.right,
+                    aWinWidth = $aWindow.width(),
+                    aWinHeight = $aWindow.height();
+                    // coords = settings.coords,
+                    // paddingY = settings.paddingY || 10,
+                    // paddingX = settings.paddingX || 10,
+                    // ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
 
-                if ( ( ignoreWindowEdges.indexOf('r') == -1 ) && (coords.left+w+16) >= (winWidth - paddingX) ) {
-                    coords.left = winWidth - w - paddingX;
-                }
-                if ( ( ignoreWindowEdges.indexOf('b') == -1 ) &&  (coords.top+h) > (winHeight + winScroll - paddingY ) ) {
-                    coords.top = winHeight + winScroll - h - paddingY;
-                }
-                if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < paddingX ) {
-                    coords.left = paddingX;
-                }
-                if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + paddingY) ) {
-                    coords.top = winScroll + paddingY;
-                }
 
-                return coords;
+                    var aWin_bottom_difference = (aWinHeight + aWinTop) - (winHeight + winScroll);
+
+                            if ( aWin_bottom_difference > 0 ) {
+                                $aWindow.css('top', aWinTop - aWin_bottom_difference );
+                            }
+
+                    var aWin_right_difference = (aWinRight) - winWidth;
+
+                            if ( aWin_right_difference > 0 ) {
+                                $aWindow.css('left', aWinLeft - aWin_right_difference );
+                            }
+
+                            if ( aWinLeft < 0 ) {
+                                $aWindow.css('left', '0px' );
+                            }
+                    return; 
+
             },
             md5: {
                 hexcase:0,
