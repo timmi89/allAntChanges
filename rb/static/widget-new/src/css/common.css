@@ -13,6 +13,10 @@
     left: 0;
 }
 
+.antenna-logo {
+    display: inline-block;
+}
+
 .antenna-logo svg {
     width: 1em;
     height: 1em;
