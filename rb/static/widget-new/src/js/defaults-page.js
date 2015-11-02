@@ -14,6 +14,7 @@ function createPage(options) {
     var element = options.element;
     var colors = options.colors;
     var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions, colors);
+    var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
         el: element,
         append: true,
@@ -24,7 +25,7 @@ function createPage(options) {
             defaultBackgroundColor: arrayAccessor(defaultLayoutData.backgroundColors)
         },
         decorators: {
-            sizetofit: ReactionsWidgetLayoutUtils.sizeToFit
+            sizetofit: ReactionsWidgetLayoutUtils.sizeToFit($reactionsWindow)
         }
     });
 

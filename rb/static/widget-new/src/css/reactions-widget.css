@@ -100,17 +100,17 @@
     color: #ffffff;
 }
 
-.antenna-reaction.half {
+.antenna-reaction.antenna-half {
     width: 50%;
 }
-.antenna-reaction.half:only-child {
+.antenna-reaction.antenna-half:only-child {
     width: 100%;
 }
-.antenna-reaction.half:nth-child(2n+0) {
+.antenna-reaction-even {
     border-left: 1px solid rgba(0, 0, 0, 0.25);
 }
 
-.antenna-reaction.full {
+.antenna-reaction.antenna-full {
     width: 100%;
 }
 
@@ -138,7 +138,7 @@
     font-weight: bold;
     font-size: 24px;
 }
-.antenna-reaction.half  .antenna-reaction-text {
+.antenna-reaction.antenna-half  .antenna-reaction-text {
     font-size: 15px;
     margin-bottom: 6px;
 }

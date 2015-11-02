@@ -20,6 +20,8 @@ var pageReactions = 'reactions';
 var pageDefaults = 'defaults';
 var pageAuto = 'auto';
 
+var SELECTOR_REACTIONS_WIDGET = '.antenna-reactions-widget';
+
 var openInstances = [];
 
 function openReactionsWidget(options, elementOrCoords) {
@@ -96,7 +98,8 @@ function openReactionsWidget(options, elementOrCoords) {
             showDefaults: function() { showDefaultReactionsPage(true) },
             showComments: showComments,
             showLocations: showLocations,
-            element: pageContainer(ractive)
+            element: pageContainer(ractive),
+            reactionsWindow: $rootElement
         };
         var page = ReactionsPage.create(options);
         pages.push(page);
@@ -117,7 +120,8 @@ function openReactionsWidget(options, elementOrCoords) {
             colors: colors,
             contentData: contentData,
             showConfirmation: showConfirmation,
-            element: pageContainer(ractive)
+            element: pageContainer(ractive),
+            reactionsWindow: $rootElement
         };
         var page = DefaultsPage.create(options);
         pages.push(page);
@@ -190,7 +194,7 @@ function openReactionsWidget(options, elementOrCoords) {
 }
 
 function rootElement(ractive) {
-    return ractive.find('.antenna-reactions-widget');
+    return ractive.find(SELECTOR_REACTIONS_WIDGET);
 }
 
 function pageContainer(ractive) {
@@ -267,12 +271,12 @@ function setupWindowClose(pages, ractive) {
             $rootElement.off('mouseover.antenna');
         });
     $(document).on('click.antenna', function(event) {
-        if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
+        if ($(event.target).closest(SELECTOR_REACTIONS_WIDGET).length === 0) {
             closeAllWindows();
         }
     });
     var tapListener = TouchSupport.setupTap(document, function(event) {
-        if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
+        if ($(event.target).closest(SELECTOR_REACTIONS_WIDGET).length === 0) {
             event.preventDefault();
             closeAllWindows();
         }
@@ -366,5 +370,6 @@ module.exports = {
     isOpen: isOpenWindow,
     PAGE_REACTIONS: pageReactions,
     PAGE_DEFAULTS: pageDefaults,
-    PAGE_AUTO: pageAuto
+    PAGE_AUTO: pageAuto,
+    selector: SELECTOR_REACTIONS_WIDGET
 };
