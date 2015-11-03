@@ -14,7 +14,6 @@ function createPage(options) {
     var pageData = options.pageData;
     var contentData = options.contentData;
     var containerElement = options.containerElement; // optional
-    //var showProgress = options.showProgress;
     var showConfirmation = options.showConfirmation;
     var showDefaults = options.showDefaults;
     var showComments = options.showComments;
@@ -23,6 +22,7 @@ function createPage(options) {
     var colors = options.colors;
     sortReactionData(reactionsData);
     var reactionsLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(reactionsData, colors);
+    var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
         el: element,
         append: true,
@@ -34,11 +34,12 @@ function createPage(options) {
             isSummary: isSummary
         },
         decorators: {
-            sizetofit: sizeToFit
+            sizetofit: sizeToFit($reactionsWindow)
         },
         partials: {
-            locationIcon: SVGs.location(),
-            commentsIcon: SVGs.comments()
+            logoTextIcon: SVGs.logoText,
+            locationIcon: SVGs.location,
+            commentsIcon: SVGs.comments
         }
     });
 
@@ -72,18 +73,21 @@ function createPage(options) {
     }
 }
 
-function sizeToFit(node) {
-    var $element = $(node).closest('.antenna-reaction-box');
-    var $reactionCount = $element.find('.antenna-reaction-count');
-    var $plusOne = $element.find('.antenna-plusone');
-    var minWidth = Math.max($reactionCount.width(), $plusOne.width());
-    $reactionCount.css({ 'min-width': minWidth });
-    $plusOne.css({ 'min-width': minWidth });
-    return ReactionsWidgetLayoutUtils.sizeToFit(node);
-}
-
-function rootElement(ractive) {
-    return ractive.find(pageSelector);
+function sizeToFit($reactionsWindow) {
+    return function(node) {
+        var $element = $(node).closest('.antenna-reaction-box');
+        // While we're sizing the text to fix in the reaction box, we also fix up the width of the reaction count and
+        // plus one buttons so that they're the same. These two visually swap with each other on hover; making them
+        // the same width makes sure we don't get jumpiness on hover.
+        // TODO: We should revisit the layout of the actions to make them easier tap on mobile. At that time, we should
+        // end up with stable touch target boxes anyway.
+        var $reactionCount = $element.find('.antenna-reaction-count');
+        var $plusOne = $element.find('.antenna-plusone');
+        var minWidth = Math.max($reactionCount.width(), $plusOne.width());
+        $reactionCount.css({'min-width': minWidth});
+        $plusOne.css({'min-width': minWidth});
+        return ReactionsWidgetLayoutUtils.sizeToFit($reactionsWindow)(node);
+    }
 }
 
 function highlightContent(containerData, pageData, $containerElement) {

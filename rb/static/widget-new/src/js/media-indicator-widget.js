@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
+var SVGs = require('./svgs');
 
 var AppMode = require('./utils/app-mode');
 var MutationObserver = require('./utils/mutation-observer');
@@ -25,7 +26,7 @@ function createIndicatorWidget(options) {
         },
         template: require('../templates/media-indicator-widget.hbs.html'),
         partials: {
-            logo: require('../templates/logo-svg.hbs.html')
+            logo: SVGs.logo
         }
     });
 

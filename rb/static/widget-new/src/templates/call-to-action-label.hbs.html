@@ -1,3 +1,9 @@
 <!--TODO: clean this up. probably add a wrapper for styling purposes.<span class="antenna antenna-cta-label {{^containerData.loaded}}notloaded{{/containerData.loaded}}">-->
-    {{computeLabel(containerData.reactionTotal)}}
+    {{#if containerData.reactionTotal === undefined || !containerData.loaded}}
+        {{getMessage('call-to-action-label_responses')}}
+    {{elseif containerData.reactionTotal === 1}}
+        {{getMessage('call-to-action-label_responses_one')}}
+    {{else}}
+        {{getMessage('call-to-action-label_responses_many', [ containerData.reactionTotal ])}}
+    {{/if}}
 <!--</span>-->
