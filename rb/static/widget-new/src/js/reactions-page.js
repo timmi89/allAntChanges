@@ -37,8 +37,9 @@ function createPage(options) {
             sizetofit: sizeToFit($reactionsWindow)
         },
         partials: {
-            locationIcon: SVGs.location(),
-            commentsIcon: SVGs.comments()
+            logoTextIcon: SVGs.logoText,
+            locationIcon: SVGs.location,
+            commentsIcon: SVGs.comments
         }
     });
 

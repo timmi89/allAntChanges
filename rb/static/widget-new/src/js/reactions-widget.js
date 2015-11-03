@@ -15,6 +15,7 @@ var DefaultsPage = require('./defaults-page');
 var LocationsPage = require('./locations-page');
 var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
+var SVGs = require('./svgs');
 
 var pageReactions = 'reactions';
 var pageDefaults = 'defaults';
@@ -45,7 +46,7 @@ function openReactionsWidget(options, elementOrCoords) {
         data: {},
         template: require('../templates/reactions-widget.hbs.html'),
         partials: {
-            logo: require('../templates/logo-svg.hbs.html')
+            logo: SVGs.logo
         }
     });
     openInstances.push(ractive);

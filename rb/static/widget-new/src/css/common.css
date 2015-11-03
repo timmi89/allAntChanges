@@ -23,6 +23,11 @@
     vertical-align: middle;
 }
 
+.antenna-logo-text svg {
+    /* TODO: real styles once we have a real SVG */
+    height: 1em;
+}
+
 .antenna-facebook svg, .antenna-twitter svg {
     width: 24px;
     height: 24px;

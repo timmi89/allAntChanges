@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
+var SVGs = require('./svgs');
 
 function createSummaryWidget(containerData, pageData, defaultReactions, groupSettings) {
     var ractive = Ractive({
@@ -11,7 +12,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
         magic: true,
         template: require('../templates/summary-widget.hbs.html'),
         partials: {
-            logo: require('../templates/logo-svg.hbs.html')
+            logo: SVGs.logo
         }
     });
     var $rootElement = $(rootElement(ractive));

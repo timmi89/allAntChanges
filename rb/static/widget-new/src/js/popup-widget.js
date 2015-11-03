@@ -3,6 +3,8 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 var WidgetBucket = require('./utils/widget-bucket');
 var TransitionUtil = require('./utils/transition-util');
 
+var SVGs = require('./svgs');
+
 var ractive;
 var clickHandler;
 
@@ -16,7 +18,7 @@ function getRootElement() {
             append: true,
             template: require('../templates/popup-widget.hbs.html'),
             partials: {
-                logo: require('../templates/logo-svg.hbs.html')
+                logo: SVGs.logo
             }
         });
         var $element = $(ractive.find('.antenna-popup'));
