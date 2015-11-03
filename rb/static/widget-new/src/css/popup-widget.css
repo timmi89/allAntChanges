@@ -16,12 +16,12 @@
 }
 
 .antenna-popup-body {
-    display: inline-block;
+    display: table-cell;
+    white-space: nowrap;
     background: #464646;
-    padding:8px 8px 6px 8px;
+    padding:8px;
     border-radius:8px;
     font:normal 12px Helvetica, Arial, sans-serif;
-    transition: width 200ms;
 }
 
 .antenna-popup:after {
@@ -51,9 +51,19 @@
 }
 
 .antenna-popup-text {
-    display: none;
+    display: inline-block;
+    vertical-align: middle;
+    visibility: hidden;
+    overflow: hidden;
+    max-width: 0;
+    transition: max-width 200ms;
     color:#CCCCCC;
-    white-space: nowrap;
-    margin-left: 8px;
+    white-space: pre; /* don't wrap */
     text-decoration: underline;
+}
+
+.antenna-popup-body:hover .antenna-popup-text {
+    margin-left: 8px;
+    max-width: 150px;
+    visibility: inherit; /* only show if the parent element is showing */
 }
