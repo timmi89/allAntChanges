@@ -143,10 +143,19 @@
     margin-bottom: 6px;
 }
 
-.antenna-think {
+.antenna-text-logo {
+    width: 100%;
     padding: 5px;
-    cursor: pointer;
+    text-align: center;
 }
-.antenna-think:hover {
-    color: #8fb3f2;
+
+.antenna-text-logo a {
+    font-family: Helvetica, Arial;
+    font-size: 11px;
+    font-weight: bold;
+    color: #a0a0a0;
+}
+
+.antenna-text-logo a:hover {
+    color: #777777;
 }

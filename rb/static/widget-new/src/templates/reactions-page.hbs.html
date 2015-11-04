@@ -36,10 +36,10 @@
     </div>
     <div class="antenna-footer antenna-reactions-footer">
         {{#if reactions}}
-            <span on-click="showdefault" class="antenna-think">{{getMessage('reactions-page_think')}}</span>
+            <div on-click="showdefault" class="antenna-think">{{getMessage('reactions-page_think')}}</div>
         {{else}}
-            <span class="antenna-no-reactions">{{getMessage('reactions-page_no_reactions')}}</span>
+            <div class="antenna-no-reactions">{{getMessage('reactions-page_no_reactions')}}</div>
         {{/if}}
-        {{>logoTextIcon}}
+        <div class="antenna-text-logo"><a href="//www.antenna.is">Antenna</a></div>
     </div>
 </div>

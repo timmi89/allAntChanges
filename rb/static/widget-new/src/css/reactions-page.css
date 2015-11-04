@@ -73,5 +73,38 @@
 }
 
 .antenna-no-reactions {
+    display: inline-block;
+    text-align: center;
+    padding: 3px;
+    color: #777777;
     font-weight: bold;
+}
+
+.antenna-think {
+    display: inline-block;
+    text-align: center;
+    padding: 3px;
+    color: #777777;
+    font-weight: bold;
+    cursor: pointer;
+}
+.antenna-think:hover {
+    color: #8fb3f2;
+}
+
+.antenna-text-logo {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+}
+
+.antenna-text-logo a {
+    font-family: Helvetica, Arial;
+    font-size: 11px;
+    font-weight: bold;
+    color: #a0a0a0;
+}
+
+.antenna-text-logo a:hover {
+    color: #777777;
 }

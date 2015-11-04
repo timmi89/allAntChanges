@@ -37,7 +37,6 @@ function createPage(options) {
             sizetofit: sizeToFit($reactionsWindow)
         },
         partials: {
-            logoTextIcon: SVGs.logoText,
             locationIcon: SVGs.location,
             commentsIcon: SVGs.comments
         }

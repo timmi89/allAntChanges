@@ -31,3 +31,11 @@
     color: #ffffff;
     font-size: 11px;
 }
+
+.antenna-custom-area {
+    text-align: center;
+}
+
+.antenna-footer.antenna-defaults-footer {
+    padding: 3px;
+}
