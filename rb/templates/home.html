@@ -16,17 +16,44 @@
 {% block page_content %}
 <section class="masthead">
   <div class="container">
-    <h1>
-      <div class="line-one no-ant">Say what you think</div>
-      <div class="line-two">about anything</div>
-      <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
-    </h1>
-    <h3>
-      <div class="line-one no-ant">Meaningful, mobile-first feedback</div>
-      <div class="line-two no-ant">for a <span class="adjective">multi-<strong>{{ multi_adjective }}</strong></span> world.</div>
-    </h3>
+    <div class="row">
+      <div class="col s12 l8">
+        <h1>
+          <div class="line-one no-ant">Kick-ass</div>
+          <div class="line-two no-ant">mobile-first</div>
+          <div class="line-three no-ant">content engagement.</div>
+          <!-- <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div> -->
+        </h1>
+        <h3>
+          <div class="line-one no-ant">Build loyalty and increase KPIs.</div>
+          <br/>
+          <div class="line-two no-ant">Antenna empowers audience reaction to any content. With just a tap.</div>
+        </h3> 
+      </div>
+      <div class="col s12 l4">
+        <iframe src="https://player.vimeo.com/video/144779066?autoplay=1" style="min-height:515px;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      </div>
+    </div>
+    <!-- 
+    -->
   </div>
 </section>
+
+<section class="logos dark-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>Used by millions of people at great sites.</h1>
+      </div>
+    </div>
+    <div class="row no-ant">
+      <div class="col s12 center-align examples">
+        <img src="{{ STATIC_URL }}site/images/logos.jpg" class="no-ant" />
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="see-it-now">
   <div class="container">
     <div class="row">
@@ -224,11 +251,11 @@ function SelectText(element) {
 }
 
 // auto-initiate Antenna on the masthead if we're near the top of the page at page load
-var $window = $(window);
-if ( $window.scrollTop() < ($('h1 .line-two').offset().top + 50) ) {
-  el = $('h1 .line-two')[0];
-  SelectText(el);
-}
+// var $window = $(window);
+// if ( $window.scrollTop() < ($('h1 .line-two').offset().top + 50) ) {
+//   el = $('h1 .line-two')[0];
+//   SelectText(el);
+// }
 
 $('.masthead').height( $(window).height() );
 

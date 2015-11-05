@@ -8094,8 +8094,10 @@ section.masthead h3 {
   section.masthead {
     background-image: url("../images/many_voices.jpg"); }
     section.masthead h1 {
-      font-size: 6rem;
+      font-size: 4.75rem;
       margin: 10% 0; }
+      section.masthead h1 .line-three {
+        font-size: 4rem; }
     section.masthead h3 {
       font-size: 2.5rem; } }
 section.see-it-now .icon-antenna-icon {
