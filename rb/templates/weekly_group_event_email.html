@@ -1,0 +1,110 @@
+<html>
+<head>
+</head>
+<body>
+{% block page_content %}
+<section class="analytics">
+  <div class="container">
+    <div class="row">
+      <div class="col m12">
+        <div class="right datepickers">
+            <!-- <label>Data for last 31 days</label> -->
+            <label>Show data for 31 days ending:</label>
+            <input type="date" class="datepicker" name="end_date" value="{{ selected_date }}" />
+        </div>
+        <h1>{{group.name}} Analytics</h1>
+      </div>
+    </div>
+    <div class="row no-ant">
+      <div class="col s12">
+        <h4>Reactions</h4>
+        <div class="legend"><div class="swatch desktop"></div>Desktop <div class="swatch mobile"></div> Mobile</div>
+        <div class="mobile-instruction"><em>Drag right to see the full chart.</em></div>
+        <div class="chart-container"><div class="wide-chart reactions-chart"></div></div>
+        <h4>Reaction Views</h4>
+        <div class="legend"><div class="swatch desktop"></div>Desktop <div class="swatch mobile"></div> Mobile</div>
+        <div class="mobile-instruction"><em>Drag right to see the full chart.</em></div>
+        <div class="chart-container"><div class="wide-chart reaction-views-chart"></div></div>
+      </div>
+    </div>
+    <div class="row no-ant">
+      <div class="col s12 m6 ">
+        <em class="right right-align"><a href="/group/{{ group.short_name }}/all_reactions/" target="_blank">Manage Reactions</a></em>
+        <h4>Top Reactions</h4>
+        {% for tag in sorted_tag_cloud|slice:":5" %}
+            <div class="top-reaction {% if forloop.counter < 5 %}large{%endif%}{% if forloop.counter >= 5 and forloop.counter < 9 %}medium{%endif%}{% if forloop.counter >= 9 %}small{%endif%}"><a href="/group/{{group.short_name}}/?s={{tag.0}}" target="_blank">{{tag.0}} <span>({{tag.1}})</span></a></div>
+        {% endfor %}
+      </div>
+      <div class="col s12 m6 center-align">
+        <h4>Reactions by Platform</h4>
+        <div class="legend"><div class="swatch desktop"></div>Desktop <div class="swatch mobile"></div> Mobile</div>
+        <div class="chart-donut-container">{{ totals }}</div>
+        <hr/>
+        <h4>Reaction Views by Platform</h4>
+        <div class="legend"><div class="swatch desktop"></div>Desktop <div class="swatch mobile"></div> Mobile</div>
+        <div class="chart-donut-container">{{ totals }}</div>
+      </div>
+    </div>
+    <div class="row no-ant">
+      <div class="col s12">
+        <h4>Popular Pages</h4>
+        <table cellspacing="0" cellpadding="0" class="popular hoverable">
+            <tr>
+                <th class="title">Title</th>
+                <th class="reactions">Reactions</th>
+                <th class="views">Reaction Views</th>
+                <!-- <th class="score">Engagement Score</th> -->
+            </tr>
+            {% for page in sorted_pages|slice:":5" %}
+            <tr>
+                <td><a href="{{page.1.url}}" target="_blank">{{page.1.title}}</a></td>
+                <td>{{page.1.reactions}}</td>
+                <td>{{page.1.reaction_views}}</td>
+                <!-- <td>{{page.1.score}}</td> -->
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </div>
+
+    <div class="row no-ant">
+      <div class="col s12">
+        <h4>Popular Content</h4>
+        <!-- <table cellspacing="0" cellpadding="0" class="popular content hoverable"> -->
+            <!-- <tr> -->
+        <div class="row popular content">
+            {% for sc in sorted_content|slice:":3" %}
+            <div class="col s12 m4">
+                <!-- <td width="25%"> -->
+                    <a href="http://www.antenna.is/i/{{ sc.1.interaction_id }}/" target="_blank">
+                    {% if sc.1.type == 'med' %}
+                      <iframe class="contentBody" width="100%" height="100%" frameborder="0" src="{{ sc.1.body|escape }}"></iframe>
+                      <div class="overlay"></div>
+                    {% elif sc.1.type == 'img' %}
+                      <img class="contentBody" src="{{ sc.1.body|escape }}" />
+                    {% elif sc.1.type == 'txt' %}
+                      <em>{{ sc.1.body }}</em>
+                    {% endif %}
+                    </a>
+                <!-- </td> -->
+            </div>
+            {% if forloop.counter|divisibleby:3 %}
+        </div>
+        <div class="row popular content">
+            <!-- </tr>
+            <tr> -->
+            {% endif %} 
+            {% endfor %}
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %} 
+
+
+</body>
+</html>
+
+

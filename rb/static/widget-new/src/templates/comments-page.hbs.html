@@ -1,7 +1,7 @@
 <div class="antenna-page antenna-comments-page" decorator="cssreset">
     <div class="antenna-body">
-        <div on-click="closewindow" class="antenna-comments-close">Close X</div>
-        <div class="antenna-comments-header">({{comments.length}}) Comments:</div>
+        <div on-click="closewindow" class="antenna-comments-close">{{getMessage('comments-page_close')}} X</div>
+        <div class="antenna-comments-header">{{getMessage('comments-page_header', [ comments.length ])}}</div>
         {{#comments:index}}
             <div class="antenna-comment-entry {{#if this.new}}antenna-comment-new{{/if}}">
                 <table>

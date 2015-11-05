@@ -19,6 +19,7 @@ logger = get_task_logger(__name__)
 
 @task(name='page.newer.cache.update')
 def update_page_newer_cache(page_id):
+    logger.info('UPDATE NEWER PAGE CACHE: ' + str(page_id))
     if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
         cache_data = getSinglePageDataNewer(page_id)
         try:
@@ -45,10 +46,12 @@ def update_page_newer_cache(page_id):
                 hcon.close()
             except Exception, e:
                 logger.info("Other datacenter refresh: " + str(e))
-
+    else:
+        logger.info('LOCKED PAGE CACHE: ' + str(page_id))
 
 @task(name='page.cache.update')
 def update_page_cache(page_id):
+    logger.info('UPDATE PAGE CACHE: ' + str(page_id))
     if cache.get('LOCKED_page_data' + str(page_id)) is None:
         cache_data = getSinglePageDataDict(page_id)
         try:
@@ -75,6 +78,8 @@ def update_page_cache(page_id):
                 hcon.close()
             except Exception, e:
                 logger.info("Other datacenter refresh: " + str(e))
+    else:
+        logger.info('LOCKED PAGE CACHE: ' + str(page_id))
 #    logger.info('updating page_data: ' + str(page_id))
 #   cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
 

@@ -13,10 +13,19 @@
     left: 0;
 }
 
+.antenna-logo {
+    display: inline-block;
+}
+
 .antenna-logo svg {
     width: 1em;
     height: 1em;
     vertical-align: middle;
+}
+
+.antenna-logo-text svg {
+    /* TODO: real styles once we have a real SVG */
+    height: 1em;
 }
 
 .antenna-facebook svg, .antenna-twitter svg {

@@ -14,6 +14,7 @@ function createPage(options) {
     var element = options.element;
     var colors = options.colors;
     var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions, colors);
+    var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
         el: element,
         append: true,
@@ -24,7 +25,7 @@ function createPage(options) {
             defaultBackgroundColor: arrayAccessor(defaultLayoutData.backgroundColors)
         },
         decorators: {
-            sizetofit: ReactionsWidgetLayoutUtils.sizeToFit
+            sizetofit: ReactionsWidgetLayoutUtils.sizeToFit($reactionsWindow)
         }
     });
 
@@ -113,7 +114,9 @@ function customReactionBlur(ractiveEvent) {
         var input = $footer.find('input');
         if (input.val() === '') {
             $footer.find('button').hide();
-            $footer.find('input').val('+ Add Your Own').removeClass('active');
+            var $input = $footer.find('input');
+            // Reset the input value to the default in the html/template
+            $input.val($input.attr('value')).removeClass('active');
         }
     }
 }
@@ -148,6 +151,7 @@ function createReactionProvider() {
     }
 }
 
+//noinspection JSUnresolvedVariable
 module.exports = {
     create: createPage
 };

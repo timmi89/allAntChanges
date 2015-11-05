@@ -47,19 +47,18 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
       context_instance=RequestContext(request)
     )
     
-def weekly_group_event_email(request, short_name, year = None, month = None, day = None):
+def weekly_group_event_email(request, short_name):
 
     context = {}
     try:
         
-        merged = get_merged_report_json(short_name, int(year), int(month), int(day))
-
+        merged = get_merged_report_json(short_name, days_back=7)
+        context['group'] = Group.objects.get(short_name=short_name)
         context['dailies'] = merged['dailies']
-        context['totals'] = merged['totals']
-        context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
-        context['group'] = group
+        context['totals'] = merged['totals']        
         context['sorted_content'] = merged['sorted_content']
         context['sorted_pages'] = merged['sorted_pages']
+        context['sorted_tag_cloud'] = merged['sorted_tag_cloud']
         
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
@@ -72,25 +71,25 @@ def weekly_group_event_email(request, short_name, year = None, month = None, day
     
     
     
-def get_merged_report_json(short_name, year = None, month = None, day = None):    
+def get_merged_report_json(short_name, year = None, month = None, day = None, days_back = None):    
     group = Group.objects.filter(short_name = short_name)[0]
-    print year
-    print month
-    print day
     if year and month and day:
         report_date = datetime.datetime(year = int(year), month = int(month), day = int(day), hour = 23, minute = 59)
     else:
         report_date = timezone.now()# - datetime.timedelta(days=120)
+    
+    if not days_back:
+        days_back = 31
         
     mobile_latest_reports = LegacyGroupEventsReport.objects.filter(group_id = group.id, mobile = True, 
-                                                            report_start__gte = report_date - datetime.timedelta(days=31), 
+                                                            report_start__gte = report_date - datetime.timedelta(days=days_back), 
                                                             report_start__lte = report_date,
-                                                            report_end__gte = report_date - datetime.timedelta(days=31), 
+                                                            report_end__gte = report_date - datetime.timedelta(days=days_back), 
                                                             report_end__lte = report_date)
     desktop_latest_reports = LegacyGroupEventsReport.objects.filter(group_id = group.id, mobile = False, 
-                                                            report_start__gte = report_date - datetime.timedelta(days=31), 
+                                                            report_start__gte = report_date - datetime.timedelta(days=days_back), 
                                                             report_start__lte = report_date,
-                                                            report_end__gte = report_date - datetime.timedelta(days=31), 
+                                                            report_end__gte = report_date - datetime.timedelta(days=days_back), 
                                                             report_end__lte = report_date)
                                                             
 

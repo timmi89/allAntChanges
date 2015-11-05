@@ -15,8 +15,8 @@ function createPage(reactionText, reactionProvider, containerData, pageData, ele
         template: require('../templates/confirmation-page.hbs.html'),
         partials: {
             commentArea: require('../templates/comment-area-partial.hbs.html'),
-            facebookIcon: SVGs.facebook(),
-            twitterIcon: SVGs.twitter()
+            facebookIcon: SVGs.facebook,
+            twitterIcon: SVGs.twitter
         }
     });
     CommentAreaPartial.setup(reactionProvider, containerData, pageData, null, ractive);

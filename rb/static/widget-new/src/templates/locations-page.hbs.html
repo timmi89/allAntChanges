@@ -1,14 +1,18 @@
 <div class="antenna-page antenna-locations-page" decorator="cssreset">
     <div class="antenna-body">
-        <div on-click="closewindow" class="antenna-locations-close">Close X</div>
+        <div on-click="closewindow" class="antenna-locations-close">{{getMessage('locations-page_close')}} X</div>
         <table class="antenna-locations-table">
             {{#if pageReactionCount}}
                 <tr class="antenna-locations-content-row">
                     <td class="antenna-locations-count-cell">
-                        {{{contentCountLabel(pageReactionCount)}}}
+                        {{#if pageReactionCount === 1}}
+                            {{{getMessage('locations-page_count_one')}}}
+                        {{else}}
+                            {{{getMessage('locations-page_count_many', [ pageReactionCount ])}}}
+                        {{/if}}
                     </td>
                     <td class="antenna-locations-page-body">
-                        To this whole page.
+                        {{getMessage('locations-page_pagelevel')}}
                     </td>
                 </tr>
             {{/if}}
@@ -16,14 +20,20 @@
                 {{#if this.kind !== 'pag'}} <!-- page reactions are handled above -->
                     <tr on-click="reveal" class="antenna-locations-content-row {{#if canLocate(this.containerHash) }}antenna-locate{{/if}}">
                         <td class="antenna-locations-count-cell">
-                            {{{contentCountLabel(this.count)}}}
+                            {{#if this.count === 1}}
+                                {{{getMessage('locations-page_count_one')}}}
+                            {{else}}
+                                {{{getMessage('locations-page_count_many', [ this.count ])}}}
+                            {{/if}}
                         </td>
                         {{#if this.kind === 'txt'}}
                             <td class="antenna-locations-text-body">{{this.body}}</td>
                         {{elseif this.kind === 'img'}}
                             <td class="antenna-locations-image-body"><img src="{{this.body}}"></td>
+                        {{elseif this.kind === 'med'}}
+                            <td class="antenna-locations-media-body"><img src="/static/widget/images/video_icon.png"> Video</td>
                         {{else}}
-                            <td class="antenna-locations-body-cell">TODO: {{this.kind}}</td>
+                            <!-- TODO: Review. Presumably, we just do nothing. -->
                         {{/if}}
                     </tr>
                 {{/if}}

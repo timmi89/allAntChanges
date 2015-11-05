@@ -1,5 +1,18 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+var groupSettings;
+
+// TODO: Update all clients that are passing around a groupSettings object to instead access the 'global' settings instance
+function getGroupSettings() {
+    return groupSettings;
+}
+
+function updateFromJSON(json) {
+    groupSettings = createFromJSON(json);
+    return groupSettings;
+}
+
+
 // TODO: trim trailing commas from any selector values
 
 // TODO: Review. These are just copied from engage_full.
@@ -146,11 +159,13 @@ function createFromJSON(json) {
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
-        exclusionSelector: data('no_ant')
+        exclusionSelector: data('no_ant'),
+        language: data('language')
     }
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    create: createFromJSON
+    create: updateFromJSON,
+    get: getGroupSettings
 };

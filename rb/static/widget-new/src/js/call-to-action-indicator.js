@@ -1,5 +1,4 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive=loadedRactive; });
+var CallToActionLabel = require('./call-to-action-label');
 var ReactionsWidget = require('./reactions-widget');
 
 
@@ -33,25 +32,7 @@ function createIndicatorWidget(options) {
     });
 
     if ($ctaLabel) {
-        // TODO: Refactor this out into a separate JS file? Otherwise, it
-        Ractive({
-            el: $ctaLabel, // TODO: review the structure of the DOM here. Do we want to render an element into $ctaLabel or just text?
-            magic: true,
-            data: {
-                containerData: containerData,
-                computeLabel: function(reactionCount) {
-                    // TODO: what do we want to do for 0? Show nothing, keep the current "Reactions" label, or something else?
-                    if (!reactionCount) {
-                        return "Responses";
-                    }
-                    if (reactionCount == 1) {
-                        return "1 Responses";
-                    }
-                    return reactionCount + " Responses";
-                }
-            },
-            template: require('../templates/call-to-action-label.hbs.html')
-        });
+        CallToActionLabel.create($ctaLabel, containerData);
     }
 }
 

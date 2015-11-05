@@ -29,16 +29,15 @@
     width: 40px;
     vertical-align: middle;
     padding: 7px;
-}
-
-.antenna-content-count {
     font-size: 11px;
     font-weight: bold;
     text-align: center;
 }
 
-.antenna-content-count.number {
+.antenna-location-count {
     font-size: 14px;
+    font-weight: bold;
+    text-align: center;
 }
 
 .antenna-locations-page-body {
@@ -56,4 +55,11 @@
 
 .antenna-locations-image-body {
     padding: 2px 7px 2px 0;
+}
+
+.antenna-locations-media-body {
+    vertical-align: middle;
+    font-family: Georgia,serif;
+    font-style: italic;
+    padding: 5px 7px 5px 0;
 }
