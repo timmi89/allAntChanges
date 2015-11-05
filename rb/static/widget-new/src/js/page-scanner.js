@@ -357,7 +357,7 @@ function computeContentData($element, groupSettings) {
                 width: $element.width()
             };
             contentData = {
-                type: 'med',
+                type: 'media',
                 body: mediaUrl,
                 dimensions: mediaDimensions
             };

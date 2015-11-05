@@ -30,8 +30,10 @@
                             <td class="antenna-locations-text-body">{{this.body}}</td>
                         {{elseif this.kind === 'img'}}
                             <td class="antenna-locations-image-body"><img src="{{this.body}}"></td>
+                        {{elseif this.kind === 'med'}}
+                            <td class="antenna-locations-media-body"><img src="/static/widget/images/video_icon.png"> Video</td>
                         {{else}}
-                            <td class="antenna-locations-body-cell">TODO: {{this.kind}}</td>
+                            <!-- TODO: Review. Presumably, we just do nothing. -->
                         {{/if}}
                     </tr>
                 {{/if}}

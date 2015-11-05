@@ -20,6 +20,7 @@ function createPage(options) {
             canLocate: function(containerHash) {
                 // TODO: is there a better way to handle reactions to hashes that are no longer on the page?
                 //       should we provide some kind of indication when we fail to locate a hash or just leave it as is?
+                // TODO: Does it make sense to even show entries that we can't locate? Probably not.
                 return HashedElements.get(containerHash, pageData.pageHash) !== undefined;
             }
         },

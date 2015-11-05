@@ -56,3 +56,10 @@
 .antenna-locations-image-body {
     padding: 2px 7px 2px 0;
 }
+
+.antenna-locations-media-body {
+    vertical-align: middle;
+    font-family: Georgia,serif;
+    font-style: italic;
+    padding: 5px 7px 5px 0;
+}
