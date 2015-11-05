@@ -256,8 +256,11 @@ function SelectText(element) {
 //   el = $('h1 .line-two')[0];
 //   SelectText(el);
 // }
-
-$('.masthead').height( $(window).height() );
+var isTouchBrowser = ( ("ontouchstart" in window || navigator.msMaxTouchPoints) && ((window.matchMedia("only screen and (max-width: 768px)")).matches) );
+var isMobile = ( isTouchBrowser && ((window.matchMedia("only screen and (max-width: 480px)")).matches) );
+if (!isMobile) {
+  $('.masthead').height( $(window).height() );
+}
 
 </script>
 

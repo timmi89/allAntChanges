@@ -108,6 +108,11 @@ section {
   }
 
 
+  &.logos {
+    img, iframe { 
+      width:100%;
+    }
+  }
   // see it in action
   &.see-it-now {
     .icon-antenna-icon {

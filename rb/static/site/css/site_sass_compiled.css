@@ -8100,6 +8100,8 @@ section.masthead h3 {
         font-size: 4rem; }
     section.masthead h3 {
       font-size: 2.5rem; } }
+section.logos img, section.logos iframe {
+  width: 100%; }
 section.see-it-now .icon-antenna-icon {
   width: 20px;
   margin-bottom: -11px; }
