@@ -138,7 +138,7 @@ function antenna($A){
 
     $.extend(ANT, {
         summaries:{},
-        current: {}, //todo: what is this? delete it?
+        current: {}, 
         // used to store jQuery deffered objects for assets that should be loaded only once per page load.
         assetLoaders: {
             content_nodes:{
@@ -2983,6 +2983,10 @@ function antenna($A){
                         canonical_url = "same";
                     }
 
+                    if ( canonical_url !='same' && ANT.util.getPageProperty('page_url').indexOf(canonical_url) == -1 ) {
+                        canonical_url = ANT.util.getPageProperty('page_url');
+                    }
+
                     // fastco fix (since they sometimes rewrite their canonical to simply be their TLD.)
                     // in the case where canonical claims TLD but we're actually on an article... set canonical to be the page_url
                     var tld = $.trim(window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
@@ -4202,7 +4206,6 @@ function antenna($A){
                 });
             },
             initPageData: function(){
-                console.log('initPageData');
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
@@ -4395,8 +4398,7 @@ function antenna($A){
                 var sendData = {
                     pages: pagesArr
                 };
-console.log('sendData - - - - - - - - - - - - - -');
-console.log(sendData);
+
                 if (pagesArr.length) {
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
                     //might not want to send canonical, or, send it separately if/only if it's different than URL
@@ -4631,6 +4633,8 @@ console.log(sendData);
                 }
             },
             initEnvironment: function(){
+
+                ANT.current.page_url = ANT.util.getPageProperty('page_url');
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
                 if ( !ANT.util.activeAB() ) {
                     $('.ant-custom-cta').css('visibility','hidden');
@@ -4870,6 +4874,45 @@ console.log(sendData);
                 });
                 
                 $(window).resize(ANT.util.throttledUpdateContainerTrackers());
+
+
+                // dom mutation observer
+                var observer = new MutationObserver(function(mutationRecords) {
+                     var added = false;
+                     var removed = false;
+                     for (var i = 0; i < mutationRecords.length; i++) {
+                      if (mutationRecords[i].addedNodes.length > 0) {
+                        added = true;
+                      }
+                      if (mutationRecords[i].removedNodes.length > 0) {
+                        removed = true;
+                      }
+                     }
+                     if (added && removed) {
+                      // reinit Antenna here
+                      if ( ANT.current && window.location.href.indexOf( ANT.current.page_url ) == -1 ) {
+
+                        ANT.util.clearFunctionTimer('domMutationObserver');
+
+                        ANT.util.setFunctionTimer( function() {
+                            ANT.current.page_url = window.location.href;
+                            ANT.actions.reset();
+                        }, 1000, 'domMutationObserver');
+
+
+                      }
+                     }
+                 });
+
+                var body = document.body;
+                observer.observe(body, {
+                   childList: true,
+                   attributes: false,
+                   characterData: false,
+                   subtree: true,
+                   attributeOldValue: false,
+                   characterDataOldValue: false
+                });
 
                 $ANT.dequeue('initAjax');
             },
