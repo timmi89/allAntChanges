@@ -10943,7 +10943,8 @@ function $AFunctions($A){
                     // }
 
                     $summary_widget.append(
-                        '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
+                        '<a href="javascript:void(0);" target="_blank" class="ant_logo">'+
+                        // '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
                             '<span class="ant-antenna-logo"></span>'+
                             // '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
