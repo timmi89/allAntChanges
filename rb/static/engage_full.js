@@ -4998,9 +4998,19 @@ function antenna($A){
                 $('[ant-page-checked]').removeAttr('ant-page-checked');
                 $('[ant-page-container]').removeAttr('ant-page-container');
                 $('.ant-summary').remove();
-                ANT.actions.initPageData();
+                // ANT.actions.initPageData();
+                $ANT.queue('initAjax', function(next){
+                    ANT.actions.initPageData();
+                    //next fired on ajax success
+                });
+                $ANT.queue('initAjax', function(next){
+                    ANT.actions.runPostPageInit();
+                });
+
+                $ANT.dequeue('initAjax');
                 ANT.actions.resetCustomDisplayHashes();
                 ANT.actions.hashCustomDisplayHashes();
+                // ANT.actions.runPostPageInit();
             },
             UIClearState: function(e){
                 // if (!isTouchBrowser) {
