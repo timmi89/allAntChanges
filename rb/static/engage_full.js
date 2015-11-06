@@ -4151,11 +4151,12 @@ function antenna($A){
 
                         ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANT.group.no_ant).each( function() {
-                            var $this = $(this);
-                            $this.addClass('no-ant');
-                            $this.find('img').addClass('no-ant');
-                        });
+                        ////// do this in initPageData instead, so that ajax-loaded pages also get the settings applied
+                        // $(ANT.group.no_ant).each( function() {
+                        //     var $this = $(this);
+                        //     $this.addClass('no-ant');
+                        //     $this.find('img').addClass('no-ant');
+                        // });
 
                         // setup the active sections + anno_whitelist (i.e. allowed tags)
                         if ( ANT.group.active_sections == "" ) {
@@ -4208,6 +4209,13 @@ function antenna($A){
             initPageData: function(){
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
+
+
+                $(ANT.group.no_ant).each( function() {
+                    var $this = $(this);
+                    $this.addClass('no-ant');
+                    $this.find('img').addClass('no-ant');
+                });
           
                 // if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
                 //     ANT.group.useDefaultSummaryBar = (
@@ -4878,19 +4886,20 @@ function antenna($A){
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
+                  if ( ANT.current && window.location.href.indexOf( ANT.current.page_url ) == -1 ) {
                      var added = false;
-                     var removed = false;
+                     // var removed = false;
                      for (var i = 0; i < mutationRecords.length; i++) {
                       if (mutationRecords[i].addedNodes.length > 0) {
                         added = true;
                       }
-                      if (mutationRecords[i].removedNodes.length > 0) {
-                        removed = true;
-                      }
+                      // if (mutationRecords[i].removedNodes.length > 0) {
+                      //   removed = true;
+                      // }
                      }
-                     if (added && removed) {
+                     // if (added && removed) {
+                     if (added) {
                       // reinit Antenna here
-                      if ( ANT.current && window.location.href.indexOf( ANT.current.page_url ) == -1 ) {
 
                         ANT.util.clearFunctionTimer('domMutationObserver');
 
@@ -5010,7 +5019,6 @@ function antenna($A){
                 $ANT.dequeue('initAjax');
                 ANT.actions.resetCustomDisplayHashes();
                 ANT.actions.hashCustomDisplayHashes();
-                // ANT.actions.runPostPageInit();
             },
             UIClearState: function(e){
                 // if (!isTouchBrowser) {
