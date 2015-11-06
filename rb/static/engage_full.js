@@ -4886,30 +4886,32 @@ function antenna($A){
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
-                  if ( ANT.current && window.location.href.indexOf( ANT.current.page_url ) == -1 ) {
-                     var added = false;
-                     // var removed = false;
-                     for (var i = 0; i < mutationRecords.length; i++) {
-                      if (mutationRecords[i].addedNodes.length > 0) {
-                        added = true;
-                      }
-                      // if (mutationRecords[i].removedNodes.length > 0) {
-                      //   removed = true;
-                      // }
-                     }
-                     // if (added && removed) {
-                     if (added) {
-                      // reinit Antenna here
+                    // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
+                  if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || window.location.href.indexOf( ANT.current.page_url ) == -1) ) {
+                    if (ANT.current.page_url != window.location.href) {
+                         var added = false;
+                         // var removed = false;
+                         for (var i = 0; i < mutationRecords.length; i++) {
+                          if (mutationRecords[i].addedNodes.length > 0) {
+                            added = true;
+                          }
+                         }
+                         // if (added && removed) {
+                         if (added) {
+                          // reinit Antenna here
 
-                        ANT.util.clearFunctionTimer('domMutationObserver');
+                            // if (window.location.href.split('//')[1].split('/').length > 2) {
+                                ANT.util.clearFunctionTimer('domMutationObserver');
 
-                        ANT.util.setFunctionTimer( function() {
-                            ANT.current.page_url = window.location.href;
-                            ANT.actions.reset();
-                        }, 1000, 'domMutationObserver');
+                                ANT.util.setFunctionTimer( function() {
+                                    ANT.current.page_url = window.location.href;
+                                    ANT.actions.reset();
+                                }, 1000, 'domMutationObserver');
+                            // }
 
 
-                      }
+                          }
+                        }
                      }
                  });
 
