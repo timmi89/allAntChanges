@@ -4459,7 +4459,6 @@ function antenna($A){
                                 ANT.actions.pages.save(page.id, page);
                                 ANT.actions.pages.initPageContainer(page.id);
                             });
-
                             var a_or_b_or_not = '';
                             if ( ANT.group.ab_test_impact === true ) {
                                 a_or_b_or_not = ( ANT.util.activeAB() ) ? 'A':'B';
@@ -4641,7 +4640,6 @@ function antenna($A){
                 }
             },
             initEnvironment: function(){
-
                 ANT.current.page_url = ANT.util.getPageProperty('page_url');
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
                 if ( !ANT.util.activeAB() ) {
@@ -5180,180 +5178,6 @@ function antenna($A){
 
                 });
 
-
-
-
-
-                //todo: consider how to do this whitelist, initialset stuff right
-            /*
-                var $allNodes = $(),
-                nodeGroups = [
-                    {
-                        kind: 'media',
-                        $group: null,
-                        whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="media"]'; },
-                        filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' iframe, [ant-item-type="media"]',
-                        // filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
-                        setupFunc: function(){
-                            var $this = $(this);
-
-                            var body = ($this.hasAttr('ant-item-content')) ? $this.attr('ant-item-content') :
-                                       (typeof this.src != 'undefined') ? this.src : 
-                                       (typeof this.data != 'undefined') ? this.data : '';
-
-                            if (body.indexOf('/') === 0){
-                                body = window.location.origin + body;
-                            }
-                            if (body.indexOf('http') !== 0){
-                                body = window.location.origin + window.location.pathname + body;
-                            }
-
-                            // $this.data({
-                            //     'body':body,
-                            //     'isCustom': ($this.hasAttr('ant-item-content')) ? true:false
-                            // });
-                            $this.data('body', body);
-                            $this.data('isCustom', ($this.hasAttr('ant-item-content')) ? true:false);
-                        }
-                    },
-                    {
-                        kind: 'img',
-                        $group: null,
-                        whiteList: function() {
-                            var whiteListConcat = '',
-                                whiteListArray = ANT.group.active_sections.split(',');
-
-                            $.each(whiteListArray, function(idx, selector) {
-                                whiteListConcat += selector + ' img,'
-                            });
-                            whiteListConcat = whiteListConcat.substring(0, whiteListConcat.length-1);
-
-                            return whiteListConcat;
-                        },
-                        filterParam: 'img,[ant-item-type="image"]',
-                        setupFunc: function(){
-                            //var body = $(this).attr('src');
-                            // var body = this.src;
-                            var $this = $(this);
-                            var body = (typeof this.src != 'undefined') ? this.src : $this.attr('ant-item-content');
-
-                            if (body.indexOf('/') === 0){
-                                body = window.location.origin + body;
-                            }
-                            if (body.indexOf('http') !== 0){
-                                body = window.location.origin + window.location.pathname + body;
-                            }
-                            $this.data({
-                                'body':body
-                            });
-                        }
-                    },
-                    {
-                        kind: 'text',
-                        $group: null,
-                        whiteList: function() { return ANT.group.active_sections_with_anno_whitelist; },
-                        filterParam: function(idx, node){
-                            //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
-                            // - Prob fine though since we're only testing hashes we pass in manually.
-                            //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
-                            var $node = $(node),
-                                node_text = $node.text(),
-                                node_parent_text = $node.parent().text();
-
-                            if ( $node.hasAttr('ant-item-content') ) {
-                                if ( $node.attr('ant-item-content') ) return false;
-                            }
-                            if ( node_text != node_parent_text ) {
-                                // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
-                                return !!node_text;
-                            }
-                        },
-                        setupFunc: function(){
-                            var $this = $(this),
-                                body = ANT.util.getCleanText($this);
-                            $this.data('body',body);
-                        }
-
-                    },
-                    {
-                        kind: 'custom',
-                        $group: null,
-                        whiteList: function() { return ''; },
-                        filterParam: function(idx, node){
-                            // look for a ant-src
-                            var $node = $(this);
-
-                            // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
-                            return !!$node.hasAttr('ant-src');
-                        },
-                        setupFunc: function(){
-                            // set the ant-src to the 'body'
-                            var $node = $(this),
-                                body = $node.attr('ant-src');
-
-                            $node.data({
-                                'body':body
-                            });
-                        }
-
-                    }
-                ];
-
-                //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
-                // [porter] i just absolutely hate this fucking piece of code.  it's inverted from expected logic, so a mindfuck to step through.
-                $.each( nodeGroups, function( idx, group ){
-
-                    // take the $node passed in, add it to group via filters
-                    var $group = $node.filter( group.filterParam );
-
-                    // add vaild descendants of the $node
-                    // PERFORMANCE ISSUE?
-                    // LAYOUT INVALIDATED?
-                    $group = $group.add( $node.find( group.whiteList() ) );
-
-                    //trick for br_replace option.
-                    //todo: prove that this approach works best across all sites and make it nicer.
-                    // if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
-                        // $group = $group.add( $node.find( '.ant_br_replaced' ) );
-                    // }
-
-                    //take out prev categorized nodes (text is last, so we default to that)
-                    $group = $group.not($allNodes);
-                    
->>>                    // hack to fix text nodes taking over our media
->>>                    if(group.kind == "text"){
->>>                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
-                    }
-
-                    //filter out blacklisted stuff and already hashed stuff
->>>                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
->>>                    group.$nodes = $group;
-
-                    //setup the group as needed
-                    $group.each( function(){
-                        group.setupFunc.apply(this);
-                        $(this).data('kind', group.kind);
-                    });
-
->>>                    $allNodes = $allNodes.add($group);
-
-                    //flag exceptions for inline_indicators
->>>                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
-
-                    $inlineMediaSet.each(function(){
-                        $(this).data('inlineIndicator', true);
-                    });
-
-                });
-            */
-
-                // TODO when would this do anything?
-                // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
-                            // I guess we can take it out if you didn't want it here either.
-                // if( !$allNodes.data('body') ) { 
-                //     return false;
-                // }
-                //else
                 var hashList = {};
 
                 //run init outside the loop for optimization to avoid many reflows
@@ -5529,7 +5353,6 @@ function antenna($A){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.attr( 'ant-hash', hash ).attr('ant-node', 'true').attr( 'ant-hashed', true );
 
-                    // if ( HTMLkind != 'body' && !isTouchBrowser) {
                     if ( HTMLkind != 'body' && !isTouchBrowser ) {
                         // // todo: touchHover
                         
@@ -7835,6 +7658,7 @@ if ( sendData.kind=="page" ) {
                             //todo: combine this with the kindSpecificSetup above right?
                             if (kind == 'text'){
                                 function _getTextNodesIn(el) {
+                                    // return true;  // testing to fix WRAL.
                                     return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
                                         return this.nodeType == 3;
                                     });
@@ -10461,7 +10285,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv30"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv31"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

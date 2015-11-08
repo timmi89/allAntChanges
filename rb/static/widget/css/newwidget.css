@@ -1865,10 +1865,10 @@ div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_body
     background-color: #FCF5A7;
     color: #666;
     text-decoration: none;
-    -webkit-user-select:none; 
-    -k-user-select:none; 
-    -moz-user-select:none; 
-    user-select:none;
+    -webkit-user-select:text;
+    -k-user-select:text;
+    -moz-user-select:text;
+    user-select:text;
 }
 
 .ant_hilite_start{}
@@ -2102,18 +2102,14 @@ div.ant_indicator {
     position: relative;
     margin: 0;
     padding: 0;
-    /*top: 0;
-    left: 0;*/
     z-index:11000;
     text-decoration:none;
     border:none;
-    /*cursor:default;*/
     cursor: wait;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+    -webkit-user-select:text;
+    -k-user-select:text;
+    -moz-user-select:text;
+    user-select:text;
 }
 .no-ant-icon div.ant_indicator { display:none !important; }
 
@@ -2184,12 +2180,10 @@ div.ant_indicator_for_text * {
     z-index:11000;
     text-decoration:none;
     border:none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-    /*opacity:0.5;*/
+    /*-webkit-user-select:text;
+    -k-user-select:text;
+    -moz-user-select:text;
+    user-select:text;*/
 }
 div.ant_indicator_for_text .ant-antenna-logo {
   top: 2px;
@@ -2252,11 +2246,10 @@ div.ant_indicator_details {
     margin:-5px 0 0 -4px;
     overflow:hidden;
     display:none; /*start with them hidden by default - will override with js*/
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+    -webkit-user-select:none;
+    -k-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
 
     /*for consistent measuing of width and positioning*/
     -webkit-box-sizing : border-box;
@@ -2638,12 +2631,13 @@ div.ant_indicator_details span.ant_count {
 
 div.ant_indicator.ant_indicator_for_text span.ant_count {
   opacity:0;
+  display:none;
 }
 
 .ant_live_hover div.ant_indicator span.ant_count, 
 .ant_live_hover div.ant_indicator_details span.ant_count {
-  /*left:0px;*/
   opacity:1;
+  display:inline-block;
 }
 
 div.ant_indicator.ant_indicator_for_media span.ant_count {
