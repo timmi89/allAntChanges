@@ -8,6 +8,9 @@
  * Build date: 10 May 2015
  */
 
+(function(root) {
+    // Hide any global define object
+    var define = undefined;
 (function(factory, root) {
     if (typeof define == "function" && define.amd) {
         // AMD. Register as an anonymous module.
@@ -7191,3 +7194,4 @@
     
     return rangy;
 }, this);
+})();
