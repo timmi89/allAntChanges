@@ -4890,7 +4890,7 @@ function antenna($A){
                          ANT.current.page_url = window.location.href;
                             var attempts = 0;
                             var tryToResetAntenna = setInterval( function() {
-                                if ( !$('.ant-summary').length || attempts++ > 100 ) {
+                                if ( !$('.ant-summary').length || attempts++ > 1000 ) {
                                     ANT.actions.reset();
                                     clearInterval(tryToResetAntenna);
                                 }
