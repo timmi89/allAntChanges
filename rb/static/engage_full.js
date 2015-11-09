@@ -4887,31 +4887,17 @@ function antenna($A){
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
                   if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || window.location.href.indexOf( ANT.current.page_url ) == -1) ) {
                     if (ANT.current.page_url != window.location.href) {
-                         var added = false;
-                         // var removed = false;
-                         for (var i = 0; i < mutationRecords.length; i++) {
-                          if (mutationRecords[i].addedNodes.length > 0) {
-                            added = true;
-                          }
-                         }
-                         // if (added && removed) {
-                         if (added) {
-                          // reinit Antenna here
-
-                            // if (window.location.href.split('//')[1].split('/').length > 2) {
-                                ANT.util.clearFunctionTimer('domMutationObserver');
-
-                                ANT.util.setFunctionTimer( function() {
-                                    ANT.current.page_url = window.location.href;
+                         ANT.current.page_url = window.location.href;
+                            var attempts = 0;
+                            var tryToResetAntenna = setInterval( function() {
+                                if ( !$('.ant-summary').length || attempts++ > 100 ) {
                                     ANT.actions.reset();
-                                }, 1000, 'domMutationObserver');
-                            // }
-
-
-                          }
+                                    clearInterval(tryToResetAntenna);
+                                }
+                            }, 25);
                         }
-                     }
-                 });
+                    }
+                });
 
                 var body = document.body;
                 observer.observe(body, {
@@ -10135,8 +10121,8 @@ if ( sendData.kind=="page" ) {
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
                         // var displayDefaultBar = ( ANT.group.useDefaultSummaryBar === true ) ? "top:-1000px !important":"";
-                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-1001px !important"/>');
-                        widgetSummarySettings.$anchor.appendTo('body');
+                        // widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-1001px !important"/>');
+                        // widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
                     //div to hold summary tag detail "menus"
