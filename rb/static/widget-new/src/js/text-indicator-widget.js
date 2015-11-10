@@ -24,7 +24,7 @@ function createIndicatorWidget(options) {
         },
         template: require('../templates/text-indicator-widget.hbs.html'),
         partials: {
-            logo: SVGs.logo
+            logo: SVGs.logoSelectable
         }
     });
 

@@ -7,6 +7,8 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 // TODO: look into using a single template for the "use" SVGs. Can we instantiate a partial with a dynamic context?
 var templates = {
     logo: require('../templates/svg-logo.hbs.html'),
+    // The "selectable" logo defines an inline 'path' rather than a 'use' reference, as a workaround for a Firefox text selection bug.
+    logoSelectable: require('../templates/svg-logo-selectable.hbs.html'),
     comments: require('../templates/svg-comments.hbs.html'),
     location: require('../templates/svg-location.hbs.html'),
     facebook: require('../templates/svg-facebook.hbs.html'),
@@ -38,6 +40,7 @@ function getSVG(template) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     logo: getSVG(templates.logo),
+    logoSelectable: getSVG(templates.logoSelectable),
     comments: getSVG(templates.comments),
     location: getSVG(templates.location),
     facebook: getSVG(templates.facebook),
