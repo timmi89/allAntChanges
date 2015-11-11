@@ -1,0 +1,26 @@
+web:
+  build: ./docker/dependencies
+  command: python manage.py runserver 0.0.0.0:3000
+  environment:
+    DATABASE_HOST: 'db'
+    CASSANDRA_HOST: 'cassandra'
+    VIRTUAL_HOST: 'antenna.docker'
+    VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
+    PYTHONPATH: '/code'
+    PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
+  volumes:
+    - .:/code/antenna
+  ports:
+    - "3000"
+  links:
+    - db
+    - cassandra
+db:
+  image: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
+    MYSQL_DATABASE: 'readrboard'
+cassandra:
+  image: cassandra
+  environment:
+    CASSANDRA_CLUSTER_NAME: event_reports

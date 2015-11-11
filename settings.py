@@ -1,11 +1,12 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
-from os import uname
+import os
+import time
 from cassandra import ConsistencyLevel
-if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
-elif uname()[0] == "Linux": DEBUG = False
+if os.uname()[1] == "hat" or os.uname()[1] == 'hat.antenna.is' or os.uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
+elif os.uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
-# DEBUG=True
+DEBUG=True
 
 # Server e-mail account
 if DEBUG:
@@ -31,21 +32,24 @@ AWS_HEADERS = {
 
 AWS_DEFAULT_ACL='public-read'
 AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = True  
+AWS_S3_FILE_OVERWRITE = True
 AWS_PRELOAD_METADATA = True
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
-ADMINS = ( 
+ADMINS = (
     ('Porter Bayne', 'porter@readrboard.com'),
-    ('Michael Shaw', 'michael@readrboard.com')
+    ('Jared Burns', 'jared@readrboard.com'),
+    ('Brian Finney', 'brian@readrboard.com')
 )
 
 RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
-    'michael@readrboard.com'
+    'porter@antenna.is',
+    'jared@antenna.is',
+    'brian@antenna.is'
 ]
 
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
@@ -58,46 +62,37 @@ OTHER_DATACENTER = 'gce.antenna.is'
 CACHE_SYNCBACK = False
 
 if DEBUG:
+    time.sleep(5)
     URL_NO_PROTO = 'local.antenna.is:8081'
     BASE_URL = 'http://local.antenna.is:8081'
     BASE_URL_SECURE = 'https://local.antenna.is:8081'
-    # STATIC_URL = '//localhost:8081/static/'
     STATIC_URL = '//local.antenna.is:8081/static/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
-    
+    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
+
     DATABASES = {
         'default': {
-          'ENGINE':   'django.db.backends.mysql',
+          'ENGINE':     'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
-            'HOST':     'localhost',
-            'PORT':     '3306',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
+            'HOST':      os.getenv('DATABASE_HOST', 'localhost'),
+            'PORT':      os.getenv('DATABASE_PORT', '3306')
         },
         'readonly1': {
           'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
-            'HOST':     'localhost',
-            'PORT':     '3306',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
+            'HOST':     os.getenv('DATABASE_HOST', 'localhost'),
+            'PORT':     os.getenv('DATABASE_PORT', '3306')
         },
         'readonly2': {
           'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
-            'HOST':     'localhost',
-            'PORT':     '3306',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
+            'HOST':     os.getenv('DATABASE_HOST', 'localhost'),
+            'PORT':     os.getenv('DATABASE_PORT', '3306')
         },
         'cassandra': {
             'ENGINE': 'django_cassandra_engine',
@@ -105,7 +100,7 @@ if DEBUG:
             'USER': 'root', #TODO
             'PASSWORD': '', #TODO
             'TEST_NAME': 'test_event_reports',
-            'HOST': '127.0.0.1',
+            'HOST': os.getenv('CASSANDRA_HOST', '127.0.0.1'),
             'OPTIONS': {
                 'replication': {
                     'strategy_class': 'SimpleStrategy',
@@ -198,9 +193,9 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    DATABASE_ROUTERS = ['rb.routers.CassandraRouter', 'rb.routers.MasterSlaveRouter']    
-    
-        
+    DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
+
+
     DATABASES = {
       'default': {
         'ENGINE':   'django.db.backends.mysql',
@@ -263,7 +258,7 @@ else:
             }
       }
     }
-    
+
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
@@ -288,16 +283,16 @@ else:
             }
         }
     }
-    
+
     #BROKER_URL = "librabbitmq://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
     BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
-      
+
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-              
+
 #JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
 
 
@@ -330,20 +325,20 @@ USE_L10N = False
 
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
-    
+
 #ADMIN_MEDIA_PREFIX = 'admin/'
 
-# Additional locations of static files                                                
+# Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".           
-    # Always use forward slashes, even on Windows.                                    
-    # Don't forget to use absolute paths, not relative paths.                         
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#   'django.contrib.staticfiles.finders.DefaultStorageFinder',                       
+#   'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -415,6 +410,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'south',
     'api',
     'rb',
     'chronos',
@@ -422,7 +418,6 @@ INSTALLED_APPS = [
     'forecast.cassandra',
     'forecast.reporting',
     # 'piston',
-    'south',
     'storages',
     'gunicorn',
     'djcelery'
@@ -486,7 +481,7 @@ LOGGING = {
         },
     },
     'filters': {
-        
+
     },
     'handlers': {
         'null': {

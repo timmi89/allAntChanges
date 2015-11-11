@@ -1,7 +1,7 @@
 import random
-#from django.db import models
 import logging
 logger = logging.getLogger('rb.standard')
+
 
 class SyncRouter(object):
     """A router that sets up a simple master/slave configuration"""
@@ -22,9 +22,10 @@ class SyncRouter(object):
 
     def allow_syncdb(self, db, model):
         "Explicitly put all models on all databases."
-        
+
         return True
-    
+
+
 class MasterSlaveRouter(object):
     """A router that sets up a simple master/slave configuration"""
 
@@ -38,13 +39,14 @@ class MasterSlaveRouter(object):
 
     def allow_relation(self, obj1, obj2, **hints):
         "Allow any relation between two objects in the db pool"
-        db_list = ('default','readonly1', 'readonly2')
+        db_list = ('default', 'readonly1', 'readonly2')
         if obj1._state.db in db_list and obj2._state.db in db_list:
             return True
         return None
 
     def allow_syncdb(self, db, model):
-        return False
+        return True
+
 
 class CassandraRouter(object):
     """A router that sets up a simple master/slave configuration"""
@@ -79,4 +81,3 @@ class CassandraRouter(object):
         except:
             return None
         return None
-
