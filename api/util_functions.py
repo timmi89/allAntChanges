@@ -23,7 +23,7 @@ logger = logging.getLogger('rb.standard')
 
 
 # BEGIN for the html tag stripping
-from HTMLParser import HTMLParser  
+from HTMLParser import HTMLParser
 class MLStripper(HTMLParser):
     def __init__(self):
         self.reset()
@@ -40,7 +40,7 @@ def strip_tags(html):
 # END for the html tag stripping
 
 blacklist = ['fuck','shit','poop','cock','cunt']
-    
+
 def getTagCommentData(comment):
     comment_data = {}
     comment_data['comment'] = comment.interaction_node.body
@@ -52,7 +52,7 @@ def getTagCommentData(comment):
 #       it goes through each tag.
 def getTagSummary(node, tags):
     tags = filter(lambda x: x.interaction_node==node, tags)
-    
+
     data = {}
     data['count'] = len(tags)
     data['body'] = node.body
@@ -92,7 +92,7 @@ def getSummary(interactions, container=None, content=None, page=None, data=None,
     counts['interactions'] = len(interactions)
     data['counts'] = counts
     data['id'] = container if container else content
-    
+
     tag_counts = dict((
         (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
     ))
@@ -111,14 +111,14 @@ def getSummary(interactions, container=None, content=None, page=None, data=None,
             comment['social_user'] = comment['user'].social_user
         except SocialUser.DoesNotExist:
             comment['social_user'] = {}
-        
+
     data['top_interactions'] = top_interactions
 
     return data
 
 def getContainerSummaries(interactions, containers, isCrossPage=False):
     data = dict((
-        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
+        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers
     ))
     return data
 
@@ -155,16 +155,16 @@ def interactionNodeCounts(interactions, kinds=[], content=None):
 def getHost(request):
     # Using referer for now, could be url as well
     url = request.META.get('HTTP_REFERER', None)
-    
+
     if url:
         split_host = urlsplit(url).netloc.split('.')
         if 'www' in split_host[0]: split_host = split_host[1:]
         host = '.'.join(split_host)
     else:
         host = request.META['HTTP_HOST']
-    
+
     return host
-    
+
 def stripQueryString(url):
     qs = urlsplit(url).query
     if qs:
@@ -226,29 +226,29 @@ def getPage(host, page_request):
             defaults = {'site': site, 'title':title, 'image':image}
         )
         return page[0]
-    
+
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
     if node_id:
         # ID known retrieve existing
         inode = InteractionNode.objects.get(id=node_id)
-    
+
     # Body was passed rather than id
     elif body:
         body = strip_tags(body)
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
-        
+
         if check_nodes.count() == 0:
             inode = InteractionNode.objects.get_or_create(body=body)[0]
 
         elif check_nodes.count() > 1:
             inode = check_nodes[0]
-        
+
         elif check_nodes.count() == 1:
             inode = check_nodes[0]
-        
-        
+
+
     return inode
 
 def isTemporaryUser(user):
@@ -475,8 +475,8 @@ def getSinglePageDataNewer(page_id):
         'summaryReactions': summary_data[:15]
     }
     return page_data
-    
-    
+
+
 def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
@@ -503,7 +503,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
 
         crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
 
-        
+
     unknown = list(set(hashes) - set(known.keys()))
     if 'crossPageKnown' in locals():
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
@@ -542,11 +542,11 @@ def getSettingsDict(group):
              'sharebox_stumble',
              'sharebox_twitter']
      )
-    
+
     blessed_tags = InteractionNode.objects.filter(
          groupblessedtag__group=group.id
      ).order_by('groupblessedtag__order')
-    
+
     settings_dict['blessed_tags'] = blessed_tags # deprecated. delete once all client usage is removed.
     settings_dict['default_reactions'] = blessed_tags
     return settings_dict
@@ -561,47 +561,47 @@ def getGlobalActivity():
     the_past = today + tdelta
     interactions = Interaction.objects.all()
     interactions = interactions.filter(
-        created__gt = the_past, 
-        kind = 'tag', 
-        approved=True, 
+        created__gt = the_past,
+        kind = 'tag',
+        approved=True,
         page__site__group__approved=True
     ).order_by('-created')[:maxInteractions]
-    
+
     users = {}
     pages = {}
     groups = {}
     nodes ={}
     for inter in interactions:
         if not groups.has_key(inter.page.site.group.name):
-            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
+            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group,
                                                                                     fields=['id', 'short_name'])}
         else:
             groups[inter.page.site.group.name]['count'] +=1
-            
+
         if not pages.has_key(inter.page.url):
             pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
         else:
             pages[inter.page.url]['count'] +=1
-        
-        if not inter.user.email.startswith('tempuser'):    
+
+        if not inter.user.email.startswith('tempuser'):
             if not users.has_key(inter.user.id):
-                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
+                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions',
                                                                'last_login', 'date_joined', 'email',
                                                                 'is_superuser', 'is_staff', 'password', 'groups'])
-                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
-                                                                                          'gender', 'provider', 
+                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option',
+                                                                                          'gender', 'provider',
                                                                                           'bio', 'hometown', 'user',
                                                                                           'follow_email_option'])
                 users[inter.user.id] = {'count': 1, "user":user_dict}
             else:
                 users[inter.user.id]['count'] +=1
-            
+
         if not nodes.has_key(inter.interaction_node.body):
             nodes[inter.interaction_node.body] = {'count': 1}
         else:
             nodes[inter.interaction_node.body]['count'] +=1
-        
-            
+
+
     return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
 
 def retry_cache_get(key):
@@ -613,9 +613,9 @@ def retry_cache_get(key):
             time.sleep( x * 0.25 )
     return None
 
-    
-    
-   
+
+
+
 def check_and_get_locked_cache(key):
     cached_result = cache.get(str(key))
     if cached_result is None and cache.get('LOCKED_'+str(key)) is None:
@@ -627,7 +627,7 @@ def check_and_get_locked_cache(key):
         cache.set('LOCKED_'+ str(key),'locked',15)
         logger.info("locking to continue for DB: " + str(key))
         return None
-    elif cached_result is None:    
+    elif cached_result is None:
         for x in range(1,10):
             time.sleep(x * 0.25)
             cached_result = cache.get(str(key))
@@ -635,7 +635,7 @@ def check_and_get_locked_cache(key):
                 cache.delete('LOCKED_'+ str(key))
                 logger.info('return cached result and cleared LOCKED'+str(key))
                 return cached_result
-    return cached_result    
+    return cached_result
 
 
-                
+

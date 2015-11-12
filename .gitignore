@@ -11,8 +11,9 @@ readrdb.db
 .settings/
 .idea/
 nohup.out
-virtualenvs/production-venv/
 .sass-cache
+virtualenvs
 rb/static/site/css/site_sass_compiled.css.map
-celerybeat-schedule
+celerybeat-schedule*
 celerybeat.pid
+node_modules

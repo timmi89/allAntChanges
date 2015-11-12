@@ -39,14 +39,14 @@ ANT_scriptPaths = {},
 //check if this script is the offline version
 //note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
 ANT_offline = !!(
-    ANT.engageScriptSrc.indexOf('localhost') != -1 ||
+    ANT.engageScriptSrc.indexOf('local-static.antenna.is') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":"http://www.antenna.is",
 ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
@@ -124,7 +124,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            (src.indexOf('antenna') != -1 || src.indexOf('localhost') != -1 || src.indexOf('readrboard') != -1) &&
+            (src.indexOf('antenna') != -1 || src.indexOf('local-static.antenna.is') != -1 || src.indexOf('readrboard') != -1) &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
@@ -9793,7 +9793,7 @@ if ( sendData.kind=="page" ) {
                                 //for testing offline
                                 if(ANT_offline){
                                     content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                    content = content.replace("localhost:8081", "www.antenna.is");
+                                    content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);

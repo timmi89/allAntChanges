@@ -1,7 +1,14 @@
 FROM python:2.7
+
 ENV PYTHONUNBUFFERED 1
-RUN mkdir /code
-WORKDIR /code
-ADD requirements.txt /code/requirements.txt
+ENV DJANGO_SETTINGS_MODULE antenna.settings
+
+RUN mkdir -p /code/antenna
+WORKDIR /code/antenna
+
+ADD requirements.txt /code/antenna/requirements.txt
 RUN pip install -r requirements.txt
-ADD . /code/
+ADD . /code/antenna
+
+EXPOSE 8000
+CMD gunicorn --preload -b 0.0.0.0:8000 -w 1 antenna.wsgi

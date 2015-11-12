@@ -2891,8 +2891,8 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 //noinspection JSUnresolvedVariable
 module.exports = {
     // TODO: Make this more flexible so it works in everyone's dev environment
-    offline: offline = currentScriptSrc.indexOf('localhost') !== -1,
-    test: currentScriptSrc.indexOf('localhost:3000') !== -1,
+    offline: offline = currentScriptSrc.indexOf('local-static.antenna.is') !== -1,
+    test: currentScriptSrc.indexOf('local-static.antenna.is:3000') !== -1,
     debug: currentScriptSrc.indexOf('?debug') !== -1
 };
 },{}],"/Users/jburns/antenna/rb/static/widget-new/src/js/utils/callback-support.js":[function(require,module,exports){
@@ -3891,9 +3891,9 @@ var AppMode = require('./app-mode');
 
 function antennaHome() {
     if (AppMode.test) {
-        return window.location.protocol + '//localhost:3000';
+        return window.location.protocol + '//local-static.antenna.is:3000';
     } else if (AppMode.offline) {
-        return window.location.protocol + "//localhost:8081";
+        return window.location.protocol + "//local-static.antenna.is:8081";
     }
     return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
 }

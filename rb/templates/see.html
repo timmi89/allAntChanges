@@ -4,7 +4,7 @@
 {% block extendedHead %}
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
 <script>
-// ANTsite.group.short_name = "localhost";
+// ANTsite.group.short_name = "local-static.antenna.is";
 // ANTsite.group.full_name = "{{ group.name }}";
 // ANTsite.group.id = "{{ group.id }}";
 // ANTsite.group.id = 1660;
@@ -219,9 +219,9 @@ window.antenna_extend = {
 </script>
 
 <script async src="/static/engage_full.js"></script>
-<!--<script async src="http://localhost:8081/static/widget-new/debug/antenna.js"></script>-->
+<!--<script async src="http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js"></script>-->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.2.3/rangy-core.js"></script>-->
-<!--<script async src="http://localhost:8081/static/widget-new/antenna.min.js"></script>-->
+<!--<script async src="http://local-static.antenna.is:8081/static/widget-new/antenna.min.js"></script>-->
 <!--
 <style>
 .ant-summary { z-index:100002; position: relative; background:#fff; }

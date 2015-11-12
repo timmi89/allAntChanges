@@ -1,26 +1,54 @@
 web:
-  build: ./docker/dependencies
-  command: python manage.py runserver 0.0.0.0:3000
-  environment:
-    DATABASE_HOST: 'db'
-    CASSANDRA_HOST: 'cassandra'
-    VIRTUAL_HOST: 'antenna.docker'
-    VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
-    PYTHONPATH: '/code'
-    PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
-  volumes:
-    - .:/code/antenna
+  extends:
+    file: ./docker/common.yml
+    service: web
+  command: bash -c 'sleep 25 && python manage.py runserver 0.0.0.0:8081'
   ports:
-    - "3000"
+    - "8081:8081"
   links:
     - db
     - cassandra
+    - memcached
+    - rabbitmq
+celeryd:
+  extends:
+    file: ./docker/common.yml
+    service: web
+  command: bash -c 'sleep 25 && ./manage.py celeryd --loglevel=debug --concurrency=1'
+  links:
+    - db
+    - cassandra
+    - memcached
+    - rabbitmq
+celerybeat:
+  extends:
+    file: ./docker/common.yml
+    service: web
+  command: bash -c 'sleep 25 && ./manage.py celerybeat --loglevel=debug'
+  links:
+    - db
+    - cassandra
+    - memcached
+    - rabbitmq
 db:
   image: mysql
   environment:
     MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
     MYSQL_DATABASE: 'readrboard'
 cassandra:
-  image: cassandra
+  image: cassandra:2
   environment:
     CASSANDRA_CLUSTER_NAME: event_reports
+memcached:
+  image: memcached
+rabbitmq:
+  image: rabbitmq:management
+  environment:
+    VIRTUAL_HOST: 'rabbitmq.antenna.docker'
+    RABBITMQ_ERLANG_COOKIE: 'development erlang cookie'
+    RABBITMQ_DEFAULT_VHOST: 'antenna_broker'
+    RABBITMQ_DEFAULT_USER: 'broadcast'
+    RABBITMQ_DEFAULT_PASS: '51gn4l5'
+  hostname: 'rabbit'
+  ports:
+    - '15672:15672'

@@ -10,7 +10,7 @@ if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
 else: ANTENNA_ARRAY = False
 #if not DEBUG:
 #    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
-    
+
 # Server e-mail account
 if DEBUG:
     SERVER_EMAIL = "devserver@antenna.is"
@@ -35,14 +35,14 @@ AWS_HEADERS = {
 
 AWS_DEFAULT_ACL='public-read'
 AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = True  
+AWS_S3_FILE_OVERWRITE = True
 AWS_PRELOAD_METADATA = True
 
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
-ADMINS = ( 
+ADMINS = (
     ('Porter Bayne', 'porter@readrboard.com'),
     ('Michael Shaw', 'michael@readrboard.com')
 )
@@ -68,7 +68,7 @@ if DEBUG:
     # STATIC_URL = '//localhost:8081/static/'
     STATIC_URL = '//local.antenna.is:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
-    
+
     DATABASES = {
         'default': {
           'ENGINE':   'django.db.backends.mysql',
@@ -180,9 +180,9 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
-    
-        
+    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
+
+
     DATABASES = {
       'default': {
         'ENGINE':   'django.db.backends.mysql',
@@ -220,9 +220,9 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       }
-      
+
     }
-    
+
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
@@ -247,15 +247,15 @@ else:
             }
         }
     }
-    
+
     BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
-      
+
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-              
+
 #JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
 
 
@@ -288,20 +288,20 @@ USE_L10N = False
 
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
-    
+
 #ADMIN_MEDIA_PREFIX = 'admin/'
 
-# Additional locations of static files                                                
+# Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".           
-    # Always use forward slashes, even on Windows.                                    
-    # Don't forget to use absolute paths, not relative paths.                         
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#   'django.contrib.staticfiles.finders.DefaultStorageFinder',                       
+#   'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -444,7 +444,7 @@ LOGGING = {
         },
     },
     'filters': {
-        
+
     },
     'handlers': {
         'null': {

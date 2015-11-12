@@ -1,0 +1,14 @@
+web:
+  build: ./dependencies
+  environment:
+    DEBUG: 'true'
+    DATABASE_HOST: 'db'
+    CASSANDRA_HOST: 'cassandra'
+    MEMCACHED_HOST: 'memcached'
+    VIRTUAL_HOST: 'antenna.docker'
+    RABBITMQ_HOST: 'rabbitmq'
+    VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
+    PYTHONPATH: '/code'
+    PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
+  volumes:
+    - ..:/code/antenna

@@ -919,7 +919,7 @@ ANTsite = {
                             //for testing offline
                             if(ANT_offline){
                                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                content = content.replace("localhost:8081", "www.antenna.is");
+                                content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -1003,7 +1003,7 @@ ANTsite = {
                                                         //for testing offline
                             if(ANT_offline){
                                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                content = content.replace("localhost:8081", "www.antenna.is");
+                                content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
                             }
 
                             mainShareText = _wrapTag(interaction_body, true);

@@ -21,7 +21,7 @@
 
     var ScriptLoader = function() {
 
-        var baseUrl = 'http://localhost:8081'; // TODO compute this
+        var baseUrl = 'http://local-static.antenna.is:8081'; // TODO compute this
 
         function jQueryLoaded() {
             // Update the $ that we define within our own closure to the version of jQuery that we want and reset the global $

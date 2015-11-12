@@ -17,7 +17,7 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
         domain=cleaned_data['domain'],
     )
     if len(existingSites) > 0:
-    
+
         try:
             site = existingSites[0]
             group = site.group
@@ -46,7 +46,7 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
                 raise Exception("More than one group with shortname found: " + cleaned_data['short_name'])
             else:
                 raise Exception("No groups found with shortname: " + cleaned_data['short_name'])
-        
+
         site = Site.objects.create(
             name=cleaned_data['domain'],
             domain=cleaned_data['domain'],
@@ -74,17 +74,17 @@ def addDefaultsForNewGroup(group, cookie_user):
     for dgroup in default_groups:
         if dgroup.short_name == 'default':
             default_group = dgroup
-    
+
     group.word_blacklist = default_group.word_blacklist
     group.anno_whitelist = default_group.anno_whitelist
     group.active_sections = default_group.active_sections
     group.save()
-    
+
     blessed = GroupBlessedTag.objects.filter(group = default_group)
     for blessing in blessed:
         GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
     #
-    
+
     # //todo
     readr_admins = SocialUser.objects.filter(
         user__email__in=RB_SOCIAL_ADMINS

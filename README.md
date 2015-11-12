@@ -20,25 +20,20 @@ docker-compose run --rm web pip install -r requirements.txt
 ```
 
 ## Setup DB
-
-Start a shell in the web container
 ```sh
-docker-compose run --rm web bash
+docker-compose run --rm web ./manage.py sync_cassandra
+docker-compose run --rm web ./manage.py syncdb --all
+docker-compose run --rm web ./manage.py migrate --fake
+docker-compose run --rm web ./manage.py loaddata seed
 ```
 
-```sh
-# Install mysql-client
-apt-get update
-apt-get install -y mysql-client
+## Setup hosts file compatible with previous dev environment
 
-# Get the password from settings.py or docker-compose.yml to create the database
-mysql --host db -u root -p -e 'CREATE DATABASE readrboard CHARACTER SET utf8;'
+Add the following entries to `/etc/hosts`
 
-# Initialize the database
-./manage.py syncdb --all
-./manage.py migrate --fake
-
-exit
+```
+192.168.99.100 local-static.antenna.is
+192.168.99.100 local.antenna.is
 ```
 
 ## Run it

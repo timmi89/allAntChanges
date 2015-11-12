@@ -2,9 +2,9 @@ var AppMode = require('./app-mode');
 
 function antennaHome() {
     if (AppMode.test) {
-        return window.location.protocol + '//localhost:3000';
+        return window.location.protocol + '//local-static.antenna.is:3000';
     } else if (AppMode.offline) {
-        return window.location.protocol + "//localhost:8081";
+        return window.location.protocol + "//local-static.antenna.is:8081";
     }
     return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
 }
