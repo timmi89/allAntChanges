@@ -197,6 +197,7 @@ function antenna($A){
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
 
                 summary_widget_expanded_mobile: false,
+                separate_cta_expanded: "none",  // "none","desktop","mobile","both"
                 
                 //example:
                 // br_replace_scope_selector: ".ant_br_replace" //e.g. "#mainsection" or "p"
@@ -1335,11 +1336,11 @@ function antenna($A){
 
 
                             //temp fix because the aWindow scrollpane re-init isnt working
-                            var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
-                            if(!isViewForAWindow){
+                            // var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
+                            // if(!isViewForAWindow){
                                 ANT.aWindow.close($aWindow);
                                 return;
-                            }
+                            // }
 
                         });
                         return $backButton;
@@ -2089,27 +2090,27 @@ function antenna($A){
             safeClose: function( $aWindow ) {
               //ANT.aWindow.safeClose:
 
-              var isView = !!$aWindow.attr('ant-view-reactions-for');
+              // var isView = !!$aWindow.attr('ant-view-reactions-for');
 
-              if(isView){
+              // if(isView){
 
-                var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
-                    $aWindow.find('.ant_header').replaceWith($header);
-                    ANT.aWindow.updateFooter( $aWindow );
+              //   var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
+              //       $aWindow.find('.ant_header').replaceWith($header);
+              //       ANT.aWindow.updateFooter( $aWindow );
 
-                    var $panelWrap = $aWindow.find('.ant_body_wrap'),
-                        $currentlyVisiblePanel = $panelWrap.find('.ant_visiblePanel'),
-                        $currentlyHiddenPanel = $panelWrap.find('.ant_hiddenPanel');
+              //       var $panelWrap = $aWindow.find('.ant_body_wrap'),
+              //           $currentlyVisiblePanel = $panelWrap.find('.ant_visiblePanel'),
+              //           $currentlyHiddenPanel = $panelWrap.find('.ant_hiddenPanel');
                     
-                    $panelWrap.animate({
-                        left: 0
-                    });
+              //       $panelWrap.animate({
+              //           left: 0
+              //       });
 
-                    $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
-                    $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
+              //       $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
+              //       $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
 
-                return true;
-              }
+              //   return true;
+              // }
 
               ANT.aWindow.close($aWindow);
               return true;
@@ -4642,9 +4643,9 @@ function antenna($A){
             initEnvironment: function(){
                 ANT.current.page_url = ANT.util.getPageProperty('page_url');
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
-                if ( !ANT.util.activeAB() ) {
-                    $('.ant-custom-cta').css('visibility','hidden');
-                }
+                // if ( !ANT.util.activeAB() ) {
+                //     $('.ant-custom-cta').css('visibility','hidden');
+                // }
 
                 ANT.broadcast.init();
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
@@ -4919,12 +4920,6 @@ function antenna($A){
                         var $this = $(this);
                         $this.attr('ant-item', $this.attr('ant-custom-display') );
                         $this.removeAttr('ant-custom-display');
-                    });
-
-                    $('[ant-grid-for]').each( function() {
-                        var $this = $(this);
-                        $this.attr('ant-view-reactions-for', $this.attr('ant-grid-for') );
-                        $this.removeAttr('ant-grid-for');
                     });
                 }
                 $ANT.dequeue('initAjax');
@@ -5761,16 +5756,17 @@ function antenna($A){
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
                     ANT.actions.indicators.init(hash, true);
 
-                    var $container = $('[ant-hash="'+hash+'"]'),
-                        customDisplayName = $container.attr('ant-item'),
-                        $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]');
+                    // no longer doing the ProPublica-style open-on-page grid
+                    // var $container = $('[ant-hash="'+hash+'"]'),
+                        // customDisplayName = $container.attr('ant-item');
+                        // $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]');
 
-                    if ($grid.length) {
-                        ANT.actions.content_nodes.init(hash, function() {
-                            ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
-                            $grid.jScrollPane({ showArrows:true,contentWidth: '0px' });
-                        });
-                    }
+                    // if ($grid.length) {
+                    //     ANT.actions.content_nodes.init(hash, function() {
+                    //         ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                    //         $grid.jScrollPane({ showArrows:true,contentWidth: '0px' });
+                    //     });
+                    // }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
                     // go ahead and initialize the content nodes for custom display elements
@@ -5784,46 +5780,45 @@ function antenna($A){
                         if (typeof hash != "undefined" && typeof $node.attr('ant_summary_loaded') == "undefined" ) {
                             ANT.actions.indicators.init(hash);
                             ANT.summaries[hash].crossPage=true;
+                            ANT.actions.content_nodes.init(hash);
 
                             // init a reaction-view for an open custom display thing.
                             // i know, this should be abstracted.  it's too ProPublica specific.  
                             // needs abstraction, and conditionals to determine what to do based on the display properties.
-                            var $container = $('[ant-hash="'+hash+'"]'),
-                                customDisplayName = $container.attr('ant-item'),
+                            // var $container = $('[ant-hash="'+hash+'"]'),
+                                // customDisplayName = $container.attr('ant-item'),
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
-                                $reactionView = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
-                                reactionViewWidth = $reactionView.width(),
-                                reactionViewHeight = $reactionView.height();
+                                // $reactionView = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                                // reactionViewWidth = $reactionView.width(),
+                                // reactionViewHeight = $reactionView.height();
 
-                            $reactionView.data('hash', hash).data('container', hash).addClass('no-ant');
+                            // $reactionView.data('hash', hash).data('container', hash).addClass('no-ant');
 
+                            //     // if the reactionView grid has no height specified, give it one
+                            //     // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
+                            //     if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
 
+                            //     ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
 
-                                // if the reactionView grid has no height specified, give it one
-                                // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
-                                if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
-
-                                ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
-
-                                if ($reactionView.length) {
-                                    // since currently, our reactionView needs to have a width that's a factor of 100... force that:
-                                    var statedWidthDividedBy100 = parseInt( reactionViewWidth / 100 );
+                            //     if ($reactionView.length) {
+                            //         // since currently, our reactionView needs to have a width that's a factor of 100... force that:
+                            //         var statedWidthDividedBy100 = parseInt( reactionViewWidth / 100 );
                                     
-                                    reactionViewWidth = statedWidthDividedBy100 * 100;
-                                    if ( reactionViewWidth > 600 ) { reactionViewWidth=600; }
+                            //         reactionViewWidth = statedWidthDividedBy100 * 100;
+                            //         if ( reactionViewWidth > 600 ) { reactionViewWidth=600; }
 
-                                    // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
-                                    if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
-                                        $reactionView.wrap('<div class="ant_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
-                                    }
+                            //         // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
+                            //         if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
+                            //             $reactionView.wrap('<div class="ant_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
+                            //         }
 
-                                    // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
-                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true,contentWidth: '0px' }); } );
-                                } else {
-                                    ANT.actions.content_nodes.init(hash);
-                                }
+                            //         // can the header stuff be optional?
+                            //         $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                            //         ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true,contentWidth: '0px' }); } );
+                            //     } else {
+                            //     }
+                            
                         }
                     });
                 },
@@ -7596,7 +7591,7 @@ if ( sendData.kind=="page" ) {
                             var customDisplayName = $container.attr('ant-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                                // $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
                                 $cta = $('[ant-cta-for="'+customDisplayName+'"]');
 
                             // some init.  does this make sense here?
@@ -7610,8 +7605,8 @@ if ( sendData.kind=="page" ) {
                                 _customDisplaySetupHoverForShowAWindow($cta);
                                 _showAWindowAfterLoad();
                             }
-                            if ( $grid.length ) {
-                            }
+                            // if ( $grid.length ) {
+                            // }
                             ANT.actions.indicators.update(hash);
 
                         } else {
@@ -8010,8 +8005,9 @@ if ( sendData.kind=="page" ) {
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
                             $label = $('[ant-reactions-label-for="'+customDisplayName+'"]'),
-                            $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
-                            $cta = $('[ant-cta-for="'+customDisplayName+'"]');
+                            // $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                            $cta = $('[ant-cta-for="'+customDisplayName+'"]'),
+                            $cta_container = $cta.parent();
 
                         // some init.  does this make sense here?
 
@@ -8030,10 +8026,46 @@ if ( sendData.kind=="page" ) {
                                     // $counter.html('0');
                                 }
                             }
-                            if ( $cta.length ) {
+                            if ( $cta.length && summary.counts.tags > 0 ) {
+                                var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
+                                var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
+                                var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
+                                var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
+
+                                var topReactions = [],
+                                    topReactionsLimit = (summary.counts.tags===1) ? 1:2;
+
+                                    if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+                                        $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
+                                            for (var k=0; k < ANT.group.default_reactions.length; k++ ) {
+                                                var currentDefault = ANT.group.default_reactions[k];
+                                                if ( parseInt(tag_id) === currentDefault.id && topReactions.length < topReactionsLimit ) {
+
+                                                    topReactions.push( tag_data );
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                var show_expanded = false;
+                                if (isMobile && (ANT.group.separate_cta_expanded == 'both' || ANT.group.separate_cta_expanded == 'mobile') ) {
+                                    show_expanded = true;
+                                }
+                                if (!isMobile && (ANT.group.separate_cta_expanded == 'both' || ANT.group.separate_cta_expanded == 'desktop') ) {
+                                    show_expanded = true;
+                                }
+                                if (show_expanded === true && topReactions.length && !$cta_container.find('.ant-top-tags').length) {
+                                    $cta.append(
+                                        '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
+                                        ( topReactions[0] ? '<div style="background-color:rgb('+bgColorRGB0+');color:rgb('+textColorRGB0+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB0+');">('+topReactions[0].count+')</span></div>' : '' ) +
+                                        ( topReactions[1] ? '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[1].count+')</span></div>' : '' ) +
+                                        '</div></div>'
+                                    );
+                                }
                             }
-                            if ( $grid.length ) {
-                            }
+
+                            // if ( $grid.length ) {
+                            // }
                     } else {
 
                         //re-init if we want a 'hard reset'
@@ -9511,11 +9543,11 @@ if ( sendData.kind=="page" ) {
                     $backButton.click( function() {
     
                         //temp fix because the aWindow scrollpane re-init isnt working
-                        var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
-                        if(!isViewForAWindow){
-                            ANT.aWindow.close($aWindow);
-                            return;
-                        }
+                        // var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
+                        // if(!isViewForAWindow){
+                            // ANT.aWindow.close($aWindow);
+                            // return;
+                        // }
 
                         var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
                         $aWindow.find('.ant_header').replaceWith($header)
@@ -10271,7 +10303,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv31"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv32"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

@@ -847,7 +847,7 @@ div.ant div.ant_back.ant_hide { margin-top:-10px;}
 /*for now, just hide this button*/
 div.ant .ant_view_success div.ant_back { display: none;}
 div.ant.ant_inline .ant_view_success div.ant_back { display: block;}
-div[ant-grid-for] div.ant_back { display: block;}
+/*div[ant-grid-for] div.ant_back { display: block;}*/
 
 div.ant.ant_indicator_details_for_media div.ant_comment,
 div.ant.ant_indicator_details_for_media div.ant_otherCommentsBox { max-width:none;}
@@ -1323,7 +1323,7 @@ div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle:hover img.ant_arr
     background:url("../images/summary_box_arrow.png") no-repeat scroll 0 -19px transparent;
 }
 
-div.ant.ant-summary div.ant-top-tags {
+div.ant-top-tags {
   display:inline-block;
   margin: 0;
   max-width:220px;
@@ -1331,17 +1331,23 @@ div.ant.ant-summary div.ant-top-tags {
   overflow-x:scroll;
   margin-bottom: -7px;
 }
-div.ant.ant-summary div.ant-top-tags-wrapper {
+div.ant-custom-cta div.ant-top-tags {
+  margin:0 0 -6px 7px;
+}
+div.ant-top-tags-wrapper {
   white-space: nowrap;
 }
 
-div.ant.ant-summary div.ant-top-tags div.ant-top-tag {
+div.ant-top-tags div.ant-top-tag {
   display:inline-block;
   padding:4px 6px;
   margin-right:1px;
   font-weight: 900;
+  font-family: Helvetica,sans-serif;
+  font-size: 12px;
+  line-height: 16px;
 }
-div.ant.ant-summary div.ant-top-tags div.ant-top-tag span {
+div.ant-top-tags div.ant-top-tag span {
   font-weight:100;
 }
 
@@ -2712,11 +2718,17 @@ div.ant.w111 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
 
 
 /* default styles auto-generated custom CTA elements */
-.ant-custom-cta-container { display:block; margin:0; color: #333; }
-.ant-custom-cta-container .ant-custom-cta { padding:3px 5px; display:inline-block; }
+.ant-custom-cta-container { display:block; margin:0; color: #333; line-height: 16px; }
+.ant-custom-cta-container .ant-custom-cta { font-size:12px; line-height: 16px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; 
+  margin:10px 0;
+  float:none;
+  cursor:default;
+  display:inline-block;
+  padding: 0px 0px 0px 8px;
+  height:30px;
+}
 /*.ant-custom-cta-container .ant-custom-cta.ant-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}*/
 /*.ant-custom-cta-container .ant-custom-cta.ant-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; }*/
-.ant-custom-cta-container .ant-custom-cta { font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; background:rgba(255,255,255,0.7); padding:4px;}
 
 div#ant_loginPanel {
     z-index: 12101;
@@ -2754,8 +2766,8 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
     /*display: none;*/
 }
 
-[ant-grid-for] .jspPane { z-index:100; margin-left:0; }
-[ant-grid-for] .jspVerticalBar { z-index:101; }
+/*[ant-grid-for] .jspPane { z-index:100; margin-left:0; }*/
+/*[ant-grid-for] .jspVerticalBar { z-index:101; }*/
 
 .ant_clear_transform{
     -webkit-transform:  translate(0px, 0px) !important;
