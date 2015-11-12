@@ -519,6 +519,7 @@ def getSettingsDict(group):
              'admins',
              'word_blacklist',
              'blocked_tags',
+             'blocked_promo_tags',
              'all_tags',
              'approved',
              'requires_approval',
