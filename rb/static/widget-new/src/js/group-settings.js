@@ -159,6 +159,7 @@ function createFromJSON(json) {
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
+        customCSS: data('custom_css'),
         exclusionSelector: data('no_ant'), // TODO: no_readr?
         language: data('language')
     }
