@@ -4885,14 +4885,44 @@ function antenna($A){
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
+                    
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
-                  if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || window.location.href.indexOf( ANT.current.page_url ) == -1) ) {
-                    if (ANT.current.page_url != window.location.href) {
-                         ANT.current.page_url = window.location.href;
+                    var windowLocation = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
+
+                  if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || windowLocation.indexOf( ANT.current.page_url ) == -1) ) {
+                    if (ANT.current.page_url != windowLocation) {
+                        // think we changed pages
+                        $('.ant-summary').remove();
+
+
+
+                        /*
+
+
+
+                        DO IT BASED ON PRESENCE OF THE FIRST [ant-hash].  once that disappears, and more content has appear... then the content changed.
+
+
+
+
+                        */
+
+                         ANT.current.page_url = windowLocation;
                             var attempts = 0;
                             var tryToResetAntenna = setInterval( function() {
-                                if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 500 ) {
-                                    ANT.actions.reset();
+                                                        
+                                // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
+                                // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
+
+                                if (attempts++ < 80) {
+                                    var $active_sections = $(ANT.group.active_sections);
+                                    if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$('[ant-hash="'+ANT.current.first_hashed_content+'"]').length ) {
+                                        if ( $active_sections.length && $active_sections.find(ANT.group.anno_whitelist).length  ) {
+                                            ANT.actions.reset();
+                                            clearInterval(tryToResetAntenna);
+                                        }
+                                    }
+                                } else {
                                     clearInterval(tryToResetAntenna);
                                 }
                             }, 25);
@@ -10136,6 +10166,8 @@ if ( sendData.kind=="page" ) {
                     }
 
                     ANT.actions.sendHashes( hashesByPageId );
+
+                    ANT.current.first_hashed_content = $(ANT.group.active_sections).find('[ant-hash]').first().attr('ant-hash');
 
                     if (!ANT.util.activeAB()) return;
 
