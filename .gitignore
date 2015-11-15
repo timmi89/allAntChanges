@@ -12,7 +12,7 @@ readrdb.db
 .idea/
 nohup.out
 virtualenvs/production-venv/
-rb/static/grunt/.sass-cache
+.sass-cache
 rb/static/site/css/site_sass_compiled.css.map
 celerybeat-schedule
 celerybeat.pid
