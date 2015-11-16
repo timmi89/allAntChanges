@@ -3,7 +3,6 @@ var AjaxClient = require('./utils/ajax-client');
 var User = require('./utils/user');
 
 function setupCommentArea(reactionProvider, containerData, pageData, callback, ractive) {
-    $(ractive.find('.antenna-comment-input')).focus(); // TODO: decide whether we really want to start with focus in the textarea
     ractive.on('inputchanged', updateInputCounter);
     ractive.on('addcomment', addComment);
     updateInputCounter();
