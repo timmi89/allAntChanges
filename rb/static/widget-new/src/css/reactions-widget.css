@@ -18,12 +18,10 @@
 }
 
 .antenna-header {
-    height: 28px;
-    box-sizing: border-box;
     border-bottom: 1px solid #f0f0f0;
     background-color: white;
     color: #8fb3f2;
-    padding: 5px 0 0 6px;
+    padding: 7px 0 7px 6px;
     cursor: move;
 }
 
