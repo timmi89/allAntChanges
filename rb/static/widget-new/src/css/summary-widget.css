@@ -1,22 +1,28 @@
 
-.ant-summary-widget {
-    display: table-cell;
-    vertical-align: middle;
-    min-width: 50px;
-    height: 30px;
-    margin: 10px 0;
-    padding: 0 5px;
+.antenna-summary-widget {
+    display: inline-block;
     box-shadow: 0 0 3px rgba(000,000,000,.3);
 }
 
-.ant-summary-widget.notloaded {
+.antenna-summary-widget.notloaded {
     visibility: hidden;
 }
 
-.ant-summary-widget {
+.antenna-summary-widget {
     color: #8fb3f2;
 }
 
-.ant-summary-widget .antenna-logo-path {
+.antenna-summary-widget .antenna-logo-path {
     fill: #8fb3f2;
+}
+
+.antenna-summary-inner {
+    vertical-align: middle;
+    padding: 8px 10px 8px 8px;
+}
+
+.antenna-summary-title {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
 }

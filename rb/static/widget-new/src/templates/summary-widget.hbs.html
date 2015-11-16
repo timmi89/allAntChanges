@@ -1,14 +1,14 @@
-<div class="antenna ant-summary-widget {{^pageData.summaryLoaded}}notloaded{{/pageData.summaryLoaded}}" decorator="cssreset">
-    <a href="http://www.antenna.is" target="_blank">
-        {{>logo}}
-    </a>
-    {{#if pageData.summaryTotal === 0}}
-        {{getMessage('summary-widget_reactions')}}
-    {{elseif pageData.summaryTotal === 1}}
-        {{getMessage('summary-widget_reactions_one')}}
-    {{else}}
-        {{getMessage('summary-widget_reactions_many', [ pageData.summaryTotal ])}}
-    {{/if}}
-
-
+<div class="antenna antenna-summary-widget {{^pageData.summaryLoaded}}notloaded{{/pageData.summaryLoaded}}" decorator="cssreset">
+    <div class="antenna-summary-inner">
+        {{>logo}}<!--
+        --><span class="antenna-summary-title">
+            {{#if pageData.summaryTotal === 0}}
+                {{getMessage('summary-widget_reactions')}}
+            {{elseif pageData.summaryTotal === 1}}
+                {{getMessage('summary-widget_reactions_one')}}
+            {{else}}
+                {{getMessage('summary-widget_reactions_many', [ pageData.summaryTotal ])}}
+            {{/if}}
+        </span>
+    </div>
 </div>

@@ -23,7 +23,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
 }
 
 function rootElement(ractive) {
-    return ractive.find('.ant-summary-widget');
+    return ractive.find('.antenna-summary-widget');
 }
 
 function openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive) {
