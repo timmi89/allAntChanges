@@ -22,7 +22,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 //noinspection JSUnresolvedVariable
 module.exports = {
     // TODO: Make this more flexible so it works in everyone's dev environment
-    offline: offline = currentScriptSrc.indexOf('localhost') !== -1,
-    test: currentScriptSrc.indexOf('localhost:3000') !== -1,
+    offline: offline = currentScriptSrc.indexOf('local-static.antenna.is') !== -1,
+    test: currentScriptSrc.indexOf('local-static.antenna.is:3000') !== -1,
     debug: currentScriptSrc.indexOf('?debug') !== -1
 };
