@@ -1,5 +1,5 @@
-web:
-  build: ./dependencies
+python_environment:
+  build: ./development
   environment:
     DEBUG: 'true'
     DATABASE_HOST: 'db'

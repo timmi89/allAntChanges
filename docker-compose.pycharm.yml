@@ -2,9 +2,10 @@ web:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'sleep 25 && python manage.py runserver 0.0.0.0:8081'
+  build: docker/pycharm_development
   ports:
     - "8081:8081"
+    - "2222:22"
   links:
     - db
     - cassandra

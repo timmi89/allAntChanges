@@ -43,7 +43,7 @@ Add the following entries to `/etc/hosts`
 dinghy up
 
 # Update the codes
-get pull
+git pull
 
 # Run migrations
 docker-compose run --rm web ./manage.py migrate
