@@ -16,4 +16,3 @@ virtualenvs
 rb/static/site/css/site_sass_compiled.css.map
 celerybeat-schedule*
 celerybeat.pid
-node_modules

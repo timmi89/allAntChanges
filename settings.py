@@ -119,6 +119,7 @@ if DEBUG:
 
     CACHES = {
         'default': {
+            # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
             'LOCATION': os.getenv(
                 'MEMCACHED_HOST',
