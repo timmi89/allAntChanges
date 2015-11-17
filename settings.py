@@ -65,7 +65,7 @@ if DEBUG:
     BASE_URL = 'http://local.antenna.is:8081'
     BASE_URL_SECURE = 'https://local.antenna.is:8081'
     STATIC_URL = '//local.antenna.is:8081/static/'
-    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['routers.DevMasterSlaveRouter']
 
     DATABASES = {
         'default': {

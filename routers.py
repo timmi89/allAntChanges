@@ -45,6 +45,11 @@ class MasterSlaveRouter(object):
         return None
 
     def allow_syncdb(self, db, model):
+        return False
+
+
+class DevMasterSlaveRouter(MasterSlaveRouter):
+    def allow_syncdb(self, db, model):
         return True
 
 
