@@ -161,5 +161,113 @@
       "page_tld": "",
       "summary_widget_expanded_mobile": 0
     }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "group": 1,
+      "node": 1,
+      "order": 0
+    }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 2,
+    "fields": {
+      "id": 2,
+      "group": 1,
+      "node": 2,
+      "order": 3
+    }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 3,
+    "fields": {
+      "id": 3,
+      "group": 1,
+      "node": 3,
+      "order": 2
+    }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 4,
+    "fields": {
+      "id": 4,
+      "group": 1,
+      "node": 4,
+      "order": 5
+    }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 5,
+    "fields": {
+      "id": 5,
+      "group": 1,
+      "node": 5,
+      "order": 4
+    }
+  },
+  {
+    "model": "rb.GroupBlessedTag",
+    "pk": 6,
+    "fields": {
+      "id": 6,
+      "group": 1,
+      "node": 6,
+      "order": 1
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 1,
+    "fields": {
+      "id": 1,
+      "body": "Love It"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 2,
+    "fields": {
+      "id": 2,
+      "body": "Really?"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 3,
+    "fields": {
+      "id": 3,
+      "body": "Agreed"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 4,
+    "fields": {
+      "id": 4,
+      "body": "Hilarious"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 5,
+    "fields": {
+      "id": 5,
+      "body": "Interesting"
+    }
+  },
+  {
+    "model": "rb.InteractionNode",
+    "pk": 6,
+    "fields": {
+      "id": 6,
+      "body": "Don't think so"
+    }
   }
 ]
