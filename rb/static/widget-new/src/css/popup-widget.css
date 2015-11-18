@@ -62,11 +62,14 @@
     transition: max-width 200ms;
     color:#CCCCCC;
     white-space: pre; /* don't wrap */
-    text-decoration: underline;
 }
 
 .antenna-popup-body:hover .antenna-popup-text {
     margin-left: 8px;
     max-width: 150px;
     visibility: inherit; /* only show if the parent element is showing */
+}
+
+.antenna-popup-text:hover {
+    color: #ffffff;
 }
