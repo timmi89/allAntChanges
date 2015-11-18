@@ -1,6 +1,9 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+// Collection of all page data, keyed by page hash
 var pages = {};
+// Mapping of page URLs to page hashes, which are computed on the server.
+var urlHashes = {};
 
 function getPageData(hash) {
     var pageData = pages[hash];
@@ -30,8 +33,7 @@ function updateAllPageData(jsonPages, groupSettings) {
 }
 
 function updatePageData(json, groupSettings) {
-    var pageHash = json.pageHash;
-    var pageData = getPageData(pageHash);
+    var pageData = getPageDataForJsonResponse(json);
 
     // TODO: Can we get away with just setting pageData = json without breaking Ractive's data binding?
     var summaryReactions = json.summaryReactions;
@@ -228,8 +230,36 @@ function registerReaction(reaction, containerData, pageData) {
     return reaction;
 }
 
+// Gets page data based on a URL. This allows our client to start processing a page (and binding data objects
+// to the UI) *before* we get data back from the server.
+function getPageDataByURL(url) {
+    var serverHash = urlHashes[url];
+    if (serverHash) {
+        // If the server already given us the hash for the page, use it.
+        return getPageData(serverHash);
+    } else {
+        // Otherwise, temporarily use the url as the hash. This will get updated whenever we get data back from the server.
+        return getPageData(url);
+    }
+}
+
+function getPageDataForJsonResponse(json) {
+    var pageHash = json.pageHash;
+    var requestedURL = json.requestedURL;
+    urlHashes[requestedURL] = pageHash;
+    var urlBasedData = pages[requestedURL];
+    if (urlBasedData) {
+        // urlBasedData we've already created/bound a pageData object under the requestedUrl, move that data over
+        // to the hash key
+        pages[pageHash] = urlBasedData;
+        delete pages[requestedURL];
+    }
+    return getPageData(pageHash);
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
+    getPageDataByURL: getPageDataByURL,
     getPageData: getPageData,
     updateAllPageData: updateAllPageData,
     getContainerData: getContainerData,
