@@ -71,19 +71,36 @@ function sizeReactionTextToFit($reactionsWindow) {
         if (originalDisplay === 'none') { // If we're sizing the boxes before the widget is displayed, temporarily display it offscreen.
             $reactionsWindow.css({display: 'block', left: '100%'});
         }
-        var ratio = node.clientWidth / node.scrollWidth;
-        if (ratio < 1.0) { // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
+        var horizontalRatio = node.clientWidth / node.scrollWidth;
+        if (horizontalRatio < 1.0) { // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
             var text = node.innerHTML;
             var mid = Math.ceil(text.length / 2); // Look for the closest space to the middle, weighted slightly (Math.ceil) toward a space in the second half.
             var secondHalfIndex = text.indexOf(' ', mid);
             var firstHalfIndex = text.lastIndexOf(' ', mid);
             var splitIndex = Math.abs(secondHalfIndex - mid) < Math.abs(mid - firstHalfIndex) ? secondHalfIndex : firstHalfIndex;
+            var verticalRatio;
             if (splitIndex > 1) {
+                // Split the text and then see how it fits.
                 node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
-                ratio = node.clientWidth / node.scrollWidth;
-            }
-            if (ratio < 1.0) {
-                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * ratio) - 1));
+                var wrappedHorizontalRatio = node.clientWidth / node.scrollWidth;
+                var parentAvailableHeight = computeAvailableClientArea(node.parentNode);
+                verticalRatio = node.scrollHeight / parentAvailableHeight;
+
+                var verticalRatioMax = 0.4;
+                if (verticalRatio && verticalRatio > verticalRatioMax) {
+                    var scaleFactor = verticalRatioMax / verticalRatio;
+                }
+                if (wrappedHorizontalRatio < 1.0) {
+                    scaleFactor = Math.min(scaleFactor, wrappedHorizontalRatio);
+                }
+                if (scaleFactor <= horizontalRatio) {
+                    // If we ended up having to make the text small
+                    node.innerHTML = text;
+                    scaleFactor = horizontalRatio;
+                }
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * scaleFactor) - 1));
+            } else {
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * horizontalRatio) - 1));
             }
         }
         if (originalDisplay === 'none') {
@@ -93,6 +110,11 @@ function sizeReactionTextToFit($reactionsWindow) {
             teardown: function() {}
         };
     };
+}
+
+function computeAvailableClientArea(node) {
+    var nodeStyle = window.getComputedStyle(node);
+    return parseInt(nodeStyle.height) - parseInt(nodeStyle.paddingTop) - parseInt(nodeStyle.paddingBottom);
 }
 
 module.exports = {
