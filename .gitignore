@@ -10,6 +10,7 @@ readrdb.db
 *.orig
 .settings/
 .idea/
+.pycharm_helpers
 nohup.out
 .sass-cache
 virtualenvs

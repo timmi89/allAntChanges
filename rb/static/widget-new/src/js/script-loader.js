@@ -7,6 +7,8 @@ var URLs = require('./utils/urls');
 var baseUrl;
 if (AppMode.test) {
     baseUrl = URLs.TEST;
+} else if (AppMode.offline) {
+    baseUrl = URLs.DEVELOPMENT;
 } else {
     baseUrl = URLs.PRODUCTION;
 }
