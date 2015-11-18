@@ -1,5 +1,6 @@
 
 var URLs = require('./urls');
+var XdmLoader = require('./xdm-loader');
 
 // Register ourselves to hear messages
 window.addEventListener("message", receiveMessage, false);
@@ -25,7 +26,7 @@ function getUser(callback) {
 
 function receiveMessage(event) {
     var eventOrigin = event.origin;
-    if (eventOrigin === URLs.antennaHome()) {
+    if (eventOrigin === XdmLoader.ORIGIN) {
         var response = JSON.parse(event.data);
         // TODO: The event.source property gives us the source window of the message and currently the XDM frame fires out
         // events that we receive before we ever try to post anything. So we *could* hold onto the window here and use it
@@ -44,7 +45,7 @@ function receiveMessage(event) {
 
 function postMessage(message, callbackKey, callback, validCacheEntry) {
 
-    var targetOrigin = URLs.antennaHome();
+    var targetOrigin = XdmLoader.ORIGIN;
     callbacks[callbackKey] = callback;
 
     if (isXDMLoaded) {

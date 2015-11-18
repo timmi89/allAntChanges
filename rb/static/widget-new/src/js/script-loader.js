@@ -4,7 +4,12 @@ var JQueryProvider = require('./utils/jquery-provider');
 var AppMode = require('./utils/app-mode');
 var URLs = require('./utils/urls');
 
-var baseUrl = URLs.antennaHome();
+var baseUrl;
+if (AppMode.test) {
+    baseUrl = URLs.TEST;
+} else {
+    baseUrl = URLs.PRODUCTION;
+}
 
 var scripts = [
     {src: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js', callback: JQueryProvider.loaded},

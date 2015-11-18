@@ -1,5 +1,6 @@
+var AppMode = require('./utils/app-mode');
 var URLs = require('./utils/urls');
-var baseUrl = URLs.antennaHome();
+var baseUrl = AppMode.offline ? URLs.DEVELOPMENT : URLs.PRODUCTION;
 
 function loadCss() {
     // To make sure none of our content renders on the page before our CSS is loaded, we append a simple inline style

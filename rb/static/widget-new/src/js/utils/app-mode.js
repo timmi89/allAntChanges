@@ -1,3 +1,4 @@
+var URLs = require('./urls');
 
 function computeCurrentScriptSrc() {
     if (document.currentScript) {
@@ -21,8 +22,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    // TODO: Make this more flexible so it works in everyone's dev environment
-    offline: offline = currentScriptSrc.indexOf('local-static.antenna.is') !== -1,
-    test: currentScriptSrc.indexOf('local-static.antenna.is:3000') !== -1,
+    offline: currentScriptSrc.indexOf(URLs.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLs.TEST) !== -1,
+    test: currentScriptSrc.indexOf(URLs.TEST) !== -1,
     debug: currentScriptSrc.indexOf('?debug') !== -1
 };

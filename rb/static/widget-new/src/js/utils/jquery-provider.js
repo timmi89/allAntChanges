@@ -1,3 +1,4 @@
+var AppMode = require('./app-mode');
 var URLs = require('./urls');
 
 var loadedjQuery;
@@ -6,10 +7,19 @@ var callbacks = [];
 // Notifies the jQuery provider that we've loaded the jQuery library.
 function loaded() {
     loadedjQuery = jQuery.noConflict();
+    var baseUrl;
+    if (AppMode.test) {
+        baseUrl = URLs.TEST;
+    } else if (AppMode.offline) {
+        baseUrl = URLs.DEVELOPMENT;
+    } else {
+        baseUrl = URLs.PRODUCTION;
+    }
     // Add our custom JSONP function
+    // TODO: Extract this to ajax-client
     loadedjQuery.getJSONP = function(url, data, success, error) {
         var options = {
-            url: URLs.antennaHome() + url,
+            url: baseUrl + url,
             type: "get",
             contentType: "application/json",
             dataType: "jsonp",

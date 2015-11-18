@@ -1,6 +1,9 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AppMode = require('./app-mode');
 var URLs = require('./urls');
 var WidgetBucket = require('./widget-bucket');
+
+var XDM_ORIGIN = AppMode.offline ? URLs.DEVELOPMENT : URLs.PRODUCTION;
 
 function createXDMframe(groupId) {
     //ANT.session.receiveMessage({}, function() {
@@ -8,7 +11,7 @@ function createXDMframe(groupId) {
     //});
 
 
-    var iframeUrl = URLs.antennaHome() + "/static/widget-new/xdm/xdm.html",
+    var iframeUrl = XDM_ORIGIN + "/static/widget-new/xdm/xdm.html",
     parentUrl = window.location.href,
     parentHost = window.location.protocol + "//" + window.location.host,
     // TODO: Restore the bookmarklet attribute on the iFrame?
@@ -21,5 +24,6 @@ function createXDMframe(groupId) {
 }
 
 module.exports = {
-    createXDMframe: createXDMframe
+    createXDMframe: createXDMframe,
+    ORIGIN: XDM_ORIGIN
 };

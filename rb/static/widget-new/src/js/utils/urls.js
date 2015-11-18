@@ -1,15 +1,7 @@
-var AppMode = require('./app-mode');
 
-function antennaHome() {
-    if (AppMode.test) {
-        return window.location.protocol + '//local-static.antenna.is:3000';
-    } else if (AppMode.offline) {
-        return window.location.protocol + "//local-static.antenna.is:8081";
-    }
-    return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
-}
-
-// TODO: our server is redirecting any URLs without a trailing slash. is this necessary?
+var PROD_SERVER_URL = "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
+var DEV_SERVER_URL = window.location.protocol + "//local-static.antenna.is:8081";
+var TEST_SERVER_URL = window.location.protocol + '//localhost:3000';
 
 function getGroupSettingsUrl() {
     return '/api/settings/';
@@ -107,7 +99,6 @@ function legacyComputeMediaUrl($element) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    antennaHome: antennaHome,
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,
@@ -115,5 +106,8 @@ module.exports = {
     fetchCommentUrl: getFetchCommentUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     computeImageUrl: computeImageUrl,
-    computeMediaUrl: computeMediaUrl
+    computeMediaUrl: computeMediaUrl,
+    PRODUCTION: PROD_SERVER_URL,
+    DEVELOPMENT: DEV_SERVER_URL,
+    TEST: TEST_SERVER_URL
 };
