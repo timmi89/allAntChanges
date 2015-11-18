@@ -34,6 +34,8 @@ function updateAllPageData(jsonPages, groupSettings) {
 
 function updatePageData(json, groupSettings) {
     var pageData = getPageDataForJsonResponse(json);
+    pageData.pageId = json.id;
+    pageData.groupId = groupSettings.groupId();
 
     // TODO: Can we get away with just setting pageData = json without breaking Ractive's data binding?
     var summaryReactions = json.summaryReactions;
@@ -74,12 +76,6 @@ function updatePageData(json, groupSettings) {
             containerCounts[i].container.suppress = true;
         }
     }
-
-    // TODO Consider supporting incremental update of data that we already have from the server. That would mean only
-    // updating fields in the local object if they exist in the json data.
-    pageData.groupId = groupSettings.groupId();
-    pageData.pageId = json.id;
-    pageData.pageHash = pageHash;
 
     return pageData;
 }
