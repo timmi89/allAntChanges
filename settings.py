@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 from cassandra import ConsistencyLevel
 import os
-import time
 
 if os.uname()[0] == 'Linux':
     DEBUG = os.getenv('DEBUG', 'false') == 'true'
@@ -343,7 +342,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
-    "antenna/rb/templates"
+    "rb/templates",
+    os.getenv('VIRTUAL_ENV') + "/django/contrib/admin/templates"
 )
 
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
