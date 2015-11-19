@@ -1,15 +1,16 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
-from os import uname
+import os
 
-if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
-elif uname()[0] == "Linux": DEBUG = False
-else: DEBUG = True
-# DEBUG=True
-if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
-else: ANTENNA_ARRAY = False
-#if not DEBUG:
-#    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
+if os.uname()[0] == 'Linux':
+    DEBUG = os.getenv('DEBUG', 'false') == 'true'
+else:
+    DEBUG = True
+
+if os.uname()[1].startswith('antenna.array'):
+    ANTENNA_ARRAY = True
+else:
+    ANTENNA_ARRAY = False
 
 # Server e-mail account
 if DEBUG:
@@ -67,7 +68,7 @@ if DEBUG:
     BASE_URL_SECURE = 'https://local.antenna.is:8081'
     # STATIC_URL = '//localhost:8081/static/'
     STATIC_URL = '//local.antenna.is:8081/static/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
 
     DATABASES = {
         'default': {
@@ -180,7 +181,7 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
 
 
     DATABASES = {
