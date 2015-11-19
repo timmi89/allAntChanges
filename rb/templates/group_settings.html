@@ -152,6 +152,21 @@
                 </label>
                 {{ form.separate_cta }}{{ form.separate_cta.errors }}
             </div>
+            <div class="formRow">
+                <label for="id_separate_cta_expanded">
+                    <span class="labelTitle">Show top reactions for the separate call-to-action?</span>
+                    <span>On what platforms should the separate call-to-action also show the top 2 reactions, without a user having to click/tap?</span>
+                </label>
+                {{ form.separate_cta_expanded.as_hidden }}{{ form.separate_cta_expanded.errors }}
+                <select id="separate_cta_expanded_selector" class="browser-default">
+                    <option {% if group.separate_cta_expanded == "none" %}selected="selected"{% endif %} value="none">Neither</option>
+                    <option {% if group.separate_cta_expanded == "mobile" %}selected="selected"{% endif %} value="mobile">Mobile only</option>
+                    <option {% if group.separate_cta_expanded == "desktop" %}selected="selected"{% endif %} value="desktop">Desktop only</option>
+                    <option {% if group.separate_cta_expanded == "both" %}selected="selected"{% endif %} value="both">Both mobile &amp; desktop</option>
+                </select>
+            </div>
+
+            
             <!-- this is too confusing still to expose to the user. 
             <div class="formRow">
                 <label for="id_br_replace_scope_selector">
@@ -483,6 +498,10 @@
 
             $('#summary_widget_method_selector').change( function() {
                 $('#id_summary_widget_method').val( $(this).val() );
+            });
+
+            $('#separate_cta_expanded_selector').change( function() {
+                $('#id_separate_cta_expanded').val( $(this).val() );
             });
 
             $('#recirc_jquery_method_selector').change( function() {

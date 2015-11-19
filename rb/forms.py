@@ -373,6 +373,7 @@ class GroupForm(forms.ModelForm):
             'active_sections',
             'anno_whitelist',
             'separate_cta',
+            'separate_cta_expanded',
             'no_readr',
             'img_whitelist',
             'img_blacklist',

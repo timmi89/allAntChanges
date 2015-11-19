@@ -237,6 +237,7 @@ class Group(models.Model):
     summary_widget_expanded_mobile = models.BooleanField(default=False)
     br_replace_scope_selector = models.CharField(max_length=255, blank=True)
     separate_cta = models.CharField(max_length=255, blank=True)
+    separate_cta_expanded = models.CharField(max_length=255, blank=True, default="none")
 
     # logo fields
     logo_url_sm = models.CharField(max_length=200, blank=True)
