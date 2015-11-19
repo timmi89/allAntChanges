@@ -7,6 +7,11 @@ if os.uname()[0] == 'Linux':
 else:
     DEBUG = True
 
+if os.uname()[1].startswith('antenna.array'):
+    ANTENNA_ARRAY = True
+else:
+    ANTENNA_ARRAY = False
+
 # Server e-mail account
 if DEBUG:
     SERVER_EMAIL = "devserver@antenna.is"
