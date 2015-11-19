@@ -3720,7 +3720,6 @@ function antenna($A){
                 );
                 $('#ant_sandbox').append( $xdmIframe );
 
-
                 // this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 
@@ -8204,7 +8203,7 @@ if ( sendData.kind=="page" ) {
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
-                        if ( $indicator.hasClass('ant_dont_show') || $indicator.hasClass('ant_no_reactions') ) {
+                        if ( $indicator && ($indicator.hasClass('ant_dont_show') || $indicator.hasClass('ant_no_reactions')) ) {
                             $indicator.css('opacity', 0);
                         }
 
@@ -10193,8 +10192,10 @@ if ( sendData.kind=="page" ) {
                     $('#ant_sandbox').append('<div id="ant_summary_tag_details" />');
                     
                     //setup widgetSummary
-                    if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANT.group.post_selector).length ) ) {
-                        widgetSummarySettings.$anchor.antWidgetSummary(widgetSummarySettings);
+                    if (widgetSummarySettings.$anchor && widgetSummarySettings.$anchor.length) {
+                        if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANT.group.post_selector).length ) ) {
+                            widgetSummarySettings.$anchor.antWidgetSummary(widgetSummarySettings);
+                        }
                     }
 
                 }
