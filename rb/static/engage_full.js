@@ -4887,7 +4887,7 @@ function antenna($A){
                 var observer = new MutationObserver(function(mutationRecords) {
                     
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
-                    var windowLocation = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
+                    var windowLocation = (window.location.protocol + '//' + window.location.hostname + window.location.pathname).toLowerCase();
 
                   if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || windowLocation.indexOf( ANT.current.page_url ) == -1) ) {
                     if (ANT.current.page_url != windowLocation) {

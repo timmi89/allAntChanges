@@ -100,8 +100,8 @@ module.exports = function(grunt) {
                 files: [ 'Gruntfile.js' ]
             },
             web_js: {
-                files: [ '<%= paths.web_js_src %>' ],
-                tasks: [ 'uglify:web_js' ]
+                files: [ '<%= paths.web_js_src %>', '<%= paths.engage_js_src %>' ],
+                tasks: [ 'uglify:web_js', 'uglify:engage_js' ]
             },
             scss: {
                 files: [ '<%= paths.web_scss_watch_src %>' ],
