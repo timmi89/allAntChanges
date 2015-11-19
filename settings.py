@@ -343,7 +343,7 @@ ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
     "rb/templates",
-    os.getenv('VIRTUAL_ENV') + "/django/contrib/admin/templates"
+    # os.getenv('VIRTUAL_ENV') + "/django/contrib/admin/templates"
 )
 
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
