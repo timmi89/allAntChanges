@@ -24,7 +24,7 @@ celerybeat:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'sleep 25 && ./manage.py celerybeat --loglevel=debug'
+  command: bash -c 'sleep 25 && ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid'
   links:
     - db
     - cassandra
