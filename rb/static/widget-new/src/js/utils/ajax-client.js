@@ -192,8 +192,8 @@ function reactionFromResponse(response, contentLocation) {
     var reaction = {
         text: response.interaction.interaction_node.body,
         id: response.interaction.interaction_node.id,
-        count: 1 // TODO: could we get back a different count if someone else made the same "new" reaction before us?
-        // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
+        count: 1,
+        parentID: response.interaction.id
     };
     if (response.content_node) {
         reaction.content = {
