@@ -86,17 +86,16 @@ function setupPositioning($containerElement, groupSettings, ractive) {
     var $rootElement = $(rootElement(ractive));
     positionIndicator();
 
-    var reposition = function() {
-        positionIndicator();
-    };
-    ThrottledEvents.on('resize', reposition);
+    ThrottledEvents.on('resize', positionIfNeeded);
     ractive.on('teardown', function() {
-        ThrottledEvents.off('resize', reposition);
+        ThrottledEvents.off('resize', positionIfNeeded);
+    });
+    ThrottledEvents.on('scroll', positionIfNeeded);
+    ractive.on('teardown', function() {
+        ThrottledEvents.off('scroll', positionIfNeeded);
     });
 
     // TODO: consider also listening to src attribute changes, which might affect the height of elements on the page
-    // TODO: consider holding onto the element's last known offset and simply using that (checking if it changed) to
-    //       determine if the indicator needs to be repositioned.
     MutationObserver.addAdditionListener(elementsAddedOrRemoved);
     MutationObserver.addRemovalListener(elementsAddedOrRemoved);
 
@@ -104,11 +103,27 @@ function setupPositioning($containerElement, groupSettings, ractive) {
         // Reposition the indicator if elements which might adjust the container's position are added/removed.
         for (var i = 0; i < $elements.length; i++) {
             var $element = $elements[i];
-            if ($element.height() > 0 && $element.offset().top <= $containerElement.offset().top) {
-                reposition();
+            if ($element.height() > 0) {
+                positionIfNeeded();
                 return;
             }
         }
+    }
+
+    var lastContainerOffset = $containerElement.offset();
+    var lastContainerHeight = $containerElement.height();
+
+    function positionIfNeeded() {
+        var containerOffset = $containerElement.offset();
+        var containerHeight = $containerElement.height();
+        if (containerOffset.top === lastContainerOffset.top &&
+            containerOffset.left === lastContainerOffset.left &&
+            containerHeight === lastContainerHeight) {
+            return;
+        }
+        lastContainerOffset = containerOffset;
+        lastContainerHeight = containerHeight;
+        positionIndicator();
     }
 
     function positionIndicator() {
