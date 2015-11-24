@@ -94,12 +94,22 @@ function scanForCallsToAction($element, pageData, groupSettings) {
         ctaTargets[antItemId] = $ctaTarget;
     });
 
-    var ctaLabels = {}; // The optional elements that report the number of reactions to the cta
+    var ctaLabels = {}; // Optional elements that report the number of reactions to the cta (e.g. "1 reaction")
     find($element, '[ant-reactions-label-for]', true).each(function() {
         var $ctaLabel = $(this);
         $ctaLabel.addClass('no-ant'); // don't show the normal reaction affordance on a cta label
         var antItemId = $ctaLabel.attr('ant-reactions-label-for').trim();
-        ctaLabels[antItemId] = $ctaLabel;
+        ctaLabels[antItemId] = ctaLabels[antItemId] || [];
+        ctaLabels[antItemId].push($ctaLabel);
+    });
+
+    var ctaCounters = {}; // Optional elements that report only the count of reaction to a cta (e.g. "1")
+    find($element, '[ant-counter-for]', true).each(function() {
+        var $ctaCounter = $(this);
+        $ctaCounter.addClass('no-ant'); // don't show the normal reaction affordance on a cta counter
+        var antItemId = $ctaCounter.attr('ant-counter-for').trim();
+        ctaCounters[antItemId] = ctaCounters[antItemId] || [];
+        ctaCounters[antItemId].push($ctaCounter);
     });
 
     var $ctaElements = find($element, '[ant-cta-for]'); // The call to action elements which prompt the user to react
@@ -118,7 +128,8 @@ function scanForCallsToAction($element, pageData, groupSettings) {
                     containerElement: $targetElement,
                     contentData: contentData,
                     ctaElement: $ctaElement,
-                    ctaLabel: ctaLabels[antItemId],
+                    ctaLabels: ctaLabels[antItemId],
+                    ctaCounters: ctaCounters[antItemId],
                     defaultReactions: groupSettings.defaultReactions($targetElement),
                     pageData: pageData,
                     groupSettings: groupSettings
