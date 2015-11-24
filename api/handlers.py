@@ -765,30 +765,35 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
 
         pages = []
         for requested_page in requested_pages:
-            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
+            url = requested_page['url']
+            # Massage the data for the new API. the "url" parameter is now always the canonical url
             requested_page['canonical_url'] = 'same'
-            # /MODIFICATION
-            pages.append(getPage(host, requested_page))
+            page = getPage(host, requested_page)
+            pages.append({ 'page_id': page.id, 'requested_url': url})
 
         pages_data = []
 
-        for current_page in pages:
-            cached_result = check_and_get_locked_cache('page_data_newer_' + str(current_page.id))
+        for page_info in pages:
+            page_id = page_info['page_id']
+            cached_result = check_and_get_locked_cache('page_data_newer_' + str(page_id))
             if cached_result is not None:
-                #logger.info('returning page_data_newer cached result')
-                pages_data.append(cached_result)
+                page_data = cached_result
             else:
                 logger.info('missed page_data_newer cache')
-                result_dict = getSinglePageDataNewer(current_page.id)
-                pages_data.append(result_dict)
+                page_data = getSinglePageDataNewer(page_id)
                 try:
-                    cache.set('page_data_newer_' + str(current_page.id), result_dict)
+                    cache.set('page_data_newer_' + str(page_id), page_data)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))
                 try:
-                    get_cache('redundant').set('page_data_newer_' + str(current_page.id), result_dict)
+                    get_cache('redundant').set('page_data_newer_' + str(page_id), page_data)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))
+            if page_data:
+                # tag the returned page_data with the requested_url that was passed to us (this can include query strings and other bits of the url that we strip off)
+                # this lets the client map the data we pass back to the url they sent us
+                page_data['requestedURL'] = page_info['requested_url']
+                pages_data.append(page_data)
 
         return pages_data
 

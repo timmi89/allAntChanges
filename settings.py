@@ -322,12 +322,13 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages"
 )
 
 MIDDLEWARE_CLASSES = (
@@ -342,8 +343,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
-    "rb/templates",
-    # os.getenv('VIRTUAL_ENV') + "/django/contrib/admin/templates"
+    "rb/templates"
 )
 
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -379,11 +379,11 @@ SEEDERS = [
 INSTALLED_APPS = [
     'django_cassandra_engine',
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
     'south',
     'api',
     'rb',

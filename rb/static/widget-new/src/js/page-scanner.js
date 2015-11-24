@@ -45,11 +45,7 @@ function scanAllPages(groupSettings) {
 // 3. Insert widget affordances for each which are bound to the data model by the hashes.
 function scanPage($page, groupSettings) {
     var url = PageUtils.computePageUrl($page, groupSettings);
-    var urlHash = Hash.hashUrl(url);
-    if (AppMode.debug) {
-        $page.attr('ant-hash', urlHash);
-    }
-    var pageData = PageData.getPageData(urlHash);
+    var pageData = PageData.getPageDataByURL(url);
     var $activeSections = find($page, groupSettings.activeSections(), true);
 
     // First, scan for elements that would cause us to insert something into the DOM that takes up space.
@@ -407,8 +403,7 @@ function elementsAdded(groupSettings) {
                         $page = $('body'); // TODO: is this right? keep in sync with scanAllPages
                     }
                     var url = PageUtils.computePageUrl($page, groupSettings);
-                    var urlHash = Hash.hashUrl(url);
-                    var pageData = PageData.getPageData(urlHash);
+                    var pageData = PageData.getPageDataByURL(url);
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
                     // Next, see if any entire active sections were added

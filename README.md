@@ -45,6 +45,9 @@ dinghy up
 # Update the codes
 git pull
 
+# Update dependencies
+docker-compose run --rm web pip install -r requirements.txt
+
 # Run migrations
 docker-compose run --rm web ./manage.py migrate
 
