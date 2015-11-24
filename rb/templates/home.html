@@ -17,12 +17,11 @@
 <section class="masthead">
   <div class="container">
     <div class="row">
-      <div class="col s12 l8">
+      <div class="col s12 l7">
         <h1>
-          <div class="line-one no-ant">Kick-ass</div>
+          <div class="line-one no-ant">Simple,</div>
           <div class="line-two no-ant">mobile-first</div>
           <div class="line-three no-ant">content engagement.</div>
-          <!-- <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div> -->
         </h1>
         <h3>
           <div class="line-one no-ant">Build loyalty and increase KPIs.</div>
@@ -30,8 +29,24 @@
           <div class="line-two no-ant">Antenna empowers audience reaction to any content. With just a tap.</div>
         </h3> 
       </div>
-      <div class="col s12 l4">
-        <iframe src="https://player.vimeo.com/video/144779066?autoplay=1" style="min-height:515px;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      <div class="col s12 l5">
+        <div class="iphone-mockup">
+          <div class="phone-shape small">
+              <span class="button-one buttons"></span>
+              <span class="button-two buttons"></span>
+              <span class="button-three buttons"></span>
+              <span class="button-four button last"></span>
+              <div class="top-details">
+                  <span class="camera"></span>
+                  <span class="circle"></span>
+                  <span class="speaker"></span>
+              </div>
+              <div class="phone-screen">
+                  <iframe src="https://player.vimeo.com/video/144779066?autoplay=1&loop=1" class="no-ant" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+              </div>
+              <div class="circle-button"></div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- 
@@ -43,12 +58,12 @@
   <div class="container">
     <div class="row">
       <div class="col s12">
-        <h1>Used by millions of people at great sites.</h1>
+        <h1>Partnering with innovative brands & publishers.</h1>
       </div>
     </div>
     <div class="row no-ant">
       <div class="col s12 center-align examples">
-        <img src="{{ STATIC_URL }}site/images/logos.jpg" class="no-ant" />
+        <img src="{{ STATIC_URL }}site/images/logos.gif" class="no-ant" />
       </div>
     </div>
   </div>
@@ -81,11 +96,11 @@
         <h4 class="line-behind serif no-ant"><span>Videos</span></h4>
         <div class="card">
           <div class="card-content">
-            <iframe src="https://player.vimeo.com/video/134530201?color=ffffff&title=0&byline=0&portrait=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
+            <iframe src="https://player.vimeo.com/video/146722791?color=ffffff&title=0&byline=0&portrait=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
           </div>
         </div>
         <div class="card-action no-ant">
-          <em><a href="https://vimeo.com/134530201" target="_blank">PATAGONIA 8K</a> from <a target="_blank" href="https://vimeo.com/timestormfilms">Martin Heck | Timestorm Films</a> on <a target="_blank" href="https://vimeo.com">Vimeo</a>.</em>
+          <em><a href="https://vimeo.com/146722791" target="_blank">PATAGONIA 8K</a> from <a target="_blank" href="https://vimeo.com/timestormfilms">Martin Heck | Timestorm Films</a> on <a target="_blank" href="https://vimeo.com">Vimeo</a>.</em>
         </div>
       </div>
       <div class="col l4 m6 s12 center-align">
@@ -107,8 +122,9 @@
   <div class="container">
     <div class="row">
       <div class="col s12">
-        <h1>Customize for your community</h1>
-        <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
+        <h1></h1>
+        <!-- <h1>Customize for your community</h1> -->
+        <!-- <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em> -->
       </div>
     </div>
     <div class="row no-ant">
@@ -259,7 +275,7 @@ function SelectText(element) {
 var isTouchBrowser = ( ("ontouchstart" in window || navigator.msMaxTouchPoints) && ((window.matchMedia("only screen and (max-width: 768px)")).matches) );
 var isMobile = ( isTouchBrowser && ((window.matchMedia("only screen and (max-width: 480px)")).matches) );
 if (!isMobile) {
-  $('.masthead').height( $(window).height() );
+  $('.masthead').css( 'min-height', $(window).height() );
 }
 
 </script>
