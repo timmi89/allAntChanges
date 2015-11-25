@@ -3,6 +3,7 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 var Range = require('./utils/range');
 
 var HashedElements = require('./hashed-elements');
+var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-locations-page';
 
@@ -11,6 +12,7 @@ function createPage(options) {
     var reactionLocationData = options.reactionLocationData;
     var pageData = options.pageData;
     var closeWindow = options.closeWindow;
+    var goBack = options.goBack;
     var ractive = Ractive({
         el: element,
         append: true,
@@ -24,9 +26,12 @@ function createPage(options) {
                 return HashedElements.get(containerHash, pageData.pageHash) !== undefined;
             }
         },
-        template: require('../templates/locations-page.hbs.html')
+        template: require('../templates/locations-page.hbs.html'),
+        partials: {
+            left: SVGs.left
+        }
     });
-    ractive.on('closewindow', closeWindow);
+    ractive.on('back', goBack);
     ractive.on('reveal', revealContent);
     return {
         selector: pageSelector,

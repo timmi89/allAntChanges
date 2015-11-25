@@ -76,7 +76,7 @@ function openReactionsWidget(options, elementOrCoords) {
         $rootElement.stop(true, true).addClass('open').css(coords);
 
         if (startPage === pageReactions || (startPage === pageAuto && reactionsData.length > 0)) {
-            showReactionsPage(false);
+            showReactions(false);
         } else { // startPage === pageDefaults || there are no reactions
             showDefaultReactionsPage(false);
         }
@@ -86,7 +86,7 @@ function openReactionsWidget(options, elementOrCoords) {
         openInstances.push(ractive);
     }
 
-    function showReactionsPage(animate) {
+    function showReactions(animate, callback) {
         var options = {
             isSummary: isSummary,
             reactionsData: reactionsData,
@@ -104,7 +104,18 @@ function openReactionsWidget(options, elementOrCoords) {
         };
         var page = ReactionsPage.create(options);
         pages.push(page);
-        showPage(page.selector, $rootElement, animate);
+        showPage(page.selector, $rootElement, animate, false, callback);
+    }
+
+    function backToReactions() {
+        showReactions(true, function() {
+            // After the transition back is complete, teardown all previous pages.
+            setWindowTitle(Messages.getMessage('reactions-widget_title'));
+            for (var i = 0; i < pages.length - 1; i++) {
+                pages[i].teardown();
+            }
+            pages = pages.splice(-1);
+        });
     }
 
     function showDefaultReactionsPage(animate) {
@@ -151,7 +162,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 reaction: reaction,
                 comments: comments,
                 element: pageContainer(ractive),
-                closeWindow: closeWindow,
+                goBack: backToReactions,
                 containerData: containerData,
                 pageData: pageData
             };
@@ -172,7 +183,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,
                 pageData: pageData,
-                closeWindow: closeWindow
+                goBack: backToReactions
             };
             var page = LocationsPage.create(options);
             pages.push(page);
@@ -204,7 +215,7 @@ function pageContainer(ractive) {
 
 var pageZ = 1000; // It's safe for this value to go across instances. We just need it to continuously increase (max value is over 2 billion).
 
-function showPage(pageSelector, $rootElement, animate, overlay) {
+function showPage(pageSelector, $rootElement, animate, overlay, callback) {
     var $page = $rootElement.find(pageSelector);
     $page.css('z-index', pageZ);
     pageZ += 1;
@@ -216,14 +227,17 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
         var $current = $rootElement.find('.antenna-page-active');
         $page.height($current.height());
         $page.addClass('antenna-page-active');
+        if (callback) { callback(); }
     } else if (animate) {
         TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
             // After the new page slides into position, move the other pages back out of the viewable area
             $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+            if (callback) { callback() }
         });
     } else {
         $page.addClass('antenna-page-active');
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+        if (callback) { callback(); }
     }
     sizeBodyToFit($rootElement, $page, animate);
 }

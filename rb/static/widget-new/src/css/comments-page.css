@@ -1,5 +1,5 @@
 
-.antenna-comments-close {
+.antenna-comments-back {
     background-color: #bbbbbb;
     color: #ffffff;
     font-size: 11px;
@@ -8,8 +8,12 @@
     margin-bottom: 4px;
     text-transform: uppercase;
 }
-.antenna-comments-close:hover {
+.antenna-comments-back:hover {
     background-color: #999999;
+}
+
+.antenna-comments-back .antenna-left-path {
+    fill: #ffffff;
 }
 
 .antenna-comments-header {

@@ -42,6 +42,16 @@
     fill: #55acee;
 }
 
+.antenna-left {
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
+.antenna-left svg {
+    width: 1em;
+    height: 1em;
+}
+
 .ant-social-twitter {
     font-size: 24px;
     color: #55acee;

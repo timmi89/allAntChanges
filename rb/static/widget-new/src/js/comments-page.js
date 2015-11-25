@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var CommentAreaPartial = require('./comment-area-partial');
+var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-comments-page';
 
@@ -10,7 +11,7 @@ function createPage(options) {
     var element = options.element;
     var containerData = options.containerData;
     var pageData = options.pageData;
-    var closeWindow = options.closeWindow;
+    var goBack = options.goBack;
     var ractive = Ractive({
         el: element,
         append: true,
@@ -21,7 +22,8 @@ function createPage(options) {
         },
         template: require('../templates/comments-page.hbs.html'),
         partials: {
-            commentArea: require('../templates/comment-area-partial.hbs.html')
+            commentArea: require('../templates/comment-area-partial.hbs.html'),
+            left: SVGs.left
         }
     });
     var reactionProvider = { // this reaction provider is a no-brainer because we already have a valid reaction (one with an ID)
@@ -30,7 +32,7 @@ function createPage(options) {
         }
     };
     CommentAreaPartial.setup(reactionProvider, containerData, pageData, commentAdded, ractive);
-    ractive.on('closewindow', closeWindow);
+    ractive.on('back', goBack);
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
