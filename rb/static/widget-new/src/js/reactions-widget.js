@@ -181,6 +181,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,
                 pageData: pageData,
+                closeWindow: closeWindow,
                 goBack: backToReactions
             };
             var page = LocationsPage.create(options);
