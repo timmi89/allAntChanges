@@ -86,7 +86,7 @@ function openReactionsWidget(options, elementOrCoords) {
         openInstances.push(ractive);
     }
 
-    function showReactions(animate, callback) {
+    function showReactions(animate, reverse) {
         var options = {
             isSummary: isSummary,
             reactionsData: reactionsData,
@@ -104,18 +104,16 @@ function openReactionsWidget(options, elementOrCoords) {
         };
         var page = ReactionsPage.create(options);
         pages.push(page);
-        showPage(page.selector, $rootElement, animate, false, callback);
+        if (reverse) {
+            goBackToPage(pages, page.selector, $rootElement);
+        } else {
+            showPage(page.selector, $rootElement, animate, false);
+        }
     }
 
     function backToReactions() {
-        showReactions(true, function() {
-            // After the transition back is complete, teardown all previous pages.
-            setWindowTitle(Messages.getMessage('reactions-widget_title'));
-            for (var i = 0; i < pages.length - 1; i++) {
-                pages[i].teardown();
-            }
-            pages = pages.splice(-1);
-        });
+        setWindowTitle(Messages.getMessage('reactions-widget_title'));
+        showReactions(true, true);
     }
 
     function showDefaultReactionsPage(animate) {
@@ -215,7 +213,7 @@ function pageContainer(ractive) {
 
 var pageZ = 1000; // It's safe for this value to go across instances. We just need it to continuously increase (max value is over 2 billion).
 
-function showPage(pageSelector, $rootElement, animate, overlay, callback) {
+function showPage(pageSelector, $rootElement, animate, overlay) {
     var $page = $rootElement.find(pageSelector);
     $page.css('z-index', pageZ);
     pageZ += 1;
@@ -227,19 +225,39 @@ function showPage(pageSelector, $rootElement, animate, overlay, callback) {
         var $current = $rootElement.find('.antenna-page-active');
         $page.height($current.height());
         $page.addClass('antenna-page-active');
-        if (callback) { callback(); }
     } else if (animate) {
         TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
             // After the new page slides into position, move the other pages back out of the viewable area
             $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
-            if (callback) { callback() }
         });
     } else {
         $page.addClass('antenna-page-active');
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
-        if (callback) { callback(); }
     }
     sizeBodyToFit($rootElement, $page, animate);
+}
+
+function goBackToPage(pages, pageSelector, $rootElement) {
+    var $targetPage = $rootElement.find(pageSelector);
+    var $currentPage = $rootElement.find('.antenna-page-active');
+    // Move the target page into place, under the current page
+    $targetPage.css('z-index', parseInt($currentPage.css('z-index')) - 1);
+    $targetPage.toggleClass('antenna-page-animate', false);
+    $targetPage.toggleClass('antenna-page-active', true);
+
+    // Then animate the current page moving away to reveal the target.
+    $currentPage.toggleClass('antenna-page-animate', true);
+    TransitionUtil.toggleClass($currentPage, 'antenna-page-active', false, function () {
+        // After the current page slides into position, move all other pages back out of the viewable area
+        $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+        $targetPage.css('z-index', pageZ++); // When the animation is done, make sure the current page has the highest z-index (just for consistency)
+        // Teardown all other pages. They'll be re-created if necessary.
+        for (var i = 0; i < pages.length - 1; i++) {
+            pages[i].teardown();
+        }
+        pages.splice(0, pages.length - 1);
+    });
+    sizeBodyToFit($rootElement, $targetPage, true);
 }
 
 function sizeBodyToFit($rootElement, $page, animate) {
