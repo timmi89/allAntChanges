@@ -19,7 +19,7 @@ module.exports = {
 
     'confirmation-page_share': 'Comparte tu reacción:',
 
-    'comments-page_close': 'Cerrar',
+    'comments-page_back': 'Cerrar', // TODO: need a translation for "Back"
     'comments-page_header': '({0}) Comentas:',
 
     'comment-area_add': 'Comenta',
@@ -30,7 +30,7 @@ module.exports = {
     'locations-page_pagelevel': 'A esta página', // TODO: need a translation of "To this whole page"
     'locations-page_count_one': '<span class="antenna-location-count">1</span><br>reacción',
     'locations-page_count_many': '<span class="antenna-location-count">{0}</span><br>reacciones',
-    'locations-page_close': 'Cerrar',
+    'locations-page_back': 'Cerrar', // TODO: need a translation for "Back"
 
     'call-to-action-label_responses': 'Respuestas', // TODO: need a translation of "Responses"
     'call-to-action-label_responses_one': '1 Respuesta', // TODO

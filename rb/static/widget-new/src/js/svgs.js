@@ -12,7 +12,8 @@ var templates = {
     comments: require('../templates/svg-comments.hbs.html'),
     location: require('../templates/svg-location.hbs.html'),
     facebook: require('../templates/svg-facebook.hbs.html'),
-    twitter: require('../templates/svg-twitter.hbs.html')
+    twitter: require('../templates/svg-twitter.hbs.html'),
+    left: require('../templates/svg-left.hbs.html')
 };
 
 var isSetup = false;
@@ -44,5 +45,6 @@ module.exports = {
     comments: getSVG(templates.comments),
     location: getSVG(templates.location),
     facebook: getSVG(templates.facebook),
-    twitter: getSVG(templates.twitter)
+    twitter: getSVG(templates.twitter),
+    left: getSVG(templates.left)
 };

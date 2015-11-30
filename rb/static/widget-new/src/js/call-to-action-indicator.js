@@ -1,3 +1,4 @@
+var CallToActionCounter = require('./call-to-action-counter');
 var CallToActionLabel = require('./call-to-action-label');
 var ReactionsWidget = require('./reactions-widget');
 
@@ -7,7 +8,8 @@ function createIndicatorWidget(options) {
     var $containerElement = options.containerElement;
     var contentData = options.contentData;
     var $ctaElement = options.ctaElement;
-    var $ctaLabel = options.ctaLabel; // optional
+    var $ctaLabels = options.ctaLabels; // optional
+    var $ctaCounters = options.ctaCounters; // optional
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
@@ -31,8 +33,16 @@ function createIndicatorWidget(options) {
         openReactionsWindow(reactionWidgetOptions, $ctaElement);
     });
 
-    if ($ctaLabel) {
-        CallToActionLabel.create($ctaLabel, containerData);
+    if ($ctaLabels) {
+        for (var i = 0; i < $ctaLabels.length; i++) {
+            CallToActionLabel.create($ctaLabels[i], containerData);
+        }
+    }
+
+    if ($ctaCounters) {
+        for (var j = 0; j < $ctaCounters.length; j++) {
+            CallToActionCounter.create($ctaCounters[j], containerData);
+        }
     }
 }
 

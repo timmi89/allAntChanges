@@ -76,7 +76,7 @@ function openReactionsWidget(options, elementOrCoords) {
         $rootElement.stop(true, true).addClass('open').css(coords);
 
         if (startPage === pageReactions || (startPage === pageAuto && reactionsData.length > 0)) {
-            showReactionsPage(false);
+            showReactions(false);
         } else { // startPage === pageDefaults || there are no reactions
             showDefaultReactionsPage(false);
         }
@@ -86,7 +86,7 @@ function openReactionsWidget(options, elementOrCoords) {
         openInstances.push(ractive);
     }
 
-    function showReactionsPage(animate) {
+    function showReactions(animate, reverse) {
         var options = {
             isSummary: isSummary,
             reactionsData: reactionsData,
@@ -104,7 +104,16 @@ function openReactionsWidget(options, elementOrCoords) {
         };
         var page = ReactionsPage.create(options);
         pages.push(page);
-        showPage(page.selector, $rootElement, animate);
+        if (reverse) {
+            goBackToPage(pages, page.selector, $rootElement);
+        } else {
+            showPage(page.selector, $rootElement, animate, false);
+        }
+    }
+
+    function backToReactions() {
+        setWindowTitle(Messages.getMessage('reactions-widget_title'));
+        showReactions(true, true);
     }
 
     function showDefaultReactionsPage(animate) {
@@ -151,7 +160,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 reaction: reaction,
                 comments: comments,
                 element: pageContainer(ractive),
-                closeWindow: closeWindow,
+                goBack: backToReactions,
                 containerData: containerData,
                 pageData: pageData
             };
@@ -172,7 +181,8 @@ function openReactionsWidget(options, elementOrCoords) {
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,
                 pageData: pageData,
-                closeWindow: closeWindow
+                closeWindow: closeWindow,
+                goBack: backToReactions
             };
             var page = LocationsPage.create(options);
             pages.push(page);
@@ -226,6 +236,29 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
     }
     sizeBodyToFit($rootElement, $page, animate);
+}
+
+function goBackToPage(pages, pageSelector, $rootElement) {
+    var $targetPage = $rootElement.find(pageSelector);
+    var $currentPage = $rootElement.find('.antenna-page-active');
+    // Move the target page into place, under the current page
+    $targetPage.css('z-index', parseInt($currentPage.css('z-index')) - 1);
+    $targetPage.toggleClass('antenna-page-animate', false);
+    $targetPage.toggleClass('antenna-page-active', true);
+
+    // Then animate the current page moving away to reveal the target.
+    $currentPage.toggleClass('antenna-page-animate', true);
+    TransitionUtil.toggleClass($currentPage, 'antenna-page-active', false, function () {
+        // After the current page slides into position, move all other pages back out of the viewable area
+        $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+        $targetPage.css('z-index', pageZ++); // When the animation is done, make sure the current page has the highest z-index (just for consistency)
+        // Teardown all other pages. They'll be re-created if necessary.
+        for (var i = 0; i < pages.length - 1; i++) {
+            pages[i].teardown();
+        }
+        pages.splice(0, pages.length - 1);
+    });
+    sizeBodyToFit($rootElement, $targetPage, true);
 }
 
 function sizeBodyToFit($rootElement, $page, animate) {

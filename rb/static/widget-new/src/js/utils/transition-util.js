@@ -13,7 +13,11 @@ function toggleTransitionClass($element, className, state, nextStep) {
             }
         }
     );
-    $element.toggleClass(className, state);
+    setTimeout(function() {
+        // This workaround gets us consistent transitionend events, which can otherwise be flaky if we're setting other
+        // classes at the same time as transition classes.
+        $element.toggleClass(className, state);
+    }, 20);
 }
 
 module.exports = {
