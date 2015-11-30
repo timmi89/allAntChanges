@@ -61,6 +61,10 @@
     padding: 2px 7px 2px 0;
 }
 
+.antenna-locations-image-body img {
+    width: 100%;
+}
+
 .antenna-locations-media-body {
     vertical-align: middle;
     font-family: Georgia,serif;
