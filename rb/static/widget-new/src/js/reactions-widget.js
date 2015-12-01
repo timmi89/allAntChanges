@@ -85,7 +85,7 @@ function openReactionsWidget(options, elementOrCoords) {
         if (isSummary) {
             Events.postSummaryOpened(isShowReactions, pageData, groupSettings);
         } else {
-            Events.postReactionWidgetOpened(isShowReactions, pageData, reactionsData, containerData, contentData, groupSettings);
+            Events.postReactionWidgetOpened(isShowReactions, pageData, containerData, contentData, groupSettings);
         }
 
         setupWindowClose(pages, ractive);
@@ -98,6 +98,7 @@ function openReactionsWidget(options, elementOrCoords) {
             isSummary: isSummary,
             reactionsData: reactionsData,
             pageData: pageData,
+            groupSettings: groupSettings,
             containerData: containerData,
             containerElement: containerElement,
             colors: colors,
@@ -133,6 +134,7 @@ function openReactionsWidget(options, elementOrCoords) {
         var options = { // TODO: clean up the number of these "options" objects that we create.
             defaultReactions: defaultReactions,
             pageData: pageData,
+            groupSettings: groupSettings,
             containerData: containerData,
             colors: colors,
             contentData: contentData,
@@ -180,7 +182,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 showPage(page.selector, $rootElement, true);
             }, 1);
 
-            Events.postViewComments(pageData, containerData, reaction, groupSettings);
+            Events.postCommentsViewed(pageData, containerData, reaction, groupSettings);
         });
     }
 

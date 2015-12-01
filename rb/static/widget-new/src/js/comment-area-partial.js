@@ -16,7 +16,7 @@ function setupCommentArea(reactionProvider, containerData, pageData, groupSettin
             $(ractive.find('.antenna-comment-waiting')).fadeIn('slow');
             reactionProvider.get(function (reaction) {
                 AjaxClient.postComment(comment, reaction, containerData, pageData, function () {
-                    Events.postCreateComment(pageData, containerData, reaction, comment, groupSettings);
+                    Events.postCommentCreated(pageData, containerData, reaction, comment, groupSettings);
                 }, error);
                 $(ractive.find('.antenna-comment-waiting')).stop().hide();
                 $(ractive.find('.antenna-comment-received')).fadeIn();

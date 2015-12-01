@@ -3,6 +3,8 @@ var AjaxClient = require('./utils/ajax-client');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
+
+var Events = require('./events');
 var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-reactions-page';
@@ -12,6 +14,7 @@ function createPage(options) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
     var contentData = options.contentData;
     var containerElement = options.containerElement; // optional
     var showConfirmation = options.showConfirmation;
@@ -46,7 +49,7 @@ function createPage(options) {
         ractive.on('highlight', highlightContent(containerData, pageData, containerElement));
         ractive.on('clearhighlights', Range.clearHighlights);
     }
-    ractive.on('plusone', plusOne(containerData, pageData, showConfirmation));
+    ractive.on('plusone', plusOne(containerData, pageData, showConfirmation, groupSettings));
     ractive.on('showdefault', showDefaults);
     ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context); return false; }); // TODO clean up
     ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context); return false; }); // TODO clean up
@@ -101,7 +104,7 @@ function highlightContent(containerData, pageData, $containerElement) {
     }
 }
 
-function plusOne(containerData, pageData, showConfirmation) {
+function plusOne(containerData, pageData, showConfirmation, groupSettings) {
     return function(event) {
         var reactionData = event.context;
         var reactionProvider = { // this reaction provider is a no-brainer because we already have a valid reaction (one with an ID)
@@ -110,7 +113,9 @@ function plusOne(containerData, pageData, showConfirmation) {
             }
         };
         showConfirmation(reactionData, reactionProvider);
-        AjaxClient.postPlusOne(reactionData, containerData, pageData, function(){}/*TODO*/, error);
+        AjaxClient.postPlusOne(reactionData, containerData, pageData, function(reactionData){
+            Events.postReactionCreated(pageData, containerData, reactionData, groupSettings);
+        }, error);
 
         function error(message) {
             // TODO handle any errors that occur posting a reaction

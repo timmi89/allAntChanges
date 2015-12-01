@@ -18,7 +18,7 @@ function postPageDataLoaded(pageData, groupSettings) {
     postEvent(event);
 }
 
-function postReactionWidgetOpened(isShowReactions, pageData, reactionsData, containerData, contentData, groupSettings) {
+function postReactionWidgetOpened(isShowReactions, pageData, containerData, contentData, groupSettings) {
     var eventValue = isShowReactions ? eventValues.readmode : eventValues.writemode;
     // TODO: what is "rd-zero" for?
     var event = createEvent(eventTypes.aWindow_show, eventValue, groupSettings);
@@ -35,7 +35,18 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     postEvent(event);
 }
 
-function postViewComments(pageData, containerData, reactionData, groupSettings) {
+function postReactionCreated(pageData, containerData, reactionData, groupSettings) {
+    var event = createEvent(eventTypes.reaction, reactionData.text, groupSettings);
+    appendPageDataParams(event, pageData);
+    event[attributes.reaction_body] = reactionData.text;
+    event[attributes.container_hash] = containerData.hash;
+    event[attributes.container_kind] = containerData.type;
+    event[attributes.content_location] = reactionData.content.location;
+    event[attributes.content_id] = reactionData.content.id;
+    postEvent(event);
+}
+
+function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
     var event = createEvent(eventTypes.view_comments, '', groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.container_hash] = containerData.hash;
@@ -44,7 +55,7 @@ function postViewComments(pageData, containerData, reactionData, groupSettings) 
     postEvent(event);
 }
 
-function postCreateComment(pageData, containerData, reactionData, comment, groupSettings) {
+function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
     var event = createEvent(eventTypes.comment, comment, groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.container_hash] = containerData.hash;
@@ -177,7 +188,8 @@ module.exports = {
     postGroupSettingsLoaded: postGroupSettingsLoaded,
     postPageDataLoaded: postPageDataLoaded,
     postSummaryOpened: postSummaryOpened,
-    postViewComments: postViewComments,
-    postCreateComment: postCreateComment,
-    postReactionWidgetOpened: postReactionWidgetOpened
+    postCommentsViewed: postCommentsViewed,
+    postCommentCreated: postCommentCreated,
+    postReactionWidgetOpened: postReactionWidgetOpened,
+    postReactionCreated: postReactionCreated
 };

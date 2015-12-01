@@ -172,8 +172,7 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
             containerData.reactionTotal = containerData.reactionTotal + 1;
             pageData.summaryTotal = pageData.summaryTotal + 1;
         }
-        // TODO: What should we pass in the callback? Maybe just pass back the reaction? Or build one from the response?
-        callback(reactionCreated);
+        callback(reactionData);
     }
 }
 

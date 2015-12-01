@@ -3,6 +3,7 @@ var AjaxClient = require('./utils/ajax-client');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
 
+var Events = require('./events');
 var PageData = require('./page-data');
 
 var pageSelector = '.antenna-defaults-page';
@@ -11,6 +12,7 @@ function createPage(options) {
     var defaultReactions = options.defaultReactions;
     var containerData = options.containerData;
     var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
     var contentData = options.contentData;
     var showConfirmation = options.showConfirmation;
     var element = options.element;
@@ -80,6 +82,7 @@ function createPage(options) {
         function success(reaction) {
             reaction = PageData.registerReaction(reaction, containerData, pageData);
             reactionProvider.reactionLoaded(reaction);
+            Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
         }
 
         function error(message) {
