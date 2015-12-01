@@ -2,7 +2,9 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var AjaxClient = require('./utils/ajax-client');
 var User = require('./utils/user');
 
-function setupCommentArea(reactionProvider, containerData, pageData, callback, ractive) {
+var Events = require('./events');
+
+function setupCommentArea(reactionProvider, containerData, pageData, groupSettings, callback, ractive) {
     ractive.on('inputchanged', updateInputCounter);
     ractive.on('addcomment', addComment);
     updateInputCounter();
@@ -13,7 +15,8 @@ function setupCommentArea(reactionProvider, containerData, pageData, callback, r
             $(ractive.find('.antenna-comment-widgets')).hide();
             $(ractive.find('.antenna-comment-waiting')).fadeIn('slow');
             reactionProvider.get(function (reaction) {
-                AjaxClient.postComment(comment, reaction, containerData, pageData, function () {/*TODO*/
+                AjaxClient.postComment(comment, reaction, containerData, pageData, function () {
+                    Events.postCreateComment(pageData, containerData, reaction, comment, groupSettings);
                 }, error);
                 $(ractive.find('.antenna-comment-waiting')).stop().hide();
                 $(ractive.find('.antenna-comment-received')).fadeIn();

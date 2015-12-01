@@ -147,7 +147,7 @@ function openReactionsWidget(options, elementOrCoords) {
 
     function showConfirmation(reactionData, reactionProvider) {
         setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
-        var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, pageContainer(ractive));
+        var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, groupSettings, pageContainer(ractive));
         pages.push(page);
 
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
@@ -169,7 +169,8 @@ function openReactionsWidget(options, elementOrCoords) {
                 element: pageContainer(ractive),
                 goBack: backToReactions,
                 containerData: containerData,
-                pageData: pageData
+                pageData: pageData,
+                groupSettings: groupSettings
             };
             var page = CommentsPage.create(options);
             pages.push(page);
@@ -179,7 +180,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 showPage(page.selector, $rootElement, true);
             }, 1);
 
-            Events.postViewComments(pageData, containerData, contentData, reaction, groupSettings);
+            Events.postViewComments(pageData, containerData, reaction, groupSettings);
         });
     }
 

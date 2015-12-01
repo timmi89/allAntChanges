@@ -5,7 +5,7 @@ var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-confirmation-page';
 
-function createPage(reactionText, reactionProvider, containerData, pageData, element) {
+function createPage(reactionText, reactionProvider, containerData, pageData, groupSettings, element) {
     var ractive = Ractive({
         el: element,
         append: true,
@@ -19,7 +19,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, ele
             twitterIcon: SVGs.twitter
         }
     });
-    CommentAreaPartial.setup(reactionProvider, containerData, pageData, null, ractive);
+    CommentAreaPartial.setup(reactionProvider, containerData, pageData, groupSettings, null, ractive);
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }

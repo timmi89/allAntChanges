@@ -35,11 +35,20 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     postEvent(event);
 }
 
-function postViewComments(pageData, containerData, contentData, reactionData, groupSettings) {
+function postViewComments(pageData, containerData, reactionData, groupSettings) {
     var event = createEvent(eventTypes.view_comments, '', groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.container_hash] = containerData.hash;
-    event[attributes.container_kind] = contentData.type;
+    event[attributes.container_kind] = containerData.type;
+    event[attributes.reaction_body] = reactionData.text;
+    postEvent(event);
+}
+
+function postCreateComment(pageData, containerData, reactionData, comment, groupSettings) {
+    var event = createEvent(eventTypes.comment, comment, groupSettings);
+    appendPageDataParams(event, pageData);
+    event[attributes.container_hash] = containerData.hash;
+    event[attributes.container_kind] = containerData.type;
     event[attributes.reaction_body] = reactionData.text;
     postEvent(event);
 }
@@ -169,5 +178,6 @@ module.exports = {
     postPageDataLoaded: postPageDataLoaded,
     postSummaryOpened: postSummaryOpened,
     postViewComments: postViewComments,
+    postCreateComment: postCreateComment,
     postReactionWidgetOpened: postReactionWidgetOpened
 };
