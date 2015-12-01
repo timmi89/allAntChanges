@@ -1,7 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 
-var Events = require('./events');
 var ReactionsWidget = require('./reactions-widget');
 var SVGs = require('./svgs');
 
@@ -39,7 +38,6 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
         contentData: { type: 'page', body: '' }
     };
     ReactionsWidget.open(reactionsWidgetOptions, rootElement(ractive));
-    Events.postSummaryOpened(pageData, groupSettings);
 }
 
 //noinspection JSUnresolvedVariable

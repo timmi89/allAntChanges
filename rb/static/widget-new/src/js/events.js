@@ -18,8 +18,18 @@ function postPageDataLoaded(pageData, groupSettings) {
     postEvent(event);
 }
 
-function postSummaryOpened(pageData, groupSettings) {
-    var eventValue = pageData.summaryTotal > 0 ? eventValues.viewReactions : eventValues.viewDefaults;
+function postReactionWidgetOpened(isShowReactions, pageData, reactionsData, containerData, contentData, groupSettings) {
+    var eventValue = isShowReactions ? eventValues.readmode : eventValues.writemode;
+    // TODO: what is "rd-zero" for?
+    var event = createEvent(eventTypes.aWindow_show, eventValue, groupSettings);
+    appendPageDataParams(event, pageData);
+    event[attributes.container_hash] = containerData.hash;
+    event[attributes.container_kind] = contentData.type;
+    postEvent(event);
+}
+
+function postSummaryOpened(isShowReactions, pageData, groupSettings) {
+    var eventValue = isShowReactions ? eventValues.viewReactions : eventValues.viewDefaults;
     var event = createEvent(eventTypes.summary_bar, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
@@ -158,5 +168,6 @@ module.exports = {
     postGroupSettingsLoaded: postGroupSettingsLoaded,
     postPageDataLoaded: postPageDataLoaded,
     postSummaryOpened: postSummaryOpened,
-    postViewComments: postViewComments
+    postViewComments: postViewComments,
+    postReactionWidgetOpened: postReactionWidgetOpened
 };

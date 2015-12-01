@@ -18,9 +18,9 @@ var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
 var SVGs = require('./svgs');
 
-var pageReactions = 'reactions';
-var pageDefaults = 'defaults';
-var pageAuto = 'auto';
+var PAGE_REACTIONS = 'reactions';
+var PAGE_DEFAULTS = 'defaults';
+var PAGE_AUTO = 'auto';
 
 var SELECTOR_REACTIONS_WIDGET = '.antenna-reactions-widget';
 
@@ -32,7 +32,7 @@ function openReactionsWidget(options, elementOrCoords) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement; // optional
-    var startPage = options.startPage || pageAuto; // optional
+    var startPage = options.startPage || PAGE_AUTO; // optional
     var isSummary = options.isSummary === undefined ? false : options.isSummary; // optional
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
@@ -76,10 +76,16 @@ function openReactionsWidget(options, elementOrCoords) {
         }
         $rootElement.stop(true, true).addClass('open').css(coords);
 
-        if (startPage === pageReactions || (startPage === pageAuto && reactionsData.length > 0)) {
+        var isShowReactions = startPage === PAGE_REACTIONS || (startPage === PAGE_AUTO && reactionsData.length > 0);
+        if (isShowReactions) {
             showReactions(false);
         } else { // startPage === pageDefaults || there are no reactions
             showDefaultReactionsPage(false);
+        }
+        if (isSummary) {
+            Events.postSummaryOpened(isShowReactions, pageData, groupSettings);
+        } else {
+            Events.postReactionWidgetOpened(isShowReactions, pageData, reactionsData, containerData, contentData, groupSettings);
         }
 
         setupWindowClose(pages, ractive);
@@ -407,8 +413,8 @@ function preventExtraScroll($rootElement) {
 module.exports = {
     open: openReactionsWidget,
     isOpen: isOpenWindow,
-    PAGE_REACTIONS: pageReactions,
-    PAGE_DEFAULTS: pageDefaults,
-    PAGE_AUTO: pageAuto,
+    PAGE_REACTIONS: PAGE_REACTIONS,
+    PAGE_DEFAULTS: PAGE_DEFAULTS,
+    PAGE_AUTO: PAGE_AUTO,
     selector: SELECTOR_REACTIONS_WIDGET
 };
