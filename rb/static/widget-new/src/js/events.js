@@ -18,6 +18,13 @@ function postPageDataLoaded(pageData, groupSettings) {
     postEvent(event);
 }
 
+function postSummaryOpened(pageData, groupSettings) {
+    var eventValue = pageData.summaryTotal > 0 ? eventValues.viewReactions : eventValues.viewDefaults;
+    var event = createEvent(eventTypes.summary_bar, eventValue, groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
 function postViewComments(pageData, containerData, contentData, reactionData, groupSettings) {
     var event = createEvent(eventTypes.view_comments, '', groupSettings);
     appendPageDataParams(event, pageData);
@@ -140,13 +147,16 @@ var eventValues = {
     readmode: 'rd',
     //default_summary_bar: 'def', // TODO: review. this was an old content_attributes value related to the bookmarklet
     single_summary_bar: 'si', // TODO: rename
-    multiple_pages: 'mu'
+    multiple_pages: 'mu',
     //unexpected: 'unex'
+    viewReactions: 'vw',
+    viewDefaults: 'ad'
 };
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     postGroupSettingsLoaded: postGroupSettingsLoaded,
     postPageDataLoaded: postPageDataLoaded,
+    postSummaryOpened: postSummaryOpened,
     postViewComments: postViewComments
 };
