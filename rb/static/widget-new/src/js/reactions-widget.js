@@ -173,7 +173,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 showPage(page.selector, $rootElement, true);
             }, 1);
 
-            Events.postViewComments(pageData, containerData, contentData, reaction);
+            Events.postViewComments(pageData, containerData, contentData, reaction, groupSettings);
         });
     }
 

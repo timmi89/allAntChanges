@@ -1,21 +1,25 @@
-var GroupSettings = require('./group-settings');
 var AjaxClient = require('./utils/ajax-client');
 
 var isTouchBrowser = (navigator.msMaxTouchPoints || "ontouchstart" in window) && ((window.matchMedia("only screen and (max-width: 768px)")).matches);
 
-function postPageDataLoad(pages) {
-    // TODO: Review with Porter. It looks like the 'widget load' event is what's actually fired when the pagedata loads?
-    // TODO: How is this supposed to work with multiple pages? Just pick the first?
-    var pageData = pages[0];
-    var event = createEvent(eventTypes.widget_load, '');
-    appendPageDataParams(event, pageData);
-    // TODO: The existing code (engage_full line 4467) appears to be mostly dead code. Review.
-    event[attributes.content_attributes] = pages.length > 1 ? eventValues.multiple_pages : eventValues.single_summary_bar;
+function postGroupSettingsLoaded(groupSettings) {
+    var event = createEvent(eventTypes.script_load, '', groupSettings); // eventValue was historically for A/B testing
+    event[attributes.page_id] = 'na';
+    event[attributes.article_height] = 'na';
     postEvent(event);
 }
 
-function postViewComments(pageData, containerData, contentData, reactionData) {
-    var event = createEvent(eventTypes.view_comments, '');
+function postPageDataLoaded(pageData, groupSettings) {
+    var event = createEvent(eventTypes.widget_load, '', groupSettings); // eventValue was historically for A/B testing
+    appendPageDataParams(event, pageData);
+    // TODO: The existing code (engage_full line 4467) appears to be mostly dead code. Review.
+    //event[attributes.content_attributes] = pages.length > 1 ? eventValues.multiple_pages : eventValues.single_summary_bar;
+    event[attributes.content_attributes] = pageData.metrics.isMultiPage ? eventValues.multiple_pages : eventValues.single_summary_bar;
+    postEvent(event);
+}
+
+function postViewComments(pageData, containerData, contentData, reactionData, groupSettings) {
+    var event = createEvent(eventTypes.view_comments, '', groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.container_hash] = containerData.hash;
     event[attributes.container_kind] = contentData.type;
@@ -26,12 +30,11 @@ function postViewComments(pageData, containerData, contentData, reactionData) {
 function toDo(eventType, eventValue, pageData, groupSettings) {
 
     var event = {};
-    event[attributes.group_id] = GroupSettings.get().groupId();
+
     event[attributes.user_id] = ''; // TODO
     event[attributes.page_id] = pageData ? pageData.id : 'na';
     event[attributes.long_term_session] = ''; // TODO
     event[attributes.short_term_session] = ''; // TODO
-    event[attributes.article_height] = ''; // TODO:  (params.event_type == 'sl') ? 'na' : parseInt(ANT.group.active_section_milestones[100]) || null,
 
 
     event[attributes.content_attributes] = ''; // TODO: params.content_attributes || null,  // what is this for?
@@ -45,9 +48,10 @@ function appendPageDataParams(event, pageData) {
     event[attributes.page_title] = pageData.pageTitle; // TODO: Send pageTitle back on page data
     event[attributes.canonical_url] = ''; // TODO: Send back the canonical URL from the server?
     event[attributes.page_url] = pageData.requestedURL; // TODO: Figure out what we want for page_url and canonical_url here
+    event[attributes.article_height] = 0 || pageData.metrics.height;
 }
 
-function createEvent(eventType, eventValue) {
+function createEvent(eventType, eventValue, groupSettings) {
     // TODO: engage_full code. Review
     var referrer_url = document.referrer.split('/').splice(2).join('/');
     // end engage_full code
@@ -55,6 +59,7 @@ function createEvent(eventType, eventValue) {
     var event = {};
     event[attributes.event_type] = eventType;
     event[attributes.event_value] = eventValue;
+    event[attributes.group_id] = groupSettings.groupId();
     event[attributes.referrer_url] = referrer_url;
     event[attributes.referrer_url_dupe] = referrer_url; // TODO: Resolve the dupe property
     event[attributes.isTouchBrowser] = isTouchBrowser;
@@ -115,6 +120,7 @@ var attributes = {
 };
 
 var eventTypes = {
+    script_load: 'sl', // TODO: this event isn't listed in the comments
     share: 'sh',
     summary_bar: 'sb',
     aWindow_show: 'rs',
@@ -128,18 +134,19 @@ var eventTypes = {
 
 var eventValues = {
     view_content: 'vc',
-    //view_comments: 'vcom', // TODO: review
+    //view_comments: 'vcom', // TODO: review. this is an eventType, not a value?
     view_reactions: 'vr',
     writemode: 'wr',
     readmode: 'rd',
-    default_summary_bar: 'def',
-    single_summary_bar: 'si',
-    multiple_pages: 'mu',
-    unexpected: 'unex'
+    //default_summary_bar: 'def', // TODO: review. this was an old content_attributes value related to the bookmarklet
+    single_summary_bar: 'si', // TODO: rename
+    multiple_pages: 'mu'
+    //unexpected: 'unex'
 };
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    postPageDataLoad: postPageDataLoad,
+    postGroupSettingsLoaded: postGroupSettingsLoaded,
+    postPageDataLoaded: postPageDataLoaded,
     postViewComments: postViewComments
 };

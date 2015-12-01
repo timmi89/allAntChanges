@@ -7,8 +7,6 @@ var pages = {};
 // Mapping of page URLs to page hashes, which are computed on the server.
 var urlHashes = {};
 
-var loadEventFired = false; // We fire a single "page load" event the first time we get back page data.
-
 function getPageData(hash) {
     var pageData = pages[hash];
     if (!pageData) {
@@ -22,7 +20,8 @@ function getPageData(hash) {
             summaryReactions: {},
             summaryTotal: 0,
             summaryLoaded: false,
-            containers: {}
+            containers: {},
+            metrics: {} // This is a catch-all field where we can attach client-side metrics for analytics
         };
         pages[hash] = pageData;
     }
@@ -32,11 +31,9 @@ function getPageData(hash) {
 function updateAllPageData(jsonPages, groupSettings) {
     var allPages = [];
     for (var i = 0; i < jsonPages.length; i++) {
-        allPages.push(updatePageData(jsonPages[i], groupSettings));
-    }
-    if (!loadEventFired) {
-        Events.postPageDataLoad(allPages);
-        loadEventFired = true;
+        var pageData = updatePageData(jsonPages[i], groupSettings)
+        allPages.push(pageData);
+        Events.postPageDataLoaded(pageData, groupSettings);
     }
 }
 

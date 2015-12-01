@@ -1,5 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+var Events = require('./events');
+
 var groupSettings;
 
 // TODO: Update all clients that are passing around a groupSettings object to instead access the 'global' settings instance
@@ -9,6 +11,7 @@ function getGroupSettings() {
 
 function updateFromJSON(json) {
     groupSettings = createFromJSON(json);
+    Events.postGroupSettingsLoaded(groupSettings);
     return groupSettings;
 }
 
