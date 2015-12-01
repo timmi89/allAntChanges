@@ -1,11 +1,12 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AjaxClient = require('./utils/ajax-client');
 var URLs = require('./utils/urls');
 var GroupSettings = require('./group-settings');
 
 // TODO fold this module into group-settings?
 
 function loadSettings(callback) {
-    $.getJSONP(URLs.groupSettingsUrl(), { host_name: window.antenna_host }, success, error);
+    AjaxClient.getJSONP(URLs.groupSettingsUrl(), { host_name: window.antenna_host }, success, error);
 
     function success(json) {
         var groupSettings = GroupSettings.create(json);

@@ -2,15 +2,15 @@ var RactiveProvider = require('./utils/ractive-provider');
 var RangyProvider = require('./utils/rangy-provider');
 var JQueryProvider = require('./utils/jquery-provider');
 var AppMode = require('./utils/app-mode');
-var URLs = require('./utils/urls');
+var URLConstants = require('./utils/url-constants');
 
 var baseUrl;
 if (AppMode.test) {
-    baseUrl = URLs.TEST;
+    baseUrl = URLConstants.TEST;
 } else if (AppMode.offline) {
-    baseUrl = URLs.DEVELOPMENT;
+    baseUrl = URLConstants.DEVELOPMENT;
 } else {
-    baseUrl = URLs.PRODUCTION;
+    baseUrl = URLConstants.PRODUCTION;
 }
 
 var scripts = [

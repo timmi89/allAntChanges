@@ -12,6 +12,7 @@ var WidgetBucket = require('./utils/widget-bucket');
 var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
+var Events = require('./events');
 var LocationsPage = require('./locations-page');
 var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
@@ -171,12 +172,16 @@ function openReactionsWidget(options, elementOrCoords) {
             setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
                 showPage(page.selector, $rootElement, true);
             }, 1);
+
+            Events.postViewComments(pageData, containerData, contentData, reaction);
         });
     }
 
     function showLocations(reaction) {
         showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
-        AjaxClient.getReactionLocationData(reaction, pageData, function(reactionLocationData) {
+        var reactionLocationData = PageData.getReactionLocationData(reaction, pageData);
+        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, function(locationDetails) {
+            PageData.updateReactionLocationData(reactionLocationData, locationDetails);
             var options = { // TODO: clean up the number of these "options" objects that we create.
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,

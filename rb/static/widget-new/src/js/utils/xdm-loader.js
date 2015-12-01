@@ -1,9 +1,9 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./app-mode');
-var URLs = require('./urls');
+var URLConstants = require('./url-constants');
 var WidgetBucket = require('./widget-bucket');
 
-var XDM_ORIGIN = AppMode.offline ? URLs.DEVELOPMENT : URLs.PRODUCTION;
+var XDM_ORIGIN = AppMode.offline ? URLConstants.DEVELOPMENT : URLConstants.PRODUCTION;
 
 function createXDMframe(groupId) {
     //ANT.session.receiveMessage({}, function() {

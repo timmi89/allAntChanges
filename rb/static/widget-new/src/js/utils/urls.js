@@ -1,8 +1,4 @@
 
-var PROD_SERVER_URL = "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
-var DEV_SERVER_URL = window.location.protocol + "//local-static.antenna.is:8081";
-var TEST_SERVER_URL = window.location.protocol + '//localhost:3000';
-
 function getGroupSettingsUrl() {
     return '/api/settings/';
 }
@@ -25,6 +21,10 @@ function getFetchCommentUrl() {
 
 function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
+}
+
+function getEventUrl() {
+    return '/insert'; // Note that this URL is for the event server, not the app server.
 }
 
 function computeImageUrl($element, groupSettings) {
@@ -107,7 +107,5 @@ module.exports = {
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
-    PRODUCTION: PROD_SERVER_URL,
-    DEVELOPMENT: DEV_SERVER_URL,
-    TEST: TEST_SERVER_URL
+    eventUrl: getEventUrl
 };

@@ -1,9 +1,13 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+var Events = require('./events');
+
 // Collection of all page data, keyed by page hash
 var pages = {};
 // Mapping of page URLs to page hashes, which are computed on the server.
 var urlHashes = {};
+
+var loadEventFired = false; // We fire a single "page load" event the first time we get back page data.
 
 function getPageData(hash) {
     var pageData = pages[hash];
@@ -29,6 +33,10 @@ function updateAllPageData(jsonPages, groupSettings) {
     var allPages = [];
     for (var i = 0; i < jsonPages.length; i++) {
         allPages.push(updatePageData(jsonPages[i], groupSettings));
+    }
+    if (!loadEventFired) {
+        Events.postPageDataLoad(allPages);
+        loadEventFired = true;
     }
 }
 

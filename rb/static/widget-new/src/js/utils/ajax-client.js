@@ -1,11 +1,11 @@
 // TODO: needs a better name once the scope is clear
 
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AppMode = require('./app-mode');
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
+var URLConstants = require('./url-constants');
 var User = require('./user');
-
-var PageData = require('../page-data'); // TODO: backwards dependency
 
 
 function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
@@ -45,7 +45,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
         if (reactionData.id) {
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
-        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(contentLocation, containerData, pageData, success), error);
+        getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(contentLocation, containerData, pageData, success), error);
     });
 }
 
@@ -92,7 +92,7 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
         if (reactionData.parentID) {
             data.tag.parent_id = reactionData.parentID;
         }
-        $.getJSONP(URLs.createReactionUrl(), data, plusOneSuccess(reactionData, containerData, pageData, success), error);
+        getJSONP(URLs.createReactionUrl(), data, plusOneSuccess(reactionData, containerData, pageData, success), error);
     });
 }
 
@@ -130,7 +130,7 @@ function postComment(comment, reactionData, containerData, pageData, success, er
             page_id: pageData.pageId,
             group_id: pageData.groupId
         };
-        $.getJSONP(URLs.createCommentUrl(), data, commentSuccess(reactionData, containerData, pageData, success), error);
+        getJSONP(URLs.createCommentUrl(), data, commentSuccess(reactionData, containerData, pageData, success), error);
     });
 }
 
@@ -181,7 +181,6 @@ function newReactionSuccess(contentLocation, containerData, pageData, callback) 
     return function(response) {
         // TODO: Can response.existing ever come back true for a 'new' reaction? Should we behave any differently if it does?
         var reaction = reactionFromResponse(response, contentLocation);
-        reaction = PageData.registerReaction(reaction, containerData, pageData);
         callback(reaction);
     };
 }
@@ -220,7 +219,7 @@ function getComments(reaction, callback) {
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token
         };
-        $.getJSONP(URLs.fetchCommentUrl(), data, function(response) {
+        getJSONP(URLs.fetchCommentUrl(), data, function(response) {
             callback(commentsFromResponse(response));
         }, function(message) {
             // TODO: error handling
@@ -229,8 +228,7 @@ function getComments(reaction, callback) {
     });
 }
 
-function getReactionLocationData(reaction, pageData, callback) {
-    var reactionLocationData = PageData.getReactionLocationData(reaction, pageData);
+function fetchLocationDetails(reactionLocationData, pageData, callback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
     XDMClient.getUser(function(response) {
         var userInfo = response.data;
@@ -239,13 +237,12 @@ function getReactionLocationData(reaction, pageData, callback) {
             ant_token: userInfo.ant_token,
             content_ids: contentIDs
         };
-        $.getJSONP(URLs.fetchContentBodiesUrl(), data, function(response) {
-            PageData.updateReactionLocationData(reactionLocationData, response);
-            callback(reactionLocationData);
+        getJSONP(URLs.fetchContentBodiesUrl(), data, function(response) {
+            callback(response);
         }, function(message) {
             // TODO: error handling
             console.log('An error occurred fetching content bodies: ' + message);
-        })
+        });
     });
 }
 
@@ -264,11 +261,71 @@ function commentsFromResponse(jsonComments) {
     return comments;
 }
 
+function getJSONP(url, data, success, error) {
+    var baseUrl;
+    if (AppMode.test) {
+        baseUrl = URLConstants.TEST;
+    } else if (AppMode.offline) {
+        baseUrl = URLConstants.DEVELOPMENT;
+    } else {
+        baseUrl = URLConstants.PRODUCTION;
+    }
+    doGetJSONP(baseUrl, url, data, success, error);
+}
+
+function postEvent(event, callback) {
+    var baseUrl;
+    if (AppMode.offline) {
+        baseUrl = URLConstants.DEVELOPMENT_EVENTS;
+    } else {
+        baseUrl = URLConstants.PRODUCTION_EVENTS;
+    }
+    console.log('Posting event: ' + JSON.stringify(event));
+    return;
+    // TODO: enable the real network request...
+    doGetJSONP(baseUrl, URLs.eventUrl(), event, callback, function(error) {
+        // TODO: error handling
+        console.log('An error occurred posting event: ', error);
+    });
+}
+
+// Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
+function doGetJSONP(baseUrl, url, data, success, error) {
+    var options = {
+        url: baseUrl + url,
+        type: "get",
+        contentType: "application/json",
+        dataType: "jsonp",
+        success: function(response, textStatus, XHR) {
+            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
+            //       the status code in the XHR
+            // Note: The server comes back with 200 responses with a nested status of "fail"...
+            if (textStatus === 'success' && response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
+                success(response.data);
+            } else {
+                // For JSONP requests, jQuery doesn't call it's error callback. It calls success instead.
+                error(response.message || response.data.message);
+            }
+        },
+        error: function(xhr, textStatus, message) {
+            // Okay, apparently jQuery *does* call its error callback for JSONP requests sometimes...
+            // Specifically, when the response status is OK but an error occurs client-side processing the response.
+            error (message);
+        }
+    };
+    if (data) {
+        options.data = { json: JSON.stringify(data) };
+    }
+    $.ajax(options);
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
+    getJSONP: getJSONP,
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
     postComment: postComment,
     getComments: getComments,
-    getReactionLocationData: getReactionLocationData
+    fetchLocationDetails: fetchLocationDetails,
+    postEvent: postEvent
 };

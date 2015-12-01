@@ -3,6 +3,8 @@ var AjaxClient = require('./utils/ajax-client');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
 
+var PageData = require('./page-data');
+
 var pageSelector = '.antenna-defaults-page';
 
 function createPage(options) {
@@ -59,23 +61,25 @@ function createPage(options) {
 
     function newDefaultReaction(ractiveEvent) {
         var defaultReactionData = ractiveEvent.context;
-        var reactionProvider = createReactionProvider();
-        showConfirmation(defaultReactionData, reactionProvider);
-        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, reactionProvider.reactionLoaded, error);
-
-        function error(message) {
-            // TODO handle any errors that occur posting a reaction
-            console.log("error posting new reaction: " + message);
-        }
+        postNewReaction(defaultReactionData);
     }
 
     function submitCustomReaction() {
         var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
         if (body !== '') {
             var reactionData = { text: body };
-            var reactionProvider = createReactionProvider();
-            showConfirmation(reactionData, reactionProvider);
-            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, reactionProvider.reactionLoaded, error);
+            postNewReaction(reactionData);
+        }
+    }
+
+    function postNewReaction(reactionData) {
+        var reactionProvider = createReactionProvider();
+        showConfirmation(reactionData, reactionProvider);
+        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+
+        function success(reaction) {
+            reaction = PageData.registerReaction(reaction, containerData, pageData);
+            reactionProvider.reactionLoaded(reaction);
         }
 
         function error(message) {
