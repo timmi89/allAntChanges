@@ -4999,8 +4999,8 @@ function antenna($A){
                             separateCtaCount++;
                         });
                     }
-                $ANT.dequeue('initAjax');  // yes this should be inside the conditional.  :/
                 }
+                $ANT.dequeue('initAjax');  // yes this should be inside the conditional.  :/
 
             },
             initHTMLAttributes: function() {
