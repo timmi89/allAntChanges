@@ -91,7 +91,7 @@ div.ant.ant_window {
     width:111px;
     opacity: 0.0;
     /*transform: scale(0.5) translate3d(50%,100%,0);*/
-    background:#fff;
+    /*background:#fff;*/
     transition: opacity 200ms ease;
       
 }
@@ -274,7 +274,7 @@ div.ant_loader {
     width: 20px;
     visibility:hidden;
     /*position:relative;*/
-    z-index:1;
+    z-index:1001;
     position:absolute;
     right:0;
     top: 7px;
@@ -478,6 +478,7 @@ div.ant.ant_window div.ant_aWindowMenu {
     right: 0;
     cursor: default;
 }
+.ant_touch_browser div.ant.ant_window div.ant_aWindowMenu {display:none;}
 div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown {
     padding: 10px 8px;
     cursor: pointer;
@@ -563,19 +564,20 @@ div.ant div.ant_footer {
     -o-box-sizing : border-box;
     box-sizing : border-box;
 }
-div.ant div.ant_footer .antenna-logo-link {
+div.ant div.ant_footer a.antenna-logo-link {
   display: block;
-  height: 40px;
+  height: 20px;
   text-align: center;
   overflow: hidden;
   position: relative;
   z-index: -1;
-  margin-top: -16px;
+  font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
+  color: rgb(78, 78, 78);
+  font-size: 11px;
+  letter-spacing: 0;
+  font-weight: 400;
 }
-div.ant div.ant_footer .antenna-logo-link span {
-  color:#ccc;
-  font-size: 50px !important;
-}
+
 div.ant div.ant_footer em {
   display:block;
   padding:11px 0;
@@ -598,10 +600,11 @@ div.ant div.ant_footer.ant_cta span {
 div.ant div.ant_footer.ant_cta .ant_cta_msg{
   position: relative;
   font-size: 10px;
-  font-weight:900;
+  font-weight:400;
   left: -3px;
   color:#777;
   padding:3px 1px;
+  margin-bottom: 5px;
 }
 div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
     position: absolute;
@@ -657,8 +660,11 @@ div.ant div.ant_window div.jspDrag    {
 }
 
 div.ant div.ant_header h1 {
- font-size:12px;
- color:#8fb3f2;
+ font-size:11px;
+ font-weight: 400;
+ font-family: 'Helvetica Neue','Helvetica';
+ letter-spacing: -0.25px;
+ color:#000;
  clear:none;
  margin-left:10px;
  padding-top:5px;
@@ -882,7 +888,7 @@ div.ant div.ant_comment .ant_commentSubmit{
     padding: 5px;
     float: right;
     border: none;
-    background: #8fb3f2;
+    background: #000;
     color: white;
     margin-top: 2px;
 }
@@ -930,7 +936,7 @@ div.ant .ant_shareLinks ul i.ant-social-twitter {
 }
 div.ant .ant_shareLinks ul i.ant-social-facebook:hover,
 div.ant .ant_shareLinks ul i.ant-social-twitter:hover {
-  color:#8fb3f2;
+  color:#000;
 }
 div.ant .ant_shareLinks ul i.ant-social-facebook {
   color:#3b5998;
@@ -1210,7 +1216,7 @@ div.ant.ant-summary div.ant-sum-headline div.ant-call-to-action {
 div.ant.ant-summary a.ant_reactions_label {
   display:inline-block;
   font-style:normal;
-  color:#8fb3f2;
+  color:#000;
   font-size:12px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
@@ -1221,7 +1227,7 @@ div.ant.ant-summary a.ant_reactions_label {
   top: 1px;*/
 }
 div.ant.ant-summary a.ant_reactions_label span {
-  color:#8fb3f2;
+  color:#000;
   font-size:12px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
@@ -1525,7 +1531,9 @@ div.ant div.ant_body.ant_tags_list .ant_box {
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box .ant_search{
     /*position: absolute;*/
     display: none;
-    padding:2px 15px;
+    /*padding:2px 15px;*/
+    bottom: -2px;
+    position: relative;
 }
 
 
@@ -1541,7 +1549,11 @@ div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box.hidePlu
 } 
 body.ant_touch_browser div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box .ant_search,
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_search{
-    display: inline-block;
+    /*display: inline-block;*/
+    display: block;
+    margin: 0 0 -10px 0;
+    float: right;
+    height:20px;
 }
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box.hidePlusOne .ant_plusOne{
     display: none;
@@ -1555,9 +1567,9 @@ div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag {
     /*transition: margin-top 0.6s ease;*/
 }
 
-div.ant div.ant_body.ant_tags_list .ant_box:hover div.ant_tag {
-  background:linear-gradient(rgba(30,30,30,0.15),rgba(255,255,255,0.2)); 
-}
+/*div.ant div.ant_body.ant_tags_list .ant_box:hover div.ant_tag {*/
+  /*background:linear-gradient(rgba(30,30,30,0.15),rgba(255,255,255,0.2)); */
+/*}*/
 div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_actions {
   font-size:10px;
   margin: 0 0 -4% 0;
@@ -1645,9 +1657,9 @@ div.ant div.ant_body.ant_tags_list .ant_box_medium.ant_writeMode {
 div.ant.ant_writemode div.ant_body.ant_tags_list .ant_box_medium .ant_tag_body {
   margin-bottom: -6px;
 }*/
-div.ant div.ant_body.ant_tags_list .ant_box_medium:nth-child(even) {
-  border-left:1px solid rgba(0,0,0,0.25);
-}
+/*div.ant div.ant_body.ant_tags_list .ant_box_medium:nth-child(even) {*/
+  /*border-left:1px solid rgba(0,0,0,0.25);*/
+/*}*/
 div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child {
 width: 222px;
 height: 50px;
@@ -1727,7 +1739,7 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
     opacity:0.9;
     margin-bottom: 2px;
     /*font-family: Helvetica,Arial,sans-serif;*/
-    font-weight: bold;
+    font-weight: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     
@@ -1792,7 +1804,7 @@ div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover {
     opacity: 0.75;
     filter: alpha(opacity=80);
     padding-left: 10px;
-    border-left: 1px solid rgba(255,255,255,0.5);
+    /*border-left: 1px solid rgba(255,255,255,0.5);*/
     margin-left: 10px;
     white-space: nowrap;
     /*z-index: 2;*/
@@ -1853,7 +1865,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount6,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount7 { font-size:24px; }
 */
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_8,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_9 { font-size:19px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_9 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_10,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_11,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_12,
@@ -1882,9 +1894,9 @@ div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_body
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 .ant_widget{
-    -moz-box-shadow:0 2px 6px #aaa;
-    -webkit-box-shadow:0 2px 6px #aaa;
-    box-shadow:0 2px 6px #aaa;
+    -moz-box-shadow:0 1px 40px #8A8A8A;
+    -webkit-box-shadow:0 1px 40px #8A8A8A;
+    box-shadow:0 1px 40px #8A8A8A;
 }
 
 /*shareWidget*/
@@ -2694,12 +2706,12 @@ div.ant div.ant_footer .ant_click_overlay{
     background: none;
 }
 
-div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto 0 -0.75em; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:13px; border:none; letter-spacing:-0.25px; padding: 3px; max-width:75%; height:auto; background:transparent; }
+div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto 0 -0.75em; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:400; font-size:11px; border:none; letter-spacing:-0.25px; padding: 3px; max-width:75%; height:auto; background:transparent; color:#aaa; }
 div.ant div.ant_footer .ant_box:hover .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   position: absolute;
-  background: #8fb3f2;
+  background: #000;
   color: white;
   border: 0;
   margin: 0;
@@ -2812,7 +2824,8 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 /*.ant_indicator .ant-antenna-logo { color:#fff; }
 .ant_indicator_for_media.ant_indicator_not_img .ant-antenna-logo { color:#bbb; }*/
 .ant_live_hover .ant_indicator .ant-antenna-logo,
-.ant-antenna-logo { color:#8fb3f2; }
+.ant-antenna-logo { color:#000; }
+.ant_actionbar .ant-antenna-logo { color:#ddd; }
 
 /* mobile */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {

@@ -410,6 +410,7 @@ class GroupForm(forms.ModelForm):
             'img_indicator_show_onload',
             'img_indicator_show_side',
             'tag_box_bg_colors',
+            'tag_box_bg_colors_hover',
             'tag_box_text_colors',
             'tag_box_font_family',
             'tag_box_gradient',

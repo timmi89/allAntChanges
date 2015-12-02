@@ -202,6 +202,7 @@ class Group(models.Model):
     img_indicator_show_onload = models.BooleanField(default=True)
     img_indicator_show_side = models.CharField(max_length=25, default='', blank=True)
     tag_box_bg_colors = models.TextField(blank=True, null=True)
+    tag_box_bg_colors_hover = models.TextField(blank=True, null=True)
     tag_box_text_colors = models.TextField(blank=True, null=True)
     tag_box_font_family = models.TextField(blank=True, null=True)
     tag_box_gradient = models.TextField(blank=True, null=True)

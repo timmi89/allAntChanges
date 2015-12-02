@@ -181,16 +181,19 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
-                // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
-                // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_bg_colors: '#18414c;#376076;78,122,146;215,179,69;#e6885c;#e46156',
-                // tag_box_bg_colors: '#376076;215,179,69;#e6885c;#e46156',
-                // tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
-                // tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
-                tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
+                tag_box_bg_colors: 'background:rgba(0,0,0,0.25);',
+                tag_box_bg_colors_hover: 'background:rgba(0,0,0,0.1);',
                 tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
-                // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
-                tags_bg_css: '',
+
+                // tags_bg_css: 'linear-gradient(rgba(52, 133, 169, 0.95),rgba(112, 177, 204, 0.95))',  // blue transparent-y
+
+                tags_bg_css: 'background-image: linear-gradient(185deg,#333,#777);', // black-white
+
+                // tags_bg_css: 'background:#e0e0e0;', // mostly white
+                // tags_bg_css: 'background-image: linear-gradient(185deg,#aaa,#fff);', // mostly white
+
+                tag_box_text_colors: 'color:#fff;',
+
                 ignore_subdomain: false,
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
@@ -646,7 +649,7 @@ function antenna($A){
                 //ANT.aWindow.updateFooter:
                 var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
-                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>' );
+                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/">Antenna</a>' );
                 
                 //todo: examine resize
                 // ANT.aWindow.updateSizes( $aWindow );
@@ -1118,10 +1121,6 @@ function antenna($A){
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
-                    // // get the background color and text color
-                    // // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
-                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
 
                     // CHANGETHIS
                     // delete??
@@ -1170,14 +1169,17 @@ function antenna($A){
                         });
                     }
 
+                    // use single quotes in the string so the string concat works, and doesn't unexpectedly close the HTML style attribute in lineOne, lineTwo
+                    ANT.group.tag_box_font_family = ANT.group.tag_box_font_family.replace(/['"]+/g, '\'');
+
                     lineOne = $.trim(lineOne) + ' '; // trim front space, add end space... won't wrap given css rule
                     var lineOneLength = ( lineOne.length > 17 ) ? "max" : lineOne.length;
-                    lineOne = '<div class="ant_charCount_' + lineOneLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
+                    lineOne = '<div class="ant_charCount_' + lineOneLength + '" style="font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
 
                     if (lineTwo!='') {
                         lineTwo = $.trim(lineTwo);
                         var lineTwoLength = ( lineTwo.length > 17 ) ? "max" : lineTwo.length;
-                        lineTwo = '<div class="ant_charCount_' + lineTwoLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineTwo + '</div>';
+                        lineTwo = '<div class="ant_charCount_' + lineTwoLength + '" style="font-family:'+ANT.group.tag_box_font_family+';">' + lineTwo + '</div>';
                     }
 
                     tagBodyHtml = lineOne + lineTwo;
@@ -1194,16 +1196,14 @@ function antenna($A){
                     var tagCount = tagCount || 0;
                     var tagCountDisplay = tagCount;
                     var searchCountDisplay = (tagCount===1) ? '':tagCountDisplay;
-                    // var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
-                        // "" : 
-                        // '<span class="ant_plusOne_container"><span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1 reaction</span></span>';
+
 
                     var tagActionsHtml = isWriteMode ?
-                        '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' : 
+                        '<span class="ant_plusOne">+1</span>' : 
                         
-                            '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
-                            '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' +
-                            ((kind=='page') ? '<span class="ant_search ant_tooltip_this" style="color:rgb('+textColorRGB+');" title="View content<br/>with this reaction"><i class="ant-search" style="color:rgb('+textColorRGB+');"></i></span>': '');
+                            '<span class="ant_count" style="font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
+                            '<span class="ant_plusOne" style="">+1</span>' +
+                            ((kind=='page') ? '<span class="ant_search ant_tooltip_this" title="View content<br/>with this reaction"><i class="ant-search"></i></span>': '');
 
 
                     var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+' row_num_'+rowNum+'">'+
@@ -1266,10 +1266,9 @@ function antenna($A){
                             comment_tooltip = 'View comments';
                         if (num_comments===0) { num_comments=''; comment_tooltip = 'Add comment here'; }
                     // if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
-                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this '+((showCommentsBeforeHover)? '':'ant_hide')+'" style="color:rgba('+textColorRGB+',0.8);border-color:rgba('+textColorRGB+',0.5);" title="'+comment_tooltip+'"></span>');
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this '+((showCommentsBeforeHover)? '':'ant_hide')+'" title="'+comment_tooltip+'"></span>');
 
-                        $commentHover.append( '<i class="ant-comment" style="color:rgba('+textColorRGB+',0.8);"></i> '+num_comments );
+                        $commentHover.append( '<i class="ant-comment"></i> '+num_comments );
                         
                         if(isTouchBrowser){
                             $commentHover.on('touchend.ant', function() {
@@ -1562,7 +1561,7 @@ function antenna($A){
                 // think we don't need $container or actionType
 
                 var $container = $aWindow.find('.ant_footer');
-                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>');
+                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/">Antenna</a>');
 
                 if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
@@ -2637,7 +2636,7 @@ function antenna($A){
                         success: function(response) {
                             var $broadcast = $('<div class="antenna-broadcast no-ant"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
-                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
+                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span>Antenna<p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
 
                             if ( $broadcastSelector.width() < 400 ) {
                                 $broadcast.addClass('ant-thin');
@@ -4123,14 +4122,15 @@ function antenna($A){
                             if (typeof group_settings.img_indicator_show_side !='undefined' && !group_settings.img_indicator_show_side ) { delete group_settings.img_indicator_show_side; }
                             if (typeof group_settings.tag_box_bg_colors !='undefined' && !group_settings.tag_box_bg_colors ) { delete group_settings.tag_box_bg_colors; }
                             if (typeof group_settings.tag_box_text_colors !='undefined' && !group_settings.tag_box_text_colors ) { delete group_settings.tag_box_text_colors; }
+                            if (typeof group_settings.tag_box_bg_colors_hover !='undefined' && !group_settings.tag_box_bg_colors_hover ) { delete group_settings.tag_box_bg_colors_hover; }
                             if (typeof group_settings.tag_box_font_family !='undefined' && !group_settings.tag_box_font_family ) { delete group_settings.tag_box_font_family; }
                             if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
 
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
-                        ANT.group.tag_box_bg_colors = ANT.group.tag_box_bg_colors.split(';');
-                        ANT.group.tag_box_text_colors = ANT.group.tag_box_text_colors.split(';');
+                        // ANT.group.tag_box_bg_colors = ANT.group.tag_box_bg_colors.split(';');
+                        // ANT.group.tag_box_text_colors = ANT.group.tag_box_text_colors.split(';');
 
                         var a_or_b_or_not = '';
                         if ( ANT.group.ab_test_impact === true ) {
@@ -4190,6 +4190,22 @@ function antenna($A){
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
+
+                        $('head').append( $('<style type="text/css">'+
+                            'div.ant div.ant_body.ant_tags_list { '+ ANT.group.tags_bg_css +' }' +
+                            'div.ant div.ant_body.ant_tags_list .ant_box { '+ ANT.group.tag_box_bg_colors + ' }' +
+                            'div.ant div.ant_body.ant_tags_list .ant_box:hover { '+ ANT.group.tag_box_bg_colors_hover +' }' +
+                            'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_actions * { '+ ANT.group.tag_box_text_colors +' }' +
+                            'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body * { '+ ANT.group.tag_box_text_colors +' }' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body,' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body span.ant_count,' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body span.ant-search,' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body .ant-comment,' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body span.ant_plusOne { '+ ANT.group.tag_box_text_colors +' }' +
+                            // 'div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_body .ant_comment_hover { '+ ANT.group.tag_box_text_colors +' }' +
+                            '</style>') );
+
+
                         if ( ANT.group.custom_css !== "" ) {
                             $('head').append( $('<style type="text/css">' + ANT.group.custom_css + '</style>') );
                         }
@@ -4955,34 +4971,37 @@ function antenna($A){
             },
             initSeparateCtas: function(){
                 // ANT.initSeparateCtas
-                
-                if (ANT.group.separate_cta && ANT.util.activeAB() ) {
+                if (ANT.group.separate_cta) {
                     var separateCtaCount = 0;
-                    $(ANT.group.active_sections).find(ANT.group.separate_cta).each( function(idx, node) {
-                        var $node = $(node),
-                            tagName = node.nodeName.toLowerCase(),
-                            crossPage = '';
+                    var $separate_ctas = $(ANT.group.active_sections).find(ANT.group.separate_cta);
 
-                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
-                        if ( $node.hasAttr('ant-item') ) {
-                            var antItem = $node.attr('ant-item');
-                        } else {
-                            var antItem = 'ant-custom-cta-'+separateCtaCount;
-                            $node.attr('ant-item', antItem);
-                        }
+                    if ($separate_ctas.length) {
+                        $separate_ctas.each( function(idx, node) {
+                            var $node = $(node),
+                                tagName = node.nodeName.toLowerCase(),
+                                crossPage = '';
 
-                        // make all media a crosspage container?  
-                        // nah.
-                        // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
-                        //     $node.attr('ant-crossPageContent', 'true');
-                        // }
+                            if ( $node.closest(ANT.group.no_ant).length ) {return;}
+                            if ( $node.hasAttr('ant-item') ) {
+                                var antItem = $node.attr('ant-item');
+                            } else {
+                                var antItem = 'ant-custom-cta-'+separateCtaCount;
+                                $node.attr('ant-item', antItem);
+                            }
 
-                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
-                        separateCtaCount++;
-                    });
+                            // make all media a crosspage container?  
+                            // nah.
+                            // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
+                            //     $node.attr('ant-crossPageContent', 'true');
+                            // }
+
+                            $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
+                            separateCtaCount++;
+                        });
+                    }
+                $ANT.dequeue('initAjax');  // yes this should be inside the conditional.  :/
                 }
 
-                $ANT.dequeue('initAjax');
             },
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
@@ -8056,10 +8075,10 @@ if ( sendData.kind=="page" ) {
                                 }
                             }
                             if ( $cta.length && summary.counts.tags > 0 ) {
-                                var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
-                                var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
-                                var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
-                                var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
+                                // var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
+                                // var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
+                                // var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
+                                // var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
 
                                 var topReactions = [],
                                     topReactionsLimit = (summary.counts.tags===1) ? 1:2;
@@ -8086,8 +8105,8 @@ if ( sendData.kind=="page" ) {
                                 if (show_expanded === true && topReactions.length && !$cta_container.find('.ant-top-tags').length) {
                                     $cta.append(
                                         '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
-                                        ( topReactions[0] ? '<div style="background-color:rgb('+bgColorRGB0+');color:rgb('+textColorRGB0+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB0+');">('+topReactions[0].count+')</span></div>' : '' ) +
-                                        ( topReactions[1] ? '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[1].count+')</span></div>' : '' ) +
+                                        ( topReactions[0] ? '<div class="ant-top-tag">'+topReactions[0].body+' <span>('+topReactions[0].count+')</span></div>' : '' ) +
+                                        ( topReactions[1] ? '<div class="ant-top-tag">'+topReactions[1].body+' <span>('+topReactions[1].count+')</span></div>' : '' ) +
                                         '</div></div>'
                                     );
                                 }
@@ -8688,14 +8707,13 @@ if ( sendData.kind=="page" ) {
                             while ( buckets.big.length || buckets.medium.length ) {
                                 // get the background color and text color
                                 // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                                var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
-                                var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
-                                
-                                
+                                // var bgColorRGBA = '0,0,0,0.95';  // ANT.group.tag_box_bg_colors; //( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
+
+                                                                
                                 if ( buckets.big.length ) {
                                     var thisTag = buckets.big.shift();
-                                    var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                    var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'"></div>');
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, rowNum:rowNum });
                                     
                                     $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
 
@@ -8718,7 +8736,7 @@ if ( sendData.kind=="page" ) {
                                         var $tagRow = $aWindow.find('.ant_tag_row:last');
 
                                         if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
-                                            var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
+                                            var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'"></div>');
                                             $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
                                             // rowNum++;
                                             // if ( rowNum == numBgColors ) rowNum = 0;
@@ -8726,7 +8744,7 @@ if ( sendData.kind=="page" ) {
                                             var $tagContainer = $tagRow;
                                         }
 
-                                        ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                        ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, rowNum:rowNum });
                                         
                                         // mediumBuckets++;
                                         if ( mediumBuckets % 2 === 0) { 
@@ -9578,9 +9596,10 @@ if ( sendData.kind=="page" ) {
                             // return;
                         // }
 
-                        var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
-                        $aWindow.find('.ant_header').replaceWith($header)
-                        ANT.aWindow.updateTagPanel( $aWindow );
+                        // var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
+                        // $aWindow.find('.ant_header').replaceWith($header)
+                        // ANT.aWindow.updateTagPanel( $aWindow );
+                        ANT.aWindow.safeClose( $aWindow );
                     });
                     return $backButton;
                 }
@@ -10336,7 +10355,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv32"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv33"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10891,10 +10910,10 @@ function $AFunctions($A){
                         '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                     );
 
-                    var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
-                    var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
-                    var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
-                    var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
+                    // var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
+                    // var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
+                    // var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
+                    // var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
 
                     var topReactions = [],
                         topReactionsLimit = (page&&page.toptags&&page.toptags.length===1) ? 1:2;
@@ -10916,8 +10935,8 @@ function $AFunctions($A){
                     if (isMobile && ANT.group.summary_widget_expanded_mobile === true && topReactions.length >= 1) {
                         $summary_widget.append(
                             '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
-                            ( topReactions[0] ? '<div style="background-color:rgb('+bgColorRGB0+');color:rgb('+textColorRGB0+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB0+');">('+topReactions[0].tag_count+')</span></div>' : '' ) +
-                            ( topReactions[1] ? '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[1].tag_count+')</span></div>' : '' ) +
+                            ( topReactions[0] ? '<div class="ant-top-tag">'+topReactions[0].body+' <span>('+topReactions[0].tag_count+')</span></div>' : '' ) +
+                            ( topReactions[1] ? '<div class="ant-top-tag">'+topReactions[1].body+' <span>('+topReactions[1].tag_count+')</span></div>' : '' ) +
                             '</div></div>'
                         );
                     }
