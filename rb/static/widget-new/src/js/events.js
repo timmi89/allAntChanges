@@ -1,19 +1,18 @@
 var AjaxClient = require('./utils/ajax-client');
+var XDMClient = require('./utils/xdm-client');
 
 var isTouchBrowser = (navigator.msMaxTouchPoints || "ontouchstart" in window) && ((window.matchMedia("only screen and (max-width: 768px)")).matches);
 
 function postGroupSettingsLoaded(groupSettings) {
-    var event = createEvent(eventTypes.script_load, '', groupSettings); // eventValue was historically for A/B testing
+    var event = createEvent(eventTypes.script_load, '', groupSettings);
     event[attributes.page_id] = 'na';
     event[attributes.article_height] = 'na';
     postEvent(event);
 }
 
 function postPageDataLoaded(pageData, groupSettings) {
-    var event = createEvent(eventTypes.widget_load, '', groupSettings); // eventValue was historically for A/B testing
+    var event = createEvent(eventTypes.widget_load, '', groupSettings);
     appendPageDataParams(event, pageData);
-    // TODO: The existing code (engage_full line 4467) appears to be mostly dead code. Review.
-    //event[attributes.content_attributes] = pages.length > 1 ? eventValues.multiple_pages : eventValues.single_summary_bar;
     event[attributes.content_attributes] = pageData.metrics.isMultiPage ? eventValues.multiple_pages : eventValues.single_summary_bar;
     postEvent(event);
 }
@@ -64,28 +63,15 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     postEvent(event);
 }
 
-function toDo(eventType, eventValue, pageData, groupSettings) {
-
-    var event = {};
-
-    event[attributes.user_id] = ''; // TODO
-    event[attributes.page_id] = pageData ? pageData.id : 'na';
-    event[attributes.long_term_session] = ''; // TODO
-    event[attributes.short_term_session] = ''; // TODO
-
-
-    event[attributes.content_attributes] = ''; // TODO: params.content_attributes || null,  // what is this for?
-    event[attributes.page_topics] = ''; // TODO: ANT.group.topics || null,
-    event[attributes.author] = ''; // TODO: ANT.group.author || null,
-    event[attributes.site_section] = ''; // TODO: ANT.group.section || null,
-
-}
-
 function appendPageDataParams(event, pageData) {
+    event[attributes.page_id] = pageData.pageId;
     event[attributes.page_title] = pageData.pageTitle; // TODO: Send pageTitle back on page data
     event[attributes.canonical_url] = ''; // TODO: Send back the canonical URL from the server?
     event[attributes.page_url] = pageData.requestedURL; // TODO: Figure out what we want for page_url and canonical_url here
     event[attributes.article_height] = 0 || pageData.metrics.height;
+    event[attributes.page_topics] = pageData.topics;
+    event[attributes.author] = pageData.author;
+    event[attributes.site_section] = pageData.section;
 }
 
 function createEvent(eventType, eventValue, groupSettings) {
@@ -97,6 +83,8 @@ function createEvent(eventType, eventValue, groupSettings) {
     event[attributes.event_type] = eventType;
     event[attributes.event_value] = eventValue;
     event[attributes.group_id] = groupSettings.groupId();
+    event[attributes.short_term_session] = getShortTermSessionId();
+    event[attributes.long_term_session] = getLongTermSessionId();
     event[attributes.referrer_url] = referrer_url;
     event[attributes.referrer_url_dupe] = referrer_url; // TODO: Resolve the dupe property
     event[attributes.isTouchBrowser] = isTouchBrowser;
@@ -108,9 +96,12 @@ function createEvent(eventType, eventValue, groupSettings) {
 }
 
 function postEvent(event) {
-    fillInMissingProperties(event);
-    // Send the event to BigQuery
-    AjaxClient.postEvent(event); // TODO: do we need to do anything in a success/fail callback?
+    XDMClient.getUser(function(userInfo) {
+        event[attributes.user_id] = userInfo.user_id;
+        fillInMissingProperties(event);
+        // Send the event to BigQuery
+        AjaxClient.postEvent(event); // TODO: do we need to do anything in a success/fail callback?
+    });
 }
 
 // Fill in any optional properties with null values.
@@ -124,6 +115,53 @@ function fillInMissingProperties(event) {
     }
 }
 
+function getLongTermSessionId() {
+    var guid = localStorage.getItem('ant_lts');
+    if (!guid) {
+        guid = createGuid();
+        try {
+            localStorage.setItem('ant_lts', guid);
+        } catch(error) {
+            // Some browsers (mobile Safari) throw an exception when in private browsing mode.
+            // Nothing we can do about it. Just fall through and return the value we generated.
+        }
+    }
+    return guid;
+}
+
+function getShortTermSessionId() {
+    var session;
+    var json = localStorage.getItem('ant_sts');
+    if (json) {
+        session = JSON.parse(json);
+        if (Date.now() > session.expires) {
+            session = null;
+        }
+    }
+    if (!session) {
+        var minutes = 15;
+        session = {
+            guid: createGuid(),
+            expires: Date.now() + minutes * 60000
+        };
+    }
+    try {
+        localStorage.setItem('ant_sts', JSON.stringify(session));
+    } catch(error) {
+        // Some browsers (mobile Safari) throw an exception when in private browsing mode.
+        // Nothing we can do about it. Just fall through and return the value we generated.
+    }
+    return session.guid;
+}
+
+function createGuid() {
+    // TODO: Review. Code copied from engage_full
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 // TODO: Rename these properties to be consistent and meaningful
 
 var attributes = {
@@ -134,7 +172,8 @@ var attributes = {
     page_id: 'pid',
     long_term_session: 'lts',
     short_term_session: 'sts',
-    referrer_url: 'ref',    // referrer_domain?
+    referrer_url: 'ref',
+    referrer_url_dupe: 'ru', // TODO: Porter?
     content_id: 'cid',
     article_height: 'ah',
     container_hash: 'ch',
@@ -143,7 +182,6 @@ var attributes = {
     page_title: 'pt',
     canonical_url: 'cu',
     page_url: 'pu',
-    referrer_url_dupe: 'ru', // TODO: Porter?
     content_attributes: 'ca',
     content_location: 'cl',
     page_topics: 'ptop',

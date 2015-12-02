@@ -21,6 +21,9 @@ function computePagesParam($pageElementArray, groupSettings) {
     }
     if (pages.length == 1) {
         pages[0].image = PageUtils.computeTopLevelPageImage(groupSettings);
+        pages[0].author = PageUtils.computePageAuthor(groupSettings);
+        pages[0].topics = PageUtils.computePageTopics(groupSettings);
+        pages[0].section = PageUtils.computePageSiteSection(groupSettings);
     }
 
     return { pages: pages };

@@ -1,9 +1,8 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
 function computeTopLevelPageTitle() {
-    // TODO: Why is this hard-coded, when the equivalent for the image is configurable? (Unify them.)
-    var title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
-    return title.trim();
+    // TODO: This should be a configurable group setting like the other page properties.
+    return getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
 }
 
 function computePageTitle($page, groupSettings) {
@@ -15,12 +14,27 @@ function computePageTitle($page, groupSettings) {
 }
 
 function computeTopLevelPageImage(groupSettings) {
-    // TODO: This is currently just reproducing what engage_full does. But do we really need to look inside the 'html'
-    //       element like this? Can we just use a selector like the one for the page title (meta[property="og:image"])?
-    //       Can/should we look inside the head element instead of the whole html document?
-    //       Unify the strategies used by this function and computeTopLevelPageTitle()
-    var image = $('html').find(groupSettings.pageImageSelector()).attr(groupSettings.pageImageAttribute()) || '';
-    return image.trim();
+    return getAttributeValue(groupSettings.pageImageSelector(), groupSettings.pageImageAttribute());
+}
+
+function computePageAuthor(groupSettings) {
+    return getAttributeValue(groupSettings.pageAuthorSelector(), groupSettings.pageAuthorAttribute());
+}
+
+function computePageTopics(groupSettings) {
+    return getAttributeValue(groupSettings.pageTopicsSelector(), groupSettings.pageTopicsAttribute());
+}
+
+function computePageSiteSection(groupSettings) {
+    return getAttributeValue(groupSettings.pageSiteSectionSelector(), groupSettings.pageSiteSectionAttribute());
+}
+
+function getAttributeValue(elementSelector, attributeSelector) {
+    var value = '';
+    if (elementSelector && attributeSelector) {
+        value = $(elementSelector).attr(attributeSelector) || '';
+    }
+    return value.trim();
 }
 
 function computeTopLevelCanonicalUrl(groupSettings) {
@@ -69,5 +83,8 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 module.exports = {
     computePageUrl: computePageElementUrl,
     computePageTitle: computePageTitle,
-    computeTopLevelPageImage: computeTopLevelPageImage
+    computeTopLevelPageImage: computeTopLevelPageImage,
+    computePageAuthor: computePageAuthor,
+    computePageTopics: computePageTopics,
+    computePageSiteSection: computePageSiteSection
 };

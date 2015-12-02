@@ -13,11 +13,8 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
     var contentType = contentData.type;
     var contentLocation = contentData.location;
     var contentDimensions = contentData.dimensions;
-    XDMClient.getUser(function(response) {
-        var userInfo = response.data;
+    XDMClient.getUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
-        // TODO figure out which parts don't get passed for a new reaction
-        // TODO compute field values (e.g. container_kind and content info) for new reactions
         var data = {
             tag: {
                 body: reactionData.text
@@ -50,11 +47,8 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
 }
 
 function postPlusOne(reactionData, containerData, pageData, success, error) {
-    XDMClient.getUser(function(response) {
-        var userInfo = response.data;
+    XDMClient.getUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
-        // TODO figure out which parts don't get passed for a new reaction
-        // TODO compute field values (e.g. container_kind and content info) for new reactions
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
             var containerReactions = containerData.reactions;
@@ -98,11 +92,8 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
 
 function postComment(comment, reactionData, containerData, pageData, success, error) {
     // TODO: refactor the post functions to eliminate all the copied code
-    XDMClient.getUser(function(response) {
-        var userInfo = response.data;
+    XDMClient.getUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
-        // TODO figure out which parts don't get passed for a new reaction
-        // TODO compute field values (e.g. container_kind and content info) for new reactions
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
             var containerReactions = containerData.reactions;
@@ -114,11 +105,6 @@ function postComment(comment, reactionData, containerData, pageData, success, er
                     break;
                 }
             }
-        }
-        if (!reactionData.parentID) {
-            // TODO: Ensure that we always have a parent ID. Comments should always be made on a reaction.
-            console.log('Error attempting to post comment. No parent reaction specified.');
-            return;
         }
         var data = {
             comment: comment,
@@ -135,7 +121,6 @@ function postComment(comment, reactionData, containerData, pageData, success, er
 }
 
 function contentNodeDataKind(type) {
-    // TODO: resolve whether to use the short or long form for content_node_data.kind. // 'pag', 'txt', 'med', 'img'
     if (type === 'image') {
         return 'img';
     }
@@ -211,8 +196,7 @@ function reactionFromResponse(response, contentLocation) {
 }
 
 function getComments(reaction, callback) {
-    XDMClient.getUser(function(response) {
-        var userInfo = response.data;
+    XDMClient.getUser(function(userInfo) {
         var data = {
             reaction_id: reaction.parentID,
             user_id: userInfo.user_id,
@@ -229,8 +213,7 @@ function getComments(reaction, callback) {
 
 function fetchLocationDetails(reactionLocationData, pageData, callback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
-    XDMClient.getUser(function(response) {
-        var userInfo = response.data;
+    XDMClient.getUser(function(userInfo) {
         var data = {
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,

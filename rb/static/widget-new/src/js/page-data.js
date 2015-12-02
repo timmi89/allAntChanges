@@ -41,8 +41,11 @@ function updatePageData(json, groupSettings) {
     var pageData = getPageDataForJsonResponse(json);
     pageData.pageId = json.id;
     pageData.groupId = groupSettings.groupId();
+    pageData.canonicalUrl = json.canonicalURL;
+    pageData.author = json.author;
+    pageData.section = json.section;
+    pageData.topics = json.topics;
 
-    // TODO: Can we get away with just setting pageData = json without breaking Ractive's data binding?
     var summaryReactions = json.summaryReactions;
     pageData.summaryReactions = summaryReactions;
     setContainers(pageData, json.containers);
@@ -92,7 +95,7 @@ function getContainerData(pageData, containerHash) {
             hash: containerHash,
             reactionTotal: 0,
             reactions: [],
-            loaded: pageData.summaryLoaded, // TODO: should this just be a live function that delegates to summaryLoaded?
+            loaded: pageData.summaryLoaded,
             suppress: false
         };
         pageData.containers[containerHash] = containerData;
