@@ -4910,7 +4910,7 @@ function antenna($A){
                         $('.ant-summary').remove();
 
 
-
+                        ANT.actions.indicators.utils.updateContainerTrackers();
                         /*
 
 
@@ -4941,6 +4941,7 @@ function antenna($A){
                                     if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$firstContent.length ) {
                                         if ( $active_sections.length && $active_sections.find(ANT.group.anno_whitelist).length  ) {
                                             ANT.actions.reset();
+                                            ANT.actions.indicators.utils.updateContainerTrackers();
                                             clearInterval(tryToResetAntenna);
                                         }
                                     }
