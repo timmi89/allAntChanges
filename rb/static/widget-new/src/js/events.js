@@ -19,7 +19,6 @@ function postPageDataLoaded(pageData, groupSettings) {
 
 function postReactionWidgetOpened(isShowReactions, pageData, containerData, contentData, groupSettings) {
     var eventValue = isShowReactions ? eventValues.readmode : eventValues.writemode;
-    // TODO: what is "rd-zero" for?
     var event = createEvent(eventTypes.aWindow_show, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.container_hash] = containerData.hash;
@@ -37,41 +36,70 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
 function postReactionCreated(pageData, containerData, reactionData, groupSettings) {
     var event = createEvent(eventTypes.reaction, reactionData.text, groupSettings);
     appendPageDataParams(event, pageData);
-    event[attributes.reaction_body] = reactionData.text;
-    event[attributes.container_hash] = containerData.hash;
-    event[attributes.container_kind] = containerData.type;
-    event[attributes.content_location] = reactionData.content.location;
-    event[attributes.content_id] = reactionData.content.id;
+    appendContainerDataParams(event, containerData);
+    appendReactionDataParams(event, reactionData);
+    postEvent(event);
+}
+
+// TODO: Hook this up once reaction sharing is in place.
+function postReactionShared(pageData, containerData, reactionData, groupSettings) {
+    var eventValue = ''; // TODO: 'facebook', 'twitter', etc
+    var event = createEvent(eventTypes.share, eventValue, groupSettings);
+    appendPageDataParams(event, pageData);
+    appendContainerDataParams(event, containerData);
+    appendReactionDataParams(event, reactionData);
+    postEvent(event);
+}
+
+function postContentViewed(pageData, locationData, groupSettings) {
+    var event = createEvent(eventTypes.summary_bar, eventValues.view_content, groupSettings);
+    appendPageDataParams(event, pageData);
+    // TODO: Note that engage_full only sent the page id. Any benefit/harm to sending extra details?
+    //       Do we want more details? (i.e. the full container/reaction data?)
+    event[attributes.container_hash] = locationData.containerHash;
+    event[attributes.content_id] = locationData.contentId;
+    event[attributes.content_location] = locationData.location;
     postEvent(event);
 }
 
 function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
     var event = createEvent(eventTypes.view_comments, '', groupSettings);
     appendPageDataParams(event, pageData);
-    event[attributes.container_hash] = containerData.hash;
-    event[attributes.container_kind] = containerData.type;
-    event[attributes.reaction_body] = reactionData.text;
+    appendContainerDataParams(event, containerData);
+    appendReactionDataParams(event, reactionData);
     postEvent(event);
 }
 
 function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
     var event = createEvent(eventTypes.comment, comment, groupSettings);
     appendPageDataParams(event, pageData);
-    event[attributes.container_hash] = containerData.hash;
-    event[attributes.container_kind] = containerData.type;
-    event[attributes.reaction_body] = reactionData.text;
+    appendContainerDataParams(event, containerData);
+    appendReactionDataParams(event, reactionData);
     postEvent(event);
 }
 
 function appendPageDataParams(event, pageData) {
     event[attributes.page_id] = pageData.pageId;
-    event[attributes.page_title] = pageData.pageTitle; // TODO: Send pageTitle back on page data
-    event[attributes.canonical_url] = ''; // TODO: Send back the canonical URL from the server?
-    event[attributes.page_url] = pageData.requestedURL; // TODO: Figure out what we want for page_url and canonical_url here
+    event[attributes.page_title] = pageData.title;
+    event[attributes.canonical_url] = pageData.canonicalUrl;
+    event[attributes.page_url] = pageData.requestedUrl;
     event[attributes.article_height] = 0 || pageData.metrics.height;
     event[attributes.page_topics] = pageData.topics;
     event[attributes.author] = pageData.author;
     event[attributes.site_section] = pageData.section;
+}
+
+function appendContainerDataParams(event, containerData) {
+    event[attributes.container_hash] = containerData.hash;
+    event[attributes.container_kind] = containerData.type;
+}
+
+function appendReactionDataParams(event, reactionData) {
+    event[attributes.reaction_body] = reactionData.text;
+    if (reactionData.content) {
+        event[attributes.content_location] = reactionData.content.location;
+        event[attributes.content_id] = reactionData.content.id;
+    }
 }
 
 function createEvent(eventType, eventValue, groupSettings) {
@@ -229,5 +257,7 @@ module.exports = {
     postCommentsViewed: postCommentsViewed,
     postCommentCreated: postCommentCreated,
     postReactionWidgetOpened: postReactionWidgetOpened,
-    postReactionCreated: postReactionCreated
+    postReactionCreated: postReactionCreated,
+    postReactionShared: postReactionShared,
+    postContentViewed: postContentViewed
 };

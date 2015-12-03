@@ -486,6 +486,8 @@ def getSinglePageDataNewer(page_id):
         'id': page_id,
         'containers': containers_data,
         'summaryReactions': summary_data[:15],
+        'title': page.title,
+        'image': page.image,
         'topics': page.topics,
         'section': page.section,
         'author': page.author,

@@ -195,6 +195,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,
                 pageData: pageData,
+                groupSettings: groupSettings,
                 closeWindow: closeWindow,
                 goBack: backToReactions
             };

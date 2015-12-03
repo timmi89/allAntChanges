@@ -42,9 +42,12 @@ function updatePageData(json, groupSettings) {
     pageData.pageId = json.id;
     pageData.groupId = groupSettings.groupId();
     pageData.canonicalUrl = json.canonicalURL;
+    pageData.requestedUrl = json.requestedURL;
     pageData.author = json.author;
     pageData.section = json.section;
     pageData.topics = json.topics;
+    pageData.title = json.title;
+    pageData.image = json.image;
 
     var summaryReactions = json.summaryReactions;
     pageData.summaryReactions = summaryReactions;
@@ -178,23 +181,25 @@ function computeLocationData(pageData) {
             var reactions = containerData.reactions;
             for (var i = 0; i < reactions.length; i++) {
                 var reaction = reactions[i];
-                var reaction_id = reaction.id;
+                var reactionId = reaction.id;
                 var content = reaction.content;
-                var content_id = content.id;
-                var reactionLocationData = locationData[reaction_id];
+                var contentId = content.id;
+                var reactionLocationData = locationData[reactionId];
                 if (!reactionLocationData) {
                     reactionLocationData = {};
-                    locationData[reaction_id] = reactionLocationData;
+                    locationData[reactionId] = reactionLocationData;
                 }
-                var contentLocationData = reactionLocationData[content_id]; // TODO: It's not really possible to get a hit here, is it? We should never see two instances of the same reaction for the same content? (There'd would just be one instance with a count > 1.)
+                var contentLocationData = reactionLocationData[contentId]; // TODO: It's not really possible to get a hit here, is it? We should never see two instances of the same reaction for the same content? (There'd would just be one instance with a count > 1.)
                 if (!contentLocationData) {
                     contentLocationData = {
                         count: 0,
-                        kind: content.kind, // TODO: We should normalize this value to a set of constants. fix this in locations-page where the value is read as well
+                        kind: content.kind, // TODO: We should normalize this value to a set of constants. fix this in locations-page where the value is read as well.
+                        // TODO: also consider translating this from the raw "kind" to "type". (e.g. "pag" => "page")
                         location: content.location,
-                        containerHash: containerData.hash
+                        containerHash: containerData.hash,
+                        contentId: contentId
                     };
-                    reactionLocationData[content_id] = contentLocationData;
+                    reactionLocationData[contentId] = contentLocationData;
                 }
                 contentLocationData.count += reaction.count;
             }
@@ -204,11 +209,11 @@ function computeLocationData(pageData) {
 }
 
 function updateReactionLocationData(reactionLocationData, contentBodies) {
-    for (var contentID in contentBodies) {
-        if (contentBodies.hasOwnProperty(contentID)) {
-            var contentLocationData = reactionLocationData[contentID];
+    for (var contentId in contentBodies) {
+        if (contentBodies.hasOwnProperty(contentId)) {
+            var contentLocationData = reactionLocationData[contentId];
             if (contentLocationData) {
-                contentLocationData.body = contentBodies[contentID];
+                contentLocationData.body = contentBodies[contentId];
             }
         }
     }
