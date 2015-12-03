@@ -48,7 +48,7 @@ ANT_offline = !!(
 // ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 // ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":"//www.antenna.is",
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081": window.location.protocol + "//www.antenna.is",
 ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
