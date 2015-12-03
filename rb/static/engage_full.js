@@ -4900,9 +4900,9 @@ function antenna($A){
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
-                    
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
-                    var windowLocation = (window.location.protocol + '//' + window.location.hostname + window.location.pathname).toLowerCase();
+                    var windowPort = (window.location.port) ? ':'+window.location.port : '',
+                        windowLocation = (window.location.protocol + '//' + window.location.hostname + windowPort + window.location.pathname).toLowerCase();
 
                   if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || windowLocation.indexOf( ANT.current.page_url ) == -1) ) {
                     if (ANT.current.page_url != windowLocation) {
@@ -4915,7 +4915,7 @@ function antenna($A){
 
 
 
-                        DO IT BASED ON PRESENCE OF THE FIRST [ant-hash].  once that disappears, and more content has appear... then the content changed.
+                        WE DO IT BASED ON PRESENCE OF THE FIRST [ant-hash].  once that disappears, or changes, and more content has appeared... then the content changed.
 
 
 
@@ -4925,13 +4925,20 @@ function antenna($A){
                          ANT.current.page_url = windowLocation;
                             var attempts = 0;
                             var tryToResetAntenna = setInterval( function() {
-                                                        
+
                                 // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
                                 // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
 
-                                if (attempts++ < 80) {
-                                    var $active_sections = $(ANT.group.active_sections);
-                                    if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$('[ant-hash="'+ANT.current.first_hashed_content+'"]').length ) {
+                                if (attempts++ < 120) {
+                                    var $active_sections = $(ANT.group.active_sections),
+                                        $firstContent = (ANT.current.first_hashed_content) ? $('[ant-hash="'+ANT.current.first_hashed_content+'"]') : $();
+
+                                    if ( $firstContent.length ) {
+                                        // ANT.actions.removeHashes( $firstContent );
+                                        ANT.actions.hashNodes( $firstContent, true );
+                                    }
+
+                                    if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$firstContent.length ) {
                                         if ( $active_sections.length && $active_sections.find(ANT.group.anno_whitelist).length  ) {
                                             ANT.actions.reset();
                                             clearInterval(tryToResetAntenna);
@@ -5028,7 +5035,7 @@ function antenna($A){
             },
             reInit: function() {
                 // ANT.actions.reInit:
-                ANT.actions.resetCustomDisplayHashes();
+                ANT.actions.removeHashes();
                 ANT.actions.hashCustomDisplayHashes();
             },
             reset: function() {
@@ -5046,7 +5053,7 @@ function antenna($A){
                 });
 
                 $ANT.dequeue('initAjax');
-                ANT.actions.resetCustomDisplayHashes();
+                ANT.actions.removeHashes();
                 ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
@@ -5088,7 +5095,7 @@ function antenna($A){
                 //safe throw the errror.
                 ANT.safeThrow(errorMsg);
             },
-            hashNodes: function( $passedInNode, nomedia ) {
+            hashNodes: function( $passedInNode, forceRehash ) {
                 //ANT.actions.hashNodes:
                 var $nodes;
 
@@ -5119,7 +5126,7 @@ function antenna($A){
 
                     */
 
-                    if ( !$node.closest('.no-ant').length && !$node.hasClass('no-ant') && !$node.hasClass('ant') && !$node.hasAttr('ant-hashed') ) {
+                    if ( !$node.closest('.no-ant').length && !$node.hasClass('no-ant') && !$node.hasClass('ant') && (forceRehash || !$node.hasAttr('ant-hashed') ) ) {  // && 
                         var body = '',
                             kind = '',
                             HTMLkind = '';
@@ -5304,6 +5311,11 @@ function antenna($A){
                             }
                         }
 
+                    }
+
+                    // ok we have a hash now
+                    if ( $this.hasAttr('ant-hash') && $this.attr('ant-hash') != hash )  {
+                        ANT.actions.removeHashes( $this );
                     }
 
                     // prevent the identical nested elements being double-hashed bug
@@ -5628,8 +5640,8 @@ function antenna($A){
                 }
                 
             },
-            resetCustomDisplayHashes: function($nodes) {
-                // ANT.actions.resetCustomDisplayHashes:
+            removeHashes: function($nodes) {
+                // ANT.actions.removeHashes:
                 if (!$nodes) {
                     $nodes = $('[ant-item]');
                 }
@@ -10130,9 +10142,6 @@ if ( sendData.kind=="page" ) {
 
                     $container.data( 'page_id', String(page.id) ); // the page ID
 
-                    // hash the "page" descendant nodes
-                    // ANT.actions.hashNodes( $container, "nomedia" );
-
                     //todo: can't we use the hashes returned by this function instead?
 
                     // is the post_selector the same node as the active_section?
@@ -10209,7 +10218,7 @@ if ( sendData.kind=="page" ) {
                     
                     //div to hold summary tag detail "menus"
                     $('#ant_sandbox').append('<div id="ant_summary_tag_details" />');
-                    
+
                     //setup widgetSummary
                     if (widgetSummarySettings.$anchor && widgetSummarySettings.$anchor.length) {
                         if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANT.group.post_selector).length ) ) {
@@ -10355,7 +10364,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv33"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv34"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10797,8 +10806,6 @@ function $AFunctions($A){
 
             // DEBUG
             // ANT.group.summary_widget_expanded_mobile = true;
-
-
 
                 if (ANT.status.page === true && ANT.group.summary_widget_selector!='none') {
                     var page = settings;

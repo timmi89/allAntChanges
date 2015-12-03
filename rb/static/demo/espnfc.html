@@ -1916,8 +1916,12 @@ body #main {     padding-top: 120px; }
 window.antenna_extend = {
     premium:true,
     no_readr:".author,.meta,h1,figcaption,.article-util,.competition-module",
-    tag_box_bg_colors:'#1eb848;#32B355;#45B363',
-    tag_box_text_colors:'#fff;fff;fff;',
+
+    tag_box_bg_colors:'background:rgba(0,0,0,0.1);',
+    tag_box_bg_colors:'background:rgba(0,0,0,0.05);',
+    tags_bg_css: 'background-image:linear-gradient(185deg,#1eb848,#69D286);',
+    tag_box_font_family:'"BentonSansMedium",Helvetica,Arial,sans-serif',
+
     active_sections: ".article-story",
     // custom_css: "body .ant-summary .ant-antenna-logo { color:#fff !important; }  body div.ant.ant-summary a.ant_reactions_label {font-family: Helvetica,Arial,sans-serif;color:#fff;letter-spacing: 0.5px;} body div.ant.ant-summary { border-radius:3px;padding:2% 4% 2.5% 3%;box-shadow:none; background:#c3c3cb; float:right; margin-top:-49px;height:auto;}div.ant.ant-summary .ant_chevron_cta{display:none;} ",
     // "summary_widget_selector": ".article__body",
@@ -1936,37 +1940,6 @@ window.antenna_extend = {
 
 <script src="/static/engage_full.js" defer type="text/javascript"></script>
 
-<style>
-#antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; left:0; right:0px; position:fixed; background:#000; transition:bottom 0.5s; margin:0 auto; color:#fff;}
-</style>
-<div id="antenna_test_notice"></div>
-
-
-<script>
-document.addEventListener("antenna.reaction", function(){
-  var lastEvent = antenna.getLastEvent();
-  if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
-    jQuery('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
-    .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
-  }
-},false); 
-
-var reactionViewCount = 0;
-document.addEventListener("antenna.reactionview", function(){
-  console.log('reactionview');
-  var lastEvent = antenna.getLastEvent();
-  console.log(lastEvent);
-  if (lastEvent.event == 'antenna.reactionview' ) {
-    reactionViewCount++;
-    
-    if (reactionViewCount == 3) {
-        jQuery('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
-        .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
-        reactionViewCount = 0;
-    }
-  }
-},false); 
-</script>
 
 </body>
 </html>
