@@ -2,10 +2,14 @@
 var URLs = require('./urls');
 var XdmLoader = require('./xdm-loader');
 
+var Events = require('../events'); // TODO: resolve this backward dependency
+
 // Register ourselves to hear messages
 window.addEventListener("message", receiveMessage, false);
 
-var callbacks = { 'xdm loaded': xdmLoaded };
+var callbacks = {
+    'xdm loaded': xdmLoaded
+};
 var cache = {};
 
 var isXDMLoaded = false;
@@ -14,16 +18,21 @@ function xdmLoaded(data) {
     isXDMLoaded = true;
 }
 
+function setMessageHandler(messageKey, callback) {
+    callbacks[messageKey] = callback;
+}
+
 function getUser(callback) {
     var message = 'getUser';
     postMessage(message, 'returning_user', success, validCacheEntry);
 
     function success(response) {
-        callback(response.data);
+        var userInfo = response.detail;
+        callback(userInfo);
     }
 
     function validCacheEntry(response) {
-        var userInfo = response.data;
+        var userInfo = response.detail;
         return userInfo && userInfo.ant_token && userInfo.user_id; // TODO && userInfo.user_type && social_user, etc.?
     }
 }
@@ -31,14 +40,14 @@ function getUser(callback) {
 function receiveMessage(event) {
     var eventOrigin = event.origin;
     if (eventOrigin === XdmLoader.ORIGIN) {
-        var response = JSON.parse(event.data);
+        var response = event.data;
         // TODO: The event.source property gives us the source window of the message and currently the XDM frame fires out
         // events that we receive before we ever try to post anything. So we *could* hold onto the window here and use it
         // for posting messages rather than looking for the XDM frame ourselves. Need to look at which events the XDM frame
         // fires out to all windows before being asked. Currently, it's more than "xdm loaded". Why?
         //var sourceWindow = event.source;
 
-        var callbackKey = response.status; // TODO: change the name of this property in xdm.html
+        var callbackKey = response.key;
         cache[callbackKey] = response;
         var callback = callbacks[callbackKey];
         if (callback) {
@@ -98,5 +107,6 @@ function getXDMFrame() {
 }
 
 module.exports = {
-    getUser: getUser
+    getUser: getUser,
+    setMessageHandler: setMessageHandler
 };

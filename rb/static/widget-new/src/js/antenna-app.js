@@ -4,6 +4,7 @@ var CssLoader = require('./css-loader');
 var GroupSettingsLoader = require('./group-settings-loader');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
+var XDMAnalytics = require('./xdm-analytics');
 var XDMLoader = require('./utils/xdm-loader');
 
 
@@ -37,6 +38,7 @@ function initCustomCSS(groupSettings) {
 }
 
 function initXdmFrame(groupSettings) {
+    XDMAnalytics.start(); // The XDM iframe has a number of messages it fires on load related to analytics. Start listening.
     XDMLoader.createXDMframe(groupSettings.groupId);
 }
 

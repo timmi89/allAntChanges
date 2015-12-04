@@ -263,8 +263,6 @@ function postEvent(event, callback) {
         baseUrl = URLConstants.PRODUCTION_EVENTS;
     }
     console.log('Posting event: ' + JSON.stringify(event));
-    return;
-    // TODO: enable the real network request...
     doGetJSONP(baseUrl, URLs.eventUrl(), event, callback, function(error) {
         // TODO: error handling
         console.log('An error occurred posting event: ', error);

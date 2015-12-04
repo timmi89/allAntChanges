@@ -42,6 +42,7 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
 }
 
 // TODO: Hook this up once reaction sharing is in place.
+// TODO: Confirm with Porter that the other place the 'sh' event is fired, _makeShareIcons, is dead code
 function postReactionShared(pageData, containerData, reactionData, groupSettings) {
     var eventValue = ''; // TODO: 'facebook', 'twitter', etc
     var event = createEvent(eventTypes.share, eventValue, groupSettings);
@@ -75,6 +76,24 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     appendPageDataParams(event, pageData);
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
+    postEvent(event);
+}
+
+function postRecircClicked(pageData, reactionId, groupSettings) {
+    // TODO: Hook this up from XDMClient in response to the recircClick message.
+    // Here's the original code that's receiving the message:
+    //                        } else if ( message.status.indexOf('recircClick') != -1 ) {
+    //                            var linkData = message.status.split('|');
+    //                            if ( linkData[1] ) {
+    //                                ANT.session.referring_int_id = parseInt( linkData[1], 10 ); // TODO what is this used for any more?
+    //                            }
+    //                            ANT.events.trackEventToCloud({
+    //                                event_type: 'rc',
+    //                                event_value: ''+ANT.session.referring_int_id,
+    //                                page_id: ANT.util.getPageProperty('id')
+    //                            });
+    var event = createEvent(eventTypes.recirc_clicked, reactionId, groupSettings);
+    appendPageDataParams(event, pageData);
     postEvent(event);
 }
 
@@ -232,7 +251,8 @@ var eventTypes = {
     comment: 'c',
     reaction: 're',
     time: 't',
-    view_comments: 'vcom' // TODO: review. this was documented as an event value
+    view_comments: 'vcom', // TODO: review. this was documented as an event value
+    recirc_clicked: 'rc' // TODO: this event isn't listed in the engage_full comments
 };
 
 var eventValues = {
@@ -259,5 +279,6 @@ module.exports = {
     postReactionWidgetOpened: postReactionWidgetOpened,
     postReactionCreated: postReactionCreated,
     postReactionShared: postReactionShared,
-    postContentViewed: postContentViewed
+    postContentViewed: postContentViewed,
+    postRecircClicked: postRecircClicked
 };
