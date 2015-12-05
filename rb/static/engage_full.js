@@ -4853,7 +4853,6 @@ function antenna($A){
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
                                 // dunno why, of course.
-                                console.log($('.ant_window').length);
                                 if ( !$mouse_target.closest('[ant-node]').length || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
                                     ANT.actions.UIClearState();
                                 }
@@ -4902,6 +4901,10 @@ function antenna($A){
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
+
+                    // let's make sure the icons for images, etc are where they should be
+                    ANT.actions.indicators.utils.updateContainerTrackers();
+
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
                     var windowPort = (window.location.port) ? ':'+window.location.port : '',
                         windowLocation = (window.location.protocol + '//' + window.location.hostname + windowPort + window.location.pathname).toLowerCase();
@@ -4911,8 +4914,6 @@ function antenna($A){
                         // think we changed pages
                         $('.ant-summary').remove();
 
-
-                        ANT.actions.indicators.utils.updateContainerTrackers();
                         /*
 
 
@@ -8804,10 +8805,20 @@ if ( sendData.kind=="page" ) {
                             $container = summary.$container,
                             $container_tracker = $('#ant_container_tracker_'+hash);
 
+
                         //quick fix so this doesnt get run on text.
                         //TODO figure out where this was getting called for text containers.
                         var container = ANT.containers[hash];
                         if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
+                        
+
+                        // check and see if the image or iframe are stil there
+                        var $container_in_dom = $('[ant-hash="'+hash+'"]');
+                        if ( !$container_in_dom.length ) {
+                            $('#ant_indicator_details_'+hash).remove();
+                            $('#ant_container_tracker'+hash).remove();
+                            return;
+                        }
 
                         var padding = {
                             top: parseInt( $container.css('padding-top'), 10 ),
