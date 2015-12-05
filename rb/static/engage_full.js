@@ -559,6 +559,7 @@ function antenna($A){
 
                 var $header = $(headerHtml);
                 $header.find('.ant_close').on('touchend.ant', function(e) {
+                    if (e) e.preventDefault();
                     ANT.actions.UIClearState();
                     if ( ANT.util.isTouchDragging(e) ) { return; }
                 });
@@ -1490,6 +1491,7 @@ function antenna($A){
                             };
 
                             $tagBox.find('.ant_search').on( clickOrTouch, function(e){
+                                if (e) e.preventDefault();
                                 clickFunc();
                                 return false;
                             });
@@ -4825,7 +4827,6 @@ function antenna($A){
                             // }
                             
                             ANT.actions.UIClearState();
-                            // setTimeout(ANT.actions.UIClearState, 333);
 
                             // if ( !isTouchBrowser ) {
                             $('div.ant_indicator_details_for_media').each( function() {
@@ -4852,6 +4853,7 @@ function antenna($A){
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
                                 // dunno why, of course.
+                                console.log($('.ant_window').length);
                                 if ( !$mouse_target.closest('[ant-node]').length || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
                                     ANT.actions.UIClearState();
                                 }
@@ -10365,7 +10367,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv34"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv36"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
