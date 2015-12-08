@@ -135,7 +135,11 @@ class ANTHandler(BaseHandler):
             return dict(message="Please confirm email address", status='fail', 
                         confirmation=generateConfirmation(django_user), user_id=django_user.id)
         
-        social_user = findSocialUser(django_user)
+        try:
+            social_user = findSocialUser(django_user)
+        except:
+            return dict(message="This user may not be verified yet.", status='fail')
+
         logger.info("SOCIAL ANT LOGIN : " + str(social_user))
         social_auth = createSocialAuth(
             social_user,
