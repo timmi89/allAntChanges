@@ -255,15 +255,15 @@ function getJSONP(url, data, success, error) {
     doGetJSONP(baseUrl, url, data, success, error);
 }
 
-function postEvent(event, callback) {
+function postEvent(event) {
     var baseUrl;
     if (AppMode.offline) {
         baseUrl = URLConstants.DEVELOPMENT_EVENTS;
+        console.log('Posting event: ' + JSON.stringify(event));
     } else {
         baseUrl = URLConstants.PRODUCTION_EVENTS;
     }
-    console.log('Posting event: ' + JSON.stringify(event));
-    doGetJSONP(baseUrl, URLs.eventUrl(), event, callback, function(error) {
+    doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
         // TODO: error handling
         console.log('An error occurred posting event: ', error);
     });

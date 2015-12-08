@@ -16,6 +16,8 @@ function recircClicked(response) {
 
 function getPageData(pageHash, callback) {
     if (pageHash) {
+        // This module loads very early in the app lifecycle and may receive events from the XDM frame before page
+        // data has been loaded. Hold onto any such events until the page data loads or we timeout.
         var maxWaitTime = Date.now() + 10000; // Give up after 10 seconds
         var interval = setInterval(function () {
             var pageData = PageData.getPageData(pageHash);

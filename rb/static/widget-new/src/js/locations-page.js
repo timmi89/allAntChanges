@@ -4,6 +4,7 @@ var Range = require('./utils/range');
 
 var Events = require('./events');
 var HashedElements = require('./hashed-elements');
+var PageData = require('./page-data');
 var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-locations-page';
@@ -56,7 +57,8 @@ function createPage(options) {
                         $(document).off('click.antenna');
                     });
                 }
-                Events.postContentViewed(pageData, locationData, groupSettings);
+                var containerData = PageData.getContainerData(pageData, locationData.containerHash);
+                Events.postContentViewed(pageData, containerData,locationData, groupSettings);
             }, 0);
         }
     }

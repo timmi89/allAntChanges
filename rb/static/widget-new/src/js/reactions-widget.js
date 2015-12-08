@@ -206,6 +206,7 @@ function openReactionsWidget(options, elementOrCoords) {
             setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
                 showPage(page.selector, $rootElement, true);
             }, 1);
+            Events.postLocationsViewed(pageData, groupSettings);
         });
     }
 
