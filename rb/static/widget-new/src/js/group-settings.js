@@ -44,7 +44,7 @@ var defaults = {
     img_indicator_show_onload: true,
     img_indicator_show_side: 'left',
     tag_box_bg_colors: '',
-    tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff', // TODO default
+    tag_box_text_colors: '',
     tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
     tags_bg_css: '',
     ignore_subdomain: false,
@@ -148,6 +148,7 @@ function createFromJSON(json) {
         customCSS += createCustomCSSRule(data('tags_bg_css', ''), '.antenna-reactions-page .antenna-body, .antenna-defaults-page .antenna-body');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors', ''), '.antenna-reaction-box');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors_hover', ''), '.antenna-reaction:hover > .antenna-reaction-box');
+        customCSS += createCustomCSSRule(migrateTextColorSettings(data('tag_box_text_colors', '')), '.antenna-reaction-box, .antenna-reaction-comments .antenna-comments-path, .antenna-reaction-location .antenna-location-path');
         customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box');
         return customCSS;
     }
@@ -169,6 +170,19 @@ function createFromJSON(json) {
         }
         return function() {
             return fontFamily;
+        }
+    }
+
+    function migrateTextColorSettings(textColorAccessor) {
+        // TODO: This is temporary code that migrates the current tag_box_text_colors property, which is a declaration
+        //       that only sets the color property, to set both the color and fill properties.
+        var textColor = textColorAccessor().trim();
+        if (textColor && textColor.indexOf('color:') === 0 && textColor.indexOf('fill:') === -1) {
+            textColor += textColor[textColor.length - 1] == ';' ? '' : ';'; // append a semicolon if needed
+            textColor += textColor.replace('color:', '\n    fill:');
+        }
+        return function() {
+            return textColor;
         }
     }
 
