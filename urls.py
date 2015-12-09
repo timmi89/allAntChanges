@@ -87,9 +87,9 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'forecast.reporting.views.group_event_report'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/$', 'forecast.reporting.views.group_event_report'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_email/$', 'forecast.reporting.views.weekly_group_event_email'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'rb.views.analytics'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/$', 'rb.views.analytics'),
+  # url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_email/$', 'forecast.reporting.views.weekly_group_event_email'),
   
 
   # galleries

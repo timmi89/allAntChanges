@@ -35,12 +35,41 @@
         <div class="reaction-views-chart"></div>
       </div>
       <div class="col s12 m3 center-align">
-        <h4>Reactions by Platform</h4>
-        <div class="reactions-by-platform-chart"></div>
-        <h4>Reaction Views by Platform</h4>
-        <div class="reaction-views-by-platform-chart"></div>
+        <h4>Total Reactions</h4>
+        <div class="total-reactions-count"></div>
+        <h4>Total Reaction Views</h4>
+        <div class="total-reaction-views-count"></div>
+
+        <h4>Top Reactions</h4>
+        {% for tag in sorted_tag_cloud %}
+            <div class="top-reaction {% if forloop.counter < 5 %}large{%endif%}{% if forloop.counter >= 5 and forloop.counter < 9 %}medium{%endif%}{% if forloop.counter >= 9 %}small{%endif%}"><a href="/group/{{group.short_name}}/?s={{tag.0}}" target="_blank">{{tag.0}} <span>({{tag.1}})</span></a></div>
+        {% endfor %}
       </div>
     </div>
+
+    <div class="row no-ant">
+      <div class="col s12">
+        <h4>Popular Pages</h4>
+        <table cellspacing="0" cellpadding="0" class="popular hoverable">
+            <tr>
+                <th class="title">Title</th>
+                <th class="reactions">Reactions</th>
+                <th class="views">Reaction Views</th>
+                <th class="score">Engagement Score</th>
+            </tr>
+            {% for page in sorted_pages %}
+            <tr>
+                <td><a href="{{page.1.url}}" target="_blank">{{page.1.title}}</a></td>
+                <td>{{page.1.reactions}}</td>
+                <td>{{page.1.reaction_views}}</td>
+                <td>{{page.1.score}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </div>
+
+
   </div>
 </section>
 
@@ -60,40 +89,6 @@
 .page-content .sticky.contain-to-grid .top-bar .name h1 a:before,.sticky.contain-to-grid.fixed .top-bar .name h1 a:before{content:"";display:inline-block;width:34px;height:34px;margin-top:-4px;margin-right:10px;vertical-align:middle;border-radius:50%;border:2px solid #F4C63D;background:url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnIGlkPSJoZWFkIj48cGF0aCBmaWxsPSIjNzU1NDNCIiBkPSJNMTMuOCAyMC42czEuNiA1LTMuOSA1bDQuOSAxLjUgNC00LjItNS0yLjN6Ii8+PHBhdGggZmlsbD0iI0IyNDk0OSIgZD0iTTE3LjEgMjVzLTQuMS0xLjUtNS45IDEuMWwzLjcuOSAyLjItMnoiLz48cGF0aCBmaWxsPSIjRDM5Qzc2IiBkPSJNOS45IDI1LjRjMi4xIDEuMSA1IC42IDYgMCAxLjUtLjggMS41LTMgMS4xLTMuMi0uMi0uMS0yLjIgMS4zLTUuOS4xbC40LTMuMy01LjktLjJMOS43IDguNHM3LTIuOSAxNCAwVjE5Yy40LS4xLjgtLjIgMS4xIDAgLjkuMyAxLjEgMS40LjYgMi41LS40LjctMSAxLjMtMS43IDEuNHY2LjJzLTcuMiA0LjgtMTUuMSAyLjFjMCAwLTIuNS0uOC0yLjMtMy40IDAtLjItLjItMS45IDMuNi0yLjR6Ii8+PGcgZmlsbD0iIzYzNDEyOCI+PHBhdGggZD0iTTE1LjEgMTQuNGMwIC41LjkgMSAxLjkgMSAxLjEgMCAxLjktLjQgMS45LTEgMC0uNS0uOS0xLTEuOS0xLTEgMC0xLjkuNS0xLjkgMXpNOS43IDE0LjRjMCAuNS44IDEgMS45IDEgMSAwIDEuOS0uNCAxLjktMXMtLjgtMS0xLjktMWMtMS4xLjEtMS45LjUtMS45IDF6Ii8+PC9nPjxwYXRoIGZpbGw9IiMyMzFGMjAiIGQ9Ik0yMy44IDEwLjVWNmMuMS0zLjYgMS40LTUuMS40LTUuMy0xLS4yLTMuMi0uNi03LjgtLjYtNC4xIDAtNy4yLjUtOC4yLjZDNy4zIDEgOSAzLjkgOS4zIDZjLjEgMSAuMSAyLjUuMSAzLjgtMy4zLjUtNS4zIDEuNy01LjcgMi44aDI2LjZzLS4zLTEuMS02LjUtMi4xeiIvPjxwYXRoIGZpbGw9IiMzNTM0MzMiIGQ9Ik0xMi44IDIyLjRjMy4xIDIuOCAxMC40IDIuMyAxMC45LTIuMS4xLTEuMy0uNS0uMy0xLjEuMS0uOS42LTIuNS42LTMuNCAwLTEuNS0xLTQuMS00LjEtNi40LTEuOC0yLjQtMi4zLTUgLjgtNi41IDEuOC0uOS42LTIuNi42LTMuNSAwLS42LS40LTEuMi0xLjMtMS4xLS4xLjUgNC40IDcuOSA0LjkgMTEuMSAyLjF6Ii8+PC9nPjwvc3ZnPg==)center no-repeat #F4C63D}.ct-chart{margin-bottom:1rem}.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{font-size:1em}@media only screen and (max-width:40em){.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{fill:rgba(255,255,255,.8)}}.main{margin:0 auto;max-width:75rem;width:100%}.main:after,.main:before{content:" ";display:table}@media only screen and (min-width:40.063em){.main{margin-top:3.1604938272rem}}.main>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left;margin-top:1.3333333333rem}.page-content .main>header{margin-bottom:3.1604938272rem}.main>.side-navigation{display:none}@media only screen and (min-width:40.063em){.main>.side-navigation{display:block;padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}.main>.side-navigation>nav{max-width:250px}.main>.side-navigation>nav>.side-nav{background-color:#ded0ba;box-shadow:3px 3px 0 rgba(0,0,0,.1)}.main>.side-navigation>nav>.side-nav>.heading{font-size:1rem;text-transform:uppercase;font-weight:600;margin-top:2.3703703704rem;margin-bottom:1rem;color:#453D3F}.main>.side-navigation>nav>.side-nav>.heading:first-child{margin-top:0}.main>.side-navigation>nav>.side-nav>li:not(.heading)>a:before{content:"\2013\00A0"}.main>.side-navigation>nav>.side-nav>li a:not(.button){padding:0}.main>.side-navigation>nav>.side-nav>li a:not(.button):hover{background:0 0}}.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}.main>.content>.documentation-section{margin:1rem -1.5625rem 1.7777777778rem;max-width:none;width:auto}.main>.content>.documentation-section:after,.main>.content>.documentation-section:before{content:" ";display:table}.main>.content>.documentation-section:first-child{margin-top:0}.main>.content>.documentation-section>.content,.main>.content>.documentation-section>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section{margin-top:1.7777777778rem;margin-bottom:3.1604938272rem}.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:75%;float:left}}.main>.content>.documentation-section>.content .sub-section{margin-bottom:3rem}.main>.content>.documentation-section>.content>.ct-chart.dark{background-color:#453D3F}.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:25%;float:left}}@media only screen and (min-width:40.063em){.main>.content>.documentation-section.full>.content,.main>.content>.documentation-section.full>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}}.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:100%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(1n+1){clear:both}@media only screen and (min-width:40.063em){.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery:after{clear:both}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:50%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(2n+1){clear:both}}.full .main>.content,.full .main>.side-navigation{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@-webkit-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-moz-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-ms-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-webkit-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-moz-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-ms-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-webkit-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-moz-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-ms-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}*/
 </style>
     <script>
-    (function() {
-        new Chartist.Pie('.reactions-by-platform-chart', {
-          series: [
-              {meta: 'Desktop', value: 35 },
-              {meta: 'Mobile', value: 65 }
-          ]
-        }, {
-          donut: true,
-          donutWidth: 45,
-          startAngle: 270,
-          total: 200,
-          plugins: [
-            Chartist.plugins.tooltip()
-            ],
-          showLabel: false
-        });
-    })();
-    (function() {
-        new Chartist.Pie('.reaction-views-by-platform-chart', {
-          series: [
-              {meta: 'Desktop', value: 95 },
-              {meta: 'Mobile', value: 5 }
-          ]
-        }, {
-          donut: true,
-          donutWidth: 45,
-          startAngle: 270,
-          total: 200,
-          plugins: [
-            Chartist.plugins.tooltip()
-            ],
-          showLabel: false
-        });
-    })();
     (function() {
         var chart = new Chartist.Line('.reactions-chart', {
           labels: ['7/1/15','7/2/15','7/3/15','7/4/15','7/5/15','7/6/15'],
@@ -198,6 +193,220 @@
           ]
         });
     })();
+
+
+/* I know, this is horrible, I'm in a hurry, and copying frmo some old code.  */
+  // analytics closure
+  (function(){
+
+        // put in external file...
+        ANTsite.analytics = {
+            queryHost: (document.domain != "local.antenna.is") ? "//events.antenna.is" : "//nodebq.docker:3000",
+            toggleGlobalLoader: function() {
+                // TODO animate something
+            },
+            initAnalytics: function() {
+              console.log('initAnalytics..');
+                if (typeof ANTsite.group == "undefined" || typeof ANTsite.group.id == "undefined") {
+                    ANTsite.group = {};
+                }
+
+                // DEBUG:
+                ANTsite.group.id = 1973;
+
+
+                ANTsite.analytics.getPopularPages();
+
+
+                // ANTsite.analytics.getTopReactions();
+                // ANTsite.analytics.getTopReferrers();
+                // ANTsite.analytics.getSummaries();
+                // ANTsite.analytics.getTime();
+                // ANTsite.analytics.getPageviews();
+            },
+            // getSummaries: function() {
+            //     $.ajax({
+            //     url: ANTsite.analytics.queryHost + '/getSummaries',
+            //     type: "get",
+            //     data: {
+            //         json: $.toJSON( { gid:ANTsite.group.id } )
+            //     },
+            //     success: function(response) {
+            //         antennaUsageData = response;
+            //         topSummary();
+            //         timeSummary();
+            //         pageviewSummary();
+            //         }
+            //     });
+            // },
+            // getTime: function() {
+            //     $.ajax({
+            //     url: ANTsite.analytics.queryHost + '/getTime',
+            //     type: "get",
+            //     data: {
+            //         json: $.toJSON( { gid:ANTsite.group.id } )
+            //     },
+            //     success: function(response) {
+            //         timeData = response;
+            //         timeSummary();
+            //         }
+            //     });
+            // },
+            // getPageviews: function() {
+            //     $.ajax({
+            //     url: ANTsite.analytics.queryHost + '/getPageviews',
+            //     type: "get",
+            //     data: {
+            //         json: $.toJSON( { gid:ANTsite.group.id } )
+            //     },
+            //     success: function(response) {
+            //         pageviewData = response;
+
+            //         // homepage override for buggy homepage-only query
+            //         if ( $('body').hasClass('homepage') ) {
+            //             pageviewData.rdr_avg_pageviews = 4.22;
+            //             pageviewData.avg_pageviews = 2.89;
+            //         }
+            //         pageviewSummary();
+            //         }
+            //     });
+            // },
+            getPopularPages: function() {
+              console.log('getPopularPages...');
+                $.ajax({
+                    url: ANTsite.analytics.queryHost + '/popularPages',
+                    type: "get",
+                    data: {
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                    },
+                    success: function(response) {
+                      console.log(response);
+                        // pageSummary(response.pages);
+                        // hotTopics(response.hot_topics);
+
+                    }, error: function(request, status, error) {
+                    }, complete:function(request, status) {
+                    }
+                });
+            },
+            // getTopReferrers: function() {
+            //     $.ajax({
+            //     url: ANTsite.analytics.queryHost + '/getTopReferrers',
+            //     type: "get",
+            //     data: {
+            //         json: $.toJSON( { gid:ANTsite.group.id } )
+            //     },
+            //     success: function(response) {
+            //         refSummary(response.referrers);
+
+            //     }, error: function(request, status, error) {
+            //     }, complete:function(request, status) {
+            //     }
+            //     });
+            // },
+            // getTopReactions: function() {
+            //     $.ajax({
+            //     url: ANTsite.analytics.queryHost + '/getTopReactions',
+            //     type: "get",
+            //     data: {
+            //         json: $.toJSON( { gid:ANTsite.group.id } )
+            //     },
+            //     success: function(response) {
+
+            //         var $temp_popularReactions = $('<div><div class="template"></div></div>');
+            //         var popularReactions = response.reactions;
+
+            //         var itemNumber = 1;
+            //         $.each(popularReactions, function(idx, reaction) {
+            //             var searchUrl = (ANTsite.group.short_name) ? '/group/'+ANTsite.group.short_name+'/':'/stream/';
+            //             var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
+            //             // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
+            //             var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
+            //             // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+ANTsite.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+            //             $temp_popularReactions.find('.template').append('<span class="reaction-tag '+size+'"><a target="_blank" href="'+searchUrl+'?s='+reaction.body+'" class="'+charCountModifier+'">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span>'); 
+            //             itemNumber++;
+            //         });
+
+            //         $('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
+
+            //         }
+            //     });
+            // },
+            updateAll: function() {
+            },
+            simulate: function() {
+                var antennaUsageData = {
+                    // sessions, pageviews, scroll, time
+                    // ant_last_30:[14984,2.55,58.1,'4:42'],
+                    // no_ant:[149510,1.56,58.55,'3:48']
+                    // sessions, pageviews, NO scroll, time
+                    ant_last_30:[14984,2.55,'4:42'],
+                    no_ant:[149510,1.56,'3:48']
+                };
+                topSummary( antennaUsageData );
+            },
+            initDates: function(){
+                moment.utc();
+                var nowDate = moment.utc().format("MM/DD/YYYY");
+                ANTsite.analytics.startDate = ANTsite.util.getHashValue('start') || nowDate;
+                ANTsite.analytics.endDate = ANTsite.util.getHashValue('end') || moment.utc().add(1, 'days').format("MM/DD/YYYY");
+
+                ANTsite.analytics.jsStartDate = moment.utc( ANTsite.analytics.startDate, "MM/DD/YYYY").unix() * 1000;
+                ANTsite.analytics.jsEndDate = moment.utc( ANTsite.analytics.endDate, "MM/DD/YYYY").unix() * 1000;
+            },
+            updateDates: function(){
+                ANTsite.analytics.startDate = $('input[name="start_date"]').val();
+                ANTsite.analytics.endDate = $('input[name="end_date"]').val();
+
+                ANTsite.util.setHashValue('start', ANTsite.analytics.startDate);
+                ANTsite.util.setHashValue('end', ANTsite.analytics.endDate);
+
+                ANTsite.analytics.jsStartDate = moment.utc(ANTsite.analytics.startDate, "MM/DD/YYYY").unix() * 1000;
+                ANTsite.analytics.jsEndDate = moment.utc(ANTsite.analytics.endDate, "MM/DD/YYYY").unix() * 1000;
+            },
+            numberWithCommas: function(x) {
+                if (typeof x!='undefined') {
+                    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } else {
+                    return '';
+                }
+            },
+            notUndefined: function(x) {
+                if ( typeof x =='undefined') {
+                    return 'Data not returned';
+                } else {
+                    return x;
+                }
+            }
+        };
+
+
+        $(function(){
+          // get things going
+
+          ANTsite.analytics.initDates();
+
+          $('.datepicker').pickadate({
+              format: 'mm/dd/yyyy',
+              onClose: function() {
+                  // necessary to prevent datepicker from opening unexpectedly from keyboard strokes or browser tab switching:
+                  $(document.activeElement).blur();  
+
+                  ANTsite.analytics.updateDates();
+
+                  // ANTsite.analytics.getPopularPages();
+              }
+          });
+
+          $('input[name="start_date"]').val( ANTsite.analytics.startDate );
+          $('input[name="end_date"]').val( ANTsite.analytics.endDate );
+
+
+          ANTsite.analytics.initAnalytics();
+        });
+    })(); // end analytics closure
+
+
     </script>
 
 

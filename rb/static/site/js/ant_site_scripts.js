@@ -100,8 +100,8 @@ ANTsite = {
                     }
                 }
                 // key not found, so return false
-                return false;
             }
+            return false;
         },
         setHashValue: function( key, value ) {
             var hash = window.location.hash;
