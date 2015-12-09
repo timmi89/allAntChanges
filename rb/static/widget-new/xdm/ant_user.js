@@ -19,7 +19,7 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
 
-var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.antenna.is/insert" : "http://localnode.com:3000/insert";
+var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.antenna.is/insert" : "http://nodebq.docker/insert";
 
 window.ANTAuth = {
     isOffline: (document.domain == "local.antenna.is"),
@@ -247,21 +247,13 @@ window.ANTAuth = {
             }
         }
     },
-    postMessage: function(params) {
-        if ( typeof $.postMessage == "function" ) {
-            $.postMessage(
-                params.message,
-                qs_args.parentUrl,
-                parent
-            );
-        }
-    },
-    notifyParent: function(response, status) {
-        response.status = status;
-        // send this info up to the widget!
-        ANTAuth.postMessage({
-            message: JSON.stringify( response )
-        });
+    notifyParent: function(messageKey, detail) {
+        // Use postMessage to send the message to the parent window
+        var message = {
+            key: messageKey,
+            detail: detail
+        };
+        window.parent.postMessage(message, qs_args.parentUrl);
     },
     getUser: function() {
         ANTAuth.readUserCookie();
@@ -269,17 +261,15 @@ window.ANTAuth = {
             // user is null.  get a tempUser.
             ANTAuth.createTempUser();
         } else if ( ANTAuth.ant_user.ant_token ) {  // temp or non-temp.  doesn't matter.
-            var sendData = {
-                data : {
-                    first_name : ANTAuth.ant_user.first_name,
-                    full_name : ANTAuth.ant_user.full_name,
-                    img_url : ANTAuth.ant_user.img_url,
-                    user_id : ANTAuth.ant_user.user_id,
-                    ant_token : ANTAuth.ant_user.ant_token,
-                    user_boards : ANTAuth.ant_user.user_boards
-                }
+            var detail = {
+                first_name : ANTAuth.ant_user.first_name,
+                full_name : ANTAuth.ant_user.full_name,
+                img_url : ANTAuth.ant_user.img_url,
+                user_id : ANTAuth.ant_user.user_id,
+                ant_token : ANTAuth.ant_user.ant_token,
+                user_boards : ANTAuth.ant_user.user_boards
             };
-            ANTAuth.notifyParent(sendData, "returning_user");
+            ANTAuth.notifyParent("returning_user", detail);
         }
     },
     getAntToken: function(fb_response, callback ) {
@@ -307,7 +297,7 @@ window.ANTAuth = {
                         } else {
                             ANTAuth.setUser(response);
                             ANTAuth.returnUser();
-                            ANTAuth.notifyParent({}, "close login panel");
+                            ANTAuth.notifyParent("close login panel");
                             if (callback) callback();
                         }
                     },
@@ -342,31 +332,27 @@ window.ANTAuth = {
                 success: function(response){
                     // store the data here and in a cookie
                     ANTAuth.setUser(response);
-                    var sendData = {
-                        data : {
-                            first_name : ANTAuth.ant_user.first_name,
-                            full_name : ANTAuth.ant_user.full_name,
-                            img_url : ANTAuth.ant_user.img_url,
-                            user_id : ANTAuth.ant_user.user_id,
-                            ant_token : ANTAuth.ant_user.ant_token,
-                            user_boards : ANTAuth.ant_user.user_boards
-                        }
+                    var detail = {
+                        first_name : ANTAuth.ant_user.first_name,
+                        full_name : ANTAuth.ant_user.full_name,
+                        img_url : ANTAuth.ant_user.img_url,
+                        user_id : ANTAuth.ant_user.user_id,
+                        ant_token : ANTAuth.ant_user.ant_token,
+                        user_boards : ANTAuth.ant_user.user_boards
                     };
-                    ANTAuth.notifyParent(sendData, "got_temp_user");
+                    ANTAuth.notifyParent("got_temp_user", detail);
                 }
             });
         } else {
-            var sendData = {
-                data : {
-                    first_name : ANTAuth.ant_user.first_name,
-                    full_name : ANTAuth.ant_user.full_name,
-                    img_url : ANTAuth.ant_user.img_url,
-                    user_id : ANTAuth.ant_user.user_id,
-                    ant_token : ANTAuth.ant_user.ant_token,
-                    user_boards : ANTAuth.ant_user.user_boards
-                }
+            var detail = {
+                first_name : ANTAuth.ant_user.first_name,
+                full_name : ANTAuth.ant_user.full_name,
+                img_url : ANTAuth.ant_user.img_url,
+                user_id : ANTAuth.ant_user.user_id,
+                ant_token : ANTAuth.ant_user.ant_token,
+                user_boards : ANTAuth.ant_user.user_boards
             };
-            ANTAuth.notifyParent(sendData, "got_temp_user");
+            ANTAuth.notifyParent("got_temp_user", detail);
         }
     },
     reauthUser : function(args) {
@@ -379,7 +365,7 @@ window.ANTAuth = {
                             ANTAuth.getAntToken(response); // function exists in ant_user.js
                         }, response);
                     } else {
-                        ANTAuth.notifyParent({}, "fb_user_needs_to_login");
+                        ANTAuth.notifyParent("fb_user_needs_to_login");
                     }
                 });
             } else {
@@ -509,7 +495,7 @@ window.ANTAuth = {
                 if ( ANTAuth.popups.loginWindow && ANTAuth.popups.loginWindow.closed ) {
                     ANTAuth.readUserCookie();
                     ANTAuth.returnUser();
-                    ANTAuth.notifyParent({}, "close login panel");
+                    ANTAuth.notifyParent("close login panel");
                     ANTAuth.popups.loginWindow.close();
                     clearInterval( ANTAuth.checkingAntLoginWindow );
                     
@@ -590,18 +576,15 @@ window.ANTAuth = {
                 }
             }
         } else {
-            var sendData = {
-                // arguments are nested under data for consistency with passing values up to the parent
-                data : {
-                    first_name : ANTAuth.ant_user.first_name,
-                    full_name : ANTAuth.ant_user.full_name,
-                    img_url : ANTAuth.ant_user.img_url,
-                    user_id : ANTAuth.ant_user.user_id,
-                    ant_token : ANTAuth.ant_user.ant_token,
-                    user_type : ANTAuth.ant_user.user_type
-                }
+            var detail = {
+                first_name : ANTAuth.ant_user.first_name,
+                full_name : ANTAuth.ant_user.full_name,
+                img_url : ANTAuth.ant_user.img_url,
+                user_id : ANTAuth.ant_user.user_id,
+                ant_token : ANTAuth.ant_user.ant_token,
+                user_type : ANTAuth.ant_user.user_type
             };
-            ANTAuth.notifyParent(sendData, "returning_user");
+            ANTAuth.notifyParent("returning_user", detail);
         }
     },
     killUser : function(callback, callback_args) {
@@ -697,7 +680,7 @@ window.ANTAuth = {
         }
     },
     init : function() {
-    ANTAuth.notifyParent({}, "xdm loaded");
+        ANTAuth.notifyParent("xdm loaded");
         if ( $.cookie('user_type') && $.cookie('user_type') == "facebook") {
             FB.getLoginStatus( function(response) {
                 if ( response.status && response.status == "connected" ) {
@@ -726,39 +709,39 @@ $(document).ready(function(){
     //wait for fb init before receiving messages
     window.fb_loader.done(function(){
 
-        if ( typeof $.receiveMessage == "function") {
-            $.receiveMessage(
-                function(e){
+        // Register ourselves to hear messages
+        window.addEventListener("message", receiveMessage, false);
 
-                    var keys = {
-                        registerEvent: "register-event::"
-                    };
-                    var jsonData;
-                    var data;
+        function receiveMessage(e) {
+            if (e.origin === qs_args.parentHost) {
+                // TODO: Review. The rest of this is original code
+                var keys = {
+                    registerEvent: "register-event::"
+                };
+                var jsonData;
+                var data;
 
-                    if( e.data == "getUser" ) {
-                        ANTAuth.getUser();
-                    } else if ( e.data == "reloadXDMframe" ) {
-                        window.location.reload();
-                    } else if ( e.data == "reauthUser" ) {
-                        ANTAuth.reauthUser();
-                    } else if ( e.data == "returnUser" ) {
-                        ANTAuth.returnUser();
-                    } else if ( e.data == "killUser" ) {
-                        ANTAuth.killUser();
-                    } else if ( e.data == "TESTIT" ) {
-                        ANTAuth.testMessage();
-                    } else if ( e.data.indexOf("page_hash") != -1 ) {
-                        //todo: this seems touchy to set this cookie forever like this.
-                        $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
-                    } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
-                        jsonData = e.data.split(keys.registerEvent)[1];
-                        data = $.parseJSON(jsonData);
-                        ANTAuth.events.trackEventToCloud(data);
-                    }
-                },
-                qs_args.parentHost
-            );
+                if( e.data == "getUser" ) {
+                    ANTAuth.getUser();
+                } else if ( e.data == "reloadXDMframe" ) {
+                    window.location.reload();
+                } else if ( e.data == "reauthUser" ) {
+                    ANTAuth.reauthUser();
+                } else if ( e.data == "returnUser" ) {
+                    ANTAuth.returnUser();
+                } else if ( e.data == "killUser" ) {
+                    ANTAuth.killUser();
+                } else if ( e.data == "TESTIT" ) {
+                    ANTAuth.testMessage();
+                } else if ( e.data.indexOf("page_hash") != -1 ) {
+                    //todo: this seems touchy to set this cookie forever like this.
+                    $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
+                } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
+                    jsonData = e.data.split(keys.registerEvent)[1];
+                    data = $.parseJSON(jsonData);
+                    ANTAuth.events.trackEventToCloud(data);
+                }
+            }
         }
     });
 });

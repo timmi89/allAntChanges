@@ -1,9 +1,9 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AjaxClient = require('./utils/ajax-client');
 var PageUtils = require('./utils/page-utils');
 var ThrottledEvents = require('./utils/throttled-events');
 var URLs = require('./utils/urls');
 var PageData = require('./page-data');
-
 
 // Compute the pages that we need to fetch. This is either:
 // 1. Any nested pages we find using the page selector OR
@@ -21,13 +21,16 @@ function computePagesParam($pageElementArray, groupSettings) {
     }
     if (pages.length == 1) {
         pages[0].image = PageUtils.computeTopLevelPageImage(groupSettings);
+        pages[0].author = PageUtils.computePageAuthor(groupSettings);
+        pages[0].topics = PageUtils.computePageTopics(groupSettings);
+        pages[0].section = PageUtils.computePageSiteSection(groupSettings);
     }
 
     return { pages: pages };
 }
 
 function loadPageData(pageDataParam, groupSettings) {
-    $.getJSONP(URLs.pageDataUrl(), pageDataParam, success, error);
+    AjaxClient.getJSONP(URLs.pageDataUrl(), pageDataParam, success, error);
 
     function success(json) {
         //setTimeout(function() { PageData.updateAllPageData(json, groupSettings); }, 3000);

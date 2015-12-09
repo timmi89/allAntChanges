@@ -7,6 +7,7 @@ python_environment:
     MEMCACHED_HOST: 'memcached'
     VIRTUAL_HOST: 'antenna.docker'
     RABBITMQ_HOST: 'rabbitmq'
+    BQ_TABLE_PREFIX: 'docker_dev'
     VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
     PYTHONPATH: '/code'
     PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'

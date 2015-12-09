@@ -210,8 +210,21 @@ def getPage(host, page_request):
             url = url,
             canonical_url = canonical
         )
+        page_changed = False
         if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
             page.image = image
+            page_changed = True
+        if (page.author is None or len(page.author) < 1) and author is not None and len(author) > 0:
+            page.author = author
+            page_changed = True
+        if (page.topics is None or len(page.topics) < 1) and topics is not None and len(topics) > 0:
+            page.topics = topics
+            page_changed = True
+        if (page.section is None or len(page.section) < 1) and section is not None and len(section) > 0:
+            page.section = section
+            page_changed = True
+
+        if page_changed:
             page.save()
         return page
     except Page.DoesNotExist:
@@ -472,7 +485,13 @@ def getSinglePageDataNewer(page_id):
         'pageHash': hashlib.md5(page.url).hexdigest(),
         'id': page_id,
         'containers': containers_data,
-        'summaryReactions': summary_data[:15]
+        'summaryReactions': summary_data[:15],
+        'title': page.title,
+        'image': page.image,
+        'topics': page.topics,
+        'section': page.section,
+        'author': page.author,
+        'canonicalURL': page.canonical_url
     }
     return page_data
 

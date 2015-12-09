@@ -11,6 +11,7 @@ function createPage(options) {
     var element = options.element;
     var containerData = options.containerData;
     var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
     var goBack = options.goBack;
     var ractive = Ractive({
         el: element,
@@ -31,7 +32,7 @@ function createPage(options) {
             callback(reaction);
         }
     };
-    CommentAreaPartial.setup(reactionProvider, containerData, pageData, commentAdded, ractive);
+    CommentAreaPartial.setup(reactionProvider, containerData, pageData, groupSettings, commentAdded, ractive, groupSettings);
     ractive.on('back', goBack);
     return {
         selector: pageSelector,

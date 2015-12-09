@@ -34,7 +34,7 @@ function scanAllPages(groupSettings) {
     }
     $pages.each(function() {
         var $page = $(this);
-        scanPage($page, groupSettings);
+        scanPage($page, groupSettings, $pages.length > 1);
     });
     MutationObserver.addAdditionListener(elementsAdded(groupSettings));
 }
@@ -43,7 +43,7 @@ function scanAllPages(groupSettings) {
 // 1. Find all the containers that we care about.
 // 2. Compute hashes for each container.
 // 3. Insert widget affordances for each which are bound to the data model by the hashes.
-function scanPage($page, groupSettings) {
+function scanPage($page, groupSettings, isMultiPage) {
     var url = PageUtils.computePageUrl($page, groupSettings);
     var pageData = PageData.getPageDataByURL(url);
     var $activeSections = find($page, groupSettings.activeSections(), true);
@@ -65,6 +65,22 @@ function scanPage($page, groupSettings) {
         var $section = $(this);
         scanActiveElement($section, pageData, groupSettings);
     });
+
+    pageData.metrics.height = computePageHeight($activeSections);
+    pageData.metrics.isMultiPage = isMultiPage;
+}
+
+function computePageHeight($activeSections) {
+    var contentTop;
+    var contentBottom;
+    $activeSections.each(function() {
+        var $section = $(this);
+        var offset = $section.offset();
+        contentTop = contentTop === undefined ? offset.top : Math.min(contentTop, offset.top);
+        var bottom = offset.top + $section.outerHeight();
+        contentBottom = contentBottom === undefined ? bottom : Math.max(contentBottom, bottom);
+    });
+    return contentBottom - contentTop;
 }
 
 // Scans the given element, which appears inside an active section. The element can be the entire active section,

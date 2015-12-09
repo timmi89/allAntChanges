@@ -2,7 +2,9 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
 
+var Events = require('./events');
 var HashedElements = require('./hashed-elements');
+var PageData = require('./page-data');
 var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-locations-page';
@@ -11,6 +13,7 @@ function createPage(options) {
     var element = options.element;
     var reactionLocationData = options.reactionLocationData;
     var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
     var closeWindow = options.closeWindow;
     var goBack = options.goBack;
     var ractive = Ractive({
@@ -54,6 +57,8 @@ function createPage(options) {
                         $(document).off('click.antenna');
                     });
                 }
+                var containerData = PageData.getContainerData(pageData, locationData.containerHash);
+                Events.postContentViewed(pageData, containerData,locationData, groupSettings);
             }, 0);
         }
     }

@@ -1,5 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+var Events = require('./events');
+
 var groupSettings;
 
 // TODO: Update all clients that are passing around a groupSettings object to instead access the 'global' settings instance
@@ -9,6 +11,7 @@ function getGroupSettings() {
 
 function updateFromJSON(json) {
     groupSettings = createFromJSON(json);
+    Events.postGroupSettingsLoaded(groupSettings);
     return groupSettings;
 }
 
@@ -152,6 +155,12 @@ function createFromJSON(json) {
         pageLinkSelector: data('post_href_selector'),
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
+        pageAuthorSelector: data('author_selector'),
+        pageAuthorAttribute: data('author_attribute'),
+        pageTopicsSelector: data('topics_selector'),
+        pageTopicsAttribute: data('topics_attribute'),
+        pageSiteSectionSelector: data('section_selector'),
+        pageSiteSectionAttribute: data('section_attribute'),
         contentSelector: data('anno_whitelist'),
         textIndicatorLimit: data('initial_pin_limit'),
         enableTextHelper: data('paragraph_helper'),

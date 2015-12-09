@@ -25,18 +25,19 @@
                 prot+"//www.antenna.is";
 
         window.ANT_staticUrl = ( ANT_offline ) ?
-                prot+"//local.antenna.is:8081/static/" :
+                prot+"//local-static.antenna.is:8081/static/" :
                 prot+"//s3.amazonaws.com/readrboard/";
 
         window.ANT_user_script = ( ANT_offline ) ? 
                 "ant_user.js" :
                 "ant_user_min.js" ;
+        window.ANT_user_script = 'ant_user.js'; // TODO: minify the new file
         
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
+        //document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget-new/xdm/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
 
     })();
     </script>
@@ -134,14 +135,30 @@
                     }
                 }
             });
-			
+
+
+            // TODO: We should only fire a recircClick event if the redirect_type is /r/
+            // TODO: There are a lot more details available for the /r/ event if we want them.
+            // TODO: Shouldn't we be capturing events for /s/ and /i/ also?
             if ( utils.cookies.read('redirect_type') ) {
-                ANTAuth.notifyParent({message:false}, "recircClick|"+utils.cookies.read('referring_int_id'));
+                var detail = {
+                    referring_int_id: utils.cookies.read('referring_int_id'),
+                    page_hash: utils.cookies.read('page_hash')
+                };
+                ANTAuth.notifyParent("recircClick", detail);
                 utils.cookies.erase( 'redirect_type' );
             }
 			if ( utils.cookies.read('location') && utils.cookies.read('container_hash') ) {
-            
-				ANTAuth.notifyParent({message:false}, "sharedLink|" + utils.cookies.read('container_hash') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('location') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('reaction') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('content') ) + "|" + utils.cookies.read('referring_int_id') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('page_hash')) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('redirect_type')) );
+                var detail = {
+                    container_hash: utils.cookies.read('container_hash'),
+                    location: ANTAuth.decodeDjangoCookie( utils.cookies.read('location') ),
+                    reaction: ANTAuth.decodeDjangoCookie( utils.cookies.read('reaction') ),
+                    content: ANTAuth.decodeDjangoCookie( utils.cookies.read('content') ),
+                    referring_int_id: utils.cookies.read('referring_int_id'),
+                    page_hash: ANTAuth.decodeDjangoCookie( utils.cookies.read('page_hash')),
+                    redirect_type: ANTAuth.decodeDjangoCookie( utils.cookies.read('redirect_type'))
+                };
+				ANTAuth.notifyParent("sharedLink", detail);
 				utils.cookies.erase( 'container_hash' );
 				utils.cookies.erase( 'location' );
 				utils.cookies.erase( 'content' );
@@ -150,7 +167,7 @@
                 utils.cookies.erase( 'page_hash' );
 
 			} else if ( !utils.cookies.read('educatedUser') ) {
-				ANTAuth.notifyParent({message:false}, "educate user");
+				ANTAuth.notifyParent("educate user");
 			}
 
 		});

@@ -1,4 +1,4 @@
-var URLs = require('./urls');
+var URLConstants = require('./url-constants');
 
 function computeCurrentScriptSrc() {
     if (document.currentScript) {
@@ -22,7 +22,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    offline: currentScriptSrc.indexOf(URLs.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLs.TEST) !== -1,
-    test: currentScriptSrc.indexOf(URLs.TEST) !== -1,
+    offline: currentScriptSrc.indexOf(URLConstants.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
+    test: currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
     debug: currentScriptSrc.indexOf('?debug') !== -1
 };
