@@ -209,7 +209,7 @@
                         var rows = '';
                         $.each(response.popularPages, function(idx, page) {
                           var newRow = '<tr>' +
-                              '<td><a href="{{page.1.url}}" target="_blank">'+page.page_title+'</a></td>' +
+                              '<td><a href="'+page.url+'" target="_blank">'+page.page_title+'</a></td>' +
                               '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_count)+'</td>' +
                               '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_view_count)+'</td>' +
                               '<td>'+ANTsite.analytics.numberWithCommas(page.pageview_count)+'</td>' +
