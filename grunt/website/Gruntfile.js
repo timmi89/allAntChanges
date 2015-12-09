@@ -20,6 +20,7 @@ module.exports = function(grunt) {
                         rootDir + '/rb/static/widget/js/jquery.json-2.2.min.js',
                         rootDir + '/rb/static/site/js/ant_site_scripts.js',
                         rootDir + '/rb/static/site/js/ant_drip.js',
+                        rootDir + '/rb/static/site/js/moment.min.js',
                         rootDir + '/rb/static/site/js/polyfills/matchMedia.js',
                         rootDir + '/rb/static/site/js/polyfills/matchMedia.addListener.js',
                         rootDir + '/rb/static/site/bower_components/chartist/dist/chartist.min.js',

@@ -1130,4 +1130,21 @@ def gallery(request, example_name):
     )
 
 
+### ANALYTICS.  added 12-2015.
+@requires_admin
+def analytics(request, short_name=None, **kwargs):
+    context = {}
+    context['group'] = Group.objects.get(short_name=short_name)
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    context['cookie_user'] = kwargs['cookie_user']
+    context['hasSubheader'] = True
+
+    return render_to_response(
+        "analytics.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+
 
