@@ -23,28 +23,41 @@
             <input type="date" class="datepicker" name="start_date" />
             <label>End Date</label>
             <input type="date" class="datepicker" name="end_date" />
+            <button class="update btn btn-small">Update</button>
         </div>
         <h1>{{group.name}} Analytics</h1>
       </div>
     </div>
     <div class="row no-ant">
-      <!-- <div class="col s12 m9 center-align">
-        <h4>Reactions</h4>
-        <div class="reactions-chart"></div>
-        <h4>Reaction Views</h4>
-        <div class="reaction-views-chart"></div>
-      </div> -->
-      <div class="col s6 m3 center-align total-reactions-count">
+      <div class="col s12 m3 center-align total-reactions-count">
         <h4>Total Reactions</h4>
         <div class="loading progress"> <div class="indeterminate"></div> </div>
         <div class="result"></div>
       </div>
-      <div class="col s6 m3 center-align total-reaction-views-count">
+      <div class="col s12 m9 center-align total-reactions-over-time">
+        <h4>Reactions by Platform</h4>
+        <div class="loading progress"> <div class="indeterminate"></div> </div>
+        <div class="result">
+          <div class="reactions-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row no-ant">
+      <div class="col s12 m3 center-align total-reaction-views-count">
         <h4>Total Reaction Views</h4>
         <div class="loading progress"> <div class="indeterminate"></div> </div>
         <div class="result"></div>
       </div>
+      <div class="col s12 m9 center-align total-reaction-views-over-time">
+        <h4>Reaction Views by Platform</h4>
+        <div class="loading progress"> <div class="indeterminate"></div> </div>
+        <div class="result">
+          <div class="reaction-views-chart"></div>
+        </div>
+      </div>
     </div>
+
     <div class="row no-ant">
       <div class="col s12 center-align top-reactions">
         <h4>Top Reactions</h4>
@@ -90,65 +103,14 @@
 .chartist-tooltip{ position:absolute;display:inline-block;min-width:5em;padding:.5em;background:#fff;color:#555;font-weight:300;text-align:center;pointer-events:none;z-index:1;box-shadow:0px 0px 15px #666;margin-top:5px;font-size:0.8rem; }
 .chartist-tooltip:after{ content:"";position:absolute;top:100%;left:50%;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top-color:#fff; }
 
+.ct-series-a .ct-bar { stroke: #4b7185; }
+.ct-series-a .ct-bar:first-of-type { stroke: #EA9971; }
+
 /*.sticky.contain-to-grid{box-shadow:0 3px 0 rgba(0,0,0,.3)}
 .page-content .sticky.contain-to-grid .top-bar .name h1 a:before,.sticky.contain-to-grid.fixed .top-bar .name h1 a:before{content:"";display:inline-block;width:34px;height:34px;margin-top:-4px;margin-right:10px;vertical-align:middle;border-radius:50%;border:2px solid #F4C63D;background:url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnIGlkPSJoZWFkIj48cGF0aCBmaWxsPSIjNzU1NDNCIiBkPSJNMTMuOCAyMC42czEuNiA1LTMuOSA1bDQuOSAxLjUgNC00LjItNS0yLjN6Ii8+PHBhdGggZmlsbD0iI0IyNDk0OSIgZD0iTTE3LjEgMjVzLTQuMS0xLjUtNS45IDEuMWwzLjcuOSAyLjItMnoiLz48cGF0aCBmaWxsPSIjRDM5Qzc2IiBkPSJNOS45IDI1LjRjMi4xIDEuMSA1IC42IDYgMCAxLjUtLjggMS41LTMgMS4xLTMuMi0uMi0uMS0yLjIgMS4zLTUuOS4xbC40LTMuMy01LjktLjJMOS43IDguNHM3LTIuOSAxNCAwVjE5Yy40LS4xLjgtLjIgMS4xIDAgLjkuMyAxLjEgMS40LjYgMi41LS40LjctMSAxLjMtMS43IDEuNHY2LjJzLTcuMiA0LjgtMTUuMSAyLjFjMCAwLTIuNS0uOC0yLjMtMy40IDAtLjItLjItMS45IDMuNi0yLjR6Ii8+PGcgZmlsbD0iIzYzNDEyOCI+PHBhdGggZD0iTTE1LjEgMTQuNGMwIC41LjkgMSAxLjkgMSAxLjEgMCAxLjktLjQgMS45LTEgMC0uNS0uOS0xLTEuOS0xLTEgMC0xLjkuNS0xLjkgMXpNOS43IDE0LjRjMCAuNS44IDEgMS45IDEgMSAwIDEuOS0uNCAxLjktMXMtLjgtMS0xLjktMWMtMS4xLjEtMS45LjUtMS45IDF6Ii8+PC9nPjxwYXRoIGZpbGw9IiMyMzFGMjAiIGQ9Ik0yMy44IDEwLjVWNmMuMS0zLjYgMS40LTUuMS40LTUuMy0xLS4yLTMuMi0uNi03LjgtLjYtNC4xIDAtNy4yLjUtOC4yLjZDNy4zIDEgOSAzLjkgOS4zIDZjLjEgMSAuMSAyLjUuMSAzLjgtMy4zLjUtNS4zIDEuNy01LjcgMi44aDI2LjZzLS4zLTEuMS02LjUtMi4xeiIvPjxwYXRoIGZpbGw9IiMzNTM0MzMiIGQ9Ik0xMi44IDIyLjRjMy4xIDIuOCAxMC40IDIuMyAxMC45LTIuMS4xLTEuMy0uNS0uMy0xLjEuMS0uOS42LTIuNS42LTMuNCAwLTEuNS0xLTQuMS00LjEtNi40LTEuOC0yLjQtMi4zLTUgLjgtNi41IDEuOC0uOS42LTIuNi42LTMuNSAwLS42LS40LTEuMi0xLjMtMS4xLS4xLjUgNC40IDcuOSA0LjkgMTEuMSAyLjF6Ii8+PC9nPjwvc3ZnPg==)center no-repeat #F4C63D}.ct-chart{margin-bottom:1rem}.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{font-size:1em}@media only screen and (max-width:40em){.ct-chart-donut .ct-label,.ct-chart-pie .ct-label{fill:rgba(255,255,255,.8)}}.main{margin:0 auto;max-width:75rem;width:100%}.main:after,.main:before{content:" ";display:table}@media only screen and (min-width:40.063em){.main{margin-top:3.1604938272rem}}.main>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left;margin-top:1.3333333333rem}.page-content .main>header{margin-bottom:3.1604938272rem}.main>.side-navigation{display:none}@media only screen and (min-width:40.063em){.main>.side-navigation{display:block;padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}.main>.side-navigation>nav{max-width:250px}.main>.side-navigation>nav>.side-nav{background-color:#ded0ba;box-shadow:3px 3px 0 rgba(0,0,0,.1)}.main>.side-navigation>nav>.side-nav>.heading{font-size:1rem;text-transform:uppercase;font-weight:600;margin-top:2.3703703704rem;margin-bottom:1rem;color:#453D3F}.main>.side-navigation>nav>.side-nav>.heading:first-child{margin-top:0}.main>.side-navigation>nav>.side-nav>li:not(.heading)>a:before{content:"\2013\00A0"}.main>.side-navigation>nav>.side-nav>li a:not(.button){padding:0}.main>.side-navigation>nav>.side-nav>li a:not(.button):hover{background:0 0}}.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}.main>.content>.documentation-section{margin:1rem -1.5625rem 1.7777777778rem;max-width:none;width:auto}.main>.content>.documentation-section:after,.main>.content>.documentation-section:before{content:" ";display:table}.main>.content>.documentation-section:first-child{margin-top:0}.main>.content>.documentation-section>.content,.main>.content>.documentation-section>header{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section{margin-top:1.7777777778rem;margin-bottom:3.1604938272rem}.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:66.6666666667%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.content{padding-left:1.5625rem;padding-right:1.5625rem;width:75%;float:left}}.main>.content>.documentation-section>.content .sub-section{margin-bottom:3rem}.main>.content>.documentation-section>.content>.ct-chart.dark{background-color:#453D3F}.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@media only screen and (min-width:40.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:33.3333333333%;float:left}}@media only screen and (min-width:64.063em){.main>.content>.documentation-section>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:25%;float:left}}@media only screen and (min-width:40.063em){.main>.content>.documentation-section.full>.content,.main>.content>.documentation-section.full>.side-notes{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}}.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:100%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(1n+1){clear:both}@media only screen and (min-width:40.063em){.main>.content>ul.example-gallery{display:block;padding:0;margin:0 -.625rem}.main>.content>ul.example-gallery:after,.main>.content>ul.example-gallery:before{content:" ";display:table}.main>.content>ul.example-gallery:after{clear:both}.main>.content>ul.example-gallery>li{display:block;float:left;height:auto;list-style:none;padding:0 .625rem 1.25rem;width:50%}.main>.content>ul.example-gallery>li:nth-of-type(1n){clear:none}.main>.content>ul.example-gallery>li:nth-of-type(2n+1){clear:both}}.full .main>.content,.full .main>.side-navigation{padding-left:1.5625rem;padding-right:1.5625rem;width:100%;float:left}@-webkit-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-moz-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-ms-keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@keyframes dashoffset{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20px}}@-webkit-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-moz-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-ms-keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@keyframes bouncing-stroke{0%,100%{stroke-width:5px}50%{stroke-width:10px}}@-webkit-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-moz-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@-ms-keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}@keyframes exploding-stroke{0%{stroke-width:2px;opacity:1}100%{stroke-width:20px;opacity:0}}*/
 </style>
     <script>
-    // (function() {
-    //     var chart = new Chartist.Line('.reactions-chart', {
-    //       labels: ['7/1/15','7/2/15','7/3/15','7/4/15','7/5/15','7/6/15'],
-    //       series: [
-    //         [
-    //           {meta: 'Desktop', value: 1 },
-    //           {meta: 'Desktop', value: 5 },
-    //           {meta: 'Desktop', value: 3 },
-    //           {meta: 'Desktop', value: 1 },
-    //           {meta: 'Desktop', value: 5 },
-    //           {meta: 'Desktop', value: 3 }
-    //         ],
-    //         [
-    //           {meta: 'Mobile', value: 20},
-    //           {meta: 'Mobile', value: 40},
-    //           {meta: 'Mobile', value: 20},
-    //           {meta: 'Mobile', value: 20},
-    //           {meta: 'Mobile', value: 40},
-    //           {meta: 'Mobile', value: 20}
-    //         ]
-    //       ]
-    //     }, {
-    //       low: 0,
-    //       // high: 8,
-    //       fullWidth: true,
-    //       chartPadding: {
-    //           right: 40
-    //         },
-    //       plugins: [
-    //         Chartist.plugins.tooltip(),
-    //         Chartist.plugins.ctAxisTitle({
-    //           axisX: {
-    //             axisTitle: 'Date',
-    //             axisClass: 'ct-axis-title',
-    //             offset: {
-    //               x: 0,
-    //               y: 35
-    //             },
-    //             textAnchor: 'middle'
-    //           },
-    //           axisY: {
-    //             axisTitle: 'Count',
-    //             axisClass: 'ct-axis-title',
-    //             offset: {
-    //               x: 0,
-    //               y: 0
-    //             },
-    //             textAnchor: 'middle',
-    //             flipTitle: false
-    //           }
-    //         })
-
-    //       ]
-    //     });
-    // })();
+    
     // (function() {
     //     var chart = new Chartist.Line('.reaction-views-chart', {
     //       labels: ['7/1/15','7/2/15','7/3/15'],
@@ -201,8 +163,13 @@
 
 
 /* I know, this is horrible, I'm in a hurry, and copying frmo some old code.  */
+
+
+
   // analytics closure
   (function(){
+        // for development.. to save $$, turn of working queries by setting this to "true";
+        skipQueries = false; "true";
 
         // put in external file...
         ANTsite.analytics = {
@@ -216,91 +183,48 @@
                 }
 
                 // DEBUG:
-                // ANTsite.group.id = 1973;
+                ANTsite.group.id = 1167;
 
 
                 ANTsite.analytics.getPopularPages();
                 ANTsite.analytics.getReactionCount();
                 ANTsite.analytics.getReactionViewCount();
                 ANTsite.analytics.getTopReactions();
+                ANTsite.analytics.getEventsOverTime('reactions');
+                ANTsite.analytics.getEventsOverTime('reaction-views');
 
-
-                // ANTsite.analytics.getTopReactions();
-                // ANTsite.analytics.getTopReferrers();
-                // ANTsite.analytics.getSummaries();
-                // ANTsite.analytics.getTime();
-                // ANTsite.analytics.getPageviews();
             },
-            // getSummaries: function() {
-            //     $.ajax({
-            //     url: ANTsite.analytics.queryHost + '/getSummaries',
-            //     type: "get",
-            //     data: {
-            //         json: $.toJSON( { gid:ANTsite.group.id } )
-            //     },
-            //     success: function(response) {
-            //         antennaUsageData = response;
-            //         topSummary();
-            //         timeSummary();
-            //         pageviewSummary();
-            //         }
-            //     });
-            // },
-            // getTime: function() {
-            //     $.ajax({
-            //     url: ANTsite.analytics.queryHost + '/getTime',
-            //     type: "get",
-            //     data: {
-            //         json: $.toJSON( { gid:ANTsite.group.id } )
-            //     },
-            //     success: function(response) {
-            //         timeData = response;
-            //         timeSummary();
-            //         }
-            //     });
-            // },
-            // getPageviews: function() {
-            //     $.ajax({
-            //     url: ANTsite.analytics.queryHost + '/getPageviews',
-            //     type: "get",
-            //     data: {
-            //         json: $.toJSON( { gid:ANTsite.group.id } )
-            //     },
-            //     success: function(response) {
-            //         pageviewData = response;
-
-            //         // homepage override for buggy homepage-only query
-            //         if ( $('body').hasClass('homepage') ) {
-            //             pageviewData.rdr_avg_pageviews = 4.22;
-            //             pageviewData.avg_pageviews = 2.89;
-            //         }
-            //         pageviewSummary();
-            //         }
-            //     });
-            // },
             getPopularPages: function() {
                 $.ajax({
                     url: ANTsite.analytics.queryHost + '/popularPages',
                     type: "get",
                     data: {
-                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
-                      var rows = '';
-                      $.each(response.popularPages, function(idx, page) {
-                        var newRow = '<tr>' +
-                            '<td><a href="{{page.1.url}}" target="_blank">'+page.page_title+'</a></td>' +
-                            '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_count)+'</td>' +
-                            '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_view_count)+'</td>' +
-                            '<td>'+ANTsite.analytics.numberWithCommas(page.pageview_count)+'</td>' +
-                            '<td>'+ Math.round( (page.reaction_count + page.reaction_view_count) / page.pageview_count * 10000) / 100 +'</td>' +
-                        '</tr>';
+                      $('table.popular').find('.loading,.no-data').remove();
 
-                        rows = rows + newRow;
-                      });
+                      if (response.popularPages) {
+                        $('table.popular').show();
+                        var rows = '';
+                        $.each(response.popularPages, function(idx, page) {
+                          var newRow = '<tr>' +
+                              '<td><a href="{{page.1.url}}" target="_blank">'+page.page_title+'</a></td>' +
+                              '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_count)+'</td>' +
+                              '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_view_count)+'</td>' +
+                              '<td>'+ANTsite.analytics.numberWithCommas(page.pageview_count)+'</td>' +
+                              '<td>'+ Math.round( (page.reaction_count + page.reaction_view_count) / page.pageview_count * 10000) / 100 +'</td>' +
+                          '</tr>';
 
-                      $('table.popular').find('.loading').remove();
-                      $('table.popular').append(rows);
+                          rows = rows + newRow;
+                        });
+
+                        $('table.popular').append(rows);
+                      } else {
+                        $('table.popular').after('<div class="no-data">Darn, no data returned!</div>');
+                        $('table.popular').hide();
+                      }
+
                     }, error: function(request, status, error) {
                     }, complete:function(request, status) {
                     }
@@ -311,11 +235,15 @@
                     url: ANTsite.analytics.queryHost + '/reactionCount',
                     type: "get",
                     data: {
-                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
-                      $('.total-reactions-count').find('.loading').remove();
-                      $('.total-reactions-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionCount)+'</h1>');
+                      $('.total-reactions-count').find('.loading,.no-data').remove();
+                      if (response.reactionCount) {
+                        $('.total-reactions-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionCount)+'</h1>');
+                      } else {
+                        $('.total-reactions-count').append('<div class="no-data">Darn, no data returned!</div>');
+                      }
                     }, error: function(request, status, error) {
                     }, complete:function(request, status) {
                     }
@@ -326,78 +254,162 @@
                     url: ANTsite.analytics.queryHost + '/reactionViewCount',
                     type: "get",
                     data: {
-                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
-                      $('.total-reaction-views-count').find('.loading').remove();
-                      $('.total-reaction-views-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionViewCount)+'</h1>');
+                      $('.total-reaction-views-count').find('.loading,.no-data').remove();
+                      if (response.reactionViewCount) {
+                        $('.total-reaction-views-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionViewCount)+'</h1>');
+                      } else {
+                        $('.total-reaction-views-count').append('<div class="no-data">Darn, no data returned!</div>');
+                      }
                     }, error: function(request, status, error) {
                     }, complete:function(request, status) {
                     }
                 });
             },
-            // getTopReferrers: function() {
-            //     $.ajax({
-            //     url: ANTsite.analytics.queryHost + '/getTopReferrers',
-            //     type: "get",
-            //     data: {
-            //         json: $.toJSON( { gid:ANTsite.group.id } )
-            //     },
-            //     success: function(response) {
-            //         refSummary(response.referrers);
+            getEventsOverTime: function(event_type) {
+                $.ajax({
+                    url: ANTsite.analytics.queryHost + '/eventsOverTime',
+                    type: "get",
+                    data: {
+                        json: $.toJSON( { gid:ANTsite.group.id, event_type:event_type, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                        // json: $.toJSON( { gid:ANTsite.group.id, event_type:event_type, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
+                    },
+                    success: function(response) {
+                      var eventCssName = (event_type=='reactions') ? "reactions" : "reaction-views";
 
-            //     }, error: function(request, status, error) {
-            //     }, complete:function(request, status) {
-            //     }
-            //     });
-            // },
+                      $('.total-'+eventCssName+'-over-time').find('.loading,.no-data').remove();
+                      
+                      if (response.events) {
+                        ANTsite.analytics.makeChart(event_type, response.events);
+                        // $('.total-reaction-views-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionViewCount)+'</h1>');
+                      } else {
+                        $('.total-'+eventCssName+'-over-time').append('<div class="no-data">Darn, no data returned!</div>');
+                      }
+                    }, error: function(request, status, error) {
+                    }, complete:function(request, status) {
+                    }
+                });
+            },
             getTopReactions: function() {
                 $.ajax({
                   url: ANTsite.analytics.queryHost + '/topReactions',
                   type: "get",
                   data: {
-                      json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                      json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                   },
                   success: function(response) {
-                  // var rows = '';
-                  // $.each(response.popularPages, function(idx, page) {
-                  //   var newRow = '<tr>' +
-                  //       '<td><a href="{{page.1.url}}" target="_blank">'+page.page_title+'</a></td>' +
-                  //       '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_count)+'</td>' +
-                  //       '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_view_count)+'</td>' +
-                  //       '<td>'+ANTsite.analytics.numberWithCommas(page.pageview_count)+'</td>' +
-                  //       '<td>'+ Math.round( (page.reaction_count + page.reaction_view_count) / page.pageview_count * 10000) / 100 +'</td>' +
-                  //   '</tr>';
+                    $('.top-reactions').find('.loading,.no-data').remove();
 
-                  //   rows = rows + newRow;
-                  // });
+                    if (response.reactions) {
+                      var $temp_popularReactions = $('<div><div class="template"></div></div>');
+                      var popularReactions = response.reactions;
 
-                  // $('table.popular').find('.loading').remove();
-                  // $('table.popular').append(rows);
+                      var itemNumber = 1;
+                      $.each(popularReactions, function(idx, reaction) {
+                          // var searchUrl = (ANTsite.group.short_name) ? '/group/'+ANTsite.group.short_name+'/':'/stream/';
+                          // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
+                          // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+ANTsite.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+                          
+                          var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
+                          var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
+                          $temp_popularReactions.find('.template').append('<span class="top-reaction reaction-tag '+size+'"><a href="javascript:void(0);" class="'+charCountModifier+'">'+reaction.body+' <span class="counter">'+ANTsite.analytics.numberWithCommas(reaction.count)+'</span></a></span>');
+                          itemNumber++;
+                      });
+                      
+                      $('.top-reactions').find('.result').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
+                      
+                    } else {
+                      $('.top-reactions').find('.result').html('<div class="no-data">Darn, no data returned!</div>').find('.template').animate({'opacity':1},500);
+                    }
 
-
-                    var $temp_popularReactions = $('<div><div class="template"></div></div>');
-                    var popularReactions = response.reactions;
-
-                    var itemNumber = 1;
-                    $.each(popularReactions, function(idx, reaction) {
-                        // var searchUrl = (ANTsite.group.short_name) ? '/group/'+ANTsite.group.short_name+'/':'/stream/';
-                        // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
-                        // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+ANTsite.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
-                        
-                        var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
-                        var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
-                        $temp_popularReactions.find('.template').append('<span class="top-reaction reaction-tag '+size+'"><a href="javascript:void(0);" class="'+charCountModifier+'">'+reaction.body+' <span class="counter">'+ANTsite.analytics.numberWithCommas(reaction.count)+'</span></a></span>');
-                        itemNumber++;
-                    });
-                    
-                    $('.top-reactions').find('.loading').remove();
-                    $('.top-reactions').find('.result').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
                   }
                 });
             },
-            // updateAll: function() {
-            // },
+            makeChart: function(event_type, events) {
+                var dates = [],
+                    desktopEventCounts = [],
+                    mobileEventCounts = [];
+
+                var legendHtml = '<div class="legend"><div class="swatch desktop"></div>Desktop <div class="swatch mobile"></div> Mobile</div>' +
+                '<div class="mobile-instruction"><em>Drag right to see the full chart.</em></div>';
+
+                $('.'+event_type+'-chart').before(legendHtml);
+                    
+                // if just data for one day, render a graph showing platform breakdown
+                if (events.length < 2) {
+
+                  var chart = new Chartist.Bar('.'+event_type+'-chart', {
+                      labels: ['Desktop','Mobile'],
+                      series: [
+                        [events[0].desktopEventCount,events[0].mobileEventCount]
+                      ]
+                    }, {
+                      seriesBarDistance: 10,
+                      reverseData: true,
+                      horizontalBars: true,
+                      axisY: {
+                        offset: 70
+                      },
+                      plugins: [
+                        Chartist.plugins.tooltip()
+                        ]
+                    }).on('draw', function(data) {
+                      if(data.type === 'bar') {
+                        data.element.attr({
+                          style: 'stroke-width: 30px'
+                        });
+                      }
+                    });
+
+                } else {
+                  $.each(events, function(idx, ev) {
+                    dates.push(ev.desktopCreatedDate);
+                    desktopEventCounts.push({meta:'Desktop', value: ev.desktopEventCount});
+                    mobileEventCounts.push({meta:'Mobile', value: ev.mobileEventCount});
+                  });
+
+                  var chart = new Chartist.Line('.'+event_type+'-chart', {
+                    labels: dates,
+                    series: [
+                      desktopEventCounts,
+                      mobileEventCounts
+                    ]
+                  }, {
+                    low: 0,
+                    fullWidth: true,
+                    chartPadding: {
+                        right: 40
+                      },
+                    plugins: [
+                      Chartist.plugins.tooltip(),
+                      Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                          axisTitle: 'Date',
+                          axisClass: 'ct-axis-title',
+                          offset: {
+                            x: 0,
+                            y: 35
+                          },
+                          textAnchor: 'middle'
+                        },
+                        axisY: {
+                          axisTitle: 'Count',
+                          axisClass: 'ct-axis-title',
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          textAnchor: 'middle',
+                          flipTitle: false
+                        }
+                      })
+
+                    ]
+                  });
+                }
+            },
             simulate: function() {
                 var antennaUsageData = {
                     // sessions, pageviews, scroll, time
@@ -447,6 +459,8 @@
 
         $(function(){
           // get things going
+
+          $('button.update').on('click', function(){window.location.reload();});
 
           ANTsite.analytics.initDates();
 

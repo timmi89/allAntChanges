@@ -8407,6 +8407,8 @@ section.big-beta-form .learn-more-boxes {
   margin-top: 1rem; }
 .admin input.attribute, .admin input.selector {
   width: auto; }
+.admin .no-data {
+  text-align: left; }
 .admin .tabs .tab {
   padding: 0;
   padding: 0 1%;
