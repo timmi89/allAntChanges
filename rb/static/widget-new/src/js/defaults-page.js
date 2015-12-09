@@ -16,8 +16,7 @@ function createPage(options) {
     var contentData = options.contentData;
     var showConfirmation = options.showConfirmation;
     var element = options.element;
-    var colors = options.colors;
-    var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions, colors);
+    var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions);
     var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
         el: element,
@@ -25,8 +24,7 @@ function createPage(options) {
         template: require('../templates/defaults-page.hbs.html'),
         data: {
             defaultReactions: defaultReactions,
-            defaultLayoutClass: arrayAccessor(defaultLayoutData.layoutClasses),
-            defaultBackgroundColor: arrayAccessor(defaultLayoutData.backgroundColors)
+            defaultLayoutClass: arrayAccessor(defaultLayoutData.layoutClasses)
         },
         decorators: {
             sizetofit: ReactionsWidgetLayoutUtils.sizeToFit($reactionsWindow)

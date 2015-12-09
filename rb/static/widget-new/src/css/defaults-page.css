@@ -1,9 +1,18 @@
+/* The CSS for the reaction boxes is in reactions-widget.css because it's that same in multiple pages. */
 
+.antenna-defaults-page .antenna-body {
+    /* This rule may be overridden by group settings, which inject custom CSS lower in the page */
+    background-image: linear-gradient(185deg,#333,#777);
+}
+
+.antenna-defaults-page .antenna-reaction.antenna-half {
+    height: 54px;
+}
 
 .antenna-defaults-footer input {
-    font-weight: 700;
-    font-size: 13px;
-    color: #666666;
+    font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
+    font-size: 11px;
+    color: #aaaaaa;
     text-align: center;
     letter-spacing: -.25px;
     border: none;
@@ -12,18 +21,23 @@
     cursor: pointer;
 }
 
+.antenna-defaults-footer input:hover {
+    color: #000000;
+}
+
 .antenna-defaults-footer input:focus {
+    color: #000000;
     cursor: text;
     outline: none;
 }
 
 .antenna-defaults-footer input.active {
-    border: 2px solid #8fb3f2;
+    border: 1px solid #000000;
 }
 
 .antenna-defaults-footer button {
     display: none;
-    background-color: #8fb3f2;
+    background-color: #000000;
     border: 0;
     text-align: center;
     padding: 6px 8px;

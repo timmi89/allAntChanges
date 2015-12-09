@@ -1,7 +1,7 @@
 <div on-keydown="pagekeydown" class="antenna-page antenna-defaults-page" tabindex="0" decorator="cssreset">
     <div class="antenna-body">
         {{#defaultReactions:index}}
-            <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}" style="background-color:{{ defaultBackgroundColor(index) }}">
+            <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}">
                 <div class="antenna-reaction-box">
                     <div class="antenna-reaction-text" decorator="sizetofit">
                         {{ this.text }}

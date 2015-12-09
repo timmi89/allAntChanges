@@ -40,7 +40,6 @@ function openReactionsWidget(options, elementOrCoords) {
     var contentData = JSON.parse(JSON.stringify(options.contentData));
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
-    var colors = groupSettings.reactionBackgroundColors();
     var ractive = Ractive({
         el: WidgetBucket.get(),
         append: true,
@@ -101,7 +100,6 @@ function openReactionsWidget(options, elementOrCoords) {
             groupSettings: groupSettings,
             containerData: containerData,
             containerElement: containerElement,
-            colors: colors,
             contentData: contentData,
             showConfirmation: showConfirmation,
             showDefaults: function() { showDefaultReactionsPage(true) },
@@ -136,7 +134,6 @@ function openReactionsWidget(options, elementOrCoords) {
             pageData: pageData,
             groupSettings: groupSettings,
             containerData: containerData,
-            colors: colors,
             contentData: contentData,
             showConfirmation: showConfirmation,
             element: pageContainer(ractive),

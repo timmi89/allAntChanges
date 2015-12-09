@@ -33,7 +33,7 @@ function scriptLoaded() {
 function initCustomCSS(groupSettings) {
     var customCSS = groupSettings.customCSS();
     if (customCSS) {
-        CssLoader.inject(groupSettings.customCSS());
+        CssLoader.inject(customCSS);
     }
 }
 

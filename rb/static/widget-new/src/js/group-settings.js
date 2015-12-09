@@ -43,8 +43,8 @@ var defaults = {
     ab_test_sample_percentage: 10,
     img_indicator_show_onload: true,
     img_indicator_show_side: 'left',
-    tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
-    tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
+    tag_box_bg_colors: '',
+    tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff', // TODO default
     tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
     tags_bg_css: '',
     ignore_subdomain: false,
@@ -141,6 +141,37 @@ function createFromJSON(json) {
         return reactions;
     }
 
+    function computeCustomCSS() {
+        // First read any raw custom CSS.
+        var customCSS = data('custom_css')();
+        // Then append rules for any specific CSS overrides.
+        customCSS += createCustomCSSRule(data('tags_bg_css', ''), '.antenna-reactions-page .antenna-body, .antenna-defaults-page .antenna-body');
+        customCSS += createCustomCSSRule(data('tag_box_bg_colors', ''), '.antenna-reaction-box');
+        customCSS += createCustomCSSRule(data('tag_box_bg_colors_hover', ''), '.antenna-reaction:hover > .antenna-reaction-box');
+        customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box');
+        return customCSS;
+    }
+
+    function createCustomCSSRule(declarationsAccessor, selector) {
+        var declarations = declarationsAccessor().trim();
+        if (declarations) {
+            return '\n' + selector + ' {\n    ' + declarations + '\n}';
+        }
+        return '';
+    }
+
+    function migrateFontFamilySetting(fontFamilyAccessor) {
+        // TODO: This is temporary code that migrates the current tag_box_font_family setting from a raw value to a
+        //       CSS declaration. We should migrate all deployed sites to use a CSS declaration and then remove this.
+        var fontFamily = fontFamilyAccessor().trim();
+        if (fontFamily && fontFamily.indexOf('font-family') === -1) {
+            fontFamily = 'font-family: ' + fontFamily;
+        }
+        return function() {
+            return fontFamily;
+        }
+    }
+
     return {
         legacyBehavior: data('legacy_behavior', false), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
         groupId: data('id'),
@@ -167,8 +198,7 @@ function createFromJSON(json) {
         mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
-        reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
-        customCSS: data('custom_css'),
+        customCSS: computeCustomCSS,
         exclusionSelector: data('no_ant'), // TODO: no_readr?
         language: data('language')
     }
