@@ -8816,7 +8816,7 @@ if ( sendData.kind=="page" ) {
                         var $container_in_dom = $('[ant-hash="'+hash+'"]');
                         if ( !$container_in_dom.length ) {
                             $('#ant_indicator_details_'+hash).remove();
-                            $('#ant_container_tracker'+hash).remove();
+                            $('#ant_container_tracker_'+hash).remove();
                             return;
                         }
 
