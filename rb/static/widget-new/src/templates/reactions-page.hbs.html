@@ -2,7 +2,7 @@
     <div class="antenna-body">
         {{#if reactions}}
             {{#reactions:index}}
-                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                <div on-tap="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
                     <div class="antenna-reaction-box">
                         <div class="antenna-reaction-text" decorator="sizetofit">
                             {{ this.text }}
@@ -14,12 +14,12 @@
                             +1
                         </div>
                         {{#if isSummary}}
-                            <div on-click="showlocations" class="antenna-reaction-location">
+                            <div on-tap="showlocations" class="antenna-reaction-location">
                                 {{>locationIcon}}
                             </div>
                         {{else}}
                             {{#if this.commentCount}}
-                                <div on-click="showcomments" class="antenna-reaction-comments hascomments">
+                                <div on-tap="showcomments" class="antenna-reaction-comments hascomments">
                                     {{>commentsIcon}}
                                     {{this.commentCount}}
                                 </div>
@@ -36,7 +36,7 @@
     </div>
     <div class="antenna-footer antenna-reactions-footer">
         {{#if reactions}}
-            <div on-click="showdefault" class="antenna-think">{{getMessage('reactions-page_think')}}</div>
+            <div on-tap="showdefault" class="antenna-think">{{getMessage('reactions-page_think')}}</div>
         {{else}}
             <div class="antenna-no-reactions">{{getMessage('reactions-page_no_reactions')}}</div>
         {{/if}}

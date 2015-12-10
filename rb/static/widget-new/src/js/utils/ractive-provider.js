@@ -1,4 +1,5 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var RactiveEventsTap = require('./ractive-events-tap');
 
 var Messages = require('./messages');
 
@@ -16,6 +17,7 @@ function loaded() {
     loadedRactive = Ractive;
     window.Ractive = noConflict;
     loadedRactive.decorators.cssreset = cssResetDecorator; // Make our css reset decorator available to all instances
+    loadedRactive.events.tap = RactiveEventsTap; // Make the 'on-tap' event plugin available to all instances
     loadedRactive.defaults.data.getMessage = Messages.getMessage; // Make getMessage available to all instances
     loadedRactive.defaults.twoway = false; // Change the default to disable two-way data bindings.
     notifyCallbacks();

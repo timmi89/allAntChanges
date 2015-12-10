@@ -1,8 +1,7 @@
 
 // Sets up the given element to be called with a TouchEvent that we recognize as a tap.
 function setupTouchTapEvents(element, callback) {
-    // TODO: find a real value for this
-    var timeout = 200; // This is the time between touchstart and touchend that we use to distinguish a tap from a long press.
+    var timeout = 400; // This is the time between touchstart and touchend that we use to distinguish a tap from a long press.
     var validTap = false;
     element.addEventListener('touchstart', touchStart);
     element.addEventListener('touchmove', touchMove);
