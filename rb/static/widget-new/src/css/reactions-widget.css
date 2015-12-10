@@ -8,6 +8,15 @@
     box-shadow: 0 1px 40px #8A8A8A;
     font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
 }
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    #antenna-widget-bucket {
+        width: 100%;
+    }
+    .antenna-reactions-widget {
+        left: 50% !important;
+        transform: translateX(-50%);
+    }
+}
 
 .antenna-reactions-widget:focus {
     outline: none;

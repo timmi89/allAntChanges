@@ -41,10 +41,19 @@
     float: right;
     padding: 15px;
     margin-top: -10px; /* We have 15px of padding on top for the touch area, but need to visually only have 5px for alignment. */
+    margin-right: -10px; /* We have 15px of padding on top for the touch area, but need to visually only have 5px for alignment. */
     white-space: nowrap;
     opacity: 0.75;
     font-size: 10px;
     line-height: 1em;
+    cursor: zoom-in;
+    -moz-cursor: zoom-in;
+    -webkit-cursor: zoom-in;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .antenna-reaction-location {
+        display: inline-block;
+    }
 }
 
 .antenna-location svg, .antenna-reaction-comments svg {
@@ -58,9 +67,6 @@
 
 .antenna-reaction-box:hover .antenna-reaction-location {
     display: inline-block;
-    cursor: zoom-in;
-    -moz-cursor: zoom-in;
-    -webkit-cursor: zoom-in;
 }
 
 .antenna-plusone {
