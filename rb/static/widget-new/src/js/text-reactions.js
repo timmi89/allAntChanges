@@ -53,7 +53,7 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
 
 function setupTouchEvents(element, reactionsWidgetOptions) {
     TouchSupport.setupTap(element, function(event) {
-        if (!ReactionsWidget.isOpen()) {
+        if (!ReactionsWidget.isOpen() && $(event.target).closest('a').length === 0) {
             event.preventDefault();
             var touch = event.changedTouches[0];
             var coords = { top: touch.pageY, left: touch.pageX };
