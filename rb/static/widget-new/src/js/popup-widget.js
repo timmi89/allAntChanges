@@ -30,6 +30,15 @@ function getRootElement() {
                 clickHandler();
             }
         });
+        // The :hover pseudo class can become stuck on the antenna-popup element when we bring up the reaction window
+        // in response to the click. So here we add/remove our own hover class instead.
+        // See: http://stackoverflow.com/questions/10321275/hover-state-is-sticky-after-element-is-moved-out-from-under-the-mouse-in-all-br
+        $element.on('mouseenter', function() {
+           $element.addClass('hover');
+        });
+        $element.on('mouseleave', function() {
+            $element.removeClass('hover');
+        });
         return $element;
     }
     return $(ractive.find('.antenna-popup'));

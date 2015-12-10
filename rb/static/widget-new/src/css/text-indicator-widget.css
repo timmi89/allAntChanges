@@ -14,16 +14,16 @@
 }
 
 .antenna-text-indicator-widget .antenna-logo-path {
-    fill: #666666;
+    fill: #aaaaaa;
     transition: fill 300ms ease;
 }
 
 .antenna-text-indicator-widget.active .antenna-logo-path {
-    fill: #8fb3f2;
+    fill: #000000;
 }
 
 .antenna-text-indicator-widget.active {
-    color: #8fb3f2 !important;
+    color: #666666 !important;
     opacity: 0.66;
 }
 
@@ -41,7 +41,7 @@
 
 .antenna-text-indicator-widget.hasreactions.active {
     opacity: 0.75;
-    color: #8fb3f2 !important;
+    color: #666666 !important;
 }
 
 .antenna-text-indicator-widget .antenna-reaction-total {

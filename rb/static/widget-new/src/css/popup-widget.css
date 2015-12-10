@@ -46,10 +46,10 @@
     height: 18px;
 }
 .antenna-popup-body .antenna-logo-path {
-    fill: #8fb3f2;
+    fill: #dddddd;
     transition: fill 500ms;
 }
-.antenna-popup-body:hover .antenna-logo-path {
+.antenna-popup.hover .antenna-logo-path {
     fill: #ffffff;
 }
 
@@ -60,11 +60,11 @@
     overflow: hidden;
     max-width: 0;
     transition: max-width 200ms;
-    color:#CCCCCC;
+    color:#cccccc;
     white-space: pre; /* don't wrap */
 }
 
-.antenna-popup-body:hover .antenna-popup-text {
+.antenna-popup.hover .antenna-popup-text {
     margin-left: 8px;
     max-width: 150px;
     visibility: inherit; /* only show if the parent element is showing */
