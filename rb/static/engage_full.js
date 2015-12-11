@@ -7736,9 +7736,12 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.on('touchstart.ant',function(e) {
+                                        if ($(e.target).closest('a').length !== 0) { return; }
                                         ANT.util.timerStart = new Date().getTime();
                                     });
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        if ($(e.target).closest('a').length !== 0) { return; }
+
                                         ANT.util.timerEnd = new Date().getTime();
                                         var touchTime = ANT.util.timerEnd - ANT.util.timerStart;
 
