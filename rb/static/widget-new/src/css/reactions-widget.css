@@ -46,6 +46,23 @@
     vertical-align: middle;
 }
 
+.antenna-reactions-close {
+    display: none;
+    float: right;
+    vertical-align: middle;
+    padding: 10px;
+    margin-top: -10px; /* We have 10px of padding on top for the touch area, but need to visually counter the padding for alignment. */
+    font-size: 11px;
+    font-weight: bold;
+    color: #d8d8d8;
+    cursor: pointer;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .antenna-reactions-close {
+        display: inline-block;
+    }
+}
+
 .antenna-page-container {
     /* body height is set in Javascript */
     position: relative;

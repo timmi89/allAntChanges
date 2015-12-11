@@ -43,7 +43,9 @@ function openReactionsWidget(options, elementOrCoords) {
     var ractive = Ractive({
         el: WidgetBucket.get(),
         append: true,
-        data: {},
+        data: {
+            closeWindow: closeWindow
+        },
         template: require('../templates/reactions-widget.hbs.html'),
         partials: {
             logo: SVGs.logo
