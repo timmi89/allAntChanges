@@ -6,6 +6,7 @@ var SVGs = require('./svgs');
 var AppMode = require('./utils/app-mode');
 var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
+var TouchSupport = require('./utils/touch-support');
 
 function createIndicatorWidget(options) {
     // TODO: validate that options contains all required properties (applies to all widgets).
@@ -44,6 +45,10 @@ function createIndicatorWidget(options) {
     var activeTimeout;
 
     var $rootElement = $(rootElement(ractive));
+    TouchSupport.setupTap($rootElement.get(0), function(event) {
+        event.preventDefault();
+        openReactionsWindow(reactionWidgetOptions, ractive)
+    });
     $rootElement.on('mouseenter.antenna', function(event) {
         if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF
             // Don't react if the user is dragging or selecting text.

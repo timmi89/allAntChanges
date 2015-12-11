@@ -51,7 +51,8 @@ function createIndicatorWidget(options) {
         });
     }
     var hoverTimeout;
-    TouchSupport.setupTap($rootElement.get(0), function() {
+    TouchSupport.setupTap($rootElement.get(0), function(event) {
+        event.preventDefault();
         openReactionsWindow(reactionWidgetOptions, ractive)
     });
     $rootElement.on('mouseenter.antenna', function(event) {
