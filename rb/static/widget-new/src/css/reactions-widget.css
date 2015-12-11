@@ -114,6 +114,7 @@
 }
 
 .antenna-progress-page .antenna-body {
+    background: none;
     height: 300px;
 }
 
