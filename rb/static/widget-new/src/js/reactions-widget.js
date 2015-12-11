@@ -43,14 +43,14 @@ function openReactionsWidget(options, elementOrCoords) {
     var ractive = Ractive({
         el: WidgetBucket.get(),
         append: true,
-        data: {
-            closeWindow: closeWindow
-        },
+        data: {},
         template: require('../templates/reactions-widget.hbs.html'),
         partials: {
             logo: SVGs.logo
         }
     });
+
+    ractive.on('close', closeAllWindows);
     openInstances.push(ractive);
     var $rootElement = $(rootElement(ractive));
     Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
@@ -195,7 +195,7 @@ function openReactionsWidget(options, elementOrCoords) {
                 reactionLocationData: reactionLocationData,
                 pageData: pageData,
                 groupSettings: groupSettings,
-                closeWindow: closeWindow,
+                closeWindow: closeAllWindows,
                 goBack: backToReactions
             };
             var page = LocationsPage.create(options);
@@ -207,10 +207,6 @@ function openReactionsWidget(options, elementOrCoords) {
             }, 1);
             Events.postLocationsViewed(pageData, groupSettings);
         });
-    }
-
-    function closeWindow() {
-        ractive.fire('closeWindow');
     }
 
     function setWindowTitle(title) {
@@ -330,14 +326,13 @@ function setupWindowClose(pages, ractive) {
             closeAllWindows();
         }
     });
-    ractive.on('closeWindow', closeWindow);
 
     var closeTimer;
 
     function delayedCloseWindow() {
         closeTimer = setTimeout(function() {
             closeTimer = null;
-            closeWindow();
+            closeAllWindows();
         }, 500);
     }
 
@@ -345,7 +340,9 @@ function setupWindowClose(pages, ractive) {
         clearTimeout(closeTimer);
     }
 
-    function closeWindow() {
+    ractive.on('internalCloseWindow', function() {
+        // Closes one particular reaction window. This function should only be called from closeAllWindows, which also
+        // cleans up the handles we maintain to all windows.
         clearTimeout(closeTimer);
 
         $rootElement.stop(true, true).fadeOut('fast', function() {
@@ -360,12 +357,12 @@ function setupWindowClose(pages, ractive) {
             pages[i].teardown();
         }
         ractive.teardown();
-    }
+    });
 }
 
 function closeAllWindows() {
     for (var i = 0; i < openInstances.length; i++) {
-        openInstances[i].fire('closeWindow');
+        openInstances[i].fire('internalCloseWindow');
     }
     openInstances = [];
 }
