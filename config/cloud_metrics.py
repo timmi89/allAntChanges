@@ -83,7 +83,7 @@ def main():
             "su broadcaster --preserve-environment -c /home/broadcaster/antenna/restart_celery.sh"
         )
         res_proc.close()
-        curl_command = "curl -X POST --data-urlencode 'payload={\"channel\": \"#system_alerts\", \"username\": \"webhookbot\", \"text\": \"Restarting Celery. (queue size: {0})\", \"icon_emoji\": \":rabbit:\"}' https://hooks.slack.com/services/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".format(queue_size)
+        curl_command = "curl -X POST --data-urlencode 'payload={{\"channel\": \"#system_alerts\", \"username\": \"webhookbot\", \"text\": \"Restarting Celery. (queue size: {0})\", \"icon_emoji\": \":rabbit:\"}}' https://hooks.slack.com/services/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".format(queue_size)
         slack_proc = os.popen(
             curl_command
         )
