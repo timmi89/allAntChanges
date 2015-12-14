@@ -4902,8 +4902,13 @@ function antenna($A){
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
 
+                    // init separate CTAs
+                    ANT.actions.initSeparateCtas();
+                    ANT.actions.hashCustomDisplayHashes();
+
                     // let's make sure the icons for images, etc are where they should be
                     ANT.actions.indicators.utils.updateContainerTrackers();
+
 
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
                     var windowPort = (window.location.port) ? ':'+window.location.port : '',
@@ -4997,16 +5002,16 @@ function antenna($A){
                                 var antItem = $node.attr('ant-item');
                             } else {
                                 var antItem = 'ant-custom-cta-'+separateCtaCount;
-                                $node.attr('ant-item', antItem);
+
+                                if ( !$node.hasAttr('ant-item') ) {
+                                    $node.attr('ant-item', antItem);
+                                }
                             }
 
-                            // make all media a crosspage container?  
-                            // nah.
-                            // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
-                            //     $node.attr('ant-crossPageContent', 'true');
-                            // }
+                            if ( !$('ant-cta-for="'+antItem+'"').length ) {
+                                $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
+                            }
 
-                            $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                             separateCtaCount++;
                         });
                     }
@@ -7736,6 +7741,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.on('touchstart.ant',function(e) {
+                                        if ($(e.target).closest('a').length !== 0) { return; }
                                         ANT.util.timerStart = new Date().getTime();
                                     });
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
@@ -7845,6 +7851,20 @@ if ( sendData.kind=="page" ) {
                             if ( $indicator.$aWindow.data('container') == hash ) { return; }
                             $indicator.$aWindow.remove();
                         }
+
+                        var page_id = ANT.util.getPageProperty('id', hash );
+                        ANT.events.trackEventToCloud({
+                            // category: "engage",
+                            // action: "aWindow_shown_readmode",
+                            // opt_label: "kind: text, hash: " + hash,
+                            event_type: 'rs',
+                            event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
+                            container_hash: hash,
+                            container_kind: "text",
+                            page_id: page_id
+                        });
+                        ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'text' });
+
                         // if(summary.$aWindow){
                         //     summary.$aWindow.remove();
                         // }
@@ -7854,7 +7874,7 @@ if ( sendData.kind=="page" ) {
                         //end - todo
 
                         var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );
-                        var page_id = ANT.util.getPageProperty('id', hash );
+                        
 
                         //This bug goes all the way back to the big-ol-nasty function ANT.aWindow._aWindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
@@ -7883,17 +7903,6 @@ if ( sendData.kind=="page" ) {
                             // });
                         // }else{
                             // ANT.events.track( 'view_node::'+hash, hash );
-                            ANT.events.trackEventToCloud({
-                                // category: "engage",
-                                // action: "aWindow_shown_readmode",
-                                // opt_label: "kind: text, hash: " + hash,
-                                event_type: 'rs',
-                                event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
-                                container_hash: hash,
-                                container_kind: "text",
-                                page_id: page_id
-                            });
-                            ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'text' });
                         // }
 
                     }

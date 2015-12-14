@@ -49,7 +49,8 @@ RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
     'porter@antenna.is',
     'jared@antenna.is',
-    'brian@antenna.is'
+    'brian@antenna.is',
+    'chris@antenna.is'
 ]
 
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
