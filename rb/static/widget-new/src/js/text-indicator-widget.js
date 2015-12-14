@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
+var TouchSupport = require('./utils/touch-support');
 
 var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
@@ -50,12 +51,15 @@ function createIndicatorWidget(options) {
         });
     }
     var hoverTimeout;
+    TouchSupport.setupTap($rootElement.get(0), function(event) {
+        event.preventDefault();
+        openReactionsWindow(reactionWidgetOptions, ractive)
+    });
     $rootElement.on('mouseenter.antenna', function(event) {
         if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF
             // Don't react if the user is dragging or selecting text.
             return;
         }
-        // TODO: Don't react if the data isn't loaded yet (i.e. we don't know whether to show the popup or reaction widget)
         clearTimeout(hoverTimeout); // only one timeout at a time
         hoverTimeout = setTimeout(function() {
             if (containerData.reactions.length > 0) {

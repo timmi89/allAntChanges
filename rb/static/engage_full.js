@@ -4904,6 +4904,7 @@ function antenna($A){
 
                     // init separate CTAs
                     ANT.actions.initSeparateCtas();
+                    
                     ANT.actions.hashCustomDisplayHashes();
 
                     // let's make sure the icons for images, etc are where they should be
@@ -7745,6 +7746,8 @@ if ( sendData.kind=="page" ) {
                                         ANT.util.timerStart = new Date().getTime();
                                     });
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        if ($(e.target).closest('a').length !== 0) { return; }
+
                                         ANT.util.timerEnd = new Date().getTime();
                                         var touchTime = ANT.util.timerEnd - ANT.util.timerStart;
 

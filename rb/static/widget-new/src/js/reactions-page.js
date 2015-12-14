@@ -22,9 +22,8 @@ function createPage(options) {
     var showComments = options.showComments;
     var showLocations = options.showLocations;
     var element = options.element;
-    var colors = options.colors;
     sortReactionData(reactionsData);
-    var reactionsLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(reactionsData, colors);
+    var reactionsLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(reactionsData);
     var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
         el: element,
@@ -33,7 +32,6 @@ function createPage(options) {
         data: {
             reactions: reactionsData,
             reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
-            reactionsBackgroundColor: arrayAccessor(reactionsLayoutData.backgroundColors),
             isSummary: isSummary
         },
         decorators: {

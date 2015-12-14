@@ -2,9 +2,8 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
 var CLASS_FULL = 'antenna-full';
 var CLASS_HALF = 'antenna-half';
-var CLASS_HALF_EVEN = 'antenna-half antenna-reaction-even';
 
-function computeLayoutData(reactionsData, colors) {
+function computeLayoutData(reactionsData) {
     var numReactions = reactionsData.length;
     if (numReactions == 0) {
         return {}; // TODO clean this up
@@ -28,9 +27,7 @@ function computeLayoutData(reactionsData, colors) {
             layoutClasses[i] = CLASS_FULL;
             numFull++;
         } else {
-            // In addition to tagging classes as full or half size, we also tag the even half-size boxes so we can
-            // draw a border on them to separate the left/right sides visually.
-            layoutClasses[i] = (numFull + i % 2 === 0) ? CLASS_HALF : CLASS_HALF_EVEN;
+            layoutClasses[i] = CLASS_HALF;
             numHalfsies++;
         }
     }
@@ -38,29 +35,8 @@ function computeLayoutData(reactionsData, colors) {
         layoutClasses[numReactions - 1] = CLASS_FULL; // If there are an odd number, the last one goes full.
     }
 
-    var backgroundColors = [];
-    var colorIndex = 0;
-    var pairWithNext = 0;
-    for (var i = 0; i < numReactions; i++) {
-        backgroundColors[i] = colors[colorIndex % colors.length];
-        if (layoutClasses[i] === CLASS_FULL) {
-            colorIndex++;
-        } else {
-            // TODO gotta be able to make this simpler
-            if (pairWithNext > 0) {
-                pairWithNext--;
-                if (pairWithNext == 0) {
-                    colorIndex++;
-                }
-            } else {
-                pairWithNext = 1; // If we want to allow N boxes per row, this number would become conditional.
-            }
-        }
-    }
-
     return {
-        layoutClasses: layoutClasses,
-        backgroundColors: backgroundColors
+        layoutClasses: layoutClasses
     };
 }
 

@@ -53,14 +53,12 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
 
 function setupTouchEvents(element, reactionsWidgetOptions) {
     TouchSupport.setupTap(element, function(event) {
-        if (!ReactionsWidget.isOpen()) {
+        if (!ReactionsWidget.isOpen() && $(event.target).closest('a').length === 0) {
             event.preventDefault();
             var touch = event.changedTouches[0];
             var coords = { top: touch.pageY, left: touch.pageX };
             setTimeout(function() { // Let this event finish processing before opening the reactions window so the window doesn't also process the event.
                 grabNodeAndOpen(element, reactionsWidgetOptions, coords);
-                element.removeEventListener('touchend', touchEnd);
-                element.addEventListener('touchend', touchEnd);
             }, 0);
         }
     });

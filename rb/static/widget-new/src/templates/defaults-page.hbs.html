@@ -1,7 +1,7 @@
 <div on-keydown="pagekeydown" class="antenna-page antenna-defaults-page" tabindex="0" decorator="cssreset">
     <div class="antenna-body">
         {{#defaultReactions:index}}
-            <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}" style="background-color:{{ defaultBackgroundColor(index) }}">
+            <div on-tap="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}">
                 <div class="antenna-reaction-box">
                     <div class="antenna-reaction-text" decorator="sizetofit">
                         {{ this.text }}
@@ -13,7 +13,7 @@
     <div class="antenna-footer antenna-defaults-footer">
         <div class="antenna-custom-area">
             <input on-focus="customfocus" on-keydown="inputkeydown" on-blur="customblur" value="{{getMessage('defaults-page_add')}}" maxlength="25">
-            <button on-click="addcustom">{{getMessage('defaults-page_ok')}}</button>
+            <button on-tap="addcustom">{{getMessage('defaults-page_ok')}}</button>
         </div>
         <div class="antenna-text-logo"><a href="//www.antenna.is">Antenna</a></div>
     </div>

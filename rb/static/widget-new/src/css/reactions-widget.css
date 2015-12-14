@@ -5,8 +5,17 @@
     overflow: hidden;
     background-color: white;
     z-index: 999; /* TODO */
-    box-shadow: 0 0 3px rgba(000,000,000,.3);
+    box-shadow: 0 1px 40px #8A8A8A;
     font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    #antenna-widget-bucket {
+        width: 100%;
+    }
+    .antenna-reactions-widget {
+        left: 50% !important;
+        transform: translateX(-50%);
+    }
 }
 
 .antenna-reactions-widget:focus {
@@ -20,19 +29,38 @@
 .antenna-header {
     border-bottom: 1px solid #f0f0f0;
     background-color: white;
-    color: #8fb3f2;
+    color: #000000;
     padding: 7px 0 7px 6px;
     cursor: move;
+    font-family: 'Helvetica Neue','Helvetica';
+    letter-spacing: -0.25px;
 }
 
 .antenna-header .antenna-logo-path {
-    fill: #8fb3f2;
+    fill: #000000;
 }
 
 .antenna-reactions-title {
-    font-size: 12px;
-    font-weight: 700;
+    margin-left: 4px;
+    font-size: 11px;
     vertical-align: middle;
+}
+
+.antenna-reactions-close {
+    display: none;
+    float: right;
+    vertical-align: middle;
+    padding: 10px;
+    margin-top: -10px; /* We have 10px of padding on top for the touch area, but need to visually counter the padding for alignment. */
+    font-size: 11px;
+    font-weight: bold;
+    color: #d8d8d8;
+    cursor: pointer;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .antenna-reactions-close {
+        display: inline-block;
+    }
 }
 
 .antenna-page-container {
@@ -43,6 +71,7 @@
 
 .antenna-body {
     overflow-y: auto;
+    background-color: #ffffff;
 }
 
 .antenna-footer {
@@ -54,7 +83,6 @@
     background-color: #ffffff;
     color: #777777;
     font-family: Helvetica,Arial,sans-serif;
-    font-weight: 500;
     font-size: 10px;
 }
 
@@ -86,6 +114,7 @@
 }
 
 .antenna-progress-page .antenna-body {
+    background: none;
     height: 300px;
 }
 
@@ -106,9 +135,6 @@
     width: 100%;
     height: 50px;
 }
-.antenna-reaction-even {
-    border-left: 1px solid rgba(0, 0, 0, 0.25);
-}
 
 .antenna-reaction.antenna-full {
     width: 100%;
@@ -126,16 +152,18 @@
     overflow-x: hidden;
 }
 
+.antenna-reaction-box {
+    /* This rule may be overridden by group settings, which inject custom CSS lower in the page */
+    background: rgba(0,0,0,0.1);
+}
+
 .antenna-reaction:hover > .antenna-reaction-box {
-    background: linear-gradient(rgba(30,30,30,.15),rgba(255,255,255,.2));
+    /* This rule may be overridden by group settings, which inject custom CSS lower in the page */
+    background: rgba(0,0,0,0);
 }
 
 .antenna-reaction-text {
-    margin: 0;
-    margin-bottom: 5px;
-    padding: 0;
     white-space: nowrap;
-    font-weight: bold;
     font-size: 24px;
 }
 .antenna-reaction.antenna-half  .antenna-reaction-text {
@@ -150,10 +178,10 @@
 }
 
 .antenna-text-logo a {
-    font-family: Helvetica, Arial;
+    font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
     font-size: 11px;
-    font-weight: bold;
-    color: #a0a0a0;
+    letter-spacing: 0;
+    color: #4E4E4E;
 }
 
 .antenna-text-logo a:hover {
