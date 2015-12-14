@@ -2,6 +2,7 @@
   {
     "id" : "page1",
     "pageHash" : "d49322704685683d1bf8c84458d0dc6a",
+    "requestedURL" : "http://localhost:3000/pages/indicator-limit/page.html",
     "summaryReactions":[
       {
         "text":"Like",

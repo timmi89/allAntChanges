@@ -1,6 +1,14 @@
 var AppMode = require('./utils/app-mode');
 var URLConstants = require('./utils/url-constants');
-var baseUrl = AppMode.offline ? URLConstants.DEVELOPMENT : URLConstants.PRODUCTION;
+
+var baseUrl;
+if (AppMode.test) {
+    baseUrl = URLConstants.TEST;
+} else if (AppMode.offline) {
+    baseUrl = URLConstants.DEVELOPMENT;
+} else {
+    baseUrl = URLConstants.PRODUCTION;
+}
 
 function loadCss() {
     // To make sure none of our content renders on the page before our CSS is loaded, we append a simple inline style

@@ -40,6 +40,7 @@ function updateAllPageData(jsonPages, groupSettings) {
 function updatePageData(json, groupSettings) {
     var pageData = getPageDataForJsonResponse(json);
     pageData.pageId = json.id;
+    pageData.pageHash = json.pageHash;
     pageData.groupId = groupSettings.groupId();
     pageData.canonicalUrl = json.canonicalURL;
     pageData.requestedUrl = json.requestedURL;
