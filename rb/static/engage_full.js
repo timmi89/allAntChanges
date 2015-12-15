@@ -4898,17 +4898,35 @@ function antenna($A){
                 
                 $(window).resize(ANT.util.throttledUpdateContainerTrackers());
 
+                // Filter the set of nodes to eliminate anything inside our own DOM elements (otherwise, we generate a ton of chatter)
+                function filteredElements(nodeList) {
+                    var filtered = [];
+                    for (var i = 0; i < nodeList.length; i++) {
+                        var node = nodeList[i];
+                        if (node.nodeType !== 3) { // Don't process text nodes
+                            var $element = $(node);
+                            if ( $element.closest('.ant,.ant-custom-cta-container').length === 0 ) {
+                                filtered.push($element);
+                            }
+                        }
+                    }
+                    return filtered;
+                }
 
                 // dom mutation observer
                 var observer = new MutationObserver(function(mutationRecords) {
 
-                    // init separate CTAs
-                    ANT.actions.initSeparateCtas();
+                    for (var i = 0; i < mutationRecords.length; i++) {
+                        var addedElements = filteredElements(mutationRecords[i].addedNodes);
+                        if (addedElements.length > 0) {
+                            // init separate CTAs
+                            ANT.actions.initSeparateCtas();
+                            ANT.actions.hashCustomDisplayHashes();
 
-                    ANT.actions.hashCustomDisplayHashes();
-
-                    // let's make sure the icons for images, etc are where they should be
-                    ANT.actions.indicators.utils.updateContainerTrackers();
+                            // let's make sure the icons for images, etc are where they should be
+                            ANT.actions.indicators.utils.updateContainerTrackers();
+                        }
+                    }
 
 
                     // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
@@ -5008,7 +5026,6 @@ function antenna($A){
                                     $node.attr('ant-item', antItem);
                                 }
                             }
-
                             if ( !$('[ant-cta-for="'+antItem+'"]').length ) {
                                 $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                             }
