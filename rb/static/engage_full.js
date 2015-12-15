@@ -5706,7 +5706,7 @@ function antenna($A){
                     pageId = ANT.util.getPageProperty();
                 
                 pageCustomDisplays[ pageId ] = [];
-                if ( $('[ant-item]:not([ant-hashed])').length ) {
+                if ( $('[ant-item]:not([ant-hash])').length ) {
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
@@ -5721,7 +5721,9 @@ function antenna($A){
 
                 }
 
-                ANT.actions.sendHashes( pageCustomDisplays );
+                if (pageCustomDisplays[ pageId ].length) {
+                    ANT.actions.sendHashes( pageCustomDisplays );
+                }
             },
             comments: {
                 makeCommentBox: function(settings, options){
