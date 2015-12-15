@@ -4905,7 +4905,7 @@ function antenna($A){
                         var node = nodeList[i];
                         if (node.nodeType !== 3) { // Don't process text nodes
                             var $element = $(node);
-                            if ( $element.closest('.ant,.ant-custom-cta-container').length === 0 ) {
+                            if ( $element.closest('.ant,.ant_indicator,.ant-custom-cta-container').length === 0 ) {
                                 filtered.push($element);
                             }
                         }
@@ -4919,65 +4919,68 @@ function antenna($A){
                     for (var i = 0; i < mutationRecords.length; i++) {
                         var addedElements = filteredElements(mutationRecords[i].addedNodes);
                         if (addedElements.length > 0) {
+
                             // init separate CTAs
                             ANT.actions.initSeparateCtas();
                             ANT.actions.hashCustomDisplayHashes();
 
                             // let's make sure the icons for images, etc are where they should be
                             ANT.actions.indicators.utils.updateContainerTrackers();
-                        }
-                    }
+                            
 
+                            // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
+                            var windowPort = (window.location.port) ? ':'+window.location.port : '',
+                                windowLocation = (window.location.protocol + '//' + window.location.hostname + windowPort + window.location.pathname).toLowerCase();
 
-                    // make sure curreent page != the window.locatino, and, that the current page is not simply the TLD.
-                    var windowPort = (window.location.port) ? ':'+window.location.port : '',
-                        windowLocation = (window.location.protocol + '//' + window.location.hostname + windowPort + window.location.pathname).toLowerCase();
+                              if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || windowLocation.indexOf( ANT.current.page_url ) == -1) ) {
+                                if (ANT.current.page_url != windowLocation) {
+                                    // think we changed pages
+                                    $('.ant-summary').remove();
 
-                  if ( ANT.current && (ANT.current.page_url.split('//')[1].split('/').length == 2 || windowLocation.indexOf( ANT.current.page_url ) == -1) ) {
-                    if (ANT.current.page_url != windowLocation) {
-                        // think we changed pages
-                        $('.ant-summary').remove();
-
-                        /*
+                                    /*
 
 
 
-                        WE DO IT BASED ON PRESENCE OF THE FIRST [ant-hash].  once that disappears, or changes, and more content has appeared... then the content changed.
+                                    WE DO IT BASED ON PRESENCE OF THE FIRST [ant-hash].  once that disappears, or changes, and more content has appeared... then the content changed.
 
 
 
 
-                        */
+                                    */
 
-                         ANT.current.page_url = windowLocation;
-                            var attempts = 0;
-                            var tryToResetAntenna = setInterval( function() {
+                                     ANT.current.page_url = windowLocation;
+                                        var attempts = 0;
+                                        var tryToResetAntenna = setInterval( function() {
 
-                                // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
-                                // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
+                                            // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
+                                            // if ( ( $(ANT.group.summary_widget_selector).length && !$('.ant-summary').length) || attempts++ > 80 ) {
 
-                                if (attempts++ < 120) {
-                                    var $active_sections = $(ANT.group.active_sections),
-                                        $firstContent = (ANT.current.first_hashed_content) ? $('[ant-hash="'+ANT.current.first_hashed_content+'"]') : $();
+                                            if (attempts++ < 120) {
+                                                var $active_sections = $(ANT.group.active_sections),
+                                                    $firstContent = (ANT.current.first_hashed_content) ? $('[ant-hash="'+ANT.current.first_hashed_content+'"]') : $();
 
-                                    if ( $firstContent.length ) {
-                                        // ANT.actions.removeHashes( $firstContent );
-                                        ANT.actions.hashNodes( $firstContent, true );
+                                                if ( $firstContent.length ) {
+                                                    // ANT.actions.removeHashes( $firstContent );
+                                                    ANT.actions.hashNodes( $firstContent, true );
+                                                }
+
+                                                if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$firstContent.length ) {
+                                                    if ( $active_sections.length && $active_sections.find(ANT.group.anno_whitelist).length  ) {
+                                                        ANT.actions.reset();
+                                                        ANT.actions.indicators.utils.updateContainerTrackers();
+                                                        clearInterval(tryToResetAntenna);
+                                                    }
+                                                }
+                                            } else {
+                                                clearInterval(tryToResetAntenna);
+                                            }
+                                        }, 25);
                                     }
-
-                                    if ( $active_sections.length<1 || !ANT.current.first_hashed_content || !$firstContent.length ) {
-                                        if ( $active_sections.length && $active_sections.find(ANT.group.anno_whitelist).length  ) {
-                                            ANT.actions.reset();
-                                            ANT.actions.indicators.utils.updateContainerTrackers();
-                                            clearInterval(tryToResetAntenna);
-                                        }
-                                    }
-                                } else {
-                                    clearInterval(tryToResetAntenna);
                                 }
-                            }, 25);
                         }
                     }
+
+
                 });
 
                 var body = document.body;
@@ -5008,7 +5011,7 @@ function antenna($A){
                 // ANT.initSeparateCtas
                 if (ANT.group.separate_cta) {
                     var separateCtaCount = 0;
-                    var $separate_ctas = $(ANT.group.active_sections).find(ANT.group.separate_cta);
+                    var $separate_ctas = $(ANT.group.active_sections).find(ANT.group.separate_cta).not('[ant-hash]');
 
                     if ($separate_ctas.length) {
                         $separate_ctas.each( function(idx, node) {
@@ -5703,8 +5706,7 @@ function antenna($A){
                     pageId = ANT.util.getPageProperty();
                 
                 pageCustomDisplays[ pageId ] = [];
-                
-                if ( $('[ant-item]').length ) {
+                if ( $('[ant-item]:not([ant-hashed])').length ) {
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
