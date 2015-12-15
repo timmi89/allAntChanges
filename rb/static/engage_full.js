@@ -4904,7 +4904,7 @@ function antenna($A){
 
                     // init separate CTAs
                     ANT.actions.initSeparateCtas();
-                    
+
                     ANT.actions.hashCustomDisplayHashes();
 
                     // let's make sure the icons for images, etc are where they should be
@@ -5009,7 +5009,7 @@ function antenna($A){
                                 }
                             }
 
-                            if ( !$('ant-cta-for="'+antItem+'"').length ) {
+                            if ( !$('[ant-cta-for="'+antItem+'"]').length ) {
                                 $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                             }
 
