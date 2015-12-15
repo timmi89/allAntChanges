@@ -98,7 +98,7 @@
     padding: 3px;
     color: #777777;
     cursor: pointer;
-    font-family: 'Helvetica',Arial,sans-serif;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     letter-spacing: 0;
 }
 .antenna-think:hover {

@@ -1,7 +1,6 @@
 var AjaxClient = require('./utils/ajax-client');
+var BrowserMetrics = require('./utils/browser-metrics');
 var XDMClient = require('./utils/xdm-client');
-
-var isTouchBrowser = (navigator.msMaxTouchPoints || "ontouchstart" in window) && ((window.matchMedia("only screen and (max-width: 768px)")).matches);
 
 function postGroupSettingsLoaded(groupSettings) {
     var event = createEvent(eventTypes.scriptLoad, '', groupSettings);
@@ -123,7 +122,7 @@ function createEvent(eventType, eventValue, groupSettings) {
     event[attributes.shortTermSession] = getShortTermSessionId();
     event[attributes.longTermSession] = getLongTermSessionId();
     event[attributes.referrerUrl] = referrerDomain;
-    event[attributes.isTouchBrowser] = isTouchBrowser;
+    event[attributes.isTouchBrowser] = BrowserMetrics.supportsTouch();
     event[attributes.screenWidth] = screen.width;
     event[attributes.screenHeight] = screen.height;
     event[attributes.pixelDensity] = window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth); // TODO: review this engage_full code, which doesn't seem correct

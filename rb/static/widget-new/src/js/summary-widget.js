@@ -1,4 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var BrowserMetrics = require('./utils/browser-metrics');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var TouchSupport = require('./utils/touch-support');
 
@@ -9,7 +10,8 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
     var ractive = Ractive({
         el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
         data: {
-            pageData: pageData
+            pageData: pageData,
+            computeExpandedReactions: computeExpandedReactions(groupSettings)
         },
         magic: true,
         template: require('../templates/summary-widget.hbs.html'),
@@ -45,6 +47,48 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
         contentData: { type: 'page', body: '' }
     };
     ReactionsWidget.open(reactionsWidgetOptions, rootElement(ractive));
+}
+
+function shouldUseExpandedSummary(groupSettings) {
+    return groupSettings.isExpandedMobileSummary() && BrowserMetrics.isMobile();
+}
+
+function computeExpandedReactions(groupSettings) {
+    return function(reactionsData) {
+        if (shouldUseExpandedSummary(groupSettings)) {
+            var defaultReactions = groupSettings.defaultReactions();
+            sortReactionData(reactionsData);
+            var max = 2;
+            var expandedReactions = [];
+            for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {
+                var reactionData = reactionsData[i];
+                if (isDefaultReaction(reactionData, defaultReactions)) {
+                    expandedReactions.push(reactionData);
+                }
+            }
+            return expandedReactions;
+        }
+    };
+}
+
+// TODO: resolve this copied code from reactions-page (probably just sort in PageData?)
+function sortReactionData(reactions) {
+    reactions.sort(function(reactionA, reactionB) {
+        if (reactionA.count === reactionB.count) {
+            // when the count is the same, sort by creation time (our IDs increase chronologically)
+            return reactionA.id - reactionB.id;
+        }
+        return reactionB.count - reactionA.count;
+    });
+}
+
+function isDefaultReaction(reactionData, defaultReactions) {
+    for (var i = 0; i < defaultReactions.length; i++) {
+        if (defaultReactions[i].text === reactionData.text) {
+            return true;
+        }
+    }
+    return false;
 }
 
 //noinspection JSUnresolvedVariable

@@ -17,10 +17,10 @@ function getPageData(hash) {
         // and tell the ractives to update whenever the data changes.
         pageData = {
             pageHash: hash,
-            summaryReactions: {},
+            summaryReactions: [],
             summaryTotal: 0,
             summaryLoaded: false,
-            containers: {},
+            containers: [],
             metrics: {} // This is a catch-all field where we can attach client-side metrics for analytics
         };
         pages[hash] = pageData;

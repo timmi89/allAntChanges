@@ -1,7 +1,9 @@
 
 .antenna {
     display: block; /* This rule goes with the code in our CSS loader which sets display:none before our CSS loads. */
-    font: 400 12px Arial,sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

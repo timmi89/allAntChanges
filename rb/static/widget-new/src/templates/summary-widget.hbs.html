@@ -9,6 +9,11 @@
             {{else}}
                 {{getMessage('summary-widget_reactions_many', [ pageData.summaryTotal ])}}
             {{/if}}
-        </span>
+        </span><!--
+        -->{{# computeExpandedReactions(pageData.summaryReactions) }}
+            <span class="antenna-expanded-reaction {{#if @index === 0}}antenna-expanded-first{{/if}}">
+                <span class="antenna-expanded-text">{{this.text}}</span><span class="antenna-expanded-count">{{this.count}}</span>
+            </span>
+        {{/}}
     </div>
 </div>
