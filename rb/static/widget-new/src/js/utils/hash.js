@@ -34,12 +34,13 @@ function getCleanText($domNode) {
     }
 }
 
-function hashText(element) {
-    // TODO: Handle the case where multiple instances of the same text appear on the page. Need to add an increment to
-    // the hashText. (This check has to be scoped to a post)
+function hashText(element, suffix) {
     var text = getCleanText(element);
     if (text) {
         var hashText = "rdr-text-" + text;
+        if (suffix !== undefined) { // Append the optional suffix
+            hashText += '-' + suffix;
+        }
         return MD5.hex_md5(hashText);
     }
 }

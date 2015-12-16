@@ -344,7 +344,6 @@ function insertContent($parent, content, method) {
 }
 
 function computeHash($element, pageData, groupSettings) {
-    // TODO: make sure we generate unique hashes using an ordered index in case of collisions
     var hash;
     switch (computeElementType($element)) {
         case TYPE_IMAGE:
@@ -357,10 +356,14 @@ function computeHash($element, pageData, groupSettings) {
             break;
         case TYPE_TEXT:
             hash = Hash.hashText($element);
+            var increment = 1;
+            while (HashedElements.getElement(hash, pageData.pageHash)) {
+                hash = Hash.hashText($element, increment++);
+            }
             break;
     }
     if (hash) {
-        HashedElements.set(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
+        HashedElements.setElement(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
         if (AppMode.debug) {
             $element.attr(ATTR_HASH, hash);
         }

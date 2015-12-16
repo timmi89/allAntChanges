@@ -26,7 +26,7 @@ function createPage(options) {
                 // TODO: is there a better way to handle reactions to hashes that are no longer on the page?
                 //       should we provide some kind of indication when we fail to locate a hash or just leave it as is?
                 // TODO: Does it make sense to even show entries that we can't locate? Probably not.
-                return HashedElements.get(containerHash, pageData.pageHash) !== undefined;
+                return HashedElements.getElement(containerHash, pageData.pageHash) !== undefined;
             }
         },
         template: require('../templates/locations-page.hbs.html'),
@@ -44,7 +44,7 @@ function createPage(options) {
 
     function revealContent(event) {
         var locationData = event.context;
-        var element = HashedElements.get(locationData.containerHash, pageData.pageHash);
+        var element = HashedElements.getElement(locationData.containerHash, pageData.pageHash);
         if (element) {
             closeWindow();
             setTimeout(function() { // Let the processing of this click event finish before we add another click handler so the new handler isn't immediately triggered
