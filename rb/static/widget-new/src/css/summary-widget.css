@@ -20,6 +20,7 @@
 .antenna-summary-inner {
     vertical-align: middle;
     padding: 8px 10px 8px 8px;
+    max-width: 100%;
     white-space: nowrap;
     overflow-x: scroll;
 }

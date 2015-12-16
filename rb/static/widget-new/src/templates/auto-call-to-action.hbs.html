@@ -1,6 +1,7 @@
 <div class="antenna antenna-auto-cta">
     <div class="antenna-auto-cta-inner" ant-cta-for="{{antItemId}}">
-        {{>logo}}
-        <span class="antenna-auto-cta-label" ant-reactions-label-for="{{antItemId}}"></span>
+        {{>logo}}<!--
+        --><span class="antenna-auto-cta-label" ant-reactions-label-for="{{antItemId}}"></span><!--
+        -->{{#if expandReactions}}<span ant-expanded-reactions-for="{{antItemId}}"></span>{{/if}}
     </div>
 </div>

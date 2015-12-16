@@ -212,6 +212,7 @@ function createFromJSON(json) {
         enableTextHelper: data('paragraph_helper'),
         mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
+        generatedCtaExpanded: data('separate_cta_expanded'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
         exclusionSelector: data('no_ant'), // TODO: no_readr?

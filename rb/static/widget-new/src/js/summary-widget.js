@@ -57,7 +57,6 @@ function computeExpandedReactions(groupSettings) {
     return function(reactionsData) {
         if (shouldUseExpandedSummary(groupSettings)) {
             var defaultReactions = groupSettings.defaultReactions();
-            sortReactionData(reactionsData);
             var max = 2;
             var expandedReactions = [];
             for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {
@@ -69,17 +68,6 @@ function computeExpandedReactions(groupSettings) {
             return expandedReactions;
         }
     };
-}
-
-// TODO: resolve this copied code from reactions-page (probably just sort in PageData?)
-function sortReactionData(reactions) {
-    reactions.sort(function(reactionA, reactionB) {
-        if (reactionA.count === reactionB.count) {
-            // when the count is the same, sort by creation time (our IDs increase chronologically)
-            return reactionA.id - reactionB.id;
-        }
-        return reactionB.count - reactionA.count;
-    });
 }
 
 function isDefaultReaction(reactionData, defaultReactions) {

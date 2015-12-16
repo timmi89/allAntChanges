@@ -1,0 +1,24 @@
+
+.antenna-cta-expanded-reaction {
+    padding: 4px 6px;
+    color: #666666;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.antenna-cta-expanded-first {
+    margin-left: 10px;
+}
+
+.antenna-cta-expanded-text {
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.antenna-cta-expanded-count {
+    margin-left: 5px;
+    font-size: 10px;
+    opacity: 0.8;
+    white-space: nowrap;
+}

@@ -22,7 +22,6 @@ function createPage(options) {
     var showComments = options.showComments;
     var showLocations = options.showLocations;
     var element = options.element;
-    sortReactionData(reactionsData);
     var reactionsLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(reactionsData);
     var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
@@ -60,16 +59,6 @@ function createPage(options) {
         return function(index) {
             return array[index];
         }
-    }
-
-    function sortReactionData(reactions) {
-        reactions.sort(function(reactionA, reactionB) {
-            if (reactionA.count === reactionB.count) {
-                // when the count is the same, sort by creation time (our IDs increase chronologically)
-                return reactionA.id - reactionB.id;
-            }
-            return reactionB.count - reactionA.count;
-        });
     }
 }
 
