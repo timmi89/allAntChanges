@@ -462,6 +462,9 @@ def getSinglePageDataNewer(page_id):
                                 }
                             }
                             reactions_data.append(reaction_data)
+        # return reactions sorted by count (highest to lowest), then id (lowest to highest)
+        reactions_data = sorted(reactions_data, key=lambda x: x['id'])
+        reactions_data = sorted(reactions_data, key=lambda x: x['count'], reverse=True)
         container_data = {
             'id': container_id,
             'hash': container['hash'],
@@ -479,6 +482,8 @@ def getSinglePageDataNewer(page_id):
                 'text': node['body']
             }
             summary_data.append(summary_reaction)
+    # return reactions sorted by count (highest to lowest), then id (lowest to highest)
+    summary_data = sorted(summary_data, key=lambda x: x['id'])
     summary_data = sorted(summary_data, key=lambda x: x['count'], reverse=True)
 
     page_data = {

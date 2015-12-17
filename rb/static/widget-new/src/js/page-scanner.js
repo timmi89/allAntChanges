@@ -128,6 +128,15 @@ function scanForCallsToAction($element, pageData, groupSettings) {
         ctaCounters[antItemId].push($ctaCounter);
     });
 
+    var ctaExpandedReactions = {}; // Optional elements that show expanded reactions for the cta (e.g. "Interesting (15) No thanks (10)")
+    find($element, '[ant-expanded-reactions-for]', true).each(function() {
+        var $ctaExpandedReactionArea = $(this);
+        $ctaExpandedReactionArea.addClass('no-ant'); // don't show the normal reaction affordance on a cta counter
+        var antItemId = $ctaExpandedReactionArea.attr('ant-expanded-reactions-for').trim();
+        ctaExpandedReactions[antItemId] = ctaExpandedReactions[antItemId] || [];
+        ctaExpandedReactions[antItemId].push($ctaExpandedReactionArea);
+    });
+
     var $ctaElements = find($element, '[ant-cta-for]'); // The call to action elements which prompt the user to react
     $ctaElements.each(function() {
         var $ctaElement = $(this);
@@ -146,6 +155,7 @@ function scanForCallsToAction($element, pageData, groupSettings) {
                     ctaElement: $ctaElement,
                     ctaLabels: ctaLabels[antItemId],
                     ctaCounters: ctaCounters[antItemId],
+                    ctaExpandedReactions: ctaExpandedReactions[antItemId],
                     defaultReactions: groupSettings.defaultReactions($targetElement),
                     pageData: pageData,
                     groupSettings: groupSettings
@@ -161,7 +171,7 @@ function createAutoCallsToAction($section, pageData, groupSettings) {
         var $ctaTarget = $(this);
         var antItemId = generateAntItemAttribute();
         $ctaTarget.attr('ant-item', antItemId);
-        var $cta = AutoCallToAction.create(antItemId);
+        var $cta = AutoCallToAction.create(antItemId, pageData, groupSettings);
         $ctaTarget.after($cta); // TODO: make the insert behavior configurable like the summary
     });
 }
@@ -334,7 +344,6 @@ function insertContent($parent, content, method) {
 }
 
 function computeHash($element, pageData, groupSettings) {
-    // TODO: make sure we generate unique hashes using an ordered index in case of collisions
     var hash;
     switch (computeElementType($element)) {
         case TYPE_IMAGE:
@@ -347,10 +356,14 @@ function computeHash($element, pageData, groupSettings) {
             break;
         case TYPE_TEXT:
             hash = Hash.hashText($element);
+            var increment = 1;
+            while (HashedElements.getElement(hash, pageData.pageHash)) {
+                hash = Hash.hashText($element, increment++);
+            }
             break;
     }
     if (hash) {
-        HashedElements.set(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
+        HashedElements.setElement(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
         if (AppMode.debug) {
             $element.attr(ATTR_HASH, hash);
         }

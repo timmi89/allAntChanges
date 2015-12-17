@@ -10,6 +10,7 @@
 
 .antenna-summary-widget {
     color: #000000;
+    max-width: 100%;
 }
 
 .antenna-summary-widget .antenna-logo-path {
@@ -19,10 +20,34 @@
 .antenna-summary-inner {
     vertical-align: middle;
     padding: 8px 10px 8px 8px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow-x: scroll;
 }
 
 .antenna-summary-title {
     display: inline-block;
     vertical-align: middle;
     margin-left: 5px;
+}
+
+.antenna-expanded-reaction {
+    padding: 4px 6px;
+    color: #666666;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: middle;
+}
+.antenna-expanded-first {
+    margin-left: 10px;
+}
+
+.antenna-expanded-text {
+    font-weight: 900;
+}
+
+.antenna-expanded-count {
+    margin-left: 5px;
+    font-size: 10px;
+    opacity: 0.8;
 }

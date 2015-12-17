@@ -196,6 +196,7 @@ function createFromJSON(json) {
         },
         summarySelector: data('summary_widget_selector'),
         summaryMethod: data('summary_widget_method'),
+        isExpandedMobileSummary: data('summary_widget_expanded_mobile'),
         pageSelector: data('post_selector'),
         pageLinkSelector: data('post_href_selector'),
         pageImageSelector: data('image_selector'),
@@ -211,6 +212,7 @@ function createFromJSON(json) {
         enableTextHelper: data('paragraph_helper'),
         mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
+        generatedCtaExpanded: data('separate_cta_expanded'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
         exclusionSelector: data('no_ant'), // TODO: no_readr?

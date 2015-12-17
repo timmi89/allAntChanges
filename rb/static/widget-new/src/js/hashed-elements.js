@@ -17,8 +17,16 @@ function setElement(containerHash, pageHash, element) {
     containers[containerHash] = element;
 }
 
+// When we first scan a page, the "hash" is just the URL while we wait to hear back from the server, then it's updated
+// to whatever value the server computed. So here we allow our mapping to be updated when that change happens.
+function updatePageHash(oldPageHash, newPageHash) {
+    pages[newPageHash] = pages[oldPageHash];
+    delete pages[oldPageHash];
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
-    get: getElement,
-    set: setElement
+    getElement: getElement,
+    setElement: setElement,
+    updatePageHash: updatePageHash
 };

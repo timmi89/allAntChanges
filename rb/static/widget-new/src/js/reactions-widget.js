@@ -241,10 +241,12 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
         TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
             // After the new page slides into position, move the other pages back out of the viewable area
             $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+            $page.focus();
         });
     } else {
         $page.addClass('antenna-page-active');
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+        $page.focus();
     }
     sizeBodyToFit($rootElement, $page, animate);
 }

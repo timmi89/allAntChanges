@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
 var Events = require('./events');
+var HashedElements = require('./hashed-elements');
 
 // Collection of all page data, keyed by page hash
 var pages = {};
@@ -17,10 +18,10 @@ function getPageData(hash) {
         // and tell the ractives to update whenever the data changes.
         pageData = {
             pageHash: hash,
-            summaryReactions: {},
+            summaryReactions: [],
             summaryTotal: 0,
             summaryLoaded: false,
-            containers: {},
+            containers: [],
             metrics: {} // This is a catch-all field where we can attach client-side metrics for analytics
         };
         pages[hash] = pageData;
@@ -40,6 +41,7 @@ function updateAllPageData(jsonPages, groupSettings) {
 function updatePageData(json, groupSettings) {
     var pageData = getPageDataForJsonResponse(json);
     pageData.pageId = json.id;
+    pageData.pageHash = json.pageHash;
     pageData.groupId = groupSettings.groupId();
     pageData.canonicalUrl = json.canonicalURL;
     pageData.requestedUrl = json.requestedURL;
@@ -258,10 +260,13 @@ function getPageDataForJsonResponse(json) {
     urlHashes[requestedURL] = pageHash;
     var urlBasedData = pages[requestedURL];
     if (urlBasedData) {
-        // urlBasedData we've already created/bound a pageData object under the requestedUrl, move that data over
-        // to the hash key
+        // If we've already created/bound a pageData object under the requestedUrl, update the pageHash and move that
+        // data over to the hash key
+        urlBasedData.pageHash = json.pageHash;
         pages[pageHash] = urlBasedData;
         delete pages[requestedURL];
+        // Update the mapping of hashes to page elements so it also knows about the change to the page hash
+        HashedElements.updatePageHash(requestedURL, pageHash);
     }
     return getPageData(pageHash);
 }

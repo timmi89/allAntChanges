@@ -6,7 +6,7 @@
     background-color: white;
     z-index: 999; /* TODO */
     box-shadow: 0 1px 40px #8A8A8A;
-    font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
 }
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
     #antenna-widget-bucket {
@@ -32,7 +32,7 @@
     color: #000000;
     padding: 7px 0 7px 6px;
     cursor: move;
-    font-family: 'Helvetica Neue','Helvetica';
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     letter-spacing: -0.25px;
 }
 
@@ -82,7 +82,7 @@
     text-align: center;
     background-color: #ffffff;
     color: #777777;
-    font-family: Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     font-size: 10px;
 }
 
@@ -178,7 +178,7 @@
 }
 
 .antenna-text-logo a {
-    font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     font-size: 11px;
     letter-spacing: 0;
     color: #4E4E4E;

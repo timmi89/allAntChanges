@@ -38,8 +38,6 @@ function createPage(options) {
     ractive.on('pagekeydown', keyboardInput);
     ractive.on('inputkeydown', customReactionInput);
 
-    $(rootElement(ractive)).focus();
-
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }

@@ -1,12 +1,16 @@
 
 .antenna-auto-cta {
     text-align: right;
+    max-width: 100%
 }
 
 .antenna-auto-cta-inner {
     display: inline-block;
+    white-space: nowrap;
     padding: 4px;
     background: rgba(255,255,255,.7);
+    max-width: 100%;
+    overflow-x: scroll;
 }
 
 .antenna-auto-cta .antenna-logo-path {
@@ -14,6 +18,8 @@
 }
 
 .antenna-auto-cta-label {
+    white-space: nowrap;
+    vertical-align: middle;
     font-size: 12px;
-    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
 }

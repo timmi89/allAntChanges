@@ -1,4 +1,5 @@
 var CallToActionCounter = require('./call-to-action-counter');
+var CallToActionExpandedReactions = require('./call-to-action-expanded-reactions');
 var CallToActionLabel = require('./call-to-action-label');
 var ReactionsWidget = require('./reactions-widget');
 
@@ -10,6 +11,7 @@ function createIndicatorWidget(options) {
     var $ctaElement = options.ctaElement;
     var $ctaLabels = options.ctaLabels; // optional
     var $ctaCounters = options.ctaCounters; // optional
+    var $ctaExpandedReactions = options.ctaExpandedReactions; // optional
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
@@ -40,8 +42,14 @@ function createIndicatorWidget(options) {
     }
 
     if ($ctaCounters) {
-        for (var j = 0; j < $ctaCounters.length; j++) {
-            CallToActionCounter.create($ctaCounters[j], containerData);
+        for (var i = 0; i < $ctaCounters.length; i++) {
+            CallToActionCounter.create($ctaCounters[i], containerData);
+        }
+    }
+
+    if ($ctaExpandedReactions) {
+        for (var i = 0; i < $ctaExpandedReactions.length; i++) {
+            CallToActionExpandedReactions.create($ctaExpandedReactions[i], $ctaElement, containerData, groupSettings);
         }
     }
 }
