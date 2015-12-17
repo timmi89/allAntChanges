@@ -1147,4 +1147,27 @@ def analytics(request, short_name=None, **kwargs):
 
 
 
+### email content report.  added 12-2015.
+# used to show how email report should look
+@requires_admin
+def email_content_report(request, short_name=None, **kwargs):
+    context = {}
+    context['group'] = Group.objects.get(short_name=short_name)
+    context['cookie_user'] = kwargs['cookie_user']
+    context['hasSubheader'] = False
+
+    return render_to_response(
+        "emails/publisher_content_report.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+
+
+
+
+
+
+
+
 

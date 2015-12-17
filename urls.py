@@ -89,6 +89,7 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'rb.views.analytics'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/$', 'rb.views.analytics'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/emails/publisher_content_report/$', 'rb.views.email_content_report'),
   # url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_email/$', 'forecast.reporting.views.weekly_group_event_email'),
   
 

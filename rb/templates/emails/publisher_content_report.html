@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- thank you http://tedgoas.github.io/Cerberus/cerberus-fluid.html -->
+<head>
+  <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+  <title>{ short name } Engagement Report</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    
+  <!-- CSS Reset -->
+    <style type="text/css">
+
+      /* What it does: Remove spaces around the email design added by some email clients. */
+      /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+        
+        /* What it does: Stops email clients resizing small text. */
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        /* What it does: Forces Outlook.com to display emails full width. */
+        .ExternalClass {
+            width: 100%;
+        }
+        
+        /* What is does: Centers email on Android 4.4 */
+        div[style*="margin: 16px 0"] {
+            margin:0 !important;
+        }
+        
+        /* What it does: Stops Outlook from adding extra spacing to tables. */
+        table,
+        td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+                
+        /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            Margin: 0 auto !important;
+        }
+        table table table {
+            table-layout: auto; 
+        }
+        
+        /* What it does: Uses a better rendering method when resizing images in IE. */
+        img {
+            -ms-interpolation-mode:bicubic;
+        }
+        
+        /* What it does: Overrides styles added when Yahoo's auto-senses a link. */
+        .yshortcuts a {
+            border-bottom: none !important;
+        }
+        
+        /* What it does: A work-around for iOS meddling in triggered links. */
+        .mobile-link--footer a,
+        a[x-apple-data-detectors] {
+            color:inherit !important;
+            text-decoration: underline !important;
+        }
+      
+    </style>
+    
+    <!-- Progressive Enhancements -->
+    <style>
+        
+        /* What it does: Hover styles for buttons */
+        .button-td,
+        .button-a {
+            transition: all 100ms ease-in;
+        }
+        .button-td:hover,
+        .button-a:hover {
+            background: #555555 !important;
+            border-color: #555555 !important;
+        }
+
+    </style>
+
+</head>
+<body width="100%" height="100%" style="Margin: 0;">
+<table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" style="border-collapse:collapse;"><tr><td valign="top">
+    <center style="width: 100%;">
+
+        <div style="max-width: 600px;">
+            <!--[if (gte mso 9)|(IE)]>
+            <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+            <tr>
+            <td>
+            <![endif]-->
+
+            <!-- Email Header : BEGIN -->
+            <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px;">
+            <tr>
+              <td style="padding: 0; text-align: center">
+                <img src="/static/site/images/antenna_logo_sm_white.png" width="240" height="80" border="0">
+              </td>
+            </tr>
+            </table>
+            <!-- Email Header : END -->
+            
+            <!-- Email Body : BEGIN -->
+            <table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff" width="100%" style="max-width: 600px;box-shadow:0px 0px 40px #ccc;">
+                
+                <!-- 1 Column Text : BEGIN -->
+                <tr>
+                    <td>
+                        <table cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="#000000">
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h1 style="color:#fff;font-size:21px;line-height:25px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding-bottom:0;margin-bottom:0;">{ short name } Engagement Report</h1>
+                                <br>
+                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/SHORT_NAME/analytics/">View Your Dashboard</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h2 class="section-headline" style="color:#fff;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Reactions</h2>
+                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">9,999</h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h2 class="section-headline" style="color:#fff;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Reaction Views</h2>
+                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">999,999</h2>
+                            </td>
+                          </tr>
+                      </table>
+
+                      <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h2 class="section-headline" style="color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Top Reactions</h2>
+                                <br/>
+                                <!-- up to 15 reactions -->
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <span style="font-size:21px;margin-right:30px;white-space:nowrap;line-height:24px;">Reaction <span style="font-size:10px;padding:4px;color:#888;background:#ddd;">100</span></span>
+                                <br>
+                                <br>
+                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/SHORT_NAME/analytics/">View more at your dashboard.</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h2 class="section-headline" style="color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Top Pages</h2>
+                                <table cellspacing="0" cellpadding="4" class="popular hoverable" style="text-align:left;margin:0 !important;">
+                                    
+                                <!-- show top 7 pages.  sort by engagement score:   (reactions+reaction views) / pageviews
+
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- article data -->
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;"><a style="font-size:16px;" href="http://link-to-the-article/">The name of the article is here</a></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    
+
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/SHORT_NAME/analytics/">View more at your dashboard.</a>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                          </tr>
+
+                          <!-- top content -->
+
+                          <tr>
+                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+                                <h2 class="section-headline" style="color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Top Content</h2>
+                                <table cellspacing="0" cellpadding="4" class="popular hoverable" style="text-align:left;margin:0 !important;">
+                                    
+                                <!-- show top 10 pieces of content.  sort by engagement score:   (reactions+reaction views) / pageviews
+
+                                    <!-- content data -->
+
+                                    <!-- text -->
+                                    <tr>
+                                        <td style="font-size:14px;text-align:left;line-height:28px;">
+                                            <div style="margin-bottom:10px;line-height:20px;"><i>Lorem ipsum dolor Yolanda Sinclair admits she didn't know how much it would cost to clean and air out her clothes and linens after her Garner home was struck by lightning and caught fire.</i></div>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            via <a style="font-size:12px;" href="http://link-to-the-article/">The name of the article is here</a>
+                                            <br/>
+                                            <hr/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+
+                                    <!-- image -->
+                                    <tr>
+                                        <td style="font-size:14px;text-align:left;line-height:28px;">
+                                            <img src="http://wwwcache.wral.com/asset/5oys/2015/09/28/14933338/14933339-1443480103-640x360.jpg" width="100%" />
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="reactions">10 reactions</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="views">1000 reaction views</span>
+                                            <span style="color:#888;background:#ddd;padding:4px;font-size:12px;margin-right:10px;white-space:nowrap;" class="score">10000 pageviews</span>
+                                            <br/>
+                                            via <a style="font-size:12px;" href="http://link-to-the-article/">The name of the article is here</a>
+                                            <br/>
+                                            <hr/>
+                                            <br/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-size:12px;text-align:left;line-height:28px;">
+                                            <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/SHORT_NAME/analytics/">View more at your dashboard.</a>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                          </tr>
+
+                          
+                        </table>
+                    </td>
+                </tr>
+                <!-- 1 Column Text : BEGIN -->
+               
+
+            </table>
+            <!-- Email Body : END -->
+          
+            <!-- Email Footer : BEGIN -->
+            <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+                <tr>
+                    <td style="padding: 40px 10px;width: 100%;font-size: 12px; font-family: sans-serif; mso-height-rule: exactly; line-height:18px; text-align: center; color: #888888;">
+                        Antenna<br><span class="mobile-link--footer">917 SW Oak St, Suite 412<br>Portland, OR, 97205 US</span><br><span class="mobile-link--footer">(123) 456-7890</span>
+                        <br><br>
+                        <unsubscribe style="color:#888888; text-decoration:underline;"><a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/SHORT_NAME/analytics/">Manage your report preferences.</a></unsubscribe>
+                    </td>
+                </tr>
+            </table>
+            <!-- Email Footer : END -->
+
+            <!--[if (gte mso 9)|(IE)]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
+        </div>
+    </center>
+</td></tr></table>
+</body>
+</html>

@@ -1,3 +1,8 @@
+# deprecated
+
+
+
+
 from itertools import groupby
 from rb.models import *
 from models import *
