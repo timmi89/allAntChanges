@@ -4058,6 +4058,7 @@ function antenna($A){
                 });
                 $ANT.queue('initAjax', function(next){
                    that.initSeparateCtas();
+                   $ANT.dequeue('initAjax');
                    //next fired on ajax success
                 });
                 $ANT.queue('initAjax', function(next){
@@ -5008,7 +5009,7 @@ function antenna($A){
                 $ANT.dequeue('initAjax');
             },
             initSeparateCtas: function(){
-                // ANT.initSeparateCtas
+                // ANT.actions.initSeparateCtas
                 if (ANT.group.separate_cta) {
                     var separateCtaCount = 0;
                     var $separate_ctas = $(ANT.group.active_sections).find(ANT.group.separate_cta).not('[ant-hash]');
@@ -5037,8 +5038,6 @@ function antenna($A){
                         });
                     }
                 }
-                $ANT.dequeue('initAjax');  // yes this should be inside the conditional.  :/
-
             },
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
