@@ -1,4 +1,6 @@
 
+// Re-usable support for managing a collection of callback functions.
+
 var antuid = 0; // "globally" unique ID that we use to tag callback functions for later retrieval. (This is how "off" works.)
 
 function createCallbacks() {
@@ -31,10 +33,9 @@ function createCallbacks() {
     // Convenience function that invokes all callbacks with no parameters. Any callbacks that need params can be called
     // by clients using getCallbacks()
     function invokeAll() {
-        for (var key in callbacks) {
-            if (callbacks.hasOwnProperty(key)) {
-                callbacks[key]();
-            }
+        var callbacks = getCallbacks();
+        for (var i = 0; i < callbacks.length; i++) {
+            callbacks[i]();
         }
     }
 
@@ -42,12 +43,17 @@ function createCallbacks() {
         return Object.getOwnPropertyNames(callbacks).length === 0;
     }
 
+    function teardown() {
+        callbacks = {};
+    }
+
     return {
         add: addCallback,
         remove: removeCallback,
         get: getCallbacks,
         isEmpty: isEmpty,
-        invokeAll: invokeAll
+        invokeAll: invokeAll,
+        teardown: teardown
     }
 }
 

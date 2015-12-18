@@ -24,9 +24,14 @@ function updatePageHash(oldPageHash, newPageHash) {
     delete pages[oldPageHash];
 }
 
+function teardown() {
+    pages = {};
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     getElement: getElement,
     setElement: setElement,
-    updatePageHash: updatePageHash
+    updatePageHash: updatePageHash,
+    teardown: teardown
 };

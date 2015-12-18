@@ -271,6 +271,11 @@ function getPageDataForJsonResponse(json) {
     return getPageData(pageHash);
 }
 
+function teardown() {
+    pages = {};
+    urlHashes = {};
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     getPageDataByURL: getPageDataByURL,
@@ -280,5 +285,6 @@ module.exports = {
     getReactionLocationData: getReactionLocationData,
     updateReactionLocationData: updateReactionLocationData,
     registerReaction: registerReaction,
-    clearIndicatorLimit: clearIndicatorLimit
+    clearIndicatorLimit: clearIndicatorLimit,
+    teardown: teardown,
 };

@@ -20,8 +20,8 @@ function createReactableText(options) {
         groupSettings: options.groupSettings
     };
 
-    setupTouchEvents($containerElement.get(0), reactionsWidgetOptions);
-    $containerElement.on('mouseup', function(event) {
+    var tapEvents = setupTapEvents($containerElement.get(0), reactionsWidgetOptions);
+    $containerElement.on('mouseup.antenna', function(event) {
         if (containerData.loaded) {
             var node = $containerElement.get(0);
             var point = Range.getSelectionEndPoint(node, event, excludeNode);
@@ -31,6 +31,12 @@ function createReactableText(options) {
             }
         }
     });
+    return {
+        teardown: function() {
+            tapEvents.teardown();
+            $containerElement.off('.antenna');
+        }
+    }
 }
 
 function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode) {
@@ -51,8 +57,8 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
     });
 }
 
-function setupTouchEvents(element, reactionsWidgetOptions) {
-    TouchSupport.setupTap(element, function(event) {
+function setupTapEvents(element, reactionsWidgetOptions) {
+    return TouchSupport.setupTap(element, function(event) {
         if (!ReactionsWidget.isOpen() && $(event.target).closest('a').length === 0) {
             event.preventDefault();
             var touch = event.changedTouches[0];

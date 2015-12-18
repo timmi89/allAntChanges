@@ -35,21 +35,32 @@ function createIndicatorWidget(options) {
         openReactionsWindow(reactionWidgetOptions, $ctaElement);
     });
 
+    var createdWidgets = [];
+
     if ($ctaLabels) {
         for (var i = 0; i < $ctaLabels.length; i++) {
-            CallToActionLabel.create($ctaLabels[i], containerData);
+            createdWidgets.push(CallToActionLabel.create($ctaLabels[i], containerData));
         }
     }
 
     if ($ctaCounters) {
         for (var i = 0; i < $ctaCounters.length; i++) {
-            CallToActionCounter.create($ctaCounters[i], containerData);
+            createdWidgets.push(CallToActionCounter.create($ctaCounters[i], containerData));
         }
     }
 
     if ($ctaExpandedReactions) {
         for (var i = 0; i < $ctaExpandedReactions.length; i++) {
-            CallToActionExpandedReactions.create($ctaExpandedReactions[i], $ctaElement, containerData, groupSettings);
+            createdWidgets.push(CallToActionExpandedReactions.create($ctaExpandedReactions[i], $ctaElement, containerData, groupSettings));
+        }
+    }
+
+    return {
+        teardown: function() {
+            $ctaElement.off('.antenna');
+            for (var i = 0; i < createdWidgets.length; i++) {
+                createdWidgets.teardown();
+            }
         }
     }
 }

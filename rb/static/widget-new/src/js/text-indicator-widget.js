@@ -51,7 +51,7 @@ function createIndicatorWidget(options) {
         });
     }
     var hoverTimeout;
-    TouchSupport.setupTap($rootElement.get(0), function(event) {
+    var tapSupport = TouchSupport.setupTap($rootElement.get(0), function(event) {
         event.preventDefault();
         openReactionsWindow(reactionWidgetOptions, ractive)
     });
@@ -86,7 +86,14 @@ function createIndicatorWidget(options) {
     $containerElement.on('mouseleave.antenna', function() {
         $rootElement.removeClass('active');
     });
-    return $rootElement;
+    return {
+        element: $rootElement,
+        teardown: function() {
+            $containerElement.off('.antenna');
+            ractive.teardown();
+            tapSupport.teardown();
+        }
+    };
 }
 
 function rootElement(ractive) {
