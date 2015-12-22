@@ -536,7 +536,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     #logger.info('CACHEABLE RESULT gkucs: ' + str(cacheable_result))
     return cacheable_result
 
-def getSettingsDict(group):
+def getSettingsDict(group, site=None):
     settings_dict = model_to_dict(
          group,
          exclude=[
@@ -566,6 +566,9 @@ def getSettingsDict(group):
              'sharebox_stumble',
              'sharebox_twitter']
      )
+    if (site is None):
+        site = Site.objects.get(group = group)
+    settings_dict['querystring_content'] = site.querystring_content
 
     blessed_tags = InteractionNode.objects.filter(
          groupblessedtag__group=group.id

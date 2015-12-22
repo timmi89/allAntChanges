@@ -32,9 +32,9 @@ function reinitialize(groupSettings) {
 }
 
 function setupReinitialization(groupSettings) {
-    var browserUrl = computeBrowserUrl();
+    var browserUrl = computeBrowserUrl(groupSettings);
     MutationObserver.addAdditionListener(function($elements) {
-        var newBrowserUrl = computeBrowserUrl();
+        var newBrowserUrl = computeBrowserUrl(groupSettings);
         if (browserUrl != newBrowserUrl) {
             browserUrl = newBrowserUrl;
             reinitialize(groupSettings);
@@ -42,13 +42,11 @@ function setupReinitialization(groupSettings) {
     });
 
 
-    function computeBrowserUrl() {
+    function computeBrowserUrl(groupSettings) {
         // We manually construct the URL so that we can leave out the search and hash portions.
-        // TODO: The search part of the URL is meaningful for some sites. We should consider either always including the
-        //       search property (and accepting the increase in false positives) or sending the group setting back to the
-        //       client so we can at least include it for sites that need it.
         var port = (window.location.port ? ':' + window.location.port : '');
-        return (window.location.protocol + '//' + window.location.hostname + port + window.location.pathname).toLowerCase();
+        var query = groupSettings.url.includeQueryString() && window.location.search ? window.location.search : '';
+        return (window.location.protocol + '//' + window.location.hostname + port + window.location.pathname).toLowerCase() + query;
     }
 }
 

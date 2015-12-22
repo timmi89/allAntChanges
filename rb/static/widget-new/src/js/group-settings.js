@@ -49,7 +49,8 @@ var defaults = {
     tags_bg_css: '',
     ignore_subdomain: false,
     image_selector: 'meta[property="og:image"]', // TODO: review what this should be (not from engage_full)
-    image_attribute: 'content', // TODO: review what this should be (not from engage_full)
+    image_attribute: 'content', // TODO: review what this should be (not from engage_full),
+    querystring_content: false,
     //the scope in which to find parents of <br> tags.
     //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
     //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -192,6 +193,7 @@ function createFromJSON(json) {
         activeSections: data('active_sections'),
         url: {
             ignoreSubdomain: data('ignore_subdomain'),
+            includeQueryString: data('querystring_content'),
             canonicalDomain: data('page_tld') // TODO: what to call this exactly. groupDomain? siteDomain? canonicalDomain?
         },
         summarySelector: data('summary_widget_selector'),
