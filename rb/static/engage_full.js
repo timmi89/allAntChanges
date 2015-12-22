@@ -390,7 +390,6 @@ function antenna($A){
                     var trackingUrl = "http://nodebq.docker:3000/insert";
                     if (document.domain != "local.antenna.is") {
                         trackingUrl = (Math.floor(Math.random() * 4) === 0) ? "http://events.antenna.is/insert" : "http://events.readrboard.com/insert";
-                        trackingUrl = "http://events.readrboard.com/insert";
                     }
 
                     $.ajax({
