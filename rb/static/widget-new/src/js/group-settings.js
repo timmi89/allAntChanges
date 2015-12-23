@@ -84,6 +84,12 @@ function createFromJSON(json) {
         };
     }
 
+    function dataOrDeprecated(key, deprecatedKey) {
+        return function() {
+            return data(key)() || data(deprecatedKey)();
+        }
+    }
+
     function backgroundColor(accessor) {
         return function() {
             var colors = [];
@@ -220,7 +226,7 @@ function createFromJSON(json) {
         generatedCtaExpanded: data('separate_cta_expanded'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
-        exclusionSelector: data('no_ant'), // TODO: no_readr?
+        exclusionSelector: dataOrDeprecated('no_ant', 'no_readr'),
         language: data('language')
     }
 }
