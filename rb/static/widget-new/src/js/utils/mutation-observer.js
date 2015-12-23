@@ -5,27 +5,25 @@ var WidgetBucket = require('./widget-bucket');
 
 // TODO: detect whether the browser supports MutationObserver and fallback to Mutations Events
 
-var additionObserver;
-var additionCallbacks = CallbackSupport.create();
-
-var removalObserver;
-var removalCallbacks = CallbackSupport.create();
+var additionListener;
+var removalListener;
 
 var attributeObservers = [];
 
 function addAdditionListener(callback) {
-    if (!additionObserver) {
-        additionObserver = createAdditionObserver();
+    if (!additionListener) {
+        additionListener = createAdditionListener();
     }
-    additionCallbacks.add(callback);
+    additionListener.addCallback(callback);
 }
 
-function createAdditionObserver() {
+function createAdditionListener() {
+    var callbackSupport = CallbackSupport.create();
     var observer = new MutationObserver(function(mutationRecords) {
         for (var i = 0; i < mutationRecords.length; i++) {
             var addedElements = filteredElements(mutationRecords[i].addedNodes);
             if (addedElements.length > 0) {
-                var callbacks = additionCallbacks.get();
+                var callbacks = callbackSupport.get();
                 for (var j = 0; j < callbacks.length; j++) {
                     callbacks[j](addedElements);
                 }
@@ -41,22 +39,34 @@ function createAdditionObserver() {
         attributeOldValue: false,
         characterDataOldValue: false
     });
-    return observer;
+    return {
+        teardown: function() {
+            callbackSupport.teardown();
+            observer.disconnect();
+        },
+        addCallback: function(callback) {
+            callbackSupport.add(callback);
+        },
+        removeCallback: function(callback) {
+            callbackSupport.remove(callback);
+        }
+    };
 }
 
 function addRemovalListener(callback) {
-    if (!removalObserver) {
-        removalObserver = createRemovalListener();
+    if (!removalListener) {
+        removalListener = createRemovalListener();
     }
-    removalCallbacks.add(callback);
+    removalListener.addCallback(callback);
 }
 
 function createRemovalListener() {
+    var callbackSupport = CallbackSupport.create();
     var observer = new MutationObserver(function(mutationRecords) {
         for (var i = 0; i < mutationRecords.length; i++) {
             var removedElements = filteredElements(mutationRecords[i].removedNodes);
             if (removedElements.length > 0) {
-                var callbacks = removalCallbacks.get();
+                var callbacks = callbackSupport.get();
                 for (var j = 0; j < callbacks.length; j++) {
                     callbacks[j](removedElements);
                 }
@@ -72,7 +82,18 @@ function createRemovalListener() {
         attributeOldValue: false,
         characterDataOldValue: false
     });
-    return observer;
+    return {
+        teardown: function() {
+            callbackSupport.teardown();
+            observer.disconnect();
+        },
+        addCallback: function(callback) {
+            callbackSupport.add(callback);
+        },
+        removeCallback: function(callback) {
+            callbackSupport.remove(callback);
+        }
+    };
 }
 
 // Filter the set of nodes to eliminate anything inside our own DOM elements (otherwise, we generate a ton of chatter)
@@ -111,13 +132,15 @@ function addOneTimeAttributeListener(node, attributes, callback) {
 }
 
 function teardown() {
-    additionCallbacks.teardown();
-    additionObserver.disconnect();
-    additionObserver = undefined;
+    if (additionListener) {
+        additionListener.teardown();
+        additionListener = undefined;
+    }
 
-    removalCallbacks.teardown();
-    removalObserver.disconnect();
-    removalObserver = undefined;
+    if (removalListener) {
+        removalListener.teardown();
+        removalListener = undefined;
+    }
 
     for (var i = 0; i < attributeObservers.length; i++) {
         attributeObservers[i].disconnect();
