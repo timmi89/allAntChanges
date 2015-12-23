@@ -6,7 +6,7 @@ var app = express();
 setupMiddleware(app);
 setupRouting(app);
 
-var server = app.listen(3000, function () {
+var server = app.listen(3001, function () {
     var host = server.address().address;
     var port = server.address().port;
 
@@ -30,6 +30,10 @@ function sendJSONP(json, res) {
 function getPageDataNew(req, res) {
     var params = JSON.parse(req.query.json);
     var page = params['pages'][0];
+    getPageData(page['url'], function(pageData) {
+        sendJSONP(pageData, res);
+    });
+    return;
     var groupName = page['group_id'];
     readJSONFile(__dirname + '/resources/' + groupName + '/page-data.json', function(json) {
         sendJSONP(json, res);
@@ -74,6 +78,20 @@ function setDefaultGroupSettings(group_settings) {
         }
     ]);
 
+}
+
+function getPageData(pageUrl, callback) {
+    var url = URL.parse(pageUrl);
+    readJSONFile(__dirname + '/resources/page-data-map.json', function(map) {
+        var pageDataPath = map[url.path];
+        if (pageDataPath) {
+            readJSONFile(__dirname + pageDataPath, callback);
+        } else {
+            var message = 'No page data in the test server matching url: ' + url.pathname;
+            console.error(message);
+            callback({error: message});
+        }
+    })
 }
 
 function setPropertyDefault(object, property, value) {

@@ -1,0 +1,6 @@
+{
+  "id": "single-page-app",
+  "summary_widget_selector": ".summary",
+  "anno_whitelist": "p,img,li,blockquote,iframe",
+  "querystring_content": true
+}

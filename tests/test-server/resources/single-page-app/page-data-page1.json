@@ -1,0 +1,50 @@
+[
+  {
+    "id" : "page1",
+    "pageHash" : "page1",
+    "requestedURL" : "http://localhost:3001/pages/single-page-app/page.html?page1",
+    "summaryReactions":[
+      {
+        "text":"Like Page 1",
+        "id":"node1",
+        "count":5
+      }
+    ],
+    "containers":{
+      "b0cb2463447c12ac5c6bca532f01a112":{
+        "hash":"b0cb2463447c12ac5c6bca532f01a112",
+        "id":"container1",
+        "reactions":[
+          {
+            "text":"Like Page 1",
+            "id":"node1",
+            "count":3,
+            "parentID":"interaction1",
+            "content":{
+              "location":":0,:1",
+              "id":"content1",
+              "kind":"text"
+            }
+          }
+        ]
+      },
+      "2ae51e6f0da25d954ac7d197a91a0e83": {
+        "hash":"2ae51e6f0da25d954ac7d197a91a0e83",
+        "id":"container2",
+        "reactions":[
+          {
+            "text":"Image Page 1",
+            "id":"node2",
+            "count":2,
+            "parentID":"interaction2",
+            "content":{
+              "location":":0,:1",
+              "id":"content2",
+              "kind":"text"
+            }
+          }
+        ]
+      }
+    }
+  }
+]

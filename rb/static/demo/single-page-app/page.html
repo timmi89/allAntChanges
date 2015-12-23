@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <script src="/static/js/cdn/jquery/2.1.4/jquery.min.js"></script>
+        <style>
+            #outerContent {
+                background-color: green;
+            }
+            #page1 {
+                background-color: red;
+            }
+            #page2 {
+                background-color: white;
+            }
+            #page3 {
+                background-color: blue;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1" class="summary">Single page site.</div>
+
+        <button id="page1-inner">Page 1 inner</button>
+        <button id="page2-inner">Page 2 inner</button>
+        <button id="page3-inner">Page 3 inner</button>
+        <button id="page1-outer">Page 1 outer</button>
+        <button id="page2-outer">Page 2 outer</button>
+        <button id="page3-outer">Page 3 outer</button>
+
+        <div id="outerContent">
+            <img id="img1" src="headphones.jpg" style="width:200px;">
+            <div id="innerContent">
+            </div>
+        </div>
+
+        <div id="page1" class="page">
+            <p class="p1">Page 1 content.</p>
+            <p class="p2">More page 1 content.</p>
+        </div>
+        <div id="page2" class="page">
+            <p class="p1">Page 2 content.</p>
+            <p class="p2">More page 2 content.</p>
+        </div>
+        <div id="page3" class="page">
+            <p class="p1">Page 3 content.</p>
+            <p class="p2">More page 3 content.</p>
+        </div>
+
+        <script>
+            $(document).on('ready', function() {
+                var $page1 = $('#page1').detach();
+                var $page2 = $('#page2').detach();
+                var $page3 = $('#page3').detach();
+                $('#page1-inner').on('click', function() {
+                    setInnerContent($page1);
+                    setLocation('/pages/single-page-site/page1');
+                });
+                $('#page2-inner').on('click', function() {
+                    setInnerContent($page2);
+                    setLocation('/pages/single-page-site/page2');
+                });
+                $('#page3-inner').on('click', function() {
+                    setInnerContent($page3);
+                    setLocation('/pages/single-page-site/page3');
+                });
+                $('#page1-outer').on('click', function() {
+                    setOuterContent($page1);
+                    setLocation('/pages/single-page-site/page1');
+                });
+                $('#page2-outer').on('click', function() {
+                    setOuterContent($page2);
+                    setLocation('/pages/single-page-site/page2');
+                });
+                $('#page3-outer').on('click', function() {
+                    setOuterContent($page3);
+                    setLocation('/pages/single-page-site/page3');
+                });
+            });
+            function setInnerContent($page) {
+                var $innerContent = $('#innerContent');
+                $innerContent.children().remove();
+                $innerContent.append($page);
+            }
+            function setOuterContent($page) {
+                var $outerContent = $('#outerContent');
+                $outerContent.children().remove();
+                $outerContent.append($page);
+            }
+            function setLocation(relativePath) {
+                var url = 'http://local.antenna.is:8081' + relativePath;
+                history.pushState({}, relativePath, url);
+            }
+        </script>
+
+        <script>
+            (function() {
+                window.antenna_host = 'single-page-site';
+                window.antenna_extend = {
+                    summary_widget_selector: '.summary',
+                    anno_whitelist: 'p,img,li,blockquote,iframe'
+                };
+            })();
+        </script>
+        <script src="http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>
+    </body>
+</html>

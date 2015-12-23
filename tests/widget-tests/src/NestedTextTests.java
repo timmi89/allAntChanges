@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class NestedTextTests extends AbstractWidgetTests {
 
-    private static String url = "http://localhost:3000/pages/nested-text/page.html";
+    private static String url = AbstractWidgetTests.computeUrl("/pages/nested-text/page.html");
 
     /**
      * p

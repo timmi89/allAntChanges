@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
     SimpleTests.class,
     DynamicContentTests.class,
     NestedTextTests.class,
-    IndicatorLimitTests.class
+    IndicatorLimitTests.class,
+    SinglePageAppTests.class
 })
 public class AllWidgetTests {
 

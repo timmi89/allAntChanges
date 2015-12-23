@@ -1,15 +1,10 @@
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IndicatorLimitTests extends AbstractWidgetTests {
 
-    public static final String url = "http://localhost:3000/pages/indicator-limit/page.html";
+    public static final String url = AbstractWidgetTests.computeUrl("/pages/indicator-limit/page.html");
 
     @Test
     public void testIndicatorLimit() {
