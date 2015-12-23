@@ -65,7 +65,10 @@ function createFromJSON(json) {
 
     function data(key, ifAbsent) {
         return function() {
-            var value = window.antenna_extend[key];
+            var value;
+            if (window.antenna_extend) {
+                value = window.antenna_extend[key];
+            }
             if (value == undefined) {
                 value = json[key];
                 // TODO: our server apparently sends back null as a value for some attributes.
