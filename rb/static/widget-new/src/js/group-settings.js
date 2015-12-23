@@ -119,7 +119,7 @@ function createFromJSON(json) {
         var elementReactions = $element ? $element.attr('ant-reactions') : undefined;
         if (elementReactions) {
             reactionStrings = elementReactions.split(';');
-        } else {
+        } else if (window.antenna_extend) {
             reactionStrings = window.antenna_extend['default_reactions'];
         }
         if (reactionStrings) {
