@@ -101,7 +101,7 @@ function filteredElements(nodeList) {
     var filtered = [];
     for (var i = 0; i < nodeList.length; i++) {
         var node = nodeList[i];
-        if (node.nodeType === 1 || node.nodeType === 2) { // Element and text nodes. (https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType)
+        if (node.nodeType === 1 || node.nodeType === 3) { // Element and text nodes. (https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType)
             var $element = $(node);
             if ($element.closest(Range.HIGHLIGHT_SELECTOR + ', .antenna, ' + WidgetBucket.selector()).length === 0) {
                 filtered.push($element);

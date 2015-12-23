@@ -254,7 +254,7 @@ function lastContentNode(node) {
         var child = childNodes[i];
         if (child.nodeType === 3) {
             lastNode = child;
-        } else {
+        } else if (child.nodeType === 1) {
             var tagName = child.tagName.toLowerCase();
             switch (tagName) {
                 case 'img':
