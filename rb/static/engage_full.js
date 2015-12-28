@@ -387,7 +387,11 @@ function antenna($A){
                     var data = $.toJSON( trackData );
 
                     // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
-                    var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://nodebq.docker:3000/insert";
+                    var trackingUrl = "http://nodebq.docker:3000/insert";
+                    if (document.domain != "local.antenna.is") {
+                        var percentGKETraffic = 25;
+                        trackingUrl = (Math.random() * 100 < percentGKETraffic) ? "http://events.antenna.is/insert" : "http://events.readrboard.com/insert";
+                    }
 
                     $.ajax({
                         url: trackingUrl,

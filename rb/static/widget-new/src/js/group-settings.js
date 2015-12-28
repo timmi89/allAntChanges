@@ -49,7 +49,8 @@ var defaults = {
     tags_bg_css: '',
     ignore_subdomain: false,
     image_selector: 'meta[property="og:image"]', // TODO: review what this should be (not from engage_full)
-    image_attribute: 'content', // TODO: review what this should be (not from engage_full)
+    image_attribute: 'content', // TODO: review what this should be (not from engage_full),
+    querystring_content: false,
     //the scope in which to find parents of <br> tags.
     //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
     //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -64,7 +65,10 @@ function createFromJSON(json) {
 
     function data(key, ifAbsent) {
         return function() {
-            var value = window.antenna_extend[key];
+            var value;
+            if (window.antenna_extend) {
+                value = window.antenna_extend[key];
+            }
             if (value == undefined) {
                 value = json[key];
                 // TODO: our server apparently sends back null as a value for some attributes.
@@ -78,6 +82,12 @@ function createFromJSON(json) {
             }
             return value;
         };
+    }
+
+    function dataOrDeprecated(key, deprecatedKey) {
+        return function() {
+            return data(key)() || data(deprecatedKey)();
+        }
     }
 
     function backgroundColor(accessor) {
@@ -115,7 +125,7 @@ function createFromJSON(json) {
         var elementReactions = $element ? $element.attr('ant-reactions') : undefined;
         if (elementReactions) {
             reactionStrings = elementReactions.split(';');
-        } else {
+        } else if (window.antenna_extend) {
             reactionStrings = window.antenna_extend['default_reactions'];
         }
         if (reactionStrings) {
@@ -192,6 +202,7 @@ function createFromJSON(json) {
         activeSections: data('active_sections'),
         url: {
             ignoreSubdomain: data('ignore_subdomain'),
+            includeQueryString: data('querystring_content'),
             canonicalDomain: data('page_tld') // TODO: what to call this exactly. groupDomain? siteDomain? canonicalDomain?
         },
         summarySelector: data('summary_widget_selector'),
@@ -215,7 +226,7 @@ function createFromJSON(json) {
         generatedCtaExpanded: data('separate_cta_expanded'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
-        exclusionSelector: data('no_ant'), // TODO: no_readr?
+        exclusionSelector: dataOrDeprecated('no_ant', 'no_readr'),
         language: data('language')
     }
 }

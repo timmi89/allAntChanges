@@ -1,14 +1,32 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var CallbackSupport = require('./callback-support');
+var Range = require('./range');
 var WidgetBucket = require('./widget-bucket');
 
 // TODO: detect whether the browser supports MutationObserver and fallback to Mutations Events
 
+var additionListener;
+var removalListener;
+
+var attributeObservers = [];
+
 function addAdditionListener(callback) {
+    if (!additionListener) {
+        additionListener = createAdditionListener();
+    }
+    additionListener.addCallback(callback);
+}
+
+function createAdditionListener() {
+    var callbackSupport = CallbackSupport.create();
     var observer = new MutationObserver(function(mutationRecords) {
         for (var i = 0; i < mutationRecords.length; i++) {
             var addedElements = filteredElements(mutationRecords[i].addedNodes);
             if (addedElements.length > 0) {
-                callback(addedElements);
+                var callbacks = callbackSupport.get();
+                for (var j = 0; j < callbacks.length; j++) {
+                    callbacks[j](addedElements);
+                }
             }
         }
     });
@@ -21,14 +39,37 @@ function addAdditionListener(callback) {
         attributeOldValue: false,
         characterDataOldValue: false
     });
+    return {
+        teardown: function() {
+            callbackSupport.teardown();
+            observer.disconnect();
+        },
+        addCallback: function(callback) {
+            callbackSupport.add(callback);
+        },
+        removeCallback: function(callback) {
+            callbackSupport.remove(callback);
+        }
+    };
 }
 
 function addRemovalListener(callback) {
+    if (!removalListener) {
+        removalListener = createRemovalListener();
+    }
+    removalListener.addCallback(callback);
+}
+
+function createRemovalListener() {
+    var callbackSupport = CallbackSupport.create();
     var observer = new MutationObserver(function(mutationRecords) {
         for (var i = 0; i < mutationRecords.length; i++) {
             var removedElements = filteredElements(mutationRecords[i].removedNodes);
             if (removedElements.length > 0) {
-                callback(removedElements);
+                var callbacks = callbackSupport.get();
+                for (var j = 0; j < callbacks.length; j++) {
+                    callbacks[j](removedElements);
+                }
             }
         }
     });
@@ -41,6 +82,18 @@ function addRemovalListener(callback) {
         attributeOldValue: false,
         characterDataOldValue: false
     });
+    return {
+        teardown: function() {
+            callbackSupport.teardown();
+            observer.disconnect();
+        },
+        addCallback: function(callback) {
+            callbackSupport.add(callback);
+        },
+        removeCallback: function(callback) {
+            callbackSupport.remove(callback);
+        }
+    };
 }
 
 // Filter the set of nodes to eliminate anything inside our own DOM elements (otherwise, we generate a ton of chatter)
@@ -48,9 +101,9 @@ function filteredElements(nodeList) {
     var filtered = [];
     for (var i = 0; i < nodeList.length; i++) {
         var node = nodeList[i];
-        if (node.nodeType !== 3) { // Don't process text nodes
+        if (node.nodeType === 1) { // Only element nodes. (https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType)
             var $element = $(node);
-            if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
+            if ($element.closest(Range.HIGHLIGHT_SELECTOR + ', .antenna, ' + WidgetBucket.selector()).length === 0) {
                 filtered.push($element);
             }
         }
@@ -75,11 +128,30 @@ function addOneTimeAttributeListener(node, attributes, callback) {
         characterDataOldValue: false,
         attributeFilter: attributes
     });
+    attributeObservers.push(observer);
+}
+
+function teardown() {
+    if (additionListener) {
+        additionListener.teardown();
+        additionListener = undefined;
+    }
+
+    if (removalListener) {
+        removalListener.teardown();
+        removalListener = undefined;
+    }
+
+    for (var i = 0; i < attributeObservers.length; i++) {
+        attributeObservers[i].disconnect();
+    }
+    attributeObservers = [];
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     addAdditionListener: addAdditionListener,
     addRemovalListener: addRemovalListener,
-    addOneTimeAttributeListener: addOneTimeAttributeListener
+    addOneTimeAttributeListener: addOneTimeAttributeListener,
+    teardown: teardown
 };

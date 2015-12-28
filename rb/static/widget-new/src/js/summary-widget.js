@@ -29,7 +29,10 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
             openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive);
         }
     });
-    return $rootElement;
+    return {
+        element: $rootElement,
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 function rootElement(ractive) {

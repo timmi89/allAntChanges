@@ -1,0 +1,10 @@
+{
+  "/pages/simple/page.html" : "/resources/simple/page-data.json",
+  "/pages/dynamic-content/page.html" : "/resources/dynamic-content/page-data.json",
+  "/pages/indicator-limit/page.html" : "/resources/indicator-limit/page-data.json",
+  "/pages/nested-text/page.html" : "/resources/nested-text/page-data.json",
+  "/pages/single-page-app/page.html" : "/resources/single-page-app/page-data.json",
+  "/pages/single-page-app/page.html?page1" : "/resources/single-page-app/page-data-page1.json",
+  "/pages/single-page-app/page.html?page2" : "/resources/single-page-app/page-data-page2.json",
+  "/pages/single-page-app/page.html?page3" : "/resources/single-page-app/page-data-page3.json"
+}

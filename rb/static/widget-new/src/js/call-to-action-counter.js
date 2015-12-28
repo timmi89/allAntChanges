@@ -1,7 +1,7 @@
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 
 function createCount($countElement, containerData) {
-    Ractive({
+    var ractive = Ractive({
         el: $countElement,
         magic: true,
         data: {
@@ -9,6 +9,9 @@ function createCount($countElement, containerData) {
         },
         template: require('../templates/call-to-action-counter.hbs.html')
     });
+    return {
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 //noinspection JSUnresolvedVariable

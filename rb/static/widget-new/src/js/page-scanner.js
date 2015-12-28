@@ -22,6 +22,8 @@ var TYPE_MEDIA = "media";
 
 var ATTR_HASH = "ant-hash";
 
+var createdWidgets = [];
+
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
@@ -36,7 +38,7 @@ function scanAllPages(groupSettings) {
         var $page = $(this);
         scanPage($page, groupSettings, $pages.length > 1);
     });
-    MutationObserver.addAdditionListener(elementsAdded(groupSettings));
+    setupMutationObserver(groupSettings);
 }
 
 // Scan the page using the given settings:
@@ -96,8 +98,10 @@ function scanForSummaries($element, pageData, groupSettings) {
         var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
         containerData.type = 'page'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($summary); // TODO: do we support customizing the default reactions at this level?
-        var $summaryElement = SummaryWidget.create(containerData, pageData, defaultReactions, groupSettings);
+        var summaryWidget = SummaryWidget.create(containerData, pageData, defaultReactions, groupSettings);
+        var $summaryElement = summaryWidget.element;
         insertContent($summary, $summaryElement, groupSettings.summaryMethod());
+        createdWidgets.push(summaryWidget);
     });
 }
 
@@ -148,7 +152,7 @@ function scanForCallsToAction($element, pageData, groupSettings) {
             if (hash && contentData) {
                 var containerData = PageData.getContainerData(pageData, hash);
                 containerData.type = computeElementType($targetElement); // TODO: revisit whether it makes sense to set the type here
-                CallToActionIndicator.create({
+                var callToAction = CallToActionIndicator.create({
                     containerData: containerData,
                     containerElement: $targetElement,
                     contentData: contentData,
@@ -160,6 +164,7 @@ function scanForCallsToAction($element, pageData, groupSettings) {
                     pageData: pageData,
                     groupSettings: groupSettings
                 });
+                createdWidgets.push(callToAction);
             }
         }
     })
@@ -171,8 +176,9 @@ function createAutoCallsToAction($section, pageData, groupSettings) {
         var $ctaTarget = $(this);
         var antItemId = generateAntItemAttribute();
         $ctaTarget.attr('ant-item', antItemId);
-        var $cta = AutoCallToAction.create(antItemId, pageData, groupSettings);
-        $ctaTarget.after($cta); // TODO: make the insert behavior configurable like the summary
+        var autoCta = AutoCallToAction.create(antItemId, pageData, groupSettings);
+        $ctaTarget.after(autoCta.element); // TODO: make the insert behavior configurable like the summary
+        createdWidgets.push(autoCta);
     });
 }
 
@@ -206,7 +212,7 @@ function scanText($textElement, pageData, groupSettings) {
             var containerData = PageData.getContainerData(pageData, hash);
             containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
             var defaultReactions = groupSettings.defaultReactions($textElement);
-            var $indicatorElement = TextIndicatorWidget.create({
+            var textIndicator = TextIndicatorWidget.create({
                     containerData: containerData,
                     containerElement: $textElement,
                     defaultReactions: defaultReactions,
@@ -214,14 +220,16 @@ function scanText($textElement, pageData, groupSettings) {
                     groupSettings: groupSettings
                 }
             );
+            var $indicatorElement = textIndicator.element;
             var lastNode = lastContentNode($textElement.get(0));
             if (lastNode.nodeType !== 3) {
                 $(lastNode).before($indicatorElement);
             } else {
                 $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
             }
+            createdWidgets.push(textIndicator);
 
-            TextReactions.createReactableText({
+            var textReactions = TextReactions.createReactableText({
                 containerData: containerData,
                 containerElement: $textElement,
                 defaultReactions: defaultReactions,
@@ -229,6 +237,7 @@ function scanText($textElement, pageData, groupSettings) {
                 groupSettings: groupSettings,
                 excludeNode: $indicatorElement.get(0)
             });
+            createdWidgets.push(textReactions);
         }
     }
 }
@@ -245,7 +254,7 @@ function lastContentNode(node) {
         var child = childNodes[i];
         if (child.nodeType === 3) {
             lastNode = child;
-        } else {
+        } else if (child.nodeType === 1) {
             var tagName = child.tagName.toLowerCase();
             switch (tagName) {
                 case 'img':
@@ -302,6 +311,7 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
                         groupSettings: groupSettings
                     }
                 );
+                createdWidgets.push(indicator);
             }
         }
     }
@@ -423,8 +433,10 @@ function computeElementType($element) {
     }
 }
 
-function elementsAdded(groupSettings) {
-    return function ($elements) {
+function setupMutationObserver(groupSettings) {
+    MutationObserver.addAdditionListener(elementsAdded);
+
+    function elementsAdded($elements) {
         for (var i = 0; i < $elements.length; i++) {
             var $element = $elements[i];
             $element.find(groupSettings.exclusionSelector()).addBack(groupSettings.exclusionSelector()).addClass('no-ant'); // Add the no-ant class to everything that is flagged for exclusion
@@ -473,7 +485,15 @@ function elementsAdded(groupSettings) {
     }
 }
 
+function teardown() {
+    for (var i = 0; i < createdWidgets.length; i++) {
+        createdWidgets[i].teardown();
+    }
+    createdWidgets = [];
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
-   scan: scanAllPages
+    scan: scanAllPages,
+    teardown: teardown
 };

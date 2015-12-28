@@ -1,27 +1,27 @@
 [
   {
-    "id" : "page1",
-    "pageHash" : "c79d84d938312c402fc3124fe5528f0d",
-    "requestedURL" : "http://localhost:3001/pages/dynamic-content/page.html",
+    "id" : "page0",
+    "pageHash" : "page0",
+    "requestedURL" : "http://localhost:3001/pages/single-page-app/page.html",
     "summaryReactions":[
       {
         "text":"Like",
         "id":"node1",
-        "count":3
+        "count":2
       }
     ],
     "containers":{
-      "f9f7c2185c1d7927151b4a87a44d89a3":{
-        "hash":"f9f7c2185c1d7927151b4a87a44d89a3",
+      "b0cb2463447c12ac5c6bca532f01a112":{
+        "hash":"b0cb2463447c12ac5c6bca532f01a112",
         "id":"container1",
         "reactions":[
           {
             "text":"Like",
             "id":"node1",
-            "count":3,
+            "count":1,
             "parentID":"interaction1",
             "content":{
-              "location":":0:1",
+              "location":":0,:1",
               "id":"content1",
               "kind":"text"
             }

@@ -22,5 +22,5 @@ the hashes we compute into the test page DOM. You can use these hashes later to 
      "summary_widget_selector": ".summary",
      "id":"<name>"
    }
-6. Create a page-data.json file at:
-    /resources/<name>page-data.json
+6. Create a page-data.json file and add an entry to the page-data-map.json file:
+    /resources/page-data-map.json

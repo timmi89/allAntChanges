@@ -105,7 +105,7 @@ class CacheSettingsRefreshHandler(AnonymousBaseHandler):
     def read(self, request, group_id = None):
         group = Group.objects.get(id = group_id)
         site = Site.objects.get(group = group)
-        settings_dict = getSettingsDict(group)
+        settings_dict = getSettingsDict(group, site)
         try:
             cache.set('group_settings_'+ str(site.domain), settings_dict)
         except Exception, e:
@@ -939,7 +939,6 @@ class SettingsHandler(AnonymousBaseHandler):
         if data and data['host_name']:
             host = data['host_name']
 
-
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))
         if cached_result is not None:
@@ -967,8 +966,7 @@ class SettingsHandler(AnonymousBaseHandler):
             else:
                 group = Group.objects.get(id=group_id)
 
-
-            settings_dict = getSettingsDict(group)
+            settings_dict = getSettingsDict(group, site)
             try:
                 cache.set('group_settings_'+ str(host), settings_dict)
             except Exception, e:

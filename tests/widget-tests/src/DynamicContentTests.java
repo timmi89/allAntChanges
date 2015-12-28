@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class DynamicContentTests extends AbstractWidgetTests {
 
-    private static String url = "http://localhost:3000/pages/dynamic-content/page.html";
+    private static String url = AbstractWidgetTests.computeUrl("/pages/dynamic-content/page.html");
 
     @Test
     public void testAddSummary() {

@@ -2,11 +2,13 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,10 +19,18 @@ import java.util.concurrent.TimeUnit;
 public class AbstractWidgetTests {
 
     protected static FirefoxDriver driver;
+//    protected static ChromeDriver driver;
+
+    private static String TEST_SERVER_URL = "http://localhost:3001";
+
+    public static String computeUrl(String relativePath) {
+        return TEST_SERVER_URL + relativePath;
+    }
 
     @BeforeClass
     public static void setupDriver() {
         driver = new FirefoxDriver();
+//        driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 
@@ -32,6 +42,20 @@ public class AbstractWidgetTests {
     public void hover(WebElement element) {
         Actions action = new Actions(driver);
         action.moveToElement(element).build().perform();
+    }
+
+    public void clickButton(String id) {
+        WebElement button = findById(id);
+        Assert.assertNotNull("button not found", button);
+        button.click();
+    }
+
+    public void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
     }
 
     /**
@@ -73,6 +97,16 @@ public class AbstractWidgetTests {
         return element;
     }
 
+    public WebElement findByClassName(String className, WebElement parent) {
+        WebElement element = null;
+        try {
+            element = parent.findElement(By.className(className));
+        } catch (NoSuchElementException e) {
+            // Do nothing!
+        }
+        return element;
+    }
+
     /**
      * Returns the media indicator widget that corresponds to the given media element or <code>null</code> if none is
      * found.
@@ -85,6 +119,19 @@ public class AbstractWidgetTests {
         return findByXpath(String.format("(//span[@ant-hash='%s'])[%s]", mediaHash, count), bucket);
     }
 
+    /**
+     * Asserts the reaction count shown in the summary widget
+     */
+    public void assertSummaryCount(int count) {
+        WebElement element = findByXpath(String.format("//span[contains(@class,'%s')]", AntennaConstants.CLASS_SUMMARY_TITLE));
+        Assert.assertNotNull("summary widget title not found", element);
+
+        Assert.assertEquals("wrong summary widget title", count + " Reactions", element.getText());
+    }
+
+    /**
+     * Asserts the number of media indicators on the page.
+     */
     public void assertMediaIndicatorCount(int count) {
         WebElement bucket = findById(AntennaConstants.ID_WIDGET_BUCKET);
         Assert.assertNotNull("widget bucket not found", bucket);
@@ -93,9 +140,30 @@ public class AbstractWidgetTests {
         Assert.assertEquals("wrong number of media indicators", count, mediaIndicators.size());
     }
 
+    /**
+     * Asserts the number of text indicators on the page.
+     */
     public void assertTextIndicatorCount(int count) {
         List<WebElement> textIndicators = driver.findElements(By.className(AntennaConstants.CLASS_TEXT_INDICATOR));
         Assert.assertEquals("wrong number of text indicators", count, textIndicators.size());
+    }
+
+    /**
+     * Asserts the reaction count shown inside the given text element.
+     */
+    public void assertTextReactionCount(WebElement textElement, int reactionCount) {
+        WebElement textIndicator = textElement.findElement((By.className(AntennaConstants.CLASS_TEXT_INDICATOR)));
+        Assert.assertNotNull("text indicator not found", textIndicator);
+
+        WebElement countElement = findByClassName(AntennaConstants.CLASS_TEXT_REACTION_COUNT, textIndicator);
+        if (reactionCount > 0) {
+            Assert.assertNotNull("text count not found", countElement);
+            // Selenium's getText() doesn't include hidden text. So get the text with Javascript.
+            int actualCount = Integer.parseInt((String) driver.executeScript("return arguments[0].innerHTML", countElement));
+            Assert.assertEquals("incorrect text reaction count", reactionCount, actualCount);
+        } else {
+            Assert.assertNull("text reactions found where none were expected", countElement);
+        }
     }
 
     public void assertMediaIndicatorOverElement(WebElement mediaElement) {

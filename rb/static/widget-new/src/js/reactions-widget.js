@@ -419,5 +419,6 @@ module.exports = {
     PAGE_REACTIONS: PAGE_REACTIONS,
     PAGE_DEFAULTS: PAGE_DEFAULTS,
     PAGE_AUTO: PAGE_AUTO,
-    selector: SELECTOR_REACTIONS_WIDGET
+    selector: SELECTOR_REACTIONS_WIDGET,
+    teardown: closeAllWindows
 };

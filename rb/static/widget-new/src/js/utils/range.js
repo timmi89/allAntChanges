@@ -116,5 +116,6 @@ module.exports = {
     grabSelection: grabSelection,
     grabNode: grabNode,
     clearHighlights: clearHighlights,
-    highlight: highlightLocation
+    highlight: highlightLocation,
+    HIGHLIGHT_SELECTOR: '.' + highlightClass
 };

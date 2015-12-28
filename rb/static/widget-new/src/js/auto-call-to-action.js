@@ -15,7 +15,10 @@ function createCallToAction(antItemId, pageData, groupSettings) {
             logo: SVGs.logo
         }
     });
-    return $(ractive.find('.antenna-auto-cta'));
+    return {
+        element: $(ractive.find('.antenna-auto-cta')),
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 function shouldExpandReactions(groupSettings) {

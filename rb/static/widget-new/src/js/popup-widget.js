@@ -73,7 +73,16 @@ function hidePopup($element) {
     $(document).off('click.antenna-popup');
 }
 
+function teardown() {
+    if (ractive) {
+        ractive.teardown();
+        ractive = undefined;
+        clickHandler = undefined;
+    }
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
-    show: showPopup
+    show: showPopup,
+    teardown: teardown
 };

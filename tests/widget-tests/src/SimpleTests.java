@@ -9,17 +9,12 @@ import java.util.List;
 
 public class SimpleTests extends AbstractWidgetTests {
 
-    public static final String url = "http://localhost:3000/pages/simple/page.html";
+    public static final String url = AbstractWidgetTests.computeUrl("/pages/simple/page.html");
 
     @Test
     public void testSummaryWidgetTitle() {
         driver.get(url);
-        WebElement element;
-
-        element = findByXpath(String.format("//span[contains(@class,'%s')]", AntennaConstants.CLASS_SUMMARY_TITLE));
-        Assert.assertNotNull("summary widget title not found", element);
-
-        Assert.assertEquals("wrong summary widget title", "3 Reactions", element.getText());
+        assertSummaryCount(3);
     }
 
     @Test

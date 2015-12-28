@@ -4,6 +4,7 @@ var CssLoader = require('./css-loader');
 var GroupSettingsLoader = require('./group-settings-loader');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
+var Reinitializer = require('./reinitializer');
 var XDMAnalytics = require('./xdm-analytics');
 var XDMLoader = require('./utils/xdm-loader');
 
@@ -27,6 +28,7 @@ function scriptLoaded() {
         initXdmFrame(groupSettings);
         fetchPageData(groupSettings);
         scanPage(groupSettings);
+        setupReinitializer(groupSettings);
     });
 }
 
@@ -49,3 +51,11 @@ function fetchPageData(groupSettings) {
 function scanPage(groupSettings) {
     PageScanner.scan(groupSettings);
 }
+
+function setupReinitializer(groupSettings) {
+    Reinitializer.setupReinitialization(groupSettings);
+}
+
+window.ANTENNAIS_NEW = { // TODO
+    reinitialize: Reinitializer.reinitializeAll
+};

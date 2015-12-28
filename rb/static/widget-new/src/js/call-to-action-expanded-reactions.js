@@ -1,7 +1,7 @@
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 
 function createExpandedReactions($expandedReactionsElement, $ctaElement, containerData, groupSettings) {
-    Ractive({
+    var ractive = Ractive({
         el: $expandedReactionsElement,
         magic: true,
         data: {
@@ -10,6 +10,9 @@ function createExpandedReactions($expandedReactionsElement, $ctaElement, contain
         },
         template: require('../templates/call-to-action-expanded-reactions.hbs.html')
     });
+    return {
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 function computeExpandedReactions(defaultReactions) {
