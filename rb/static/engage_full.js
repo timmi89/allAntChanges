@@ -280,16 +280,13 @@ function antenna($A){
             // },
             trackEventToCloud: function( params ) {
                 // ANT.events.trackEventToCloud
-
                 ANT.user = ANT.user || {};
                 ANT.events.queue = ANT.events.queue || [];
 
                 // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
                 // which will not have all of the PAGE data loaded yet.
                 if ( (ANT.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
-
                     var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : ANT.util.getPageProperty('id') ).toString() );
-
                     var referrer_url_array = document.referrer.split('/');
                     var referrer_url = referrer_url_array.splice(2).join('/');
 
@@ -4500,6 +4497,8 @@ function antenna($A){
                             //for now, ignore error and carry on with mockup
                         }
                     });
+                // } else {
+                    // $ANT.dequeue('initAjax');
                 }
 
             },
@@ -4746,8 +4745,12 @@ function antenna($A){
                     ANT.actions.initPageData();
                 });
 
-                var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
-                ANT.events.recordEvents = $(".ant-page-summary" + groupPageSelector).length;
+                if (!ANT.group.summary_widget_selector) {
+                    ANT.events.recordEvents = 1;  // force data recording if summary widget selector is empty
+                } else {
+                    var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
+                    ANT.events.recordEvents = $(".ant-page-summary" + groupPageSelector).length;
+                }
 
 
                 
