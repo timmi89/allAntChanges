@@ -199,6 +199,7 @@ function createFromJSON(json) {
     return {
         legacyBehavior: data('legacy_behavior', false), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
         groupId: data('id'),
+        groupName: data('name'),
         activeSections: data('active_sections'),
         url: {
             ignoreSubdomain: data('ignore_subdomain'),
@@ -227,7 +228,8 @@ function createFromJSON(json) {
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
         exclusionSelector: dataOrDeprecated('no_ant', 'no_readr'),
-        language: data('language')
+        language: data('language'),
+        twitterAccount: data('twitter')
     }
 }
 

@@ -1,3 +1,5 @@
+var AppMode = require('./app-mode');
+var URLConstants = require('./url-constants');
 
 function getGroupSettingsUrl() {
     return '/api/settings/';
@@ -21,6 +23,14 @@ function getFetchCommentUrl() {
 
 function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
+}
+
+function getShareReactionUrl() {
+    return '/api/share/;'
+}
+
+function getShareWindowUrl() {
+    return '/static/share.html';
 }
 
 function getEventUrl() {
@@ -97,14 +107,36 @@ function legacyComputeMediaUrl($element) {
     return content;
 }
 
+// TODO: refactor usage of app server url + relative routes
+function appServerUrl() {
+    if (AppMode.test) {
+        return URLConstants.TEST;
+    } else if (AppMode.offline) {
+        return URLConstants.DEVELOPMENT;
+    }
+    return URLConstants.PRODUCTION;
+}
+
+// TODO: refactor usage of events server url + relative routes
+function eventsServerUrl() {
+    if (AppMode.offline) {
+        return URLConstants.DEVELOPMENT_EVENTS;
+    }
+    return URLConstants.PRODUCTION_EVENTS;
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
+    appServerUrl: appServerUrl,
+    eventsServerUrl: eventsServerUrl,
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,
     createCommentUrl: getCreateCommentUrl,
     fetchCommentUrl: getFetchCommentUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
+    shareReactionUrl: getShareReactionUrl,
+    shareWindowUrl: getShareWindowUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
     eventUrl: getEventUrl

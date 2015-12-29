@@ -4,6 +4,9 @@
         {{>commentArea}}
     </div>
     <div class="antenna-footer antenna-confirm-footer">
-        <span on-tap="share" class="antenna-share">{{getMessage('confirmation-page_share')}} {{>facebookIcon}}{{>twitterIcon}}</span>
+        <span class="antenna-share">{{getMessage('confirmation-page_share')}}
+            <a on-tap="share-facebook" href="//facebook.com">{{>facebookIcon}}</a>
+            <a on-tap="share-twitter" href="//twitter.com">{{>twitterIcon}}</a>
+        </span>
     </div>
 </div>

@@ -1,10 +1,8 @@
 // TODO: needs a better name once the scope is clear
 
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-var AppMode = require('./app-mode');
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
-var URLConstants = require('./url-constants');
 var User = require('./user');
 
 
@@ -243,26 +241,39 @@ function commentsFromResponse(jsonComments) {
     return comments;
 }
 
+function postShareReaction(reactionData, containerData, pageData, success, failure) {
+    XDMClient.getUser(function(userInfo) {
+        var contentData = reactionData.content;
+        var data = {
+            tag: { // TODO: why does the ShareHandler create a reaction if it doesn't exist? How can you share a reaction that hasn't happened?
+                id: reactionData.id,
+                body: reactionData.text
+            },
+            hash: containerData.hash,
+            container_kind: containerData.type,
+            content_node_data: { // TODO: why does the ShareHandler create a content if it doesn't exist? How can you share a reaction that hasn't happened?
+                id: contentData.id,
+                body: contentData.text,
+                location: contentData.location,
+                kind: containerData.type
+            },
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token,
+            group_id: pageData.groupId,
+            page_id: pageData.pageId,
+            referring_int_id: reactionData.parentID
+        };
+        getJSONP(URLs.shareReactionUrl(), data, success, failure);
+    });
+}
+
 function getJSONP(url, data, success, error) {
-    var baseUrl;
-    if (AppMode.test) {
-        baseUrl = URLConstants.TEST;
-    } else if (AppMode.offline) {
-        baseUrl = URLConstants.DEVELOPMENT;
-    } else {
-        baseUrl = URLConstants.PRODUCTION;
-    }
+    var baseUrl = URLs.appServerUrl();
     doGetJSONP(baseUrl, url, data, success, error);
 }
 
 function postEvent(event) {
-    var baseUrl;
-    if (AppMode.offline) {
-        baseUrl = URLConstants.DEVELOPMENT_EVENTS;
-        console.log('Posting event: ' + JSON.stringify(event));
-    } else {
-        baseUrl = URLConstants.PRODUCTION_EVENTS;
-    }
+    var baseUrl = URLs.eventsServerUrl();
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
         // TODO: error handling
         console.log('An error occurred posting event: ', error);
@@ -306,6 +317,7 @@ module.exports = {
     postNewReaction: postNewReaction,
     postComment: postComment,
     getComments: getComments,
+    postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
     postEvent: postEvent
 };
