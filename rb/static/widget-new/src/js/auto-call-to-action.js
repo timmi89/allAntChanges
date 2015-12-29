@@ -5,7 +5,7 @@ var SVGs = require('./svgs');
 
 function createCallToAction(antItemId, pageData, groupSettings) {
     var ractive = Ractive({
-        el: $('div'),
+        el: $('<div>'),
         data: {
             antItemId: antItemId,
             expandReactions: shouldExpandReactions(groupSettings)
