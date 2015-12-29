@@ -1,6 +1,7 @@
 // TODO: needs a better name once the scope is clear
 
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AppMode = require('./app-mode');
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 var User = require('./user');
@@ -275,7 +276,11 @@ function getJSONP(url, data, success, error) {
 
 function postEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
+    if (AppMode.debug) {
+        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+    }
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
+        // TODO: error handling
         // TODO: error handling
         console.log('An error occurred posting event: ', error);
     });

@@ -3,6 +3,7 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 var AjaxClient = require('./utils/ajax-client');
 var URLs = require('./utils/urls');
 var CommentAreaPartial = require('./comment-area-partial');
+var Events = require('./events');
 var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-confirmation-page';
@@ -37,6 +38,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
     function shareToFacebook(ractiveEvent) {
         ractiveEvent.original.preventDefault();
         shareReaction(function(reactionData, shortUrl) {
+            Events.postReactionShared('facebook', pageData, containerData, reactionData, groupSettings);
             var shareText = computeShareText(reactionData, 300);
             var imageParam = '';
             if (containerData.type === 'image') {
@@ -53,6 +55,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
     function shareToTwitter(ractiveEvent) {
         ractiveEvent.original.preventDefault();
         shareReaction(function(reactionData, shortUrl) {
+            Events.postReactionShared('twitter', pageData, containerData, reactionData, groupSettings);
             var shareText = computeShareText(reactionData, 110); // Make sure we stay under the 140 char limit (twitter appends additional text like the url)
             var twitterVia = groupSettings.twitterAccount() ? '&via=' + groupSettings.twitterAccount() : '';
             return 'http://twitter.com/intent/tweet?url=' + shortUrl + twitterVia + '&text=' + encodeURI(shareText);
