@@ -118,6 +118,7 @@ function postComment(comment, reactionData, containerData, pageData, success, er
     });
 }
 
+// TODO: We need to review the API so that it returns/accepts a uniform set of values.
 function contentNodeDataKind(type) {
     if (type === 'image') {
         return 'img';
@@ -255,7 +256,7 @@ function postShareReaction(reactionData, containerData, pageData, success, failu
                 id: contentData.id,
                 body: contentData.text,
                 location: contentData.location,
-                kind: containerData.type
+                kind: contentNodeDataKind(containerData.type)
             },
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,

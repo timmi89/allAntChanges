@@ -37,32 +37,23 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
     function shareToFacebook(ractiveEvent) {
         ractiveEvent.original.preventDefault();
         shareReaction(function(reactionData, shortUrl) {
-            return 'http://www.facebook.com/sharer.php?s=100&p[url]=' + shortUrl;
+            var shareText = computeShareText(reactionData, 300);
+            var imageParam = '';
+            if (containerData.type === 'image') {
+                imageParam = '&p[images][0]=' + encodeURI(reactionData.content.body);
+            }
+            return 'http://www.facebook.com/sharer.php?s=100' +
+                '&p[url]=' + shortUrl +
+                '&p[title]=' + encodeURI(shareText) +
+                '&p[summary]=' + encodeURI(shareText) +
+                imageParam;
         });
     }
 
     function shareToTwitter(ractiveEvent) {
         ractiveEvent.original.preventDefault();
         shareReaction(function(reactionData, shortUrl) {
-            var shareText = reactionData.text + " » " + '';
-            var groupName = groupSettings.groupName();
-            switch (containerData.type) {
-                case 'image':
-                    shareText += '[a picture on ' + groupName + '] Check it out: ';
-                    break;
-                case 'media':
-                    shareText += '[a video on ' + groupName + '] Check it out: ';
-                    break;
-                case 'page':
-                    shareText += '[an article on ' + groupName + '] Check it out: ';
-                    break;
-                case 'text':
-                    var maxBodyLength = 110 - shareText.length; // Make sure we stay under the 140 char limit (twitter appends additional text like the url)
-                    var textBody = reactionData.content.body;
-                    textBody = textBody.length > maxBodyLength ? textBody.substring(0, maxBodyLength-3) + '...' : textBody;
-                    shareText += '"' + textBody + '"';
-                    break;
-            }
+            var shareText = computeShareText(reactionData, 110); // Make sure we stay under the 140 char limit (twitter appends additional text like the url)
             var twitterVia = groupSettings.twitterAccount() ? '&via=' + groupSettings.twitterAccount() : '';
             return 'http://twitter.com/intent/tweet?url=' + shortUrl + twitterVia + '&text=' + encodeURI(shareText);
         });
@@ -78,6 +69,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
                     redirectShareWindow(url);
                 }, function (message) {
                     console.log("Failed to share reaction: " + message);
+                    closeShareWindow();
                     // TODO: engage_full:9818
                     //if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                     //    ANT.session.showLoginPanel( args );
@@ -107,6 +99,29 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
         if (popupWindow && !popupWindow.closed) {
             popupWindow.location = url;
         }
+    }
+
+    function computeShareText(reactionData, maxTextLength) {
+        var shareText = reactionData.text + " » " + '';
+        var groupName = groupSettings.groupName();
+        switch (containerData.type) {
+            case 'image':
+                shareText += '[a picture on ' + groupName + '] Check it out: ';
+                break;
+            case 'media':
+                shareText += '[a video on ' + groupName + '] Check it out: ';
+                break;
+            case 'page':
+                shareText += '[an article on ' + groupName + '] Check it out: ';
+                break;
+            case 'text':
+                var maxBodyLength = maxTextLength - shareText.length - 2; // the extra 2 accounts for the quotes we add
+                var textBody = reactionData.content.body;
+                textBody = textBody.length > maxBodyLength ? textBody.substring(0, maxBodyLength-3) + '...' : textBody;
+                shareText += '"' + textBody + '"';
+                break;
+        }
+        return shareText;
     }
 
 }
