@@ -51,7 +51,6 @@ function openReactionsWidget(options, elementOrCoords) {
     });
 
     ractive.on('close', closeAllWindows);
-    openInstances.push(ractive);
     var $rootElement = $(rootElement(ractive));
     Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     var pages = [];
@@ -350,15 +349,16 @@ function setupWindowClose(pages, ractive) {
         $rootElement.stop(true, true).fadeOut('fast', function() {
             $rootElement.css('display', ''); // Clear the display:none that fadeOut puts on the element
             $rootElement.removeClass('open');
+
+            Range.clearHighlights();
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].teardown();
+            }
+            ractive.teardown();
         });
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         tapListener.teardown();
-        Range.clearHighlights();
-        for (var i = 0; i < pages.length; i++) {
-            pages[i].teardown();
-        }
-        ractive.teardown();
     });
 }
 
