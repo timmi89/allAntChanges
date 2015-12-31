@@ -6,6 +6,7 @@ module.exports = {
 
     'reactions-widget_title': 'Reactions',
     'reactions-widget_title_thanks': 'Thanks for your reaction!',
+    'reactions-widget_title_signin': 'Sign in Required',
 
     'reactions-page_no_reactions': 'No reactions yet!',
     'reactions-page_think': 'What do you think?',
@@ -34,5 +35,7 @@ module.exports = {
 
     'call-to-action-label_responses': 'Responses',
     'call-to-action-label_responses_one': '1 Response',
-    'call-to-action-label_responses_many': '{0} Responses'
+    'call-to-action-label_responses_many': '{0} Responses',
+
+    'login-page_back': 'Back'
 };

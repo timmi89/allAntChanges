@@ -37,6 +37,10 @@ function getEventUrl() {
     return '/insert'; // Note that this URL is for the event server, not the app server.
 }
 
+function getLoginPageUrl() {
+    return '/static/widget-new/fb_login.html';
+}
+
 function computeImageUrl($element, groupSettings) {
     if (groupSettings.legacyBehavior()) {
         return legacyComputeImageUrl($element);
@@ -137,6 +141,7 @@ module.exports = {
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     shareReactionUrl: getShareReactionUrl,
     shareWindowUrl: getShareWindowUrl,
+    loginPageUrl: getLoginPageUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
     eventUrl: getEventUrl

@@ -9,9 +9,6 @@
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
 }
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
-    #antenna-widget-bucket {
-        width: 100%;
-    }
     .antenna-reactions-widget {
         left: 50% !important;
         transform: translateX(-50%);
@@ -22,7 +19,7 @@
     outline: none;
 }
 
-.antenna-reactions-widget.open {
+.antenna-reactions-widget.antenna-reactions-open {
     display: block;
 }
 
@@ -149,7 +146,7 @@
     opacity: 0.9;
     letter-spacing: .5px;
     line-height: 1em;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .antenna-reaction-box {

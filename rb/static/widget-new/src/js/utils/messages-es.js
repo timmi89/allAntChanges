@@ -6,6 +6,7 @@ module.exports = {
 
     'reactions-widget_title': "Reacciones",
     'reactions-widget_title_thanks': 'Gracias por tu reacción!',
+    'reactions-widget_title_signin': 'Sign in Required', // TODO: need a translation
 
     'reactions-page_no_reactions': 'No reacciones!', // TODO: need a translation of "No reactions yet!"
     'reactions-page_think': '¿Qué piensas?',
@@ -34,5 +35,7 @@ module.exports = {
 
     'call-to-action-label_responses': 'Respuestas', // TODO: need a translation of "Responses"
     'call-to-action-label_responses_one': '1 Respuesta', // TODO
-    'call-to-action-label_responses_many': '{0} Respuestas' // TODO
+    'call-to-action-label_responses_many': '{0} Respuestas', // TODO
+
+    'login-page_back': 'Cerrar' // TODO: need a translation for "Back"
 };
