@@ -427,7 +427,7 @@ def getSinglePageDataNewer(page_id):
     # Next, fetch all of the containers, content, and interaction_nodes that we need
     containers = Container.objects.filter(id__in=container_ids).values('id','hash')
     content_dict = {}
-    for content in Content.objects.filter(id__in=content_ids).values('id','kind','location'):
+    for content in Content.objects.filter(id__in=content_ids).values('id','kind','location','body'):
         content_dict[content['id']] = content
     node_dict = {}
     for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
@@ -458,7 +458,8 @@ def getSinglePageDataNewer(page_id):
                                 'content': {
                                     'id': content_id,
                                     'location': content['location'],
-                                    'kind': content['kind']
+                                    'kind': content['kind'],
+                                    'body': content['body']
                                 }
                             }
                             reactions_data.append(reaction_data)

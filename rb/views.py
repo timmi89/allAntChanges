@@ -909,16 +909,16 @@ def expander(request, short):
 
     # Retrieve related objects
     interaction = Interaction.objects.get(id=link.interaction.id)
+    page = Page.objects.get(id=interaction.page.id)
 
     if interaction.content.kind == 'pag':
         url = interaction.page.url
     elif interaction.parent:
         url = BASE_URL + '/i/' + str(interaction.parent.id)
     else:
-        page = Page.objects.get(id=interaction.page.id)
+        url = page.url
 
-        # Create redirect response
-        url = page.url;
+    # Create redirect response
     redirect_response = HttpResponseRedirect(unicode(url))
     
     # Setup cookie for redirect
@@ -944,7 +944,7 @@ def interaction_redirect(request, short):
     page = Page.objects.get(id=interaction.page.id)
 
     # Create redirect response
-    url = page.url;
+    url = page.url
     redirect_response = HttpResponseRedirect(unicode(url))
     
     # Setup cookie for redirect
@@ -969,7 +969,7 @@ def click_redirect(request, short):
     page = Page.objects.get(id=interaction.page.id)
 
     # Create redirect response
-    url = page.url;
+    url = page.url
     redirect_response = HttpResponseRedirect(unicode(url))
     
     # Setup cookie for redirect

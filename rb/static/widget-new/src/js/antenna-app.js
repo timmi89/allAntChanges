@@ -1,3 +1,7 @@
+if (window.ANTENNAIS || window.antenna || window.AntennaApp) {
+    // Protect against multiple instances of this script being added to the page (or this script and engage.js)
+    return;
+}
 
 var ScriptLoader = require('./script-loader');
 var CssLoader = require('./css-loader');
@@ -8,6 +12,9 @@ var Reinitializer = require('./reinitializer');
 var XDMAnalytics = require('./xdm-analytics');
 var XDMLoader = require('./utils/xdm-loader');
 
+window.AntennaApp = { // TODO flesh out our desired API
+    reinitialize: Reinitializer.reinitializeAll
+};
 
 // Step 1 - kick off the asynchronous loading of the Javascript and CSS we need.
 CssLoader.load(); // Inject the CSS first because we may soon append more asynchronously, in the groupSettings callback, and we want that CSS to be lower in the document.
@@ -55,7 +62,3 @@ function scanPage(groupSettings) {
 function setupReinitializer(groupSettings) {
     Reinitializer.setupReinitialization(groupSettings);
 }
-
-window.ANTENNAIS_NEW = { // TODO
-    reinitialize: Reinitializer.reinitializeAll
-};

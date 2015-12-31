@@ -40,10 +40,8 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
     postEvent(event);
 }
 
-// TODO: Hook this up once reaction sharing is in place.
-// TODO: Confirm with Porter that the other place the 'sh' event is fired, _makeShareIcons, is dead code
-function postReactionShared(pageData, containerData, reactionData, groupSettings) {
-    var eventValue = ''; // TODO: 'facebook', 'twitter', etc
+function postReactionShared(target, pageData, containerData, reactionData, groupSettings) {
+    var eventValue = target; // 'facebook', 'twitter', etc
     var event = createEvent(eventTypes.reactionShared, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     appendContainerDataParams(event, containerData);
