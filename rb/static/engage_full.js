@@ -5,7 +5,6 @@ var ANT = {};
 if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
     // reinit custom display hashes only
     window.ANTENNAIS.actions.reInit();
-    console.log('reinitted');
     return;
 }
 
