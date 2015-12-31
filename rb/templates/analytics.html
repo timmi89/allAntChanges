@@ -123,10 +123,11 @@
                 }
 
                 // DEBUG:
-                // ANTsite.group.id = 1167;
+                ANTsite.group.id = 1167;
 
 
                 ANTsite.analytics.getPopularPages();
+                ANTsite.analytics.getPopularContent();
                 ANTsite.analytics.getReactionCount();
                 ANTsite.analytics.getReactionViewCount();
                 ANTsite.analytics.getTopReactions();
@@ -164,6 +165,43 @@
                         $('table.popular').after('<div class="no-data">Darn, no data returned!</div>');
                         $('table.popular').hide();
                       }
+
+                    }, error: function(request, status, error) {
+                    }, complete:function(request, status) {
+                    }
+                });
+            },
+            getPopularContent: function() {
+                $.ajax({
+                    url: ANTsite.analytics.queryHost + '/popularContent',
+                    type: "get",
+                    data: {
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
+                    },
+                    success: function(response) {
+                        console.log(response);
+                      // $('table.popular').find('.loading,.no-data').remove();
+
+                      // if (response.popularPages) {
+                      //   $('table.popular').show();
+                      //   var rows = '';
+                      //   $.each(response.popularPages, function(idx, page) {
+                      //     var newRow = '<tr>' +
+                      //         '<td><a href="'+page.url+'" target="_blank">'+page.page_title+'</a></td>' +
+                      //         '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_count)+'</td>' +
+                      //         '<td>'+ANTsite.analytics.numberWithCommas(page.reaction_view_count)+'</td>' +
+                      //         '<td>'+ANTsite.analytics.numberWithCommas(page.pageview_count)+'</td>' +
+                      //         '<td>'+ Math.round( (page.reaction_count + page.reaction_view_count) / page.pageview_count * 10000) / 100 +'</td>' +
+                      //     '</tr>';
+
+                      //     rows = rows + newRow;
+                      //   });
+
+                      //   $('table.popular').append(rows);
+                      // } else {
+                      //   $('table.popular').after('<div class="no-data">Darn, no data returned!</div>');
+                      //   $('table.popular').hide();
+                      // }
 
                     }, error: function(request, status, error) {
                     }, complete:function(request, status) {
