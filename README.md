@@ -4,6 +4,7 @@
 
 ```sh
 # Install dependencies from homebrew
+brew update
 brew install caskroom/cask/brew-cask
 brew cask install virtualbox
 brew cask install virtualbox-extension-pack
