@@ -1,8 +1,5 @@
 
-var URLs = require('./urls');
 var XdmLoader = require('./xdm-loader');
-
-var Events = require('../events'); // TODO: resolve this backward dependency
 
 // Register ourselves to hear messages
 window.addEventListener("message", receiveMessage, false);
@@ -19,6 +16,7 @@ function xdmLoaded(data) {
 }
 
 function setMessageHandler(messageKey, callback) {
+    callback.persistent = true; // Set the flag which tells us that this isn't a typical one-time callback.
     callbacks[messageKey] = callback;
 }
 
@@ -52,6 +50,9 @@ function receiveMessage(event) {
         var callback = callbacks[callbackKey];
         if (callback) {
             callback(response);
+            if (!callbacks[callbackKey].persistent) {
+                delete callbacks[callbackKey];
+            }
         }
     }
 }
@@ -59,13 +60,13 @@ function receiveMessage(event) {
 function postMessage(message, callbackKey, callback, validCacheEntry) {
     if (isXDMLoaded) {
         var targetOrigin = XdmLoader.ORIGIN;
-        callbacks[callbackKey] = callback;
         var cachedResponse = cache[callbackKey];
         if (cachedResponse !== undefined && validCacheEntry && validCacheEntry(cache[callbackKey])) {
             callback(cache[callbackKey]);
         } else {
             var xdmFrame = getXDMFrame();
             if (xdmFrame) {
+                callbacks[callbackKey] = callback;
                 xdmFrame.postMessage(message, targetOrigin);
             }
         }
@@ -96,6 +97,7 @@ function queueMessage(message, callbackKey, callback, validCacheEntry) {
                     var dequeued = messageQueue[i];
                     postMessage(dequeued.message, dequeued.callbackKey, dequeued.callback, dequeued.validCacheEntry);
                 }
+                messageQueue = [];
             }
         }, 50);
     }

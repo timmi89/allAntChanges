@@ -17,7 +17,7 @@ function getWindowProps(options){
     var l = (window.screen.width/2)-(w/2);
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
-};
+}
 
 var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.antenna.is/insert" : "http://nodebq.docker/insert";
 
@@ -120,71 +120,18 @@ window.ANTAuth = {
             }
         },
         trackEventToCloud: function(params){
-            // ANTAuth.events.trackEventToCloud
-            // if ( trackingUrl.indexOf('localnode') == -1 ) {
-                $.ajax({
-                    url: trackingUrl,
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: {
-                        json: $.toJSON( params )
-                    },
-                    success : function(response)
-                    {
-                    }
-                });
-            // }
-
-            return;
-
-            // Old.  When Using Parse.
-            //Record events to 3rd party event tracking.  These parameters match Google's event tracking API.
-            //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
-            // var category = params.category,
-            //     action = params.action,
-            //     opt_label = params.opt_label || null,
-            //     opt_value = params.opt_value  || null,
-            //     opt_noninteraction = params.opt_noninteraction  || null;
-                
-            // //these are extra params that we are adding only for parse, not google analytics.
-            // //google analytics duplicates some of these as json in opt_value
-            // var shareNetwork = params.shareNetwork || null,
-            //     container_hash = params.container_hash || null,
-            //     container_kind = params.container_kind || null,
-            //     page_id = params.page_id || null,
-            //     tag_body = params.tag_body || null,
-            //     user_id = params.user_id || null,
-            //     group_id = params.group_id || null;
-
-                
-            // if( typeof Parse !== "undefined" ){
-            //     //uncomment for debugging
-            //     // log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
-            //     var parseTrackingRepo = ANTAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
-            //     var ParseTracker = Parse.Object.extend(parseTrackingRepo);
-            //     var parseTracker = new ParseTracker();
-            //     parseTracker.save({
-            //         category: category,
-            //         action: action,
-            //         shareNetwork: shareNetwork,
-            //         container_hash: container_hash,
-            //         container_kind: container_kind,
-            //         page_id: parseInt(page_id),
-            //         tag_body: tag_body,
-            //         user_id: user_id,
-            //         group_id: group_id
-            //     }, {
-            //       success: function(object) {
-            //       }
-            //     });
-            // }
-            
-            //don't log google tracking events while offline
-            // killing for now.  we can't make much use of this.
-            // if( typeof _gaq !== "undefined" && !ANTAuth.isOffline ){
-                // _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
-            // }
+            $.ajax({
+                url: trackingUrl,
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: {
+                    json: JSON.stringify( params )
+                },
+                success : function(response)
+                {
+                }
+            });
         },
         helpers: {
             trackFBLoginAttempt: function(){
@@ -738,7 +685,7 @@ $(document).ready(function(){
                     $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
                 } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
                     jsonData = e.data.split(keys.registerEvent)[1];
-                    data = $.parseJSON(jsonData);
+                    data = JSON.parse(jsonData);
                     ANTAuth.events.trackEventToCloud(data);
                 }
             }
