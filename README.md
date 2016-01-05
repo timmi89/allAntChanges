@@ -22,7 +22,6 @@ docker-compose run --rm web pip install -r requirements.txt
 
 ## Setup DB
 ```sh
-docker-compose run --rm web ./manage.py sync_cassandra
 docker-compose run --rm web ./manage.py syncdb --all
 docker-compose run --rm web ./manage.py migrate --fake
 docker-compose run --rm web ./manage.py loaddata seed
