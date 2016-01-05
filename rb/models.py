@@ -112,6 +112,10 @@ class SocialUser(models.Model):
 
     default_tags = models.ManyToManyField(InteractionNode, through='UserDefaultTag')
 
+    @property
+    def email(self):
+        return self.user.email
+
     def admin_groups_unapproved(self):
         ga = GroupAdmin.objects.filter(social_user=self, approved=False)
         return Group.objects.filter(id__in=ga.values('group'))
@@ -284,6 +288,9 @@ class Group(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def admin_emails(self):
+        return [admin.email for admin in self.admins.all()]
 
     class Meta:
         ordering = ['short_name']

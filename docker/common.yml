@@ -10,5 +10,6 @@ python_environment:
     VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
     PYTHONPATH: '/code'
     PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
+    PYTHONDONTWRITEBYTECODE: 'true'
   volumes:
     - ..:/code/antenna

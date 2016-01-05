@@ -334,7 +334,7 @@ INSTALLED_APPS = [
     'rb',
     'chronos',
     'analytics',
-    'forecast.reporting',
+    'reporting',
     'storages',
     'gunicorn',
     'djcelery'
@@ -434,3 +434,6 @@ LOGGING = {
         }
     }
 }
+
+SOUTH_TESTS_MIGRATE = False
+SKIP_SOUTH_TESTS = True
