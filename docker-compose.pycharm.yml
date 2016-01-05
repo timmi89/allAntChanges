@@ -37,7 +37,7 @@ db:
     MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
     MYSQL_DATABASE: 'readrboard'
 cassandra:
-  image: cassandra:2
+  image: cassandra:2.2.3
   environment:
     CASSANDRA_CLUSTER_NAME: event_reports
 memcached:
