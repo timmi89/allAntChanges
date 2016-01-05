@@ -2,32 +2,29 @@ web:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'sleep 25 && python manage.py runserver 0.0.0.0:8081'
+  command: bash -c 'python manage.py runserver 0.0.0.0:8081'
   ports:
     - "8081:8081"
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 celeryd:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'sleep 25 && ./manage.py celeryd --loglevel=debug --concurrency=1'
+  command: bash -c './manage.py celeryd --loglevel=debug --concurrency=1'
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 celerybeat:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'sleep 25 && ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid'
+  command: bash -c './manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid'
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 db:
@@ -35,10 +32,6 @@ db:
   environment:
     MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
     MYSQL_DATABASE: 'readrboard'
-cassandra:
-  image: cassandra:2.2.3
-  environment:
-    CASSANDRA_CLUSTER_NAME: event_reports
 memcached:
   image: memcached
 rabbitmq:

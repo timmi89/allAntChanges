@@ -1,6 +1,5 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
-from cassandra import ConsistencyLevel
 import os
 
 if os.uname()[0] == 'Linux':
@@ -91,29 +90,6 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':      os.getenv('DATABASE_HOST', 'localhost'),
             'PORT':      os.getenv('DATABASE_PORT', '3306')
-        },
-        'cassandra': {
-            'ENGINE': 'django_cassandra_engine',
-            'NAME': 'event_reports',
-            'USER': 'root',  # TODO
-            'PASSWORD': '',  # TODO
-            'TEST_NAME': 'test_event_reports',
-            'HOST': os.getenv('CASSANDRA_HOST', '127.0.0.1'),
-            'OPTIONS': {
-                'replication': {
-                    'strategy_class': 'SimpleStrategy',
-                    'replication_factor': 1
-                },
-                'connection': {
-                    'consistency': ConsistencyLevel.ONE,
-                    'retry_connect': True,
-                    'lazy_connect': True,
-                },
-                'session': {
-                    'default_timeout': 10,
-                    'default_fetch_size': 10000,
-                }
-            }
         }
     }
 
@@ -205,30 +181,6 @@ else:
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
-            }
-        },
-        'cassandra': {
-            'ENGINE': 'django_cassandra_engine',
-            'NAME': 'event_reports',
-            'USER': 'root',  # TODO
-            'PASSWORD': '',  # TODO
-            'TEST_NAME': 'test_event_reports',
-            'HOST': '10.240.0.3,10.240.0.4,10.240.0.5',
-            'OPTIONS': {
-                'replication': {
-                    'strategy_class': 'SimpleStrategy',
-                    'replication_factor': 2
-                },
-                'connection': {
-                    'consistency': ConsistencyLevel.ONE,
-                    'retry_connect': True
-                    # + All connection options for cassandra.cluster.Cluster()
-                },
-                'session': {
-                    'default_timeout': 10,
-                    'default_fetch_size': 10000
-                    # + All options for cassandra.cluster.Session()
-                }
             }
         }
     }
@@ -378,7 +330,6 @@ SEEDERS = [
 ]
 
 INSTALLED_APPS = [
-    'django_cassandra_engine',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -390,7 +341,6 @@ INSTALLED_APPS = [
     'rb',
     'chronos',
     'analytics',
-    'forecast.cassandra',
     'forecast.reporting',
     'storages',
     'gunicorn',

@@ -3,7 +3,6 @@ python_environment:
   environment:
     DEBUG: 'true'
     DATABASE_HOST: 'db'
-    CASSANDRA_HOST: 'cassandra'
     MEMCACHED_HOST: 'memcached'
     VIRTUAL_HOST: 'antenna.docker'
     RABBITMQ_HOST: 'rabbitmq'

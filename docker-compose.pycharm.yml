@@ -8,7 +8,6 @@ web:
     - "2222:22"
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 celeryd:
@@ -18,7 +17,6 @@ celeryd:
   command: bash -c 'sleep 25 && ./manage.py celeryd --loglevel=debug --concurrency=1'
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 celerybeat:
@@ -28,7 +26,6 @@ celerybeat:
   command: bash -c 'sleep 25 && ./manage.py celerybeat --loglevel=debug'
   links:
     - db
-    - cassandra
     - memcached
     - rabbitmq
 db:
@@ -36,10 +33,6 @@ db:
   environment:
     MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
     MYSQL_DATABASE: 'readrboard'
-cassandra:
-  image: cassandra:2.2.3
-  environment:
-    CASSANDRA_CLUSTER_NAME: event_reports
 memcached:
   image: memcached
 rabbitmq:
