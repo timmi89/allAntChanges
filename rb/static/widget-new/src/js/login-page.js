@@ -24,13 +24,21 @@ function createPage(options) {
     XDMClient.setMessageHandler("close login panel", function() {
         retry();
     });
+    XDMClient.setMessageHandler("getUserLoginState", function() {
+        retry();
+    });
     ractive.on('back', function() {
-        XDMClient.setMessageHandler("close login panel");
+        XDMClient.setMessageHandler("close login panel", undefined);
+        XDMClient.setMessageHandler("getUserLoginState", undefined);
         goBack();
     });
     return {
         selector: pageSelector,
-        teardown: function() { ractive.teardown(); }
+        teardown: function() {
+            ractive.teardown();
+            XDMClient.setMessageHandler("close login panel", undefined);
+            XDMClient.setMessageHandler("getUserLoginState", undefined);
+        }
     };
 }
 

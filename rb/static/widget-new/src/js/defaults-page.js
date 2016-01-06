@@ -51,7 +51,7 @@ function createPage(options) {
         var key = (event.which !== undefined) ? event.which : event.keyCode;
         if (key == 13) { // Enter
             setTimeout(function() { // let the processing of the keyboard event finish before we show the page (otherwise, the confirmation page also receives the keystroke)
-                submitCustomReaction();
+                newCustomReaction();
             }, 0);
         } else if (key == 27) { // Escape
             $(event.target).val('');
