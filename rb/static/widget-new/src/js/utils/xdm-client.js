@@ -16,7 +16,9 @@ function xdmLoaded(data) {
 }
 
 function setMessageHandler(messageKey, callback) {
-    callback.persistent = true; // Set the flag which tells us that this isn't a typical one-time callback.
+    if (callback) {
+        callback.persistent = true; // Set the flag which tells us that this isn't a typical one-time callback.
+    }
     callbacks[messageKey] = callback;
 }
 

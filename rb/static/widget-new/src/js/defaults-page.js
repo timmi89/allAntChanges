@@ -94,9 +94,10 @@ function createPage(options) {
 
             function error(message) {
                 if (message.indexOf('sign in required for organic reactions') !== -1) {
-                    showLogin();
-                    // TODO add a callback for retry (will need a 'goback' function on reactions-widget which doesn't tear down the page)
-                    // TODO create a module with our error handlers?
+                    showLogin(function() {
+                        // Retry.
+                        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+                    });
                 } else if (message.indexOf('TODO blacklist content')) {
                     // TODO: show feedback about the problem
                 }
@@ -118,12 +119,6 @@ function createPage(options) {
         }
 
         function error(message) {
-            if (message.indexOf('sign in required for organic reactions') !== -1) {
-                showLogin();
-                //LoginDialog.openLoginDialog(groupSettings);
-                // TODO add a callback where a retry is attempted once.
-                // TODO create a module with our error handlers?
-            }
             // TODO handle any errors that occur posting a reaction
             console.log("error posting new reaction: " + message);
         }

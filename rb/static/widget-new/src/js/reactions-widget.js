@@ -139,7 +139,10 @@ function openReactionsWidget(options, elementOrCoords) {
             contentData: contentData,
             showConfirmation: showConfirmation,
             showProgress: showProgressPage,
-            showLogin: function() { showLoginPage(page.selector); }, // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
+            showLogin: function(retryCallback) {
+                // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
+                showLoginPage(page.selector, retryCallback);
+            },
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
@@ -212,7 +215,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     // Shows the login page, with a prompt to go Back to the page specified by the given page selector.
-    function showLoginPage(backPageSelector) {
+    function showLoginPage(backPageSelector, retryCallback) {
         setWindowTitle(Messages.getMessage('reactions-widget_title_signin'));
         var options = {
             showConfirmation: showConfirmation,
@@ -222,7 +225,8 @@ function openReactionsWidget(options, elementOrCoords) {
             goBack: function() {
                 setWindowTitle(Messages.getMessage('reactions-widget_title'));
                 goBackToPage(pages, backPageSelector, $rootElement);
-            }
+            },
+            retry: retryCallback
         };
         var page = LoginPage.createPage(options);
         pages.push(page);

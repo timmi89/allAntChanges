@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var URLs = require('./utils/urls');
+var XDMClient = require('./utils/xdm-client');
 var SVGs = require('./svgs');
 
 var pageSelector = '.antenna-login-page';
@@ -9,6 +10,7 @@ function createPage(options) {
     var groupSettings = options.groupSettings;
     var showConfirmation = options.showConfirmation;
     var goBack = options.goBack;
+    var retry = options.retry;
     var element = options.element;
     var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
@@ -22,7 +24,13 @@ function createPage(options) {
             left: SVGs.left
         }
     });
-    ractive.on('back', goBack);
+    XDMClient.setMessageHandler("close login panel", function() {
+        retry();
+    });
+    ractive.on('back', function() {
+        XDMClient.setMessageHandler("close login panel");
+        goBack();
+    });
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
