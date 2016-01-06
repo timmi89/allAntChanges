@@ -15,6 +15,8 @@ function createPage(options) {
     var groupSettings = options.groupSettings;
     var contentData = options.contentData;
     var showConfirmation = options.showConfirmation;
+    var showProgress = options.showProgress;
+    var showLogin = options.showLogin;
     var element = options.element;
     var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions);
     var $reactionsWindow = $(options.reactionsWindow);
@@ -58,15 +60,50 @@ function createPage(options) {
     }
 
     function newDefaultReaction(ractiveEvent) {
-        var defaultReactionData = ractiveEvent.context;
-        postNewReaction(defaultReactionData);
+        var reactionData = ractiveEvent.context;
+        var reactionProvider = createReactionProvider();
+        showConfirmation(reactionData, reactionProvider); // Optimistically show confirmation for default reactions because they should always be accepted.
+        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+
+        function success(reaction) {
+            reaction = PageData.registerReaction(reaction, containerData, pageData);
+            reactionProvider.reactionLoaded(reaction);
+            Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
+        }
+
+        function error(message) {
+            // TODO handle any errors that occur posting a reaction
+            console.log("error posting new reaction: " + message);
+        }
     }
 
     function submitCustomReaction() {
         var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
         if (body !== '') {
+            showProgress(); // Show progress for custom reactions because the server might reject them for a number of reasons
             var reactionData = { text: body };
-            postNewReaction(reactionData);
+            var reactionProvider = createReactionProvider();
+            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+
+            function success(reaction) {
+                showConfirmation(reactionData, reactionProvider); // TODO: review the reactionProvider in this case
+                reaction = PageData.registerReaction(reaction, containerData, pageData);
+                reactionProvider.reactionLoaded(reaction);
+                Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
+            }
+
+            function error(message) {
+                if (message.indexOf('sign in required for organic reactions') !== -1) {
+                    showLogin(function() {
+                        // Retry.
+                        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+                    });
+                } else if (message.indexOf('TODO blacklist content')) {
+                    // TODO: show feedback about the problem
+                }
+                // TODO handle any errors that occur posting a reaction
+                console.log("error posting new reaction: " + message);
+            }
         }
     }
 

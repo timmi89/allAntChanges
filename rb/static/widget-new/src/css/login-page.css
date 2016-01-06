@@ -1,0 +1,22 @@
+
+.antenna-login-back {
+    background-color: #bbbbbb;
+    color: #ffffff;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px 12px 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+.antenna-login-back:hover {
+    background-color: #999999;
+}
+
+.antenna-login-back .antenna-left-path {
+    fill: #ffffff;
+}
+
+.antenna-login-iframe {
+    width: 100%;
+    height: 250px;
+}

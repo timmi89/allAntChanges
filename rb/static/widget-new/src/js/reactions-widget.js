@@ -14,6 +14,7 @@ var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var Events = require('./events');
 var LocationsPage = require('./locations-page');
+var LoginPage = require('./login-page');
 var PageData = require('./page-data');
 var ReactionsPage = require('./reactions-page');
 var SVGs = require('./svgs');
@@ -51,7 +52,6 @@ function openReactionsWidget(options, elementOrCoords) {
     });
 
     ractive.on('close', closeAllWindows);
-    openInstances.push(ractive);
     var $rootElement = $(rootElement(ractive));
     Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     var pages = [];
@@ -75,7 +75,7 @@ function openReactionsWidget(options, elementOrCoords) {
         if (horizontalOverflow > 0) {
             coords.left = coords.left - horizontalOverflow;
         }
-        $rootElement.stop(true, true).addClass('open').css(coords);
+        $rootElement.stop(true, true).addClass('antenna-reactions-open').css(coords);
 
         var isShowReactions = startPage === PAGE_REACTIONS || (startPage === PAGE_AUTO && reactionsData.length > 0);
         if (isShowReactions) {
@@ -138,6 +138,11 @@ function openReactionsWidget(options, elementOrCoords) {
             containerData: containerData,
             contentData: contentData,
             showConfirmation: showConfirmation,
+            showProgress: showProgressPage,
+            showLogin: function(retryCallback) {
+                // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
+                showLoginPage(page.selector, retryCallback);
+            },
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
@@ -209,6 +214,29 @@ function openReactionsWidget(options, elementOrCoords) {
         });
     }
 
+    // Shows the login page, with a prompt to go Back to the page specified by the given page selector.
+    function showLoginPage(backPageSelector, retryCallback) {
+        setWindowTitle(Messages.getMessage('reactions-widget_title_signin'));
+        var options = {
+            showConfirmation: showConfirmation,
+            element: pageContainer(ractive),
+            reactionsWindow: $rootElement,
+            groupSettings: groupSettings,
+            goBack: function() {
+                setWindowTitle(Messages.getMessage('reactions-widget_title'));
+                goBackToPage(pages, backPageSelector, $rootElement);
+            },
+            retry: retryCallback
+        };
+        var page = LoginPage.createPage(options);
+        pages.push(page);
+
+        // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
+        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+            showPage(page.selector, $rootElement, true);
+        }, 1);
+    }
+
     function setWindowTitle(title) {
         $(ractive.find('.antenna-reactions-title')).html(title);
     }
@@ -266,10 +294,16 @@ function goBackToPage(pages, pageSelector, $rootElement) {
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
         $targetPage.css('z-index', pageZ++); // When the animation is done, make sure the current page has the highest z-index (just for consistency)
         // Teardown all other pages. They'll be re-created if necessary.
+        var remainingPages = [];
         for (var i = 0; i < pages.length - 1; i++) {
-            pages[i].teardown();
+            var page = pages[i];
+            if (page.selector === pageSelector) {
+                remainingPages.push(page);
+            } else {
+                page.teardown();
+            }
         }
-        pages.splice(0, pages.length - 1);
+        pages = remainingPages;
     });
     sizeBodyToFit($rootElement, $targetPage, true);
 }
@@ -349,16 +383,17 @@ function setupWindowClose(pages, ractive) {
 
         $rootElement.stop(true, true).fadeOut('fast', function() {
             $rootElement.css('display', ''); // Clear the display:none that fadeOut puts on the element
-            $rootElement.removeClass('open');
+            $rootElement.removeClass('antenna-reactions-open');
+
+            Range.clearHighlights();
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].teardown();
+            }
+            ractive.teardown();
         });
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         tapListener.teardown();
-        Range.clearHighlights();
-        for (var i = 0; i < pages.length; i++) {
-            pages[i].teardown();
-        }
-        ractive.teardown();
     });
 }
 

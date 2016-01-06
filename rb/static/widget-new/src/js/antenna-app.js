@@ -14,6 +14,12 @@ var XDMLoader = require('./utils/xdm-loader');
 
 window.AntennaApp = { // TODO flesh out our desired API
     reinitialize: Reinitializer.reinitializeAll
+    // teardown?
+    // trace?
+    // debug?
+    // pagedata?
+    // groupsettings?
+    // need to make sure others (e.g. malicious scripts) can't write data
 };
 
 // Step 1 - kick off the asynchronous loading of the Javascript and CSS we need.
