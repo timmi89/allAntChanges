@@ -35,9 +35,9 @@ function createPage(options) {
     });
 
     ractive.on('newreaction', newDefaultReaction);
+    ractive.on('newcustom', newCustomReaction);
     ractive.on('customfocus', customReactionFocus);
     ractive.on('customblur', customReactionBlur);
-    ractive.on('addcustom', submitCustomReaction);
     ractive.on('pagekeydown', keyboardInput);
     ractive.on('inputkeydown', customReactionInput);
 
@@ -78,7 +78,7 @@ function createPage(options) {
         }
     }
 
-    function submitCustomReaction() {
+    function newCustomReaction() {
         var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
         if (body !== '') {
             showProgress(); // Show progress for custom reactions because the server might reject them for a number of reasons
@@ -94,34 +94,21 @@ function createPage(options) {
             }
 
             function error(message) {
-                if (message.indexOf('sign in required for organic reactions') !== -1) {
-                    showLogin(function() {
-                        // Retry.
-                        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
-                    });
-                } else if (message.indexOf('Group has blocked this tag.') !== -1) {
-                    showBlocked();
-                } else {
-                    // TODO handle any errors that occur posting a reaction
-                    console.log("error posting new reaction: " + message);
-                }
+                var retry = function() {
+                    AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+                };
+                handleNewReactionError(message, retry);
             }
         }
     }
 
-    function postNewReaction(reactionData) {
-        var reactionProvider = createReactionProvider();
-        showConfirmation(reactionData, reactionProvider);
-        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
-
-        function success(reaction) {
-            reaction = PageData.registerReaction(reaction, containerData, pageData);
-            reactionProvider.reactionLoaded(reaction);
-            Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
-        }
-
-        function error(message) {
-            // TODO handle any errors that occur posting a reaction
+    function handleNewReactionError(message, retryCallback) {
+        if (message.indexOf('sign in required for organic reactions') !== -1) {
+            showLogin(retryCallback);
+        } else if (message.indexOf('Group has blocked this tag.') !== -1) {
+            showBlocked();
+        } else {
+            // TODO error handling
             console.log("error posting new reaction: " + message);
         }
     }

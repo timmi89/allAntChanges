@@ -16,9 +16,9 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
         // TODO extract the shape of this data and possibly the whole API call
         var data = {
             tag: {
-                body: reactionData.text
+                body: reactionData.text,
+                is_default: reactionData.isDefault !== undefined && reactionData.isDefault // false unless specified
             },
-            is_default: reactionData.isDefault !== undefined && reactionData.isDefault, // false unless specified
             hash: containerData.hash,
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
