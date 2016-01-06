@@ -17,6 +17,7 @@ function createPage(options) {
     var showConfirmation = options.showConfirmation;
     var showProgress = options.showProgress;
     var showLogin = options.showLogin;
+    var showBlocked = options.showBlocked;
     var element = options.element;
     var defaultLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(defaultReactions);
     var $reactionsWindow = $(options.reactionsWindow);
@@ -98,11 +99,12 @@ function createPage(options) {
                         // Retry.
                         AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
                     });
-                } else if (message.indexOf('TODO blacklist content')) {
-                    // TODO: show feedback about the problem
+                } else if (message.indexOf('Group has blocked this tag.') !== -1) {
+                    showBlocked();
+                } else {
+                    // TODO handle any errors that occur posting a reaction
+                    console.log("error posting new reaction: " + message);
                 }
-                // TODO handle any errors that occur posting a reaction
-                console.log("error posting new reaction: " + message);
             }
         }
     }

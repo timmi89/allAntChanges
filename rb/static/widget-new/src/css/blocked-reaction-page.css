@@ -1,0 +1,23 @@
+.antenna-blocked-back {
+    background-color: #bbbbbb;
+    color: #ffffff;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px 12px 2px;
+    text-transform: uppercase;
+}
+.antenna-blocked-back:hover {
+    background-color: #999999;
+}
+
+.antenna-blocked-back .antenna-left-path {
+    fill: #ffffff;
+}
+
+.antenna-blocked-body {
+    padding: 10px;
+}
+
+.antenna-blocked-message {
+    padding: 5px;
+}

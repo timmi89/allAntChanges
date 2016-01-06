@@ -6,9 +6,9 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 var Range = require('./utils/range');
 var TouchSupport = require('./utils/touch-support');
 var TransitionUtil = require('./utils/transition-util');
-var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
+var BlockedReactionPage = require('./blocked-reaction-page');
 var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
@@ -143,6 +143,10 @@ function openReactionsWidget(options, elementOrCoords) {
                 // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
                 showLoginPage(page.selector, retryCallback);
             },
+            showBlocked: function() {
+                // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
+                showBlockedReactionPage(page.selector);
+            },
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
@@ -218,9 +222,7 @@ function openReactionsWidget(options, elementOrCoords) {
     function showLoginPage(backPageSelector, retryCallback) {
         setWindowTitle(Messages.getMessage('reactions-widget_title_signin'));
         var options = {
-            showConfirmation: showConfirmation,
             element: pageContainer(ractive),
-            reactionsWindow: $rootElement,
             groupSettings: groupSettings,
             goBack: function() {
                 setWindowTitle(Messages.getMessage('reactions-widget_title'));
@@ -229,6 +231,25 @@ function openReactionsWidget(options, elementOrCoords) {
             retry: retryCallback
         };
         var page = LoginPage.createPage(options);
+        pages.push(page);
+
+        // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
+        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+            showPage(page.selector, $rootElement, true);
+        }, 1);
+    }
+
+    function showBlockedReactionPage(backPageSelector) {
+        setWindowTitle(Messages.getMessage('reactions-widget_title_blocked'));
+        var options = {
+            element: pageContainer(ractive),
+            groupSettings: groupSettings,
+            goBack: function() {
+                setWindowTitle(Messages.getMessage('reactions-widget_title'));
+                goBackToPage(pages, backPageSelector, $rootElement);
+            }
+        };
+        var page = BlockedReactionPage.createPage(options);
         pages.push(page);
 
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
