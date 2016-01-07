@@ -21,7 +21,7 @@ function setupCommentArea(reactionProvider, containerData, pageData, groupSettin
                 $(ractive.find('.antenna-comment-waiting')).stop().hide();
                 $(ractive.find('.antenna-comment-received')).fadeIn();
                 if (callback) {
-                    callback(comment, User.optimisticUser());
+                    callback(comment, User.optimisticCommentUser());
                 }
 
                 function error(message) {

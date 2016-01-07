@@ -1,13 +1,22 @@
-
+var CallbackSupport = require('./callback-support');
 var XdmLoader = require('./xdm-loader');
 
 // Register ourselves to hear messages
 window.addEventListener("message", receiveMessage, false);
 
-var callbacks = {
-    'xdm loaded': xdmLoaded
-};
-var cache = {};
+var responseHandlers = {};
+
+addResponseHandler('xdm loaded', xdmLoaded);
+
+function addResponseHandler(messageKey, callback) {
+    var handlers = getResponseHandlers(messageKey);
+    handlers.add(callback);
+}
+
+function removeResponseHandler(messageKey, callback) {
+    var handlers = getResponseHandlers(messageKey);
+    handlers.remove(callback);
+}
 
 var isXDMLoaded = false;
 // The initial message that XDM sends out when it loads
@@ -19,22 +28,25 @@ function setMessageHandler(messageKey, callback) {
     if (callback) {
         callback.persistent = true; // Set the flag which tells us that this isn't a typical one-time callback.
     }
-    callbacks[messageKey] = callback;
+    addResponseHandler(messageKey, callback);
 }
 
-function getUser(callback) {
-    var message = 'getUser';
-    postMessage(message, 'returning_user', success, validCacheEntry);
+function fetchUser(callback) {
+    postMessage('getUser', 'sendUser', success);
 
     function success(response) {
         var userInfo = response.detail;
         callback(userInfo);
     }
+}
 
-    function validCacheEntry(response) {
-        var userInfo = response.detail;
-        return userInfo && userInfo.ant_token && userInfo.user_id; // TODO && userInfo.user_type && social_user, etc.?
+function getResponseHandlers(messageKey) {
+    var handlers = responseHandlers[messageKey];
+    if (!handlers) {
+        handlers = CallbackSupport.create();
+        responseHandlers[messageKey] = handlers;
     }
+    return handlers;
 }
 
 function receiveMessage(event) {
@@ -47,45 +59,40 @@ function receiveMessage(event) {
         // fires out to all windows before being asked. Currently, it's more than "xdm loaded". Why?
         //var sourceWindow = event.source;
 
-        var callbackKey = response.key;
-        cache[callbackKey] = response;
-        var callback = callbacks[callbackKey];
-        if (callback) {
+        var messageKey = response.key;
+        var handlers = getResponseHandlers(messageKey);
+        var callbacks = handlers.get();
+        for (var i = 0; i < callbacks.length; i++) {
+            var callback = callbacks[i];
             callback(response);
-            if (!callbacks[callbackKey].persistent) {
-                delete callbacks[callbackKey];
+            if (!callback.persistent) {
+                removeResponseHandler(messageKey, callback);
             }
         }
     }
 }
 
-function postMessage(message, callbackKey, callback, validCacheEntry) {
+function postMessage(sendKey, responseKey, callback) {
     if (isXDMLoaded) {
-        var targetOrigin = XdmLoader.ORIGIN;
-        var cachedResponse = cache[callbackKey];
-        if (cachedResponse !== undefined && validCacheEntry && validCacheEntry(cache[callbackKey])) {
-            callback(cache[callbackKey]);
-        } else {
-            var xdmFrame = getXDMFrame();
-            if (xdmFrame) {
-                callbacks[callbackKey] = callback;
-                xdmFrame.postMessage(message, targetOrigin);
-            }
+        var xdmFrame = getXDMFrame();
+        if (xdmFrame) {
+            addResponseHandler(responseKey, callback);
+            xdmFrame.postMessage(sendKey, XdmLoader.ORIGIN);
         }
     } else {
-        queueMessage(message, callbackKey, callback, validCacheEntry);
+        queueMessage(sendKey, responseKey, callback);
     }
 }
 
 var messageQueue = [];
 var messageQueueTimer;
 
-function queueMessage(message, callbackKey, callback, validCacheEntry) {
+function queueMessage(sendKey, responseKey, callback) {
     // TODO: Review this idea. The main message we really need to queue up is the getUser request as part of the "group settings loaded"
     // event which fires very early (possibly "page data loaded" too). But what about the rest of the widget? Should we even show
     // the reaction window if the XDM frame isn't ready? Or should the widget wait to become visible until XDM is ready like the
     // way it waits for page data to load?
-    messageQueue.push({message: message, callbackKey: callbackKey, callback: callback, validCacheEntry: validCacheEntry});
+    messageQueue.push({sendKey: sendKey, responseKey: responseKey, callback: callback});
     if (!messageQueueTimer) {
         // Start the wait...
         var stopTime = Date.now() + 10000; // Give up after 10 seconds
@@ -97,7 +104,7 @@ function queueMessage(message, callbackKey, callback, validCacheEntry) {
                 // TODO: Consider the timing issue where messages could sneak in and be processed while this loop is sleeping.
                 for (var i = 0; i < messageQueue.length; i++) {
                     var dequeued = messageQueue[i];
-                    postMessage(dequeued.message, dequeued.callbackKey, dequeued.callback, dequeued.validCacheEntry);
+                    postMessage(dequeued.sendKey, dequeued.responseKey, dequeued.callback);
                 }
                 messageQueue = [];
             }
@@ -111,6 +118,8 @@ function getXDMFrame() {
 }
 
 module.exports = {
-    getUser: getUser,
-    setMessageHandler: setMessageHandler
+    fetchUser: fetchUser,
+    setMessageHandler: setMessageHandler,
+    addResponseHandler: addResponseHandler,
+    removeResponseHandler: removeResponseHandler
 };

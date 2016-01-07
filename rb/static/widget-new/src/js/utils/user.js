@@ -1,4 +1,18 @@
 var AppMode = require('./app-mode');
+var XDMClient = require('./xdm-client');
+
+var cachedUserInfo;
+
+function fetchUser(callback) {
+    XDMClient.fetchUser(function (userInfo) {
+        cachedUserInfo = userInfo;
+        callback(userInfo);
+    });
+}
+
+function cachedUser(callback) {
+    callback(cachedUserInfo);
+}
 
 // TODO: Figure out how many different formats of user data we have and either unify them or provide clear
 //       API here to translate each variation into something standard for the client.
@@ -23,11 +37,11 @@ function userFromCommentJSON(jsonUser, socialUser) { // This format works for th
 
 
 // TODO: Revisit the user that we pass back for new comments. Options are:
-//       1. Use the logged in user, assuming we already have one in hand via XDM.
+//       1. Use the logged in user, assuming the cached user has social_user info
 //       2. Use a generic "you" representation like we're doing now.
 //       3. Don't show any indication of the user. Just show the comment.
 //       For now, this is just giving us some notion of user without a round trip.
-function optimisticUser() {
+function optimisticCommentUser() {
     var user = {
         name: 'You',
         imageURL: anonymousImageURL()
@@ -41,5 +55,7 @@ function anonymousImageURL() {
 
 module.exports = {
     fromCommentJSON: userFromCommentJSON,
-    optimisticUser: optimisticUser
+    optimisticCommentUser: optimisticCommentUser,
+    fetchUser: fetchUser,
+    cachedUser: cachedUser
 };

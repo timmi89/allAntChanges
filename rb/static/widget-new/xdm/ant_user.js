@@ -202,21 +202,23 @@ window.ANTAuth = {
         };
         window.parent.postMessage(message, qs_args.parentUrl);
     },
+    sendUser: function(messageKey) {
+        var detail = {
+            first_name : ANTAuth.ant_user.first_name,
+            full_name : ANTAuth.ant_user.full_name,
+            img_url : ANTAuth.ant_user.img_url,
+            user_id : ANTAuth.ant_user.user_id,
+            ant_token : ANTAuth.ant_user.ant_token,
+            user_type : ANTAuth.ant_user.user_type
+        };
+        ANTAuth.notifyParent("sendUser", detail);
+    },
     getUser: function() {
         ANTAuth.readUserCookie();
         if ( !ANTAuth.ant_user.ant_token ) {
-            // user is null.  get a tempUser.
             ANTAuth.createTempUser();
-        } else if ( ANTAuth.ant_user.ant_token ) {  // temp or non-temp.  doesn't matter.
-            var detail = {
-                first_name : ANTAuth.ant_user.first_name,
-                full_name : ANTAuth.ant_user.full_name,
-                img_url : ANTAuth.ant_user.img_url,
-                user_id : ANTAuth.ant_user.user_id,
-                ant_token : ANTAuth.ant_user.ant_token,
-                user_boards : ANTAuth.ant_user.user_boards
-            };
-            ANTAuth.notifyParent("returning_user", detail);
+        } else {
+            ANTAuth.sendUser();
         }
     },
     getAntToken: function(fb_response, callback ) {
@@ -263,8 +265,7 @@ window.ANTAuth = {
         // if not calling from the iframe, don't create a temp user right now.
         if (parent.location == window.location) return;
 
-        if ( (!ANTAuth.ant_user.user_id && !ANTAuth.ant_user.ant_token) ||  // no user data
-             ( ANTAuth.ant_user.user_id && ANTAuth.ant_user.ant_token && !ANTAuth.ant_user.temp_user) ) { // we have user data but believe it is wrong
+        if (!ANTAuth.ant_user.user_id || !ANTAuth.ant_user.ant_token || !ANTAuth.ant_user.temp_user) {
             var sendData = {
                 group_id : qs_args.group_id
             };
@@ -276,30 +277,17 @@ window.ANTAuth = {
                 data: {
                     json: JSON.stringify( sendData )
                 },
-                success: function(response){
-                    // store the data here and in a cookie
-                    ANTAuth.setUser(response);
-                    var detail = {
-                        first_name : ANTAuth.ant_user.first_name,
-                        full_name : ANTAuth.ant_user.full_name,
-                        img_url : ANTAuth.ant_user.img_url,
-                        user_id : ANTAuth.ant_user.user_id,
-                        ant_token : ANTAuth.ant_user.ant_token,
-                        user_boards : ANTAuth.ant_user.user_boards
-                    };
-                    ANTAuth.notifyParent("got_temp_user", detail);
+                success: function(response) {
+                    if (!ANTAuth.ant_user.user_id || !ANTAuth.ant_user.ant_token || !ANTAuth.ant_user.temp_user) {
+                        // It's possible that multiple of these ajax requests got fired in parallel. Whichever one
+                        // comes back first wins.
+                        ANTAuth.setUser(response);
+                    }
+                    ANTAuth.sendUser();
                 }
             });
         } else {
-            var detail = {
-                first_name : ANTAuth.ant_user.first_name,
-                full_name : ANTAuth.ant_user.full_name,
-                img_url : ANTAuth.ant_user.img_url,
-                user_id : ANTAuth.ant_user.user_id,
-                ant_token : ANTAuth.ant_user.ant_token,
-                user_boards : ANTAuth.ant_user.user_boards
-            };
-            ANTAuth.notifyParent("got_temp_user", detail);
+            ANTAuth.sendUser();
         }
     },
     reauthUser : function(args) {
@@ -309,7 +297,7 @@ window.ANTAuth = {
                 FB.getLoginStatus(function(response) {
                     if (response && response.status == "connected") {
                         ANTAuth.killUser( function(response) {
-                            ANTAuth.getAntToken(response); // function exists in ant_user.js
+                            ANTAuth.getAntToken(response);
                         }, response);
                     } else {
                         ANTAuth.notifyParent("fb_user_needs_to_login");
@@ -317,7 +305,7 @@ window.ANTAuth = {
                 });
             } else {
                 ANTAuth.killUser( function(response) {
-                    ANTAuth.getAntToken(response); // function exists in ant_user.js
+                    ANTAuth.getAntToken(response);
                 });
             }
         } else {
@@ -523,15 +511,7 @@ window.ANTAuth = {
                 }
             }
         } else {
-            var detail = {
-                first_name : ANTAuth.ant_user.first_name,
-                full_name : ANTAuth.ant_user.full_name,
-                img_url : ANTAuth.ant_user.img_url,
-                user_id : ANTAuth.ant_user.user_id,
-                ant_token : ANTAuth.ant_user.ant_token,
-                user_type : ANTAuth.ant_user.user_type
-            };
-            ANTAuth.notifyParent("returning_user", detail);
+            ANTAuth.sendUser();
         }
     },
     killUser : function(callback, callback_args) {

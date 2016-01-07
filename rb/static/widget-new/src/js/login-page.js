@@ -21,25 +21,33 @@ function createPage(options) {
             left: SVGs.left
         }
     });
-    XDMClient.setMessageHandler("close login panel", function() {
-        retry();
-    });
-    XDMClient.setMessageHandler("getUserLoginState", function() {
-        retry();
-    });
+    addResponseHandlers();
     ractive.on('back', function() {
-        XDMClient.setMessageHandler("close login panel", undefined);
-        XDMClient.setMessageHandler("getUserLoginState", undefined);
+        clearResponseHandlers();
         goBack();
     });
     return {
         selector: pageSelector,
         teardown: function() {
+            clearResponseHandlers();
             ractive.teardown();
-            XDMClient.setMessageHandler("close login panel", undefined);
-            XDMClient.setMessageHandler("getUserLoginState", undefined);
         }
     };
+
+    function addResponseHandlers() {
+        XDMClient.addResponseHandler("close login panel", doRetry);
+        XDMClient.addResponseHandler("getUserLoginState", doRetry);
+    }
+
+    function clearResponseHandlers() {
+        XDMClient.removeResponseHandler("close login panel", doRetry);
+        XDMClient.removeResponseHandler("getUserLoginState", doRetry);
+    }
+
+    function doRetry() {
+        clearResponseHandlers();
+        retry();
+    }
 }
 
 function computeLoginPageUrl(groupSettings) {

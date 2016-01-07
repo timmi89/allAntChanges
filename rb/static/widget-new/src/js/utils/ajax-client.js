@@ -2,7 +2,6 @@
 
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./app-mode');
-var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 var User = require('./user');
 
@@ -12,7 +11,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
     var contentType = contentData.type;
     var contentLocation = contentData.location;
     var contentDimensions = contentData.dimensions;
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         var data = {
             tag: {
@@ -46,7 +45,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
 }
 
 function postPlusOne(reactionData, containerData, pageData, success, error) {
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
@@ -91,7 +90,7 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
 
 function postComment(comment, reactionData, containerData, pageData, success, error) {
     // TODO: refactor the post functions to eliminate all the copied code
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
@@ -196,7 +195,7 @@ function reactionFromResponse(response, contentLocation) {
 }
 
 function getComments(reaction, callback) {
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         var data = {
             reaction_id: reaction.parentID,
             user_id: userInfo.user_id,
@@ -213,7 +212,7 @@ function getComments(reaction, callback) {
 
 function fetchLocationDetails(reactionLocationData, pageData, callback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         var data = {
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
@@ -244,7 +243,7 @@ function commentsFromResponse(jsonComments) {
 }
 
 function postShareReaction(reactionData, containerData, pageData, success, failure) {
-    XDMClient.getUser(function(userInfo) {
+    User.fetchUser(function(userInfo) {
         var contentData = reactionData.content;
         var data = {
             tag: { // TODO: why does the ShareHandler create a reaction if it doesn't exist? How can you share a reaction that hasn't happened?
@@ -280,7 +279,6 @@ function postEvent(event) {
         console.log('ANTENNA Posting event: ' + JSON.stringify(event));
     }
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
-        // TODO: error handling
         // TODO: error handling
         console.log('An error occurred posting event: ', error);
     });

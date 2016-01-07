@@ -1,6 +1,6 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
-var XDMClient = require('./utils/xdm-client');
+var User = require('./utils/user');
 
 function postGroupSettingsLoaded(groupSettings) {
     var event = createEvent(eventTypes.scriptLoad, '', groupSettings);
@@ -129,8 +129,10 @@ function createEvent(eventType, eventValue, groupSettings) {
 }
 
 function postEvent(event) {
-    XDMClient.getUser(function(userInfo) {
-        event[attributes.userId] = userInfo.user_id;
+    User.cachedUser(function(userInfo) { // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
+        if (userInfo) {
+            event[attributes.userId] = userInfo.user_id;
+        }
         fillInMissingProperties(event);
         // Send the event to BigQuery
         AjaxClient.postEvent(event);
