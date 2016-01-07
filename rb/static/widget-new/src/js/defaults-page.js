@@ -2,6 +2,7 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var AjaxClient = require('./utils/ajax-client');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
+var User = require('./utils/user');
 
 var Events = require('./events');
 var PageData = require('./page-data');
@@ -85,20 +86,20 @@ function createPage(options) {
             var reactionData = { text: body };
             var reactionProvider = createReactionProvider();
             AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+        }
 
-            function success(reaction) {
-                showConfirmation(reactionData, reactionProvider); // TODO: review the reactionProvider in this case
-                reaction = PageData.registerReaction(reaction, containerData, pageData);
-                reactionProvider.reactionLoaded(reaction);
-                Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
-            }
+        function success(reaction) {
+            showConfirmation(reactionData, reactionProvider); // TODO: review the reactionProvider in this case
+            reaction = PageData.registerReaction(reaction, containerData, pageData);
+            reactionProvider.reactionLoaded(reaction);
+            Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
+        }
 
-            function error(message) {
-                var retry = function() {
-                    AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
-                };
-                handleNewReactionError(message, retry);
-            }
+        function error(message) {
+            var retry = function() {
+                AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+            };
+            handleNewReactionError(message, retry);
         }
     }
 
@@ -107,10 +108,31 @@ function createPage(options) {
             showLogin(retryCallback);
         } else if (message.indexOf('Group has blocked this tag.') !== -1) {
             showBlocked();
+        } else if (isTokenError(message)) {
+            User.reAuthorizeUser(function(hasNewToken) {
+                if (hasNewToken) {
+                    retryCallback();
+                } else {
+                    showLogin(retryCallback);
+                }
+            });
         } else {
             // TODO error handling
+            // TODO: show some kind of generic error page
             console.log("error posting new reaction: " + message);
         }
+    }
+
+    function isTokenError(message) {
+        switch(message) {
+            case "Token was invalid":
+            case "Facebook token expired":
+            case "FB graph error - token invalid":
+            case "Social Auth does not exist for user":
+            case "Data to create token is missing":
+                return true;
+        }
+        return false;
     }
 
     function keyboardInput(ractiveEvent) {

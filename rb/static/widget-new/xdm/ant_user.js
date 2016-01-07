@@ -202,14 +202,15 @@ window.ANTAuth = {
         };
         window.parent.postMessage(message, qs_args.parentUrl);
     },
-    sendUser: function(messageKey) {
+    sendUser: function() {
+        var user = ANTAuth.ant_user || {};
         var detail = {
-            first_name : ANTAuth.ant_user.first_name,
-            full_name : ANTAuth.ant_user.full_name,
-            img_url : ANTAuth.ant_user.img_url,
-            user_id : ANTAuth.ant_user.user_id,
-            ant_token : ANTAuth.ant_user.ant_token,
-            user_type : ANTAuth.ant_user.user_type
+            first_name: user.first_name,
+            full_name: user.full_name,
+            img_url: user.img_url,
+            user_id: user.user_id,
+            ant_token: user.ant_token,
+            user_type: user.user_type
         };
         ANTAuth.notifyParent("sendUser", detail);
     },
@@ -222,42 +223,40 @@ window.ANTAuth = {
         }
     },
     getAntToken: function(fb_response, callback ) {
-        // if ( $.cookie('user_type') == "facebook" ) {
-            if ( fb_response ) {
-                var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
-                var sendData = {
-                    fb: fb_session,
-                    group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
-                    user_id: ANTAuth.ant_user.user_id, // might be temp, might be the ID of a valid FB-created user
-                    ant_token: ANTAuth.ant_user.ant_token
-                };
+        if (fb_response) {
+            var fb_session = fb_response.authResponse ? fb_response.authResponse : fb_response;
+            var sendData = {
+                fb: fb_session,
+                group_id: (qs_args.group_id) ? qs_args.group_id : 1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
+                user_id: ANTAuth.ant_user.user_id, // might be temp, might be the ID of a valid FB-created user
+                ant_token: ANTAuth.ant_user.ant_token
+            };
 
-                $.ajax({
-                    url: "/api/fb/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: {
-                        json: JSON.stringify( sendData )
-                    },
-                    success: function(response){
-                        if ( response.status == "fail" ) {
-                            ANTAuth.createTempUser();
-                        } else {
-                            ANTAuth.setUser(response);
-                            ANTAuth.returnUser();
-                            ANTAuth.notifyParent("close login panel");
-                            if (callback) callback();
-                        }
-                    },
-                    error: function(response) {
+            $.ajax({
+                url: "/api/fb/",
+                type: "get",
+                contentType: "application/json",
+                dataType: "jsonp",
+                data: {
+                    json: JSON.stringify( sendData )
+                },
+                success: function(response){
+                    if ( response.status == "fail" ) {
                         ANTAuth.createTempUser();
+                    } else {
+                        ANTAuth.setUser(response);
+                        ANTAuth.returnUser();
+                        ANTAuth.notifyParent("close login panel");
+                        if (callback) callback();
                     }
-                });
-            } else {
-                ANTAuth.doFBLogin();
-            }
-        // }
+                },
+                error: function(response) {
+                    ANTAuth.createTempUser();
+                }
+            });
+        } else {
+            ANTAuth.doFBLogin();
+        }
     },
     // simply tell the widget what we currently know about the user
     // optionally create a temp user
@@ -296,20 +295,21 @@ window.ANTAuth = {
             if ( !FB.getAuthResponse() ) {
                 FB.getLoginStatus(function(response) {
                     if (response && response.status == "connected") {
-                        ANTAuth.killUser( function(response) {
+                        ANTAuth.killUser(function() {
                             ANTAuth.getAntToken(response);
-                        }, response);
+                        });
                     } else {
-                        ANTAuth.notifyParent("fb_user_needs_to_login");
+                        ANTAuth.returnUser();
                     }
                 });
             } else {
-                ANTAuth.killUser( function(response) {
-                    ANTAuth.getAntToken(response);
+                ANTAuth.killUser( function() {
+                    ANTAuth.getAntToken();
                 });
             }
         } else {
             // antenna user.  we don't have a reauth for ANT users yet.  but widget should throw the login panel.
+            ANTAuth.returnUser();
         }
     },
     quickFixAjaxLogout: function(){
@@ -514,9 +514,8 @@ window.ANTAuth = {
             ANTAuth.sendUser();
         }
     },
-    killUser : function(callback, callback_args) {
-        // if ( ANTAuth.ant_user && ANTAuth.ant_user.user_id && ANTAuth.ant_user.ant_token && ANTAuth.ant_user.first_name ) {
-        if ( ANTAuth.ant_user && ANTAuth.ant_user.temp_user == "false" ) {
+    killUser : function(callback) {
+        if ( ANTAuth.ant_user && !ANTAuth.ant_user.temp_user ) {
             // deauth a full user
             var sendData = {
                 user_id : ANTAuth.ant_user.user_id,
@@ -527,32 +526,19 @@ window.ANTAuth = {
                 url: "/api/deauthorize/",
                 type: "get",
                 contentType: "application/json",
-                context: {callback_args:callback_args},
                 dataType: "jsonp",
                 data: {
                     json: JSON.stringify( sendData )
                 },
-                success: function(response){
-          
+                success: function(response) {
                     ANTAuth.clearSessionCookies();
-
                     ANTAuth.ant_user = {};
-                    if (callback && this.callback_args) {
-                        callback(this.callback_args);
-                    } else if (callback) {
-                        callback();
-                    }
+                    callback();
                 }
             });
         } else {
-            // just a temp user
-            ANTAuth.clearSessionCookies();
-          
-            if (callback && callback_args) {
-                callback(callback_args);
-            } else if (callback) {
-                callback();
-            }
+            ANTAuth.clearSessionCookies(); // Throw out the temp user if we have one.
+            callback();
         }
     },
 

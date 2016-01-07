@@ -3,6 +3,7 @@ var XDMClient = require('./xdm-client');
 
 var cachedUserInfo;
 
+// Fetch the logged in user. Will trigger a network request to create a temporary user if needed.
 function fetchUser(callback) {
     XDMClient.fetchUser(function (userInfo) {
         cachedUserInfo = userInfo;
@@ -10,8 +11,19 @@ function fetchUser(callback) {
     });
 }
 
+// Returns the logged-in user, if we already have one. Will not trigger a network request.
 function cachedUser(callback) {
     callback(cachedUserInfo);
+}
+
+// Attempts to create a new authorization token for the logged-in user.
+function reAuthorizeUser(callback) {
+    var oldToken = cachedUserInfo ? cachedUserInfo.ant_token : undefined;
+    XDMClient.reAuthorizeUser(function (userInfo) {
+        cachedUserInfo = userInfo;
+        var hasNewToken = userInfo && userInfo.ant_token && userInfo.ant_token !== oldToken;
+        callback(hasNewToken);
+    });
 }
 
 // TODO: Figure out how many different formats of user data we have and either unify them or provide clear
@@ -57,5 +69,6 @@ module.exports = {
     fromCommentJSON: userFromCommentJSON,
     optimisticCommentUser: optimisticCommentUser,
     fetchUser: fetchUser,
-    cachedUser: cachedUser
+    cachedUser: cachedUser,
+    reAuthorizeUser: reAuthorizeUser
 };

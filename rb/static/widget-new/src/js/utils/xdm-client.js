@@ -40,6 +40,15 @@ function fetchUser(callback) {
     }
 }
 
+function reAuthorizeUser(callback) {
+    postMessage('reauthUser', 'sendUser', success);
+
+    function success(response) {
+        var userInfo = response.detail;
+        callback(userInfo);
+    }
+}
+
 function getResponseHandlers(messageKey) {
     var handlers = responseHandlers[messageKey];
     if (!handlers) {
@@ -119,6 +128,7 @@ function getXDMFrame() {
 
 module.exports = {
     fetchUser: fetchUser,
+    reAuthorizeUser: reAuthorizeUser,
     setMessageHandler: setMessageHandler,
     addResponseHandler: addResponseHandler,
     removeResponseHandler: removeResponseHandler
