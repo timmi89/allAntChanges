@@ -155,6 +155,9 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
             reactionData.count = reactionData.count + 1;
             containerData.reactionTotal = containerData.reactionTotal + 1;
             pageData.summaryTotal = pageData.summaryTotal + 1;
+            containerData.reactions.sort(function(a, b) {
+                return b.count - a.count;
+            });
         }
         callback(reactionData);
     }

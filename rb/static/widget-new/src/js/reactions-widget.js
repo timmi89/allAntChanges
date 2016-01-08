@@ -6,6 +6,7 @@ var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) 
 var Range = require('./utils/range');
 var TouchSupport = require('./utils/touch-support');
 var TransitionUtil = require('./utils/transition-util');
+var User = require('./utils/user');
 var WidgetBucket = require('./utils/widget-bucket');
 
 var BlockedReactionPage = require('./blocked-reaction-page');
@@ -102,11 +103,11 @@ function openReactionsWidget(options, elementOrCoords) {
             groupSettings: groupSettings,
             containerData: containerData,
             containerElement: containerElement,
-            contentData: contentData,
             showConfirmation: showConfirmation,
             showDefaults: function() { showDefaultReactionsPage(true) },
             showComments: showComments,
             showLocations: showLocations,
+            handleReactionError: handleReactionError,
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
@@ -139,14 +140,7 @@ function openReactionsWidget(options, elementOrCoords) {
             contentData: contentData,
             showConfirmation: showConfirmation,
             showProgress: showProgressPage,
-            showLogin: function(retryCallback) {
-                // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
-                showLoginPage(page.selector, retryCallback);
-            },
-            showBlocked: function() {
-                // Beware: this function references the 'page' variable which isn't set until after DefaultsPage.create() returns.
-                showBlockedReactionPage(page.selector);
-            },
+            handleReactionError: handleReactionError,
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
@@ -256,6 +250,37 @@ function openReactionsWidget(options, elementOrCoords) {
         setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
             showPage(page.selector, $rootElement, true);
         }, 1);
+    }
+
+    function handleReactionError(message, retryCallback, backPageSelector) {
+        if (message.indexOf('sign in required for organic reactions') !== -1) {
+            showLoginPage(backPageSelector, retryCallback);
+        } else if (message.indexOf('Group has blocked this tag.') !== -1) {
+            showBlockedReactionPage(backPageSelector);
+        } else if (isTokenError(message)) {
+            User.reAuthorizeUser(function(hasNewToken) {
+                if (hasNewToken) {
+                    retryCallback();
+                } else {
+                    showLoginPage(backPageSelector, retryCallback);
+                }
+            });
+        } else {
+            // TODO: show some kind of generic error page
+            console.log("error posting reaction: " + message);
+        }
+
+        function isTokenError(message) {
+            switch(message) {
+                case "Token was invalid":
+                case "Facebook token expired":
+                case "FB graph error - token invalid":
+                case "Social Auth does not exist for user":
+                case "Data to create token is missing":
+                    return true;
+            }
+            return false;
+        }
     }
 
     function setWindowTitle(title) {
