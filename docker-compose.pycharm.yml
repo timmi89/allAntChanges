@@ -1,4 +1,4 @@
-web:
+web-pycharm:
   extends:
     file: ./docker/common.yml
     service: python_environment
