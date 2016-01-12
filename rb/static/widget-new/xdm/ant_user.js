@@ -626,7 +626,7 @@ $(document).ready(function(){
         window.addEventListener("message", receiveMessage, false);
 
         function receiveMessage(e) {
-            if (e.origin === qs_args.parentHost) {
+            if (e.origin === qs_args.parentHost && typeof e.data === 'string') {
                 // TODO: Review. The rest of this is original code
                 var keys = {
                     registerEvent: "register-event::"
