@@ -387,8 +387,8 @@ function computeContentData($element, groupSettings) {
         case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
             var imageDimensions = {
-                height: $element.height(), // TODO: review how we get the image dimensions
-                width: $element.width()
+                height: parseInt($element.attr('height')) || $element.height() || 0,
+                width: parseInt($element.attr('width')) || $element.width() || 0
             };
             contentData = {
                 type: 'img',
@@ -399,8 +399,8 @@ function computeContentData($element, groupSettings) {
         case TYPE_MEDIA:
             var mediaUrl = URLs.computeMediaUrl($element, groupSettings);
             var mediaDimensions = {
-                height: $element.height(), // TODO: review how we get the media dimensions
-                width: $element.width()
+                height: parseInt($element.attr('height')) || $element.height() || 0,
+                width: parseInt($element.attr('width')) || $element.width() || 0
             };
             contentData = {
                 type: 'media',
