@@ -7,7 +7,7 @@ var highlightedRanges = [];
 var classApplier;
 function getClassApplier() {
     if (!classApplier) {
-        classApplier = rangy.createClassApplier(highlightClass);
+        classApplier = rangy.createClassApplier(highlightClass, { elementTagName: 'ins' });
     }
     return classApplier;
 }
