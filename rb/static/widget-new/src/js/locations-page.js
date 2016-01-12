@@ -42,24 +42,25 @@ function createPage(options) {
     };
 
 
-    function revealContent(event) {
-        var locationData = event.context;
+    function revealContent(ractiveEvent) {
+        var locationData = ractiveEvent.context;
         var element = HashedElements.getElement(locationData.containerHash, pageData.pageHash);
         if (element) {
+            var event = ractiveEvent.original;
+            event.preventDefault();
+            event.stopPropagation();
             closeWindow();
-            setTimeout(function() { // Let the processing of this click event finish before we add another click handler so the new handler isn't immediately triggered
-                var targetScrollTop = $(element).offset().top - 20; // TODO: review the exact location
-                $('body').animate({scrollTop: targetScrollTop});
-                if (locationData.kind === 'txt') { // TODO: something better than a string compare. fix this along with the same issue in page-data
-                    Range.highlight(element.get(0), locationData.location);
-                    $(document).on('click.antenna', function() {
-                        Range.clearHighlights();
-                        $(document).off('click.antenna');
-                    });
-                }
-                var containerData = PageData.getContainerData(pageData, locationData.containerHash);
-                Events.postContentViewed(pageData, containerData,locationData, groupSettings);
-            }, 0);
+            var targetScrollTop = $(element).offset().top - 20; // TODO: review the exact location
+            $('body').animate({scrollTop: targetScrollTop});
+            if (locationData.kind === 'txt') { // TODO: something better than a string compare. fix this along with the same issue in page-data
+                Range.highlight(element.get(0), locationData.location);
+                $(document).on('click.antenna', function() {
+                    Range.clearHighlights();
+                    $(document).off('click.antenna');
+                });
+            }
+            var containerData = PageData.getContainerData(pageData, locationData.containerHash);
+            Events.postContentViewed(pageData, containerData,locationData, groupSettings);
         }
     }
 }
