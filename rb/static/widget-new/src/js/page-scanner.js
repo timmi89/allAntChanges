@@ -367,7 +367,7 @@ function computeHash($element, pageData, groupSettings) {
         case TYPE_TEXT:
             hash = Hash.hashText($element);
             var increment = 1;
-            while (HashedElements.getElement(hash, pageData.pageHash)) {
+            while (hash && HashedElements.getElement(hash, pageData.pageHash)) {
                 hash = Hash.hashText($element, increment++);
             }
             break;
