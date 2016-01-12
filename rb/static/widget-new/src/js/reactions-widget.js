@@ -432,12 +432,12 @@ function setupWindowClose(pages, ractive) {
             $rootElement.css('display', ''); // Clear the display:none that fadeOut puts on the element
             $rootElement.removeClass('antenna-reactions-open');
 
-            Range.clearHighlights();
             for (var i = 0; i < pages.length; i++) {
                 pages[i].teardown();
             }
             ractive.teardown();
         });
+        Range.clearHighlights();
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         tapListener.teardown();
