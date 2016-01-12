@@ -47,6 +47,7 @@ function createIndicatorWidget(options) {
     var $rootElement = $(rootElement(ractive));
     TouchSupport.setupTap($rootElement.get(0), function(event) {
         event.preventDefault();
+        event.stopPropagation();
         openReactionsWindow(reactionWidgetOptions, ractive)
     });
     $rootElement.on('mouseenter.antenna', function(event) {

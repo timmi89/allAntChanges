@@ -53,7 +53,8 @@ function createIndicatorWidget(options) {
     var hoverTimeout;
     var tapSupport = TouchSupport.setupTap($rootElement.get(0), function(event) {
         event.preventDefault();
-        openReactionsWindow(reactionWidgetOptions, ractive)
+        event.stopPropagation();
+        openReactionsWindow(reactionWidgetOptions, ractive);
     });
     $rootElement.on('mouseenter.antenna', function(event) {
         if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF

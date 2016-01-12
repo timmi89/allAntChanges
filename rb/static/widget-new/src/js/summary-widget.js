@@ -26,6 +26,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
     TouchSupport.setupTap($rootElement.get(0), function(event) {
         if (!ReactionsWidget.isOpen()) {
             event.preventDefault();
+            event.stopPropagation();
             openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive);
         }
     });

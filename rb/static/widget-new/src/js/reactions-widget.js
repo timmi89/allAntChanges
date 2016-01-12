@@ -405,6 +405,7 @@ function setupWindowClose(pages, ractive) {
     var tapListener = TouchSupport.setupTap(document, function(event) {
         if ($(event.target).closest(SELECTOR_REACTIONS_WIDGET).length === 0) {
             event.preventDefault();
+            event.stopPropagation();
             closeAllWindows();
         }
     });
