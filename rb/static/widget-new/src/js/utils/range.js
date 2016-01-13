@@ -51,7 +51,14 @@ function isValidSelection(selection, node, excludeNode) {
     return !selection.isCollapsed &&  // Non-empty selection
         selection.rangeCount === 1 && // Single selection
         (!excludeNode || !selection.containsNode(excludeNode, true)) && // Selection doesn't contain anything we've said we don't want (e.g. the indicator)
-        node.contains(selection.getRangeAt(0).commonAncestorContainer); // Selection is contained entirely within the node
+        nodeContainsSelection(node, selection); // Selection is contained entirely within the node
+}
+
+function nodeContainsSelection(node, selection) {
+    var commonAncestor = selection.getRangeAt(0).commonAncestorContainer; // commonAncestor could be a text node or some parent element
+    return node.contains(commonAncestor) ||
+            // The following check is for IE, which doesn't implement "contains" properly for text nodes.
+        (commonAncestor.nodeType === 3 && node.contains(commonAncestor.parentNode));
 }
 
 function grabNode(node, callback) {
