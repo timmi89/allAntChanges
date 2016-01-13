@@ -24,6 +24,7 @@ function getRootElement() {
         var $element = $(ractive.find('.antenna-popup'));
         $element.on('mousedown', false); // Prevent mousedown from propagating, so the browser doesn't clear the text selection.
         $element.on('click.antenna-popup', function(event) {
+            event.preventDefault();
             event.stopPropagation();
             hidePopup($element);
             if (clickHandler) {
