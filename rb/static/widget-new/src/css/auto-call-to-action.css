@@ -10,7 +10,7 @@
     padding: 4px;
     background: rgba(255,255,255,.7);
     max-width: 100%;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .antenna-auto-cta .antenna-logo-path {

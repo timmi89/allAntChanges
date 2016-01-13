@@ -12,6 +12,7 @@
     text-align: left;
     text-transform: none;
     line-height: 1em;
+    -ms-overflow-style: none; /* Tell IE to never show their ugly element scroll bars */
 }
 
 button.antenna-reset, button.antenna-reset:hover {
