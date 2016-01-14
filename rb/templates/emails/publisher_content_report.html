@@ -120,21 +120,21 @@
                         <table cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="#000000">
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
-                                <h1 style="color:#fff;font-size:21px;line-height:25px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding-bottom:0;margin-bottom:0;">{ short name } { daily/weekly } <span style="white-space:nowrap;">Engagement Report</span></h1>
+                              <h1 style="color:#fff;font-size:21px;line-height:25px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding-bottom:0;margin-bottom:0;">{{ short_name }} {{ report_period }} <span style="white-space:nowrap;">Engagement Report</span></h1>
                                 <br>
-                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{ SHORT_NAME }/analytics/">View Your Dashboard</a>
+                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View Your Dashboard</a>
                             </td>
                           </tr>
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
                                 <h2 class="section-headline" style="color:#fff;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Reactions</h2>
-                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">9,999</h2>
+                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">{{ reactions_count }}</h2>
                             </td>
                           </tr>
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
                                 <h2 class="section-headline" style="color:#fff;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Reaction Views</h2>
-                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">999,999</h2>
+                                <h3 style="color:#fff;font-size:42px;line-height:42px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;padding:0;margin:0;">{{ reaction_views_count }}</h2>
                             </td>
                           </tr>
                       </table>
