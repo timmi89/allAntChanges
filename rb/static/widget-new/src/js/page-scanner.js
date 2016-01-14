@@ -92,7 +92,7 @@ function scanActiveElement($element, pageData, groupSettings) {
 }
 
 function scanForSummaries($element, pageData, groupSettings) {
-    var $summaries = find($element, groupSettings.summarySelector(), true);
+    var $summaries = find($element, groupSettings.summarySelector(), true, true); // summary widgets can be inside no-ant sections
     $summaries.each(function() {
         var $summary = $(this);
         var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
@@ -326,10 +326,13 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
     });
 }
 
-function find($element, selector, addBack) {
+function find($element, selector, addBack, ignoreNoAnt) {
     var result = $element.find(selector);
     if (addBack && selector) { // with an undefined selector, addBack will match and always return the input element (unlike find() which returns an empty match)
         result = result.addBack(selector);
+    }
+    if (ignoreNoAnt) { // Some pieces of content (e.g. the summary widget) can actually go inside sections tagged no-ant
+        return result;
     }
     return result.filter(function() {
         return $(this).closest('.no-ant').length == 0;
