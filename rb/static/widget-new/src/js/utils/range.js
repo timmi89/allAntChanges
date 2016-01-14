@@ -32,7 +32,7 @@ function getSelectionEndPoint(node, event, excludeNode) {
 function grabSelection(node, callback, excludeNode) {
     var selection = rangy.getSelection();
     if (isValidSelection(selection, node, excludeNode)) {
-        selection.expand('word', { trim: true });
+        selection.expand('word', { trim: true, wordOptions: { wordRegex: /\S+\S*/gi } });
         if (selection.containsNode(excludeNode)) {
             var range = selection.getRangeAt(0);
             range.setEndBefore(excludeNode);
