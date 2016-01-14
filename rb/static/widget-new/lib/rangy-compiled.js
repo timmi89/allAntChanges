@@ -6486,6 +6486,8 @@
                             if (character) {
                                 previousTextPos = pos;
                                 return pos;
+                            } else {
+                                return null;
                             }
                         }
                         return null;
