@@ -82,6 +82,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'hometown'
     )
     search_fields = ['id','username',]
+    raw_id_fields = ['user',]
 
 class SocialAuthAdmin(admin.ModelAdmin):
     list_display = (
