@@ -1,6 +1,37 @@
 ;(function(){
 //dont bother indenting this top level anonymous function
 
+// If the window location contains the query param 'antennaNew=true', load the new widget
+// and exit.
+if ((function() {
+    var queryString = window.location.search;
+    var urlParams = {};
+    var e,
+    a = /\+/g,  // Regex for replacing addition symbol with a space
+    r = /([^&=]+)=?([^&]*)/g,
+    d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+    q = queryString.substring(1);
+
+    while (e = r.exec(q)) {
+        urlParams[d(e[1])] = d(e[2]);
+    }
+
+    if (urlParams['antennaNewWidget'] && urlParams['antennaNewWidget'].toLowerCase() === 'true') {
+        var head = document.getElementsByTagName('head')[0];
+        if (head) {
+            var newScriptUrl = 'https://www.antenna.is/static/widget-new/debug/antenna.js';
+            var scriptTag = document.createElement('script');
+            scriptTag.setAttribute('src', newScriptUrl);
+            scriptTag.setAttribute('type', 'text/javascript');
+            head.appendChild(scriptTag);
+            return true;
+        }
+    }
+    return false;
+})()) {
+    return;
+}
+
 var ANT = {};
 if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
     // reinit custom display hashes only
