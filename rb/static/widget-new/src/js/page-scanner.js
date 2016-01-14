@@ -54,9 +54,9 @@ function scanPage($page, groupSettings, isMultiPage) {
     // We want to get any page resizing out of the way as early as possible.
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
-    scanForSummaries($page, pageData, groupSettings); // TODO: should the summary search be confined to the active sections?
     $activeSections.each(function() {
         var $section = $(this);
+        scanForSummaries($section, pageData, groupSettings);
         createAutoCallsToAction($section, pageData, groupSettings);
     });
     // Scan for CTAs across the entire page (they can be outside an active section). CTAs have to go before scans for
@@ -456,13 +456,13 @@ function setupMutationObserver(groupSettings) {
                     }
                     var url = PageUtils.computePageUrl($page, groupSettings);
                     var pageData = PageData.getPageDataByURL(url);
-                    // First, check for any new summary widgets...
-                    scanForSummaries($element, pageData, groupSettings);
-                    // Next, see if any entire active sections were added
+                    // First, see if any entire active sections were added
                     var $activeSections = find($element, groupSettings.activeSections());
                     if ($activeSections.length > 0) {
                         $activeSections.each(function () {
-                            createAutoCallsToAction($(this), pageData, groupSettings);
+                            var $section = $(this);
+                            scanForSummaries($section, pageData, groupSettings);
+                            createAutoCallsToAction($section, pageData, groupSettings);
                         });
                         $activeSections.each(function () {
                             var $section = $(this);
@@ -470,6 +470,7 @@ function setupMutationObserver(groupSettings) {
                         });
                     } else {
                         // Finally, scan inside the element for content
+                        scanForSummaries($element, pageData, groupSettings);
                         var $activeSection = $element.closest(groupSettings.activeSections());
                         if ($activeSection.length > 0) {
                             createAutoCallsToAction($element, pageData, groupSettings);
