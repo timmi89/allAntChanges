@@ -10,7 +10,7 @@ from authentication.token import *
 from authentication.decorators import requires_admin, requires_admin_rest
 from settings import BASE_URL, STATIC_URL, RB_SOCIAL_ADMINS
 from django.forms.models import model_to_dict
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.core.cache import cache, get_cache
 from django.db.models import Q
 from chronos.jobs import *
@@ -1029,8 +1029,16 @@ class FollowHandler(InteractionHandler):
         )
         if follow.user is not None and follow.user.social_user.follow_email_option:
             follow_email = generateFollowEmail(owner)
-            msg = EmailMessage("Someone just followed you on Antenna!", follow_email, "hello@antenna.is", [follow.user.email])
-            msg.content_subtype='html'
+            msg = EmailMultiAlternatives(
+                "Someone just followed you on Antenna!",
+                '',
+                "hello@antenna.is",
+                [follow.user.email]
+            )
+            msg.attach_alternative(
+                follow_email,
+                "text/html"
+            )
             msg.send(False)
         return follow_dict
 
