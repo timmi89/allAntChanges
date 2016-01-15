@@ -39,9 +39,9 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = (
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Jared Burns', 'jared@readrboard.com'),
-    ('Brian Finney', 'brian@readrboard.com')
+    ('Porter Bayne', 'porter@antenna.is'),
+    ('Jared Burns', 'jared@antenna.is'),
+    ('Brian Finney', 'brian@antenna.is')
 )
 
 RB_SOCIAL_ADMINS = [
