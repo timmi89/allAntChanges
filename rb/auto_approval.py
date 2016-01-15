@@ -4,7 +4,7 @@
 # from extras.facebook import GraphAPI, GraphAPIError
 from models import *
 from api import userutils
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from settings import RB_SOCIAL_ADMINS
 import logging
 logger = logging.getLogger('rb.standard')
@@ -97,8 +97,8 @@ def addDefaultsForNewGroup(group, cookie_user):
     #######
 
     # email us about needing to approve the group
-    msg = EmailMessage("Antenna group approval", userutils.generateGroupApprovalEmail(group), "groups@antenna.is", RB_SOCIAL_ADMINS )
-    msg.content_subtype='html'
+    msg = EmailMultiAlternatives("Antenna group approval", '', "hello@antenna.is", RB_SOCIAL_ADMINS)
+    msg.attach_alternative(userutils.generateGroupApprovalEmail(group), "text/html")
     msg.send(False)
 
     return group
@@ -115,8 +115,8 @@ def autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=False):
     if isAutoApproved:
         group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=isAutoApproved)
         ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
-        msg = EmailMessage("Antenna group admin approval", ga_approval_mail, "groups@antenna.is", RB_SOCIAL_ADMINS )
-        msg.content_subtype='html'
+        msg = EmailMultiAlternatives("Antenna group admin approval", '', "hello@antenna.is", RB_SOCIAL_ADMINS)
+        msg.attach_alternative(ga_approval_mail, "text/html")
         msg.send(False)
         #######
 

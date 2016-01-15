@@ -155,11 +155,11 @@ function createFromJSON(json) {
         // First read any raw custom CSS.
         var customCSS = data('custom_css')();
         // Then append rules for any specific CSS overrides.
-        customCSS += createCustomCSSRule(data('tags_bg_css', ''), '.antenna-reactions-page .antenna-body, .antenna-defaults-page .antenna-body');
+        customCSS += createCustomCSSRule(migrateReactionsBackgroundColorSettings(data('tags_bg_css', '')), '.antenna-reactions-page .antenna-body, .antenna-defaults-page .antenna-body');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors', ''), '.antenna-reaction-box');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors_hover', ''), '.antenna-reaction:hover > .antenna-reaction-box');
         customCSS += createCustomCSSRule(migrateTextColorSettings(data('tag_box_text_colors', '')), '.antenna-reaction-box, .antenna-reaction-comments .antenna-comments-path, .antenna-reaction-location .antenna-location-path');
-        customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box');
+        customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box .antenna-reset');
         return customCSS;
     }
 
@@ -169,6 +169,18 @@ function createFromJSON(json) {
             return '\n' + selector + ' {\n    ' + declarations + '\n}';
         }
         return '';
+    }
+
+    function migrateReactionsBackgroundColorSettings(backgroundColorAccessor) {
+        // TODO: This is temporary code that migrates the current tags_bg_css setting from a raw value to a
+        //       CSS declaration. We should migrate all deployed sites to use a CSS declaration and then remove this.
+        var backgroundColor = backgroundColorAccessor().trim();
+        if (backgroundColor && backgroundColor.indexOf('background:') === -1) {
+            backgroundColor = 'background: ' + backgroundColor;
+        }
+        return function() {
+            return backgroundColor;
+        }
     }
 
     function migrateFontFamilySetting(fontFamilyAccessor) {

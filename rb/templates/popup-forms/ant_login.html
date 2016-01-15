@@ -59,8 +59,10 @@
 		window.opener.ANTAuth.checkAntLoginWindow();
 
 		function direct_registration() {
-			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
-						   "&password="+$('#direct_registration').find('input[name="password"]').val();
+            var sendData = {
+                username: $('#direct_registration').find('input[name="username"]').val(),
+                password: $('#direct_registration').find('input[name="password"]').val()
+            };
 
 			$.ajax({
 				beforeSend: function( xhr ) {

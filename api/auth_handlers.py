@@ -9,6 +9,7 @@ from userutils import *
 import json
 from piston.utils import Mimer
 from django.forms.models import model_to_dict
+from django.core.mail import EmailMultiAlternatives
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -19,7 +20,7 @@ class TempUserHandler(BaseHandler):
         data = json.loads(request.GET['json'])
         group_id = data['group_id']
         user = User.objects.create_user(
-            username=generateUsername(), 
+            username=generateUsername(),
             email='tempuser@antenna.is'
         )
         ant_token = createTokenFromUser(user, 'R3dRB0aRdR0X')
@@ -93,27 +94,27 @@ class FBHandler(BaseHandler):
         user['user_boards'] = getUserBoardsDict(django_user)
 
         return user
-        
-        
+
+
 class ANTHandler(BaseHandler):
     allowed_methods = ('POST',)
     @status_response
     def create(self, request, admin_req=False):
-        
+
         group_id = None
 
         try:
             user_id = request.POST['user_id']
         except KeyError:
             user_id = None
-            
+
         try:
             username = request.POST['username']
             password = request.POST['password']
-            
+
         except KeyError:
             return dict(message='Please enter username and password', status='fail')
-        
+
         faux_fb_session = {'accessToken':'R3dRB0aRdR0X', 'expiresIn':60}
         try:
             django_user = findDjangoUserByUsername(username);
@@ -121,20 +122,20 @@ class ANTHandler(BaseHandler):
             authenticated = False
             if not authenticated:
                 return dict(message="No such user.", status='fail')
-        
-        
+
+
         authenticated = django_user.check_password(password)
-            
+
         if not authenticated:
             return dict(message="Username or password did not match.", status='fail')
-        
-        
+
+
         confirmed = django_user.has_perm('rb.change_socialuser')
-        
+
         if not confirmed:
-            return dict(message="Please confirm email address", status='fail', 
+            return dict(message="Please confirm email address", status='fail',
                         confirmation=generateConfirmation(django_user), user_id=django_user.id)
-        
+
         try:
             social_user = findSocialUser(django_user)
         except:
@@ -147,7 +148,7 @@ class ANTHandler(BaseHandler):
             group_id,
             faux_fb_session
         )
-        
+
         # Check to see if user passed in was temporary, if yes, convert
         # temporary user's interactions to social user interactions
         if user_id and len(SocialUser.objects.filter(user__id=user_id)) == 0:
@@ -168,7 +169,7 @@ class ANTHandler(BaseHandler):
         user['user_boards'] = getUserBoardsDict(django_user)
 
         return user
-      
+
 
 class ConfirmUserHandler(BaseHandler):
     allowed_methods = ('POST',)
@@ -179,8 +180,16 @@ class ConfirmUserHandler(BaseHandler):
         user_confirmation = data['confirmation']
         user = User.objects.get(id=int(user_id))
         if user_confirmation == generateConfirmation(user):
-            msg = EmailMessage("Antenna email confirmation", generateConfirmationEmail(user), "hello@antenna.is", [user.email])
-            msg.content_subtype='html'
+            msg = EmailMultiAlternatives(
+                "Antenna email confirmation",
+                '',
+                "hello@antenna.is",
+                [user.email]
+            )
+            msg.attach_alternative(
+                generateConfirmationEmail(user),
+                "text/html"
+            )
             msg.send(False)
         return dict(
             user_id=user.id,

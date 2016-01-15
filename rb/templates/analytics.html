@@ -258,7 +258,7 @@
                       var eventCssName = (event_type=='reactions') ? "reactions" : "reaction-views";
 
                       $('.total-'+eventCssName+'-over-time').find('.loading,.no-data').remove();
-                      
+
                       if (response.events) {
                         ANTsite.analytics.makeChart(event_type, response.events);
                         // $('.total-reaction-views-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionViewCount)+'</h1>');

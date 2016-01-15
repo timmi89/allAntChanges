@@ -39,9 +39,9 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = (
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Jared Burns', 'jared@readrboard.com'),
-    ('Brian Finney', 'brian@readrboard.com')
+    ('Porter Bayne', 'porter@antenna.is'),
+    ('Jared Burns', 'jared@antenna.is'),
+    ('Brian Finney', 'brian@antenna.is')
 )
 
 RB_SOCIAL_ADMINS = [
@@ -303,18 +303,11 @@ RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
 if DEBUG:
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello@antenna.is'
-    EMAIL_HOST_PASSWORD = 'br04dc45t'
-    EMAIL_PORT = 587
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello@antenna.is'
-    EMAIL_HOST_PASSWORD = 'br04dc45t'
-    EMAIL_PORT = 587
-
+    EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+    MAILGUN_ACCESS_KEY = 'key-d18e972f265717b3b43ecf0317b85cbe'
+    MAILGUN_SERVER_NAME = 'mailgun.antenna.is'
 
 SEEDERS = [
     119507,

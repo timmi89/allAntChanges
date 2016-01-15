@@ -23,7 +23,7 @@ from forms import *
 from django.forms.models import model_to_dict
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from django import template
@@ -167,7 +167,7 @@ def publishers(request):
       context,
       context_instance=RequestContext(request)
     )
-    
+
     # return HttpResponseRedirect('/')
 
 def retailers(request):
@@ -284,9 +284,9 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     context = main_helper(request, user_id, short_name, **kwargs)
     """ For interactions.html """
     interactions = Interaction.objects.all()
-    
+
     interactions.order_by('-rank')
-    
+
     singleton = False;
     # Search interaction node body and content body
     # for instances of the 's' query string parameter
@@ -298,7 +298,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
             Q(page__site__name__icontains=query_string) |
             Q(page__title__icontains=query_string)
         )
-        
+
 
     context['query_string'] = query_string
 
@@ -316,26 +316,26 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     if short_name:
         interactions = group_helper(short_name, interactions, context)
         context['hasSubheader'] = True
-        
+
     if interaction_id:
         interactions = singleton_helper(interaction_id, interactions, context)
         singleton = True;
-    
+
     # Interactions for specific page
     if site_id:
         interactions = site_helper(site_id, interactions, context)
-        
+
     # Interactions for specific page
     if page_id:
         interactions = page_helper(page_id, interactions, context)
-            
+
     #view filters
     interactions = filter_interactions(interactions, context, **kwargs)
 
-    #interactions.prefetch_related("page").prefetch_related("content").prefetch_related("page__site").prefetch_related("page__site__group")    
-    
+    #interactions.prefetch_related("page").prefetch_related("content").prefetch_related("page__site").prefetch_related("page__site__group")
+
     paginate_with_children(interactions, page_num, context, query_string)
-    
+
 
     template = "single_interaction.html" if singleton else "index.html"
     return render_to_response(template, context, context_instance=RequestContext(request))
@@ -356,10 +356,10 @@ def board(request, board_id=None, **kwargs):
 
     if cookie_user:
         context['cookie_user'] = cookie_user
-        
+
         #context['board_admins'] = Board.objects.filter(admins__in=[cookie_user]).values_list('admins', flat=True)
-        
-        
+
+
     """ For interactions.html """
     try:
         board = Board.objects.get(id=board_id)
@@ -369,16 +369,16 @@ def board(request, board_id=None, **kwargs):
             context['social_user'] = model_to_dict(social, fields=('id','full_name', 'img_url'))
         except SocialUser.DoesNotExist:
             logger.warning("Balls")
-            
+
         if cookie_user in board.admins.all():
             context['board_admin'] = True
         else:
             context['board_admin'] = False
     except Board.DoesNotExist:
         raise Http404
-    
+
     interactions = board.interactions.all()
-    
+
     interactions_paginator = Paginator(interactions, 50)
 
     try: page_number = int(page_num)
@@ -386,16 +386,16 @@ def board(request, board_id=None, **kwargs):
 
     try: current_page = interactions_paginator.page(page_number)
     except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
-      
+
     context['current_page'] = current_page
     len(current_page.object_list)
     parent_ids = []
     for inter in current_page.object_list:
         parent_ids.append(inter.id)
-    
+
     child_interactions = Interaction.objects.filter(parent__id__in = parent_ids, kind='tag')
     context['child_interactions'] = {}
-    
+
     for child_interaction in child_interactions:
         if not context['child_interactions'].has_key(child_interaction.parent.id):
             context['child_interactions'][child_interaction.parent.id] = 0
@@ -434,7 +434,7 @@ def sidebar(request, user_id=None, short_name=None):
 @requires_admin_wordpress
 def wordpress(request, **kwargs):
     context = kwargs.get('context', {})
-    
+
     # urls:
     isNotAdminUrl = '/friendlylogin_wordpress/'+context['qParams']
     hasNotRegisteredUrl = '/signup_wordpress/'+context['qParams']
@@ -494,7 +494,7 @@ def create_group_wordpress(request, **kwargs):
             context['requested'] = True
     else:
         form = CreateGroupForm()
-        
+
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
 
@@ -520,7 +520,7 @@ def create_board(request):
 
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
-    
+
     if request.method == 'POST':
         form = CreateBoardForm(request.POST)
         if form.is_valid():
@@ -532,15 +532,15 @@ def create_board(request):
             except IntegrityError, e:
                 context['title_error']  = 'You already have a board with this name.  Please choose a new name!'
 
-            
+
     else:
         form = CreateBoardForm()
-        
+
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
 
     context['user_boards'] = mark_safe(simplejson.dumps(getUserBoardsDict(cookie_user)))
-    
+
     return render_to_response(
         "board_create.html",
         context,
@@ -555,27 +555,27 @@ def create_rb_user(request):
     #are they already registered?
     #
     user = None
-    
+
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
             user = form.save(True)
-            
+
             #user.email_user("Antenna email confirmation", generateConfirmationEmail(user))
-            msg = EmailMessage("Antenna email confirmation", generateConfirmationEmail(user), "hello@antenna.is", [user.email])
-            msg.content_subtype='html'
+            msg = EmailMultiAlternatives("Antenna email confirmation", '', "hello@antenna.is", [user.email])
+            msg.attach_alternative(generateConfirmationEmail(user), "text/html")
             msg.send(False)
             context['requested'] = True
     else:
         form = CreateUserForm()
-        
+
     context['form'] = form
     response =  render_to_response(
         "popup-forms/user_create.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 def modify_rb_social_user(request):
@@ -595,23 +595,23 @@ def modify_rb_social_user(request):
             context,
             context_instance=RequestContext(request)
         )
-    
+
     if request.method == 'POST':
         form = ModifySocialUserForm(request.POST, request.FILES)
         if form.is_valid():
             social_user = form.save(True)
-            
+
             context['requested'] = True
     else:
         form = ModifySocialUserForm(initial={'user_token' : user_token, 'id' : social_user.id})
-        
+
     context['form'] = form
     response =  render_to_response(
         "popup-forms/social_user_modify.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 def confirm_rb_user(request):
@@ -625,37 +625,37 @@ def confirm_rb_user(request):
         context['message']  = 'There was a problem with your confirmation information.'
     except Exception, e:
         context['message']  = str(e)
-        
+
     context['confirmed'] = confirmed
     response =  render_to_response(
         "popup-forms/user_confirm.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 
 def ant_login(request):
     context = {}
-    
+
     response =  render_to_response(
         "popup-forms/ant_login.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 def ant_login_success(request):
     context = {}
-    
+
     response =  render_to_response(
         "popup-forms/ant_login_success.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 def request_password_reset(request):
@@ -665,8 +665,8 @@ def request_password_reset(request):
         email_addr = request.POST['email']
         (user, password_email) = generatePasswordEmail(username, email_addr)
         if user is not None:
-            msg = EmailMessage("Antenna password reset", password_email, "hello@antenna.is", [user.email])
-            msg.content_subtype='html'
+            msg = EmailMultiAlternatives("Antenna password reset", '', "hello@antenna.is", [user.email])
+            msg.attach_alternative(password_email, "text/html")
             msg.send(False)
             context['requested'] = True
         else:
@@ -675,14 +675,14 @@ def request_password_reset(request):
     else:
         # context['message'] = 'Please enter your username'
         context['requested'] = False
-        
+
     response =  render_to_response(
         "popup-forms/password_reset.html",
         context,
         context_instance=RequestContext(request)
     )
-    
-    return response   
+
+    return response
 
 def change_rb_password(request):
     data = {}
@@ -703,18 +703,18 @@ def change_rb_password(request):
         except KeyError, ke:
             context['message']  = 'There was a problem with your request.  Looks like you are not logged in.'
             logger.warning(str(ke))
-    
+
         form = ChangePasswordWhileLoggedInForm(request.POST)
         # is_valid_token = validatePasswordToken(user_id, password_token)
-        
+
         if form.is_valid():
             logger.info("resetting password for " + str(user_id))
-            user = form.save(True)            
+            user = form.save(True)
             context['requested'] = True
-    
+
 
     context['form'] = form
-    
+
     response =  render_to_response(
         "popup-forms/password_change_loggedin.html",
         context,
@@ -722,20 +722,20 @@ def change_rb_password(request):
     )
 
     return response
-        
+
 
 def reset_rb_password(request):
     context = {}
     if request.method == 'GET':
-        
+
         try:
             password_token = request.GET['token']
             user_id = request.GET['uid']
         except KeyError, ke:
             context['message']  = 'There was a problem with your reset token.'
-    
+
         form = ChangePasswordForm(initial={'password_token' : password_token, 'uid' : user_id})
-        
+
     elif request.method == 'POST':
         try:
             password_token = request.POST['password_token']
@@ -743,23 +743,23 @@ def reset_rb_password(request):
         except KeyError, ke:
             context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
             logger.warning(str(ke))
-    
+
         form = ChangePasswordForm(request.POST)
         is_valid_token = validatePasswordToken(user_id, password_token)
-        
+
         if is_valid_token and form.is_valid():
             logger.info("resetting password for " + str(user_id))
-            user = form.save(True)            
+            user = form.save(True)
             context['requested'] = True
-    
+
     context['form'] = form
-    
+
     response =  render_to_response(
         "popup-forms/password_change.html",
         context,
         context_instance=RequestContext(request)
     )
-    
+
     return response
 
 @requires_admin
@@ -806,7 +806,7 @@ def settings_wordpress(request, **kwargs):
     # context['host_xdm_url'] = '...'
     context['hostdomain'] = site.domain
     context['fb_client_id'] = FACEBOOK_APP_ID
-    
+
     # todo move wordpress stuff
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
@@ -826,7 +826,7 @@ def settings_wordpress(request, **kwargs):
         context_instance=RequestContext(request)
     )
 
-    
+
 @requires_admin
 def admin_approve(request, short_name=None, request_id=None, **kwargs):
     context = {}
@@ -839,14 +839,14 @@ def admin_approve(request, short_name=None, request_id=None, **kwargs):
         short_name=short_name
     )
     context['group'] = group
-    
+
     groups = cookie_user.social_user.admin_groups()
-    
+
     requests = GroupAdmin.objects.filter(
         group__in=groups,
         approved=False
     ).exclude(social_user=cookie_user.social_user)
-    
+
     try:
         if request_id:
             admin_request = requests.get(id=request_id)
@@ -855,7 +855,7 @@ def admin_approve(request, short_name=None, request_id=None, **kwargs):
             requests.exclude(id=request_id)
     except Exception, ex:
         pass
-    
+
     context['requests'] = requests
     context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
@@ -869,13 +869,13 @@ def admin_request(request, short_name=None):
     context['requested'] = False
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
-    
+
     # Get the Group and related group admins
     group = Group.objects.get(
         short_name=short_name
     )
     context['group'] = group
-    
+
     # If this is a post request access
     if request.method == 'POST':
         ga = GroupAdmin(
@@ -883,7 +883,7 @@ def admin_request(request, short_name=None):
             social_user = cookie_user.social_user,
         )
         ga.save()
-    
+
     # Check if user has already requested admin access
     if cookie_user.social_user.groupadmin_set.filter(group=group):
         context['requested'] = True
@@ -920,7 +920,7 @@ def expander(request, short):
 
     # Create redirect response
     redirect_response = HttpResponseRedirect(unicode(url))
-    
+
     # Setup cookie for redirect
     redirect_response.set_cookie(key='page_hash', value=smart_str(hashlib.md5(page.url).hexdigest()))
     redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
@@ -935,7 +935,7 @@ def expander(request, short):
 
 
 def interaction_redirect(request, short):
-    
+
     try:
         interaction = Interaction.objects.get(id=short)
     except Interaction.DoesNotExist:
@@ -946,7 +946,7 @@ def interaction_redirect(request, short):
     # Create redirect response
     url = page.url
     redirect_response = HttpResponseRedirect(unicode(url))
-    
+
     # Setup cookie for redirect
     redirect_response.set_cookie(key='page_hash', value=smart_str(hashlib.md5(page.url).hexdigest()))
     redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
@@ -960,7 +960,7 @@ def interaction_redirect(request, short):
     return redirect_response
 
 def click_redirect(request, short):
-    
+
     try:
         interaction = Interaction.objects.get(id=short)
     except Interaction.DoesNotExist:
@@ -971,7 +971,7 @@ def click_redirect(request, short):
     # Create redirect response
     url = page.url
     redirect_response = HttpResponseRedirect(unicode(url))
-    
+
     # Setup cookie for redirect
     redirect_response.set_cookie(key='page_hash', value=smart_str(hashlib.md5(page.url).hexdigest()))
     redirect_response.set_cookie(key='container_hash', value=smart_str(interaction.container.hash))
@@ -1004,36 +1004,36 @@ def follow_interactions(request, user_id):
     if cookie_user:
         context['cookie_user'] = cookie_user
         # Look for a better way to do this
-    
+
     owner = User.objects.get(id = user_id)
     context['profile_user'] = owner
     #owner = SocialUser.objects.get(user = django_user)
     requested_types = request.GET.getlist('ftype')
     if len(requested_types) == 0:
         requested_types.append('usr')
-    
+
     follow_objects = Follow.objects.filter(owner = owner, type__in  = requested_types)
     follow_lists = {}
     for type in requested_types:
         follow_lists[type] = []
     for follow in follow_objects:
         follow_lists[follow.type].append(follow.follow_id)
-    
+
     if not follow_lists.has_key('pag'):
         follow_lists['pag'] = [-1]
     if not follow_lists.has_key('grp'):
         follow_lists['grp'] = [-1]
     if not follow_lists.has_key('usr') or len(follow_lists['usr']) == 0 :
         follow_lists['usr'] = [-1]
-    
-    
-    interactions = Interaction.objects.filter(Q(user__id__in = follow_lists['usr']) | 
-                        Q(page__id__in = follow_lists['pag']) | 
+
+
+    interactions = Interaction.objects.filter(Q(user__id__in = follow_lists['usr']) |
+                        Q(page__id__in = follow_lists['pag']) |
                         Q(page__site__group__id__in = follow_lists['grp']))
-    
+
     interactions_paginator = Paginator(interactions, 20)
-    
-    
+
+
     try: page_number = int(page_num)
     except ValueError: page_number = 1
 
@@ -1063,22 +1063,22 @@ def group_all_tags(request, **kwargs):
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
     context['hasSubheader'] = True
-    
+
     all_set = set(group.all_tags.all())
     blocked_set = set(group.blocked_tags.all())
     all_unblocked = all_set - blocked_set
     all_promo_unblocked = all_set - set(group.blocked_promo_tags.all())
-    
+
     context['all_unblocked'] = all_unblocked
     context['all_promo_unblocked'] = all_promo_unblocked
-    
+
     return render_to_response(
         "group_all_tags.html",
         context,
         context_instance=RequestContext(request)
     )
- 
- 
+
+
 
 def manage_groups(request, **kwargs):
     context = kwargs.get('context', {})
@@ -1092,7 +1092,7 @@ def manage_groups(request, **kwargs):
             context['cookie_user'] = cookie_user
         else:
             return HttpResponseRedirect('/')
-        
+
     return render_to_response(
         "group_manage.html",
         context,
@@ -1112,7 +1112,7 @@ def gallery(request, example_name):
 
     if cookie_user:
         context['cookie_user'] = cookie_user
-    
+
     examples = {
         'tech_blog':'Tech Blog',
         'news_magazine':'News Magazine',
@@ -1161,7 +1161,7 @@ def email_content_report(request, short_name=None, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
-    
+
 
 
 
