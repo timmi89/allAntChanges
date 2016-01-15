@@ -140,12 +140,7 @@
                     url: ANTsite.analytics.queryHost + '/popularPages',
                     type: "get",
                     data: {
-                        json: {
-                            gid: ANTsite.group.id,
-                            start_date: ANTsite.analytics.jsStartDate,
-                            end_date: ANTsite.analytics.jsEndDate,
-                            skipQuery: skipQueries
-                        }
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
                       $('table.popular').find('.loading,.no-data').remove();
@@ -181,12 +176,7 @@
                     url: ANTsite.analytics.queryHost + '/popularContent',
                     type: "get",
                     data: {
-                        json: {
-                            gid: ANTsite.group.id,
-                            start_date: ANTsite.analytics.jsStartDate,
-                            end_date: ANTsite.analytics.jsEndDate,
-                            skipQuery: skipQueries
-                        }
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
                         console.log(response);
@@ -223,12 +213,7 @@
                     url: ANTsite.analytics.queryHost + '/reactionCount',
                     type: "get",
                     data: {
-                        json: {
-                            gid: ANTsite.group.id,
-                            start_date: ANTsite.analytics.jsStartDate,
-                            end_date: ANTsite.analytics.jsEndDate,
-                            skipQuery: skipQueries
-                        }
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
                       $('.total-reactions-count').find('.loading,.no-data').remove();
@@ -247,12 +232,7 @@
                     url: ANTsite.analytics.queryHost + '/reactionViewCount',
                     type: "get",
                     data: {
-                        json: {
-                            gid: ANTsite.group.id,
-                            start_date: ANTsite.analytics.jsStartDate,
-                            end_date: ANTsite.analytics.jsEndDate,
-                            skipQuery: skipQueries
-                        }
+                        json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
                       $('.total-reaction-views-count').find('.loading,.no-data').remove();
@@ -271,19 +251,14 @@
                     url: ANTsite.analytics.queryHost + '/eventsOverTime',
                     type: "get",
                     data: {
-                        json: {
-                            gid: ANTsite.group.id,
-                            event_type: event_type,
-                            start_date: ANTsite.analytics.jsStartDate,
-                            end_date: ANTsite.analytics.jsEndDate
-                        }
-                        // json: { gid:ANTsite.group.id, event_type:event_type, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries }
+                        json: $.toJSON( { gid:ANTsite.group.id, event_type:event_type, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate } )
+                        // json: $.toJSON( { gid:ANTsite.group.id, event_type:event_type, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                     },
                     success: function(response) {
                       var eventCssName = (event_type=='reactions') ? "reactions" : "reaction-views";
 
                       $('.total-'+eventCssName+'-over-time').find('.loading,.no-data').remove();
-                      
+
                       if (response.events) {
                         ANTsite.analytics.makeChart(event_type, response.events);
                         // $('.total-reaction-views-count').find('.result').append('<h1 style="text-align:left;">'+ANTsite.analytics.numberWithCommas(response.reactionViewCount)+'</h1>');
@@ -300,12 +275,7 @@
                   url: ANTsite.analytics.queryHost + '/topReactions',
                   type: "get",
                   data: {
-                      json: {
-                          gid: ANTsite.group.id,
-                          start_date: ANTsite.analytics.jsStartDate,
-                          end_date: ANTsite.analytics.jsEndDate,
-                          skipQuery: skipQueries
-                      }
+                      json: $.toJSON( { gid:ANTsite.group.id, start_date:ANTsite.analytics.jsStartDate, end_date: ANTsite.analytics.jsEndDate, skipQuery:skipQueries } )
                   },
                   success: function(response) {
                     $('.top-reactions').find('.loading,.no-data').remove();

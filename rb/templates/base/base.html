@@ -110,7 +110,7 @@
         url: "/api/privacy/toggle/",
         type: "get",
         data: {
-              json: sendData
+              json: JSON.stringify(sendData)
             },
         success: function(response) {
             $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
@@ -120,7 +120,7 @@
   $('#follow_email').click( function() {
     $('label[for="follow_email"] span').remove();
     var sendData = {
-        user_id:ANTAuth.ant_user.user_id, 
+        user_id:ANTAuth.ant_user.user_id,
         ant_token:ANTAuth.ant_user.ant_token,
         group_id:1
     };
@@ -128,7 +128,7 @@
         url: "/api/followemail/toggle/",
         type: "get",
         data: {
-            json: sendData
+            json: JSON.stringify(sendData)
           },
         success: function(response) {
             $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
@@ -139,7 +139,7 @@
   $('#activity_notifications').click( function() {
     $('label[for="activity_notifications"] span').remove();
     var sendData = {
-        user_id:ANTAuth.ant_user.user_id, 
+        user_id:ANTAuth.ant_user.user_id,
         ant_token:ANTAuth.ant_user.ant_token,
         group_id:1
     };
@@ -147,7 +147,7 @@
         url: "/api/notificationemail/toggle/",
         type: "get",
         data: {
-            json: sendData
+            json: JSON.stringify(sendData)
           },
         success: function(response) {
             $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
