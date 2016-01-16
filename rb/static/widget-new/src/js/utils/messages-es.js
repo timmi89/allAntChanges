@@ -5,7 +5,7 @@ module.exports = {
     'summary-widget_reactions_many': "{0} Reacciones",
 
     'reactions-widget_title': "Reacciones",
-    'reactions-widget_title_thanks': 'Gracias por tu reacción!',
+    'reactions-widget_title_thanks': '¡Gracias por tu reacción!',
     'reactions-widget_title_signin': 'Sign in Required', // TODO: need a translation
     'reactions-widget_title_blocked': 'Blocked Reaction', // TODO: need a translation
 
@@ -40,5 +40,8 @@ module.exports = {
 
     'login-page_back': 'Cerrar', // TODO: need a translation for "Back",
 
-    'blocked-page_back': 'Cerrar' // TODO: need a translation for "Back",
+    'blocked-page_back': 'Cerrar', // TODO: need a translation for "Back"
+
+    'mobile-helper_prompt': '¡Toca un párrafo para opinar!', // TODO: need translation
+    'mobile-helper_close': 'Cerrar'
 };

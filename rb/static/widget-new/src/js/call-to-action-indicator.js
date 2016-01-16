@@ -59,7 +59,7 @@ function createIndicatorWidget(options) {
         teardown: function() {
             $ctaElement.off('.antenna');
             for (var i = 0; i < createdWidgets.length; i++) {
-                createdWidgets.teardown();
+                createdWidgets[i].teardown();
             }
         }
     }

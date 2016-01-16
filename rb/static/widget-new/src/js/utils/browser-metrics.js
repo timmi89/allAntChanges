@@ -11,7 +11,9 @@ function supportsTouch() {
 
 function isMobile() {
     if (isMobileDevice === undefined) {
-        isMobileDevice = supportsTouch() && ((window.matchMedia("only screen and (max-width: 480px)")).matches);
+        isMobileDevice = supportsTouch() &&
+            ((window.matchMedia("only screen and (max-width: 480px) and (orientation: portrait)")).matches ||
+            (window.matchMedia("only screen and (max-width: 640px) and (orientation: landscape)")).matches);
     }
     return isMobileDevice;
 }

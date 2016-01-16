@@ -1,0 +1,33 @@
+.antenna-mobile-helper {
+    position: fixed;
+    top: 85%;
+    left: 50vw;
+    transform: translateX(-50%);
+    width: 75vw;
+    margin: auto;
+    box-shadow: 0 0 40px #666;
+    border: 4px solid #000000
+}
+
+.antenna-mobile-helper-inner {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 8px;
+    text-align: center;
+    color: #000000;
+    font-size: 11px;
+}
+
+.antenna-mobile-helper-inner div {
+    text-align: center;
+}
+
+.antenna-mobile-helper-prompt {
+    margin-left: 4px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.antenna-mobile-helper-close {
+    margin-top: 6px;
+}

@@ -40,5 +40,8 @@ module.exports = {
 
     'login-page_back': 'Back',
 
-    'blocked-page_back': 'Back'
+    'blocked-page_back': 'Back',
+
+    'mobile-helper_prompt': 'Tap any paragraph to respond!',
+    'mobile-helper_close': 'Close'
 };

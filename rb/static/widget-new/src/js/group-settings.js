@@ -221,6 +221,7 @@ function createFromJSON(json) {
         summarySelector: data('summary_widget_selector'),
         summaryMethod: data('summary_widget_method'),
         isExpandedMobileSummary: data('summary_widget_expanded_mobile'),
+        isHideMobileHelper: data('hideDoubleTapMessage'),
         pageSelector: data('post_selector'),
         pageLinkSelector: data('post_href_selector'),
         pageImageSelector: data('image_selector'),

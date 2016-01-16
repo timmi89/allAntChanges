@@ -6,6 +6,7 @@ if (window.ANTENNAIS || window.antenna || window.AntennaApp) {
 var ScriptLoader = require('./script-loader');
 var CssLoader = require('./css-loader');
 var GroupSettingsLoader = require('./group-settings-loader');
+var MobileHelper = require('./mobile-helper');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
 var Reinitializer = require('./reinitializer');
@@ -41,6 +42,7 @@ function scriptLoaded() {
         initXdmFrame(groupSettings);
         fetchPageData(groupSettings);
         scanPage(groupSettings);
+        setupMobileHelper(groupSettings);
         setupReinitializer(groupSettings);
     });
 }
@@ -63,6 +65,10 @@ function fetchPageData(groupSettings) {
 
 function scanPage(groupSettings) {
     PageScanner.scan(groupSettings);
+}
+
+function setupMobileHelper(groupSettings) {
+    MobileHelper.setupMobileHelper(groupSettings);
 }
 
 function setupReinitializer(groupSettings) {
