@@ -8435,6 +8435,8 @@ section.big-beta-form .learn-more-boxes {
         text-decoration: underline; }
 .admin table {
   font-size: 0.85rem; }
+  .admin table tr:hover {
+    background: #eee; }
 .admin .analytics .datepickers input {
   width: auto;
   margin: 0 1rem 1rem 0;

@@ -977,7 +977,9 @@ function antenna($A){
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
                                     $options = $('<div class="ant_nextActions"></div>').appendTo( $success );
                                 
-                                if ( args.kind != 'page' ) {
+                                if (!args.response.data.approved) {
+                                    $('<div>'+ANT.t('not_yet_approved')+'</div>').appendTo( $options );
+                                } else if ( args.kind != 'page' ) {
                                     var $sayMore = ANT.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
@@ -1080,8 +1082,10 @@ function antenna($A){
                             }
 
                             // var $shareSocialWrap = $('.ant_menu_share .ant_linkWrap');
-                            var $shareSocialWrap = $('.ant_nextActions');
-                            $shareSocialWrap.append( makeShareLinks() );
+                            if (args.response.data.approved) {
+                                var $shareSocialWrap = $('.ant_nextActions');
+                                $shareSocialWrap.append( makeShareLinks() );
+                            }
                         }
 
                         ANT.actions.containers.media.onEngage( hash );
@@ -2621,6 +2625,7 @@ function antenna($A){
                 thanks_for_comment : 'Thanks for your comment!',
                 share_reaction : 'Share your reaction',
                 doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!',
+                not_yet_approved : 'Thank you for reacting.  We will review this reaction and approve it if it meets our community guidelines.',
                 bad_language_warning : 'This site has blocked that from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.'
             },
             es : {
@@ -2645,6 +2650,7 @@ function antenna($A){
                 thanks_for_comment : 'Gracias por tu comentario',
                 share_reaction : 'Comparte tu reacción',
                 doubleTapMessage : '<strong>Toca</strong> un párrafo para opinar',
+                not_yet_approved : 'Gracias.  Vamos a revisar esta reacción y aprobarlo si cumple con nuestras normas de la comunidad.',
                 bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
             }
         },

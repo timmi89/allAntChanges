@@ -387,6 +387,7 @@ class GroupForm(forms.ModelForm):
             'requires_approval',
             'signin_organic_required',
             'word_blacklist',
+            'word_whitelist',
             'custom_css',
             'post_selector',
             'post_href_selector',

@@ -41,6 +41,7 @@ BoardSearch = Resource(handler=BoardSearchHandler)
 FollowsBoards = Resource(handler=FollowedBoardsHandler)
 GlobalActivity = Resource(handler=GlobalActivityHandler)
 BlockedTag = Resource(handler=BlockedTagHandler)
+ApprovedTag = Resource(handler=ApprovedTagHandler)
 BlockedPromoTag = Resource(handler=BlockedPromoTagHandler)
 CachePageRefresh = Resource(handler=CachePageRefreshHandler)
 CachePageRefreshNewer = Resource(handler=CachePageRefreshHandlerNewer)
@@ -91,6 +92,7 @@ urlpatterns = patterns('',
     url(r'^metoo', MeToo),
     url(r'^tagremove', TagRemove),
     url(r'^tag/block/(?P<group_id>\d+)/(?P<node_id>\d+)', BlockedTag),
+    url(r'^tag/approve/(?P<group_id>\d+)/(?P<node_id>\d+)', ApprovedTag),
     url(r'^promotag/block/(?P<group_id>\d+)/(?P<node_id>\d+)', BlockedPromoTag),
     url(r'^tag/create/', Tag, kwargs={'action':'create'}),
     url(r'^tag/remove/', Tag, kwargs={'action':'delete'}),

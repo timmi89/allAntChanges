@@ -1057,27 +1057,73 @@ def group_blocked_tags(request, **kwargs):
     )
 
 
+
 @requires_admin
-def group_all_tags(request, **kwargs):
+def group_allowed_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
     context['hasSubheader'] = True
 
-    all_set = set(group.all_tags.all())
-    blocked_set = set(group.blocked_tags.all())
-    all_unblocked = all_set - blocked_set
-    all_promo_unblocked = all_set - set(group.blocked_promo_tags.all())
+    # is this really inefficient?
+    approved_interaction_node_ids = []
+    for tag in AllTag.objects.filter(group=group,approved=True):
+        approved_interaction_node_ids.append(tag.node.id)
 
-    context['all_unblocked'] = all_unblocked
-    context['all_promo_unblocked'] = all_promo_unblocked
+    tag_set = set( InteractionNode.objects.filter(id__in=approved_interaction_node_ids)  )
+
+    blessed_set = set(group.blessed_tags.all())
+    blocked_set = set(group.blocked_tags.all())
+
+    context['all_unblocked'] = (tag_set | blessed_set) - blocked_set
 
     return render_to_response(
-        "group_all_tags.html",
+        "group_allowed_tags.html",
         context,
         context_instance=RequestContext(request)
     )
 
+@requires_admin
+def group_unapproved_tags(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['hasSubheader'] = True
+
+    
+    # is this really inefficient?
+    unapproved_interaction_node_ids = []
+    for tag in AllTag.objects.filter(group=group,approved=False):
+        unapproved_interaction_node_ids.append(tag.node.id)
+
+    tag_set = set( InteractionNode.objects.filter(id__in=unapproved_interaction_node_ids)  )
+
+    # unapproved_tags = AllTag.objects.filter(group=group,approved=False)
+    # print 'unapproved_tags'
+    # print unapproved_tags
+
+    # tag_set = set( InteractionNode.objects.filter(id__in=unapproved_tags) )
+
+    print 'tag_set'
+    print tag_set
+
+    # all_set = set(group.all_tags.all())
+    blessed_set = set(group.blessed_tags.all())
+    blocked_set = set(group.blocked_tags.all())
+
+    # print 'blocked_set'
+    # print blocked_set
+    
+    # unapproved_reactions = all_set - blessed_set
+    # unapproved_reactions = unapproved_reactions - blocked_set
+
+    context['unapproved_reactions'] = tag_set - blessed_set - blocked_set
+
+    return render_to_response(
+        "group_unapproved_tags.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 
 def manage_groups(request, **kwargs):

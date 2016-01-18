@@ -1314,24 +1314,7 @@ class GlobalActivityHandler(AnonymousBaseHandler):
 
 
 class BlockedTagHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET', 'POST', 'DELETE', 'PUT')
-
-    @requires_admin_rest
-    def create(self, request, group_id = None, node_id = None, **kwargs):
-        group = Group.objects.get(id=int(group_id))
-        i_node = InteractionNode.objects.get(id=int(node_id))
-        blocked = BlockedTag.objects.create(group=group, node = i_node, order=0)
-        blocked_promo = BlockedPromoTag.objects.create(group=group, node = i_node, order=0)
-        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
-        existing_interactions.update(approved = False)
-        self.clear_caches(existing_interactions)
-
-        if group and group.word_blacklist:
-            group.word_blacklist += ','+i_node.body
-            group.save()
-
-        return {"created":True}
-
+    allowed_methods = ('GET', 'DELETE', 'PUT')
 
     @requires_admin_rest
     def read(self, request, group_id = None, node_id = None, **kwargs):
@@ -1348,7 +1331,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
         blocked, existed = BlockedTag.objects.get_or_create(group=group, node = i_node, order=0)
-        blocked, existed = BlockedPromoTag.objects.get_or_create(group=group, node = i_node, order=0)
+        # blocked, existed = BlockedPromoTag.objects.get_or_create(group=group, node = i_node, order=0)
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
         self.clear_caches(existing_interactions)
@@ -1384,6 +1367,59 @@ class BlockedTagHandler(AnonymousBaseHandler):
 
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
+
+class ApprovedTagHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'PUT')
+
+    @requires_admin_rest
+    def read(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        approved = AllTag.objects.filter(group=group, node=i_node)
+        if len(approved) == 0:
+            return {"approved":False}
+        return {"approved":True}
+
+
+    @requires_admin_rest
+    def update(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        try:
+            tagsToApprove = AllTag.objects.get(group=group, node = i_node)
+        except AllTag.DoesNotExist:
+            tagsToApprove = AllTag(group=group, node = i_node, order=0, approved=True)
+            tagsToApprove.save()
+
+        tagsToApprove.approved = True
+        tagsToApprove.save()
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = True)
+        self.clear_caches(existing_interactions)
+        return {"updated":True, 'tagActualStatus':tagsToApprove.approved}
+
+    def clear_caches(self, interactions):
+        for interaction in interactions:
+            page = interaction.page
+            container = interaction.container
+
+            try:
+                cache.delete('page_data' + str(page.id))
+
+                cache.delete('page_containers' + str(page.id))
+
+                cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
+
+                #if not interaction.parent or interaction.kind == 'com':
+                #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                #    t = Thread(target=global_cache_updater, kwargs={})
+                #    t.start()
+
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+
+
+
 
 class BlockedPromoTagHandler(AnonymousBaseHandler):
     allowed_methods = ('GET', 'POST', 'DELETE', 'PUT')

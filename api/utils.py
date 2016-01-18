@@ -56,18 +56,42 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None, tag_is_default=False):
-    approveOnCreate = False if group.requires_approval else True
+    
+    # do we need to validate this tag, i.e., check it against the blocked words list?
+    checkIfOffensiveTag = True
+
+    approveOnCreate = True
+
+    # if tag is a default tag (which makes this vulnerable to the client-side), pass it on through
+    if tag_is_default == True:
+        checkIfOffensiveTag = False
+
+    # otherwise, see if this group requires approval for custom reactions, and if this tag is already "blessed"
+    elif group and group.requires_approval:
+        print "GROUP REQUIRES APPROVAL..."
+        if interaction_node in group.blessed_tags.all():
+            print "tag already approved"
+            checkIfOffensiveTag = False
+        else:
+            print "tag NOT already approved"
+            approveOnCreate = False
+
+    print "approveOnCreate: " + str(approveOnCreate)
+
+    blockThisTag = False
 
     interaction_node.body = strip_tags(interaction_node.body)
     if interaction_node.body == '':
         raise JSONException("Group has blocked this tag.")
 
-    if kind and kind == 'tag':
+    if checkIfOffensiveTag == True and kind and kind == 'tag':        
+        # see if it is a Blocked reaction
         if group and group.blocked_tags:
             for blocked in group.blocked_tags.all():
                 if interaction_node.body == blocked.body:
                     raise JSONException("Group has blocked this tag.")
 
+        # see if it is a reaction listed in the more free-flowing "blocked word list"
         if group and group.word_blacklist:
             # Check body for blacklisted word
             # if in the blacklist, block it
@@ -79,7 +103,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
             # check the whole reaction (i.e. 'f u c k'), and smash case
             if tagLowerCased in blacklist:
-                approveOnCreate = False
+                blockThisTag = True
 
             tagNoNumbers = re.sub("^\d+\s|\s\d+\s|\s\d+$", " ", interaction_node.body.lower() )
             tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.punctuation), '', tagNoNumbers)
@@ -88,20 +112,20 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             # check the whole reaction but with loose digits removed.  does not remove numbers inside a word.
             # so fuck1 is still "fuck1" but "fuck 1" is now "fuck"
             if tagLowerCasedNoNumbers in blacklist:
-                approveOnCreate = False
+                blockThisTag = True
 
             # let's check for words ending in "er" and see if they match bad words.
             # so check to see if "fucker" --> "fuck" --> blackword match
             if tagLowerCased.endswith('er'):
                 if tagLowerCased[:-2] in blacklist:
-                    approveOnCreate = False
+                    blockThisTag = True
 
             # also check individual words, by splitting on a space
             # also, replace dashes with a space first.  a bit simple but a good start.
             # for word in tagLowerCased.replace('-', ' ').split(' '):
             for word in interaction_node.body.lower().replace('-', ' ').split(' '):
                 if word.lower() in blacklist:
-                    approveOnCreate = False
+                    blockThisTag = True
                     
                 #### DO ALL THE SAME STUFF FOR EACH 'word'.  should abstract to a function, but not right now.
                 # strip punctuation and whitespace, so that f!u ck is not OK
@@ -110,7 +134,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
                 # check the whole reaction (i.e. 'f u c k'), and smash case
                 if tagLowerCased in blacklist:
-                    approveOnCreate = False
+                    blockThisTag = True
 
                 tagNoNumbers = re.sub("^\d+\s|\s\d+\s|\s\d+$", " ", word )
                 tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.punctuation), '', tagNoNumbers)
@@ -119,19 +143,21 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 # check the whole reaction but with loose digits removed.  does not remove numbers inside a word.
                 # so fuck1 is still "fuck1" but "fuck 1" is now "fuck"
                 if tagLowerCasedNoNumbers in blacklist:
-                    approveOnCreate = False
+                    blockThisTag = True
 
                 # let's check for words ending in "er" and see if they match bad words.
                 # so check to see if "fucker" --> "fuck" --> blackword match
                 if tagLowerCased.endswith('er'):
                     if tagLowerCased[:-2] in blacklist:
-                        approveOnCreate = False
+                        blockThisTag = True
 
 
-            if approveOnCreate == False:
+            if blockThisTag == True:
                 raise JSONException("Group has blocked this tag.")
 
-         
+
+
+    
     # Check to see if user has reached their interaction limit
     tempuser = False
     if isTemporaryUser(user):
@@ -180,7 +206,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 pass
             else:
                 raise JSONException(u"sign in required for organic reactions")
-            
+        
     try:
         new_interaction = Interaction(
             page=page,
@@ -207,7 +233,8 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 logger.info("Creating all tag")
                 AllTag.objects.create(group=page.site.group, 
                                       node = new_interaction.interaction_node, 
-                                      order=len(page.site.group.all_tags.all()))
+                                      order=len(page.site.group.all_tags.all()),
+                                      approved=approveOnCreate)
                 try:
                     notification = AsynchNewGroupNodeNotification()
                     t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
@@ -222,6 +249,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         interaction=new_interaction,
         content_node=content,
         existing=False,
+        approved=approveOnCreate,
         container=container
     )
     try:

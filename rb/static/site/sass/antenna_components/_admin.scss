@@ -65,6 +65,10 @@
     
     table {
         font-size:0.85rem;
+
+        tr {
+            &:hover {background:#eee;}
+        }
     }
 
     // Analytics

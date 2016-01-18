@@ -173,6 +173,7 @@ class Group(models.Model):
     signin_organic_required = models.BooleanField(default=False)
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
+    word_whitelist = models.TextField(blank=True)
     paragraph_helper = models.BooleanField(default=True)
     media_url_ignore_query = models.BooleanField(default=True)
     ignore_subdomain = models.BooleanField(default=False)
@@ -287,6 +288,7 @@ class Group(models.Model):
     class Meta:
         ordering = ['short_name']
 
+# i.e. the group defaults
 class GroupBlessedTag(models.Model):
     group = models.ForeignKey(Group)
     node = models.ForeignKey(InteractionNode)
@@ -326,6 +328,7 @@ class AllTag(models.Model):
     group = models.ForeignKey(Group)
     node = models.ForeignKey(InteractionNode)
     order =  models.IntegerField()
+    approved = models.BooleanField(default=True)
 
     def __unicode__(self):
         return str(self.group) + ":" + str(self.node) + "" + str(self.order)

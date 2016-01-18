@@ -9,7 +9,7 @@
 <section role="subheader">
     {% with group=form.instance %}
     {% with "settings" as activeAdminTab %} 
-    {% include "admin/nav_tabs.html" %}
+    {% include "admin_nav_tabs.html" %}
     {% endwith %}
     {% endwith %}
 </section>
@@ -281,7 +281,7 @@
             <h3>Moderation</h3>
             <div class="formRow" style="margin: 10px 0;">
                 {{ form.requires_approval }}{{ form.requires_approval.errors }}
-                <label for="id_requires_approval"><span class="labelTitle">Auto-block all reactions </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
+                <label for="id_requires_approval"><span class="labelTitle">Require approval for custom reactions </span><span>If you want reactions to be approved before they are visible for others to see, check this box.</span></label>
             </div>
             <div class="formRow">
                 {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}

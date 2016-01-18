@@ -16,26 +16,26 @@
 {% block page_content %}
 <div class="container row settings">
   <section role="panels" class="content">
-	<!-- <h1>Blocked Reactions</h1> -->
 
     <nav>
       <div class="nav-wrapper blue-grey">
         <ul id="nav-mobile" class="left">
-          <li><a href="../all_reactions">Approved Reactions</a></li>
+          <li class="active"><a href="../all_reactions">Approved Reactions</a></li>
           <li><a href="../unapproved_reactions">Unapproved Reactions</a></li>
-          <li class="active"><a href="../blocked_reactions">Blocked Reactions</a></li>
+          <li><a href="../blocked_reactions">Blocked Reactions</a></li>
         </ul>
       </div>
     </nav>
 
 
+    <div class="card-panel">
+        <p>These are reactions that currently appear on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>
+        <p>Blocking a reaction will remove all current instances of it on your site, and prevent any more from being made.</p>
+    </div>
 
-	<div class="card-panel">
-		<p>These are the reactions on your site that you have <strong>blocked</strong>.  This means if anyone tries to react using an exact much of the reactions listed below, Antenna won't let the react get created on your site.</p>
-	</div>
+    <h2>Approved Reactions</h2>
 
-    <h2>Blocked Reactions</h2>
-	<table role="unblock_tags">
+    <table role="block_tags">
 		<thead>
 			<tr>
 				<th>Reaction</th>
@@ -43,29 +43,32 @@
 			</tr>
 		</thead>
 		<tbody>
-    {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
+    {% for tag in all_unblocked|dictsortreversed:"id" %}
     		<tr>
-    			<td width="300">{{blocked.body}}</td>
-    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
+    			<td width="300">{{tag.body}}</td>
+    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
     		</tr>
     {% endfor %}  
 		</tbody>
 	</table>
-
+	
 </section>
 </div>
 
 <script>
-// bind an "unblock" event to each button
-// this will unblock the reaction on the site, allowing people to again use it
-$('table[role="unblock_tags"] button').click( function() {
+// bind a "block" event to each button
+// this will block the reaction on the site
+$('table[role="block_tags"] button').click( function() {
 	var $button = $(this);
 	// send the data!
     $.ajax({
         url: "/api/tag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
-        type: "delete",
+        type: "put",
+        // contentType: "application/json",
+        // dataType: "jsonp",
+        // data: { json: JSON.stringify(sendData) },
         success: function(response) {
-        	$button.closest('tr').html('<td colspan="2">This reaction has been unblocked, and approved!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/all_reactions/">list of approved reactions</a> to re-block it.</td>');
+        	$button.closest('tr').html('<td colspan="2">This reaction has been blocked!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/blocked_reactions/">list of blocked reactions</a> to unblock it.</td>');
         },
         error: function(response) {
         	console.log(response);

@@ -159,7 +159,7 @@ class BlockedTagAdmin(admin.ModelAdmin):
     search_fields = ['group__name', 'node__body', 'node__id']
 
 class AllTagAdmin(admin.ModelAdmin):
-    list_display = ('group', 'node', 'order')
+    list_display = ('group', 'node', 'approved', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
 
 
