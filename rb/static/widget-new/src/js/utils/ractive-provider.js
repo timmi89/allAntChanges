@@ -1,4 +1,3 @@
-var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var RactiveEventsTap = require('./ractive-events-tap');
 
 var Messages = require('./messages');
@@ -24,17 +23,17 @@ function loaded() {
 }
 
 function cssResetDecorator(node) {
-    tagChildren(node, 'antenna-reset');
+    tagNodeAndChildren(node, 'antenna-reset');
     return { teardown: function() {} };
 }
 
-function tagChildren(element, clazz) {
-    if (element.children) { // Safari returns undefined when asking for children on an SVG element
-        for (var i = 0; i < element.children.length; i++) {
-            tagChildren(element.children[i], clazz);
+function tagNodeAndChildren(node, clazz) {
+    node.className = node.className ? node.className + ' ' + clazz : clazz;
+    if (node.children) { // Safari returns undefined when asking for children on an SVG element
+        for (var i = 0; i < node.children.length; i++) {
+            tagNodeAndChildren(node.children[i], clazz);
         }
     }
-    $(element).addClass(clazz);
 }
 
 function notifyCallbacks() {
