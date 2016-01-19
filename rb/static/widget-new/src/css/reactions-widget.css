@@ -11,6 +11,7 @@
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
     .antenna-reactions-widget {
         left: 50% !important;
+        -webkit-transform: translateX(-50%);
         transform: translateX(-50%);
     }
 }

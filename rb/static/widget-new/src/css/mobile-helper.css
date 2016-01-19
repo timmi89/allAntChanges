@@ -2,6 +2,7 @@
     position: fixed;
     top: 85%;
     left: 50vw;
+    -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
     width: 75vw;
     margin: auto;
