@@ -101,6 +101,7 @@ function highlightSelection(selection) {
 }
 
 function highlightRange(range) {
+    clearHighlights();
     getClassApplier().applyToRange(range);
     highlightedRanges.push(range);
 }
