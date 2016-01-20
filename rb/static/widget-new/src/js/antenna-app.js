@@ -30,6 +30,9 @@ ScriptLoader.load(scriptLoaded);
 function scriptLoaded() {
     // Step 2 - Once we have our required scripts, fetch the group settings from the server
     GroupSettingsLoader.load(function(groupSettings) {
+        if (groupSettings.isHideOnMobile()) {
+            return;
+        }
         // Step 3 - Once we have the settings, we can kick off a couple things in parallel:
         //
         // -- inject any custom CSS from the group settings

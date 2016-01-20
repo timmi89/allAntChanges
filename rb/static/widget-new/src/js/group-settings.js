@@ -220,6 +220,7 @@ function createFromJSON(json) {
         },
         summarySelector: data('summary_widget_selector'),
         summaryMethod: data('summary_widget_method'),
+        isHideOnMobile: data('hideOnMobile'),
         isExpandedMobileSummary: data('summary_widget_expanded_mobile'),
         isHideTapHelper: data('hideDoubleTapMessage'),
         pageSelector: data('post_selector'),
