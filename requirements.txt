@@ -51,3 +51,4 @@ factory_boy==2.6.0
 functools32
 mock
 shortuuid
+httmock
