@@ -11,6 +11,7 @@ var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
 var Reinitializer = require('./reinitializer');
 var XDMAnalytics = require('./xdm-analytics');
+var BrowserMetrics = require('./utils/browser-metrics');
 var XDMLoader = require('./utils/xdm-loader');
 
 window.AntennaApp = { // TODO flesh out our desired API
@@ -30,7 +31,7 @@ ScriptLoader.load(scriptLoaded);
 function scriptLoaded() {
     // Step 2 - Once we have our required scripts, fetch the group settings from the server
     GroupSettingsLoader.load(function(groupSettings) {
-        if (groupSettings.isHideOnMobile()) {
+        if (groupSettings.isHideOnMobile() && BrowserMetrics.isMobile()) {
             return;
         }
         // Step 3 - Once we have the settings, we can kick off a couple things in parallel:
