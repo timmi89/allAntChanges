@@ -8,7 +8,7 @@
     box-shadow: 0 1px 40px #8A8A8A;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+@media only screen and (max-width : 480px) and (orientation: portrait), only screen and (max-width: 640px) and (orientation: landscape) {
     .antenna-reactions-widget {
         left: 50% !important;
         -webkit-transform: translateX(-50%);
@@ -55,7 +55,10 @@
     color: #d8d8d8;
     cursor: pointer;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+.antenna-touch .antenna-reactions-close {
+    display: inline-block;
+}
+@media only screen and (max-width : 480px) and (orientation: portrait), only screen and (max-width: 640px) and (orientation: landscape) {
     .antenna-reactions-close {
         display: inline-block;
     }

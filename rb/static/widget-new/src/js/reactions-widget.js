@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AjaxClient = require('./utils/ajax-client');
+var BrowserMetrics = require('./utils/browser-metrics');
 var Messages = require('./utils/messages');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
@@ -45,7 +46,9 @@ function openReactionsWidget(options, elementOrCoords) {
     var ractive = Ractive({
         el: WidgetBucket.get(),
         append: true,
-        data: {},
+        data: {
+            supportsTouch: BrowserMetrics.supportsTouch()
+        },
         template: require('../templates/reactions-widget.hbs.html'),
         partials: {
             logo: SVGs.logo

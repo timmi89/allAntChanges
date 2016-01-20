@@ -50,7 +50,10 @@
     -moz-cursor: zoom-in;
     -webkit-cursor: zoom-in;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+.antenna-touch .antenna-reaction-location {
+    display: inline-block;
+}
+@media only screen and (max-width : 480px) and (orientation: portrait), only screen and (max-width: 640px) and (orientation: landscape) {
     .antenna-reaction-location {
         display: inline-block;
     }
