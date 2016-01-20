@@ -43,6 +43,6 @@ module.exports = {
 
     'blocked-page_back': 'Volver',
 
-    'mobile-helper_prompt': '¡Toca un párrafo para opinar!',
-    'mobile-helper_close': 'Volver'
+    'tap-helper_prompt': '¡Toca un párrafo para opinar!',
+    'tap-helper_close': 'Volver'
 };

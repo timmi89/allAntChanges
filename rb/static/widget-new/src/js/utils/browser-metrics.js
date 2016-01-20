@@ -4,7 +4,8 @@ var isMobileDevice;
 
 function supportsTouch() {
     if (isTouchBrowser === undefined) {
-        isTouchBrowser = (navigator.msMaxTouchPoints || "ontouchstart" in window) && ((window.matchMedia("only screen and (max-width: 768px)")).matches);
+        //isTouchBrowser = (navigator.msMaxTouchPoints || "ontouchstart" in window) && ((window.matchMedia("only screen and (max-width: 768px)")).matches);
+        isTouchBrowser = "ontouchstart" in window;
     }
     return isTouchBrowser;
 }
@@ -17,7 +18,6 @@ function isMobile() {
     }
     return isMobileDevice;
 }
-
 
 module.exports = {
     supportsTouch: supportsTouch,

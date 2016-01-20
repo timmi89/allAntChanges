@@ -3,13 +3,13 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var SVGs = require('./svgs');
 var WidgetBucket = require('./utils/widget-bucket');
 
-function setupMobileHelper(groupSettings) {
-    if (!isDismissed() && !groupSettings.isHideMobileHelper() && BrowserMetrics.isMobile()) {
+function setupHelper(groupSettings) {
+    if (!isDismissed() && !groupSettings.isHideTapHelper() && BrowserMetrics.supportsTouch()) {
         var ractive = Ractive({
             el: WidgetBucket.get(),
             append: true,
             data: {},
-            template: require('../templates/mobile-helper.hbs.html'),
+            template: require('../templates/tap-helper.hbs.html'),
             partials: {
                 logo: SVGs.logo
             }
@@ -32,5 +32,5 @@ function isDismissed() {
 }
 
 module.exports = {
-    setupMobileHelper: setupMobileHelper
+    setupHelper: setupHelper
 };

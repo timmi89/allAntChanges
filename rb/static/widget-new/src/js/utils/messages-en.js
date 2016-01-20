@@ -43,6 +43,6 @@ module.exports = {
 
     'blocked-page_back': 'Back',
 
-    'mobile-helper_prompt': 'Tap any paragraph to respond!',
-    'mobile-helper_close': 'Close'
+    'tap-helper_prompt': 'Tap any paragraph to respond!',
+    'tap-helper_close': 'Close'
 };
