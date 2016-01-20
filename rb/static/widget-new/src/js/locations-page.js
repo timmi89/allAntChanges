@@ -31,7 +31,8 @@ function createPage(options) {
         },
         template: require('../templates/locations-page.hbs.html'),
         partials: {
-            left: SVGs.left
+            left: SVGs.left,
+            film: SVGs.film
         }
     });
     ractive.on('back', goBack);

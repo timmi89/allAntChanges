@@ -31,9 +31,9 @@
                         {{elseif this.kind === 'img'}}
                             <td class="antenna-locations-image-body"><img src="{{this.body}}"></td>
                         {{elseif this.kind === 'med'}}
-                            <td class="antenna-locations-media-body"><img src="/static/widget/images/video_icon.png"> Video</td>
+                            <td class="antenna-locations-media-body">{{>film}}<span class="antenna-locations-video">{{getMessage('locations-page_video')}}</span></td>
                         {{else}}
-                            <!-- TODO: Review. Presumably, we just do nothing. -->
+                            <td>&nbsp;</td>
                         {{/if}}
                     </tr>
                 {{/if}}

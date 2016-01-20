@@ -33,6 +33,7 @@ module.exports = {
     'locations-page_count_one': '<span class="antenna-location-count">1</span><br>reacción',
     'locations-page_count_many': '<span class="antenna-location-count">{0}</span><br>reacciones',
     'locations-page_back': 'Volver',
+    'locations-page_video': 'Video',
 
     'call-to-action-label_responses': 'Respuestas', // TODO: need a translation of "Responses"
     'call-to-action-label_responses_one': '1 Respuesta', // TODO

@@ -33,6 +33,7 @@ module.exports = {
     'locations-page_count_one': '<span class="antenna-location-count">1</span><br>reaction',
     'locations-page_count_many': '<span class="antenna-location-count">{0}</span><br>reactions',
     'locations-page_back': 'Back',
+    'locations-page_video': 'Video',
 
     'call-to-action-label_responses': 'Responses',
     'call-to-action-label_responses_one': '1 Response',

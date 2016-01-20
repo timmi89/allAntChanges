@@ -71,3 +71,27 @@
     font-style: italic;
     padding: 5px 7px 5px 0;
 }
+
+.antenna-locations-media-body .antenna-film {
+    display: inline-block;
+    vertical-align: middle;
+    height: 24px;
+    width: 24px;
+    margin-left: 2px;
+}
+
+.antenna-locations-media-body svg {
+    width: 24px;
+    height: 24px;
+}
+
+.antenna-locations-media-body .antenna-film-path {
+    fill: #666666;
+}
+
+.antenna-locations-video {
+    vertical-align: middle;
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: bold;
+}
