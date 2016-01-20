@@ -32,6 +32,7 @@
 }
 
 .antenna-expanded-reaction {
+    display: inline-block;
     padding: 4px 6px;
     color: #666666;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
@@ -43,10 +44,12 @@
 }
 
 .antenna-expanded-text {
+    display: inline-block;
     font-weight: 900;
 }
 
 .antenna-expanded-count {
+    display: inline-block;
     margin-left: 5px;
     font-size: 10px;
     opacity: 0.8;
