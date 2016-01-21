@@ -10,7 +10,7 @@ function createXDMframe(groupId) {
     //    ANT.util.userLoginState();
     //});
 
-    var iframeUrl = XDM_ORIGIN + "/static/widget-new/xdm/xdm.html",
+    var iframeUrl = XDM_ORIGIN + "/static/widget-new/xdm.html",
     parentUrl = window.location.href,
     parentHost = window.location.protocol + "//" + window.location.host,
     // TODO: Restore the bookmarklet attribute on the iFrame?

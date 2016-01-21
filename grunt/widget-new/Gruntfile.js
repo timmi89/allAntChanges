@@ -13,11 +13,17 @@ module.exports = function(grunt) {
         widget_css_src_temp: rootDir + '/rb/static/widget-new/debug/temp.css',
         widget_css_reset: rootDir + '/rb/static/widget-new/src/css/reset.css',
         widget_css_reset_temp: rootDir + '/rb/static/widget-new/debug/reset_temp.css',
-        widget_css_dest: rootDir + '/rb/static/widget-new/debug/antenna.css',
+        widget_css_dest: rootDir + '/rb/static/widget-new/antenna.css',
 
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
-        rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy-compiled.js',
-        rangy_min: rootDir + '/rb/static/widget-new/lib/rangy-compiled.min.js'
+        rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.js',
+        rangy_min: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.min.js',
+
+        ractive_src: rootDir + '/rb/static/widget-new/lib/ractive.runtime-0.7.3.js',
+        ractive_dest: rootDir + '/rb/static/widget-new/lib/ractive.runtime-0.7.3.min.js',
+
+        antuser_src: rootDir + '/rb/static/widget-new/src/xdm/ant_user.js',
+        antuser_dest: rootDir + '/rb/static/widget-new/ant_user.min.js'
     };
 
   // Project configuration.
@@ -75,6 +81,14 @@ module.exports = function(grunt) {
                 dest: '<%= paths.widget_css_dest %>'
             }
         },
+        clean: {
+            options: {
+                force: true
+            },
+            temp_css: {
+                src: ['<%= paths.widget_css_reset_temp %>', '<%= paths.widget_css_src_temp %>']
+            }
+        },
         uglify: {
             widget_js: {
                 options: {
@@ -87,6 +101,14 @@ module.exports = function(grunt) {
             rangy: {
                 src: ['<%= paths.rangy_dest %>'],
                 dest: '<%= paths.rangy_min %>'
+            },
+            ractive: {
+                src: ['<%= paths.ractive_src %>'],
+                dest: '<%= paths.ractive_dest %>'
+            },
+            antuser: {
+                src: ['<%= paths.antuser_src %>'],
+                dest: '<%= paths.antuser_dest %>'
             }
         },
         watch: {
@@ -98,7 +120,7 @@ module.exports = function(grunt) {
                     atBegin: true
                 },
                 files: [ '<%= paths.widget_css_src %>', '<%= paths.widget_css_reset %>'],
-                tasks: [ 'cssmin', 'concat:widget_css' ]
+                tasks: [ 'cssmin', 'concat:widget_css', 'clean:temp_css' ]
             }
             // our watch on the widget src is handled by 'watchify', included in browserify.
             // (see the 'watch' option in the browserify config.)
@@ -110,10 +132,15 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css' ]);
+    grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'watch:widget_css'  ]);
-    grunt.registerTask('rangy', [ 'concat:rangy', 'uglify:rangy' ]); // This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
+    grunt.registerTask('rangy-compile', [ 'concat:rangy' ]);// This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
+    grunt.registerTask('rangy-min', [ 'uglify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.
+    grunt.registerTask('ractive-min', [ 'uglify:ractive' ]);
+    grunt.registerTask('antuser-min', [ 'uglify:antuser' ]);
+    grunt.registerTask('widget', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
 
 };

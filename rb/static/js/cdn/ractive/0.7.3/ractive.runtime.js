@@ -7,12 +7,9 @@
 
 	Released under the MIT License.
 */
-(function() {
-	// Hide any global define object
-	var define = undefined;
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
+  //typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  //typeof define === 'function' && define.amd ? define(factory) :
   global.Ractive = factory()
 }(this, function () { 'use strict';
 
@@ -14167,5 +14164,4 @@
   return _Ractive;
 
 }));
-})();
 //# sourceMappingURL=ractive.runtime.js.map

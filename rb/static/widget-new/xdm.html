@@ -29,15 +29,13 @@
                 prot+"//s3.amazonaws.com/readrboard/";
 
         window.ANT_user_script = ( ANT_offline ) ? 
-                "ant_user.js" :
-                "ant_user_min.js" ;
-        window.ANT_user_script = 'ant_user.js'; // TODO: minify the new file
+                "src/xdm/ant_user.js" :
+                "ant_user.min.js" ;
         
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-        //document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget-new/xdm/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget-new/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
 
     })();
     </script>

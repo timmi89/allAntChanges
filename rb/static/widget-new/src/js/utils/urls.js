@@ -111,6 +111,10 @@ function legacyComputeMediaUrl($element) {
     return content;
 }
 
+function amazonS3Url() {
+    return URLConstants.AMAZON_S3;
+}
+
 // TODO: refactor usage of app server url + relative routes
 function appServerUrl() {
     if (AppMode.test) {
@@ -133,6 +137,7 @@ function eventsServerUrl() {
 module.exports = {
     appServerUrl: appServerUrl,
     eventsServerUrl: eventsServerUrl,
+    amazonS3Url: amazonS3Url,
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,

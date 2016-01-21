@@ -7,10 +7,9 @@
 
 	Released under the MIT License.
 */
-
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
+  //typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  //typeof define === 'function' && define.amd ? define(factory) :
   global.Ractive = factory()
 }(this, function () { 'use strict';
 
@@ -3524,3036 +3523,7 @@
 
   // TODO do we need to support this in the new Ractive() case?
 
-  var Parser,
-      ParseError,
-      parse_Parser__leadingWhitespace = /^\s+/;
-
-  ParseError = function (message) {
-  	this.name = "ParseError";
-  	this.message = message;
-  	try {
-  		throw new Error(message);
-  	} catch (e) {
-  		this.stack = e.stack;
-  	}
-  };
-
-  ParseError.prototype = Error.prototype;
-
-  Parser = function (str, options) {
-  	var items,
-  	    item,
-  	    lineStart = 0;
-
-  	this.str = str;
-  	this.options = options || {};
-  	this.pos = 0;
-
-  	this.lines = this.str.split("\n");
-  	this.lineEnds = this.lines.map(function (line) {
-  		var lineEnd = lineStart + line.length + 1; // +1 for the newline
-
-  		lineStart = lineEnd;
-  		return lineEnd;
-  	}, 0);
-
-  	// Custom init logic
-  	if (this.init) this.init(str, options);
-
-  	items = [];
-
-  	while (this.pos < this.str.length && (item = this.read())) {
-  		items.push(item);
-  	}
-
-  	this.leftover = this.remaining();
-  	this.result = this.postProcess ? this.postProcess(items, options) : items;
-  };
-
-  Parser.prototype = {
-  	read: function (converters) {
-  		var pos, i, len, item;
-
-  		if (!converters) converters = this.converters;
-
-  		pos = this.pos;
-
-  		len = converters.length;
-  		for (i = 0; i < len; i += 1) {
-  			this.pos = pos; // reset for each attempt
-
-  			if (item = converters[i](this)) {
-  				return item;
-  			}
-  		}
-
-  		return null;
-  	},
-
-  	getLinePos: function (char) {
-  		var lineNum = 0,
-  		    lineStart = 0,
-  		    columnNum;
-
-  		while (char >= this.lineEnds[lineNum]) {
-  			lineStart = this.lineEnds[lineNum];
-  			lineNum += 1;
-  		}
-
-  		columnNum = char - lineStart;
-  		return [lineNum + 1, columnNum + 1, char]; // line/col should be one-based, not zero-based!
-  	},
-
-  	error: function (message) {
-  		var pos = this.getLinePos(this.pos);
-  		var lineNum = pos[0];
-  		var columnNum = pos[1];
-
-  		var line = this.lines[pos[0] - 1];
-  		var numTabs = 0;
-  		var annotation = line.replace(/\t/g, function (match, char) {
-  			if (char < pos[1]) {
-  				numTabs += 1;
-  			}
-
-  			return "  ";
-  		}) + "\n" + new Array(pos[1] + numTabs).join(" ") + "^----";
-
-  		var error = new ParseError("" + message + " at line " + lineNum + " character " + columnNum + ":\n" + annotation);
-
-  		error.line = pos[0];
-  		error.character = pos[1];
-  		error.shortMessage = message;
-
-  		throw error;
-  	},
-
-  	matchString: function (string) {
-  		if (this.str.substr(this.pos, string.length) === string) {
-  			this.pos += string.length;
-  			return string;
-  		}
-  	},
-
-  	matchPattern: function (pattern) {
-  		var match;
-
-  		if (match = pattern.exec(this.remaining())) {
-  			this.pos += match[0].length;
-  			return match[1] || match[0];
-  		}
-  	},
-
-  	allowWhitespace: function () {
-  		this.matchPattern(parse_Parser__leadingWhitespace);
-  	},
-
-  	remaining: function () {
-  		return this.str.substring(this.pos);
-  	},
-
-  	nextChar: function () {
-  		return this.str.charAt(this.pos);
-  	}
-  };
-
-  Parser.extend = function (proto) {
-  	var Parent = this,
-  	    Child,
-  	    key;
-
-  	Child = function (str, options) {
-  		Parser.call(this, str, options);
-  	};
-
-  	Child.prototype = create(Parent.prototype);
-
-  	for (key in proto) {
-  		if (hasOwn.call(proto, key)) {
-  			Child.prototype[key] = proto[key];
-  		}
-  	}
-
-  	Child.extend = Parser.extend;
-  	return Child;
-  };
-
-  var parse_Parser = Parser;
-
-  var TEXT = 1;
-  var INTERPOLATOR = 2;
-  var TRIPLE = 3;
-  var SECTION = 4;
-  var INVERTED = 5;
-  var CLOSING = 6;
-  var ELEMENT = 7;
-  var PARTIAL = 8;
-  var COMMENT = 9;
-  var DELIMCHANGE = 10;
-  var ATTRIBUTE = 13;
-  var CLOSING_TAG = 14;
-  var COMPONENT = 15;
-  var YIELDER = 16;
-  var INLINE_PARTIAL = 17;
-  var DOCTYPE = 18;
-
-  var NUMBER_LITERAL = 20;
-  var STRING_LITERAL = 21;
-  var ARRAY_LITERAL = 22;
-  var OBJECT_LITERAL = 23;
-  var BOOLEAN_LITERAL = 24;
-  var REGEXP_LITERAL = 25;
-
-  var GLOBAL = 26;
-  var KEY_VALUE_PAIR = 27;
-
-  var REFERENCE = 30;
-  var REFINEMENT = 31;
-  var MEMBER = 32;
-  var PREFIX_OPERATOR = 33;
-  var BRACKETED = 34;
-  var CONDITIONAL = 35;
-  var INFIX_OPERATOR = 36;
-
-  var INVOCATION = 40;
-
-  var SECTION_IF = 50;
-  var SECTION_UNLESS = 51;
-  var SECTION_EACH = 52;
-  var SECTION_WITH = 53;
-  var SECTION_IF_WITH = 54;
-
-  var ELSE = 60;
-  var ELSEIF = 61;
-
-  var mustache_readDelimiterChange = readDelimiterChange;
-  var delimiterChangePattern = /^[^\s=]+/,
-      whitespacePattern = /^\s+/;
-  function readDelimiterChange(parser) {
-  	var start, opening, closing;
-
-  	if (!parser.matchString("=")) {
-  		return null;
-  	}
-
-  	start = parser.pos;
-
-  	// allow whitespace before new opening delimiter
-  	parser.allowWhitespace();
-
-  	opening = parser.matchPattern(delimiterChangePattern);
-  	if (!opening) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	// allow whitespace (in fact, it's necessary...)
-  	if (!parser.matchPattern(whitespacePattern)) {
-  		return null;
-  	}
-
-  	closing = parser.matchPattern(delimiterChangePattern);
-  	if (!closing) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	// allow whitespace before closing '='
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("=")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	return [opening, closing];
-  }
-
-  var readRegexpLiteral = readRegexpLiteral__readNumberLiteral;
-  var regexpPattern = /^(\/(?:[^\n\r\u2028\u2029/\\[]|\\.|\[(?:[^\n\r\u2028\u2029\]\\]|\\.)*])+\/(?:([gimuy])(?![a-z]*\2))*(?![a-zA-Z_$0-9]))/;
-  function readRegexpLiteral__readNumberLiteral(parser) {
-  	var result;
-
-  	if (result = parser.matchPattern(regexpPattern)) {
-  		return {
-  			t: REGEXP_LITERAL,
-  			v: result
-  		};
-  	}
-
-  	return null;
-  }
-
-  var converters_readMustache = readMustache;
-
-  var delimiterChangeToken = { t: DELIMCHANGE, exclude: true };
-  function readMustache(parser) {
-  	var mustache, i;
-
-  	// If we're inside a <script> or <style> tag, and we're not
-  	// interpolating, bug out
-  	if (parser.interpolate[parser.inside] === false) {
-  		return null;
-  	}
-
-  	for (i = 0; i < parser.tags.length; i += 1) {
-  		if (mustache = readMustacheOfType(parser, parser.tags[i])) {
-  			return mustache;
-  		}
-  	}
-  }
-
-  function readMustacheOfType(parser, tag) {
-  	var start, mustache, reader, i;
-
-  	start = parser.pos;
-
-  	if (parser.matchString("\\" + tag.open)) {
-  		if (start === 0 || parser.str[start - 1] !== "\\") {
-  			return tag.open;
-  		}
-  	} else if (!parser.matchString(tag.open)) {
-  		return null;
-  	}
-
-  	// delimiter change?
-  	if (mustache = mustache_readDelimiterChange(parser)) {
-  		// find closing delimiter or abort...
-  		if (!parser.matchString(tag.close)) {
-  			return null;
-  		}
-
-  		// ...then make the switch
-  		tag.open = mustache[0];
-  		tag.close = mustache[1];
-  		parser.sortMustacheTags();
-
-  		return delimiterChangeToken;
-  	}
-
-  	parser.allowWhitespace();
-
-  	// illegal section closer
-  	if (parser.matchString("/")) {
-  		parser.pos -= 1;
-  		var rewind = parser.pos;
-  		if (!readRegexpLiteral(parser)) {
-  			parser.pos = rewind - tag.close.length;
-  			parser.error("Attempted to close a section that wasn't open");
-  		} else {
-  			parser.pos = rewind;
-  		}
-  	}
-
-  	for (i = 0; i < tag.readers.length; i += 1) {
-  		reader = tag.readers[i];
-
-  		if (mustache = reader(parser, tag)) {
-  			if (tag.isStatic) {
-  				mustache.s = true; // TODO make this `1` instead - more compact
-  			}
-
-  			if (parser.includeLinePositions) {
-  				mustache.p = parser.getLinePos(start);
-  			}
-
-  			return mustache;
-  		}
-  	}
-
-  	parser.pos = start;
-  	return null;
-  }
-
-  var expectedExpression = "Expected a JavaScript expression";
-  var expectedParen = "Expected closing paren";
-
-  var literal_readNumberLiteral = literal_readNumberLiteral__readNumberLiteral;
-  var literal_readNumberLiteral__numberPattern = /^(?:[+-]?)0*(?:(?:(?:[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
-  function literal_readNumberLiteral__readNumberLiteral(parser) {
-  	var result;
-
-  	if (result = parser.matchPattern(literal_readNumberLiteral__numberPattern)) {
-  		return {
-  			t: NUMBER_LITERAL,
-  			v: result
-  		};
-  	}
-
-  	return null;
-  }
-
-  var literal_readBooleanLiteral = readBooleanLiteral;
-  function readBooleanLiteral(parser) {
-  	var remaining = parser.remaining();
-
-  	if (remaining.substr(0, 4) === "true") {
-  		parser.pos += 4;
-  		return {
-  			t: BOOLEAN_LITERAL,
-  			v: "true"
-  		};
-  	}
-
-  	if (remaining.substr(0, 5) === "false") {
-  		parser.pos += 5;
-  		return {
-  			t: BOOLEAN_LITERAL,
-  			v: "false"
-  		};
-  	}
-
-  	return null;
-  }
-
-  var stringMiddlePattern, escapeSequencePattern, lineContinuationPattern;
-
-  // Match one or more characters until: ", ', \, or EOL/EOF.
-  // EOL/EOF is written as (?!.) (meaning there's no non-newline char next).
-  stringMiddlePattern = /^(?=.)[^"'\\]+?(?:(?!.)|(?=["'\\]))/;
-
-  // Match one escape sequence, including the backslash.
-  escapeSequencePattern = /^\\(?:['"\\bfnrt]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|(?=.)[^ux0-9])/;
-
-  // Match one ES5 line continuation (backslash + line terminator).
-  lineContinuationPattern = /^\\(?:\r\n|[\u000A\u000D\u2028\u2029])/;
-
-  // Helper for defining getDoubleQuotedString and getSingleQuotedString.
-  var makeQuotedStringMatcher = function (okQuote) {
-  	return function (parser) {
-  		var start, literal, done, next;
-
-  		start = parser.pos;
-  		literal = "\"";
-  		done = false;
-
-  		while (!done) {
-  			next = parser.matchPattern(stringMiddlePattern) || parser.matchPattern(escapeSequencePattern) || parser.matchString(okQuote);
-  			if (next) {
-  				if (next === "\"") {
-  					literal += "\\\"";
-  				} else if (next === "\\'") {
-  					literal += "'";
-  				} else {
-  					literal += next;
-  				}
-  			} else {
-  				next = parser.matchPattern(lineContinuationPattern);
-  				if (next) {
-  					// convert \(newline-like) into a \u escape, which is allowed in JSON
-  					literal += "\\u" + ("000" + next.charCodeAt(1).toString(16)).slice(-4);
-  				} else {
-  					done = true;
-  				}
-  			}
-  		}
-
-  		literal += "\"";
-
-  		// use JSON.parse to interpret escapes
-  		return JSON.parse(literal);
-  	};
-  };
-
-  var getSingleQuotedString = makeQuotedStringMatcher("\"");
-  var getDoubleQuotedString = makeQuotedStringMatcher("'");
-
-  var readStringLiteral = function (parser) {
-  	var start, string;
-
-  	start = parser.pos;
-
-  	if (parser.matchString("\"")) {
-  		string = getDoubleQuotedString(parser);
-
-  		if (!parser.matchString("\"")) {
-  			parser.pos = start;
-  			return null;
-  		}
-
-  		return {
-  			t: STRING_LITERAL,
-  			v: string
-  		};
-  	}
-
-  	if (parser.matchString("'")) {
-  		string = getSingleQuotedString(parser);
-
-  		if (!parser.matchString("'")) {
-  			parser.pos = start;
-  			return null;
-  		}
-
-  		return {
-  			t: STRING_LITERAL,
-  			v: string
-  		};
-  	}
-
-  	return null;
-  };
-
-  var patterns__name = /^[a-zA-Z_$][a-zA-Z_$0-9]*/;
-
-  // http://mathiasbynens.be/notes/javascript-properties
-  // can be any name, string literal, or number literal
-  var shared_readKey = readKey;
-  var identifier = /^[a-zA-Z_$][a-zA-Z_$0-9]*$/;
-  function readKey(parser) {
-  	var token;
-
-  	if (token = readStringLiteral(parser)) {
-  		return identifier.test(token.v) ? token.v : "\"" + token.v.replace(/"/g, "\\\"") + "\"";
-  	}
-
-  	if (token = literal_readNumberLiteral(parser)) {
-  		return token.v;
-  	}
-
-  	if (token = parser.matchPattern(patterns__name)) {
-  		return token;
-  	}
-  }
-
-  var keyValuePair = readKeyValuePair;
-  function readKeyValuePair(parser) {
-  	var start, key, value;
-
-  	start = parser.pos;
-
-  	// allow whitespace between '{' and key
-  	parser.allowWhitespace();
-
-  	key = shared_readKey(parser);
-  	if (key === null) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	// allow whitespace between key and ':'
-  	parser.allowWhitespace();
-
-  	// next character must be ':'
-  	if (!parser.matchString(":")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	// allow whitespace between ':' and value
-  	parser.allowWhitespace();
-
-  	// next expression must be a, well... expression
-  	value = converters_readExpression(parser);
-  	if (value === null) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	return {
-  		t: KEY_VALUE_PAIR,
-  		k: key,
-  		v: value
-  	};
-  }
-
-  var objectLiteral_keyValuePairs = readKeyValuePairs;
-  function readKeyValuePairs(parser) {
-  	var start, pairs, pair, keyValuePairs;
-
-  	start = parser.pos;
-
-  	pair = keyValuePair(parser);
-  	if (pair === null) {
-  		return null;
-  	}
-
-  	pairs = [pair];
-
-  	if (parser.matchString(",")) {
-  		keyValuePairs = readKeyValuePairs(parser);
-
-  		if (!keyValuePairs) {
-  			parser.pos = start;
-  			return null;
-  		}
-
-  		return pairs.concat(keyValuePairs);
-  	}
-
-  	return pairs;
-  }
-
-  var readObjectLiteral = function (parser) {
-  	var start, keyValuePairs;
-
-  	start = parser.pos;
-
-  	// allow whitespace
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("{")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	keyValuePairs = objectLiteral_keyValuePairs(parser);
-
-  	// allow whitespace between final value and '}'
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("}")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	return {
-  		t: OBJECT_LITERAL,
-  		m: keyValuePairs
-  	};
-  };
-
-  var shared_readExpressionList = readExpressionList;
-  function readExpressionList(parser) {
-  	var start, expressions, expr, next;
-
-  	start = parser.pos;
-
-  	parser.allowWhitespace();
-
-  	expr = converters_readExpression(parser);
-
-  	if (expr === null) {
-  		return null;
-  	}
-
-  	expressions = [expr];
-
-  	// allow whitespace between expression and ','
-  	parser.allowWhitespace();
-
-  	if (parser.matchString(",")) {
-  		next = readExpressionList(parser);
-  		if (next === null) {
-  			parser.error(expectedExpression);
-  		}
-
-  		next.forEach(append);
-  	}
-
-  	function append(expression) {
-  		expressions.push(expression);
-  	}
-
-  	return expressions;
-  }
-
-  var readArrayLiteral = function (parser) {
-  	var start, expressionList;
-
-  	start = parser.pos;
-
-  	// allow whitespace before '['
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("[")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	expressionList = shared_readExpressionList(parser);
-
-  	if (!parser.matchString("]")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	return {
-  		t: ARRAY_LITERAL,
-  		m: expressionList
-  	};
-  };
-
-  var primary_readLiteral = readLiteral;
-  function readLiteral(parser) {
-  	return literal_readNumberLiteral(parser) || literal_readBooleanLiteral(parser) || readStringLiteral(parser) || readObjectLiteral(parser) || readArrayLiteral(parser) || readRegexpLiteral(parser);
-  }
-
-  var primary_readReference = readReference;
-  var prefixPattern = /^(?:~\/|(?:\.\.\/)+|\.\/(?:\.\.\/)*|\.)/,
-      globals,
-      keywords;
-
-  // if a reference is a browser global, we don't deference it later, so it needs special treatment
-  globals = /^(?:Array|console|Date|RegExp|decodeURIComponent|decodeURI|encodeURIComponent|encodeURI|isFinite|isNaN|parseFloat|parseInt|JSON|Math|NaN|undefined|null)\b/;
-
-  // keywords are not valid references, with the exception of `this`
-  keywords = /^(?:break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|throw|try|typeof|var|void|while|with)$/;
-
-  var legalReference = /^[a-zA-Z$_0-9]+(?:(?:\.[a-zA-Z$_0-9]+)|(?:\[[0-9]+\]))*/;
-  var relaxedName = /^[a-zA-Z_$][-a-zA-Z_$0-9]*/;
-  function readReference(parser) {
-  	var startPos, prefix, name, global, reference, lastDotIndex;
-
-  	startPos = parser.pos;
-
-  	name = parser.matchPattern(/^@(?:keypath|index|key)/);
-
-  	if (!name) {
-  		prefix = parser.matchPattern(prefixPattern) || "";
-  		name = !prefix && parser.relaxedNames && parser.matchPattern(relaxedName) || parser.matchPattern(legalReference);
-
-  		if (!name && prefix === ".") {
-  			prefix = "";
-  			name = ".";
-  		}
-  	}
-
-  	if (!name) {
-  		return null;
-  	}
-
-  	// bug out if it's a keyword (exception for ancestor/restricted refs - see https://github.com/ractivejs/ractive/issues/1497)
-  	if (!prefix && !parser.relaxedNames && keywords.test(name)) {
-  		parser.pos = startPos;
-  		return null;
-  	}
-
-  	// if this is a browser global, stop here
-  	if (!prefix && globals.test(name)) {
-  		global = globals.exec(name)[0];
-  		parser.pos = startPos + global.length;
-
-  		return {
-  			t: GLOBAL,
-  			v: global
-  		};
-  	}
-
-  	reference = (prefix || "") + normalise(name);
-
-  	if (parser.matchString("(")) {
-  		// if this is a method invocation (as opposed to a function) we need
-  		// to strip the method name from the reference combo, else the context
-  		// will be wrong
-  		lastDotIndex = reference.lastIndexOf(".");
-  		if (lastDotIndex !== -1) {
-  			reference = reference.substr(0, lastDotIndex);
-  			parser.pos = startPos + reference.length;
-  		} else {
-  			parser.pos -= 1;
-  		}
-  	}
-
-  	return {
-  		t: REFERENCE,
-  		n: reference.replace(/^this\./, "./").replace(/^this$/, ".")
-  	};
-  }
-
-  var primary_readBracketedExpression = readBracketedExpression;
-  function readBracketedExpression(parser) {
-  	var start, expr;
-
-  	start = parser.pos;
-
-  	if (!parser.matchString("(")) {
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	expr = converters_readExpression(parser);
-  	if (!expr) {
-  		parser.error(expectedExpression);
-  	}
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString(")")) {
-  		parser.error(expectedParen);
-  	}
-
-  	return {
-  		t: BRACKETED,
-  		x: expr
-  	};
-  }
-
-  var readPrimary = function (parser) {
-  	return primary_readLiteral(parser) || primary_readReference(parser) || primary_readBracketedExpression(parser);
-  };
-
-  var shared_readRefinement = readRefinement;
-  function readRefinement(parser) {
-  	var start, name, expr;
-
-  	start = parser.pos;
-
-  	parser.allowWhitespace();
-
-  	// "." name
-  	if (parser.matchString(".")) {
-  		parser.allowWhitespace();
-
-  		if (name = parser.matchPattern(patterns__name)) {
-  			return {
-  				t: REFINEMENT,
-  				n: name
-  			};
-  		}
-
-  		parser.error("Expected a property name");
-  	}
-
-  	// "[" expression "]"
-  	if (parser.matchString("[")) {
-  		parser.allowWhitespace();
-
-  		expr = converters_readExpression(parser);
-  		if (!expr) {
-  			parser.error(expectedExpression);
-  		}
-
-  		parser.allowWhitespace();
-
-  		if (!parser.matchString("]")) {
-  			parser.error("Expected ']'");
-  		}
-
-  		return {
-  			t: REFINEMENT,
-  			x: expr
-  		};
-  	}
-
-  	return null;
-  }
-
-  var readMemberOrInvocation = function (parser) {
-  	var current, expression, refinement, expressionList;
-
-  	expression = readPrimary(parser);
-
-  	if (!expression) {
-  		return null;
-  	}
-
-  	while (expression) {
-  		current = parser.pos;
-
-  		if (refinement = shared_readRefinement(parser)) {
-  			expression = {
-  				t: MEMBER,
-  				x: expression,
-  				r: refinement
-  			};
-  		} else if (parser.matchString("(")) {
-  			parser.allowWhitespace();
-  			expressionList = shared_readExpressionList(parser);
-
-  			parser.allowWhitespace();
-
-  			if (!parser.matchString(")")) {
-  				parser.error(expectedParen);
-  			}
-
-  			expression = {
-  				t: INVOCATION,
-  				x: expression
-  			};
-
-  			if (expressionList) {
-  				expression.o = expressionList;
-  			}
-  		} else {
-  			break;
-  		}
-  	}
-
-  	return expression;
-  };
-
-  var readTypeOf, makePrefixSequenceMatcher;
-
-  makePrefixSequenceMatcher = function (symbol, fallthrough) {
-  	return function (parser) {
-  		var expression;
-
-  		if (expression = fallthrough(parser)) {
-  			return expression;
-  		}
-
-  		if (!parser.matchString(symbol)) {
-  			return null;
-  		}
-
-  		parser.allowWhitespace();
-
-  		expression = converters_readExpression(parser);
-  		if (!expression) {
-  			parser.error(expectedExpression);
-  		}
-
-  		return {
-  			s: symbol,
-  			o: expression,
-  			t: PREFIX_OPERATOR
-  		};
-  	};
-  };
-
-  // create all prefix sequence matchers, return readTypeOf
-  (function () {
-  	var i, len, matcher, prefixOperators, fallthrough;
-
-  	prefixOperators = "! ~ + - typeof".split(" ");
-
-  	fallthrough = readMemberOrInvocation;
-  	for (i = 0, len = prefixOperators.length; i < len; i += 1) {
-  		matcher = makePrefixSequenceMatcher(prefixOperators[i], fallthrough);
-  		fallthrough = matcher;
-  	}
-
-  	// typeof operator is higher precedence than multiplication, so provides the
-  	// fallthrough for the multiplication sequence matcher we're about to create
-  	// (we're skipping void and delete)
-  	readTypeOf = fallthrough;
-  })();
-
-  var readTypeof = readTypeOf;
-
-  var readLogicalOr, makeInfixSequenceMatcher;
-
-  makeInfixSequenceMatcher = function (symbol, fallthrough) {
-  	return function (parser) {
-  		var start, left, right;
-
-  		left = fallthrough(parser);
-  		if (!left) {
-  			return null;
-  		}
-
-  		// Loop to handle left-recursion in a case like `a * b * c` and produce
-  		// left association, i.e. `(a * b) * c`.  The matcher can't call itself
-  		// to parse `left` because that would be infinite regress.
-  		while (true) {
-  			start = parser.pos;
-
-  			parser.allowWhitespace();
-
-  			if (!parser.matchString(symbol)) {
-  				parser.pos = start;
-  				return left;
-  			}
-
-  			// special case - in operator must not be followed by [a-zA-Z_$0-9]
-  			if (symbol === "in" && /[a-zA-Z_$0-9]/.test(parser.remaining().charAt(0))) {
-  				parser.pos = start;
-  				return left;
-  			}
-
-  			parser.allowWhitespace();
-
-  			// right operand must also consist of only higher-precedence operators
-  			right = fallthrough(parser);
-  			if (!right) {
-  				parser.pos = start;
-  				return left;
-  			}
-
-  			left = {
-  				t: INFIX_OPERATOR,
-  				s: symbol,
-  				o: [left, right]
-  			};
-
-  			// Loop back around.  If we don't see another occurrence of the symbol,
-  			// we'll return left.
-  		}
-  	};
-  };
-
-  // create all infix sequence matchers, and return readLogicalOr
-  (function () {
-  	var i, len, matcher, infixOperators, fallthrough;
-
-  	// All the infix operators on order of precedence (source: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/Operator_Precedence)
-  	// Each sequence matcher will initially fall through to its higher precedence
-  	// neighbour, and only attempt to match if one of the higher precedence operators
-  	// (or, ultimately, a literal, reference, or bracketed expression) already matched
-  	infixOperators = "* / % + - << >> >>> < <= > >= in instanceof == != === !== & ^ | && ||".split(" ");
-
-  	// A typeof operator is higher precedence than multiplication
-  	fallthrough = readTypeof;
-  	for (i = 0, len = infixOperators.length; i < len; i += 1) {
-  		matcher = makeInfixSequenceMatcher(infixOperators[i], fallthrough);
-  		fallthrough = matcher;
-  	}
-
-  	// Logical OR is the fallthrough for the conditional matcher
-  	readLogicalOr = fallthrough;
-  })();
-
-  var expressions_readLogicalOr = readLogicalOr;
-
-  // The conditional operator is the lowest precedence operator, so we start here
-  var readConditional = getConditional;
-  function getConditional(parser) {
-  	var start, expression, ifTrue, ifFalse;
-
-  	expression = expressions_readLogicalOr(parser);
-  	if (!expression) {
-  		return null;
-  	}
-
-  	start = parser.pos;
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("?")) {
-  		parser.pos = start;
-  		return expression;
-  	}
-
-  	parser.allowWhitespace();
-
-  	ifTrue = converters_readExpression(parser);
-  	if (!ifTrue) {
-  		parser.error(expectedExpression);
-  	}
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString(":")) {
-  		parser.error("Expected \":\"");
-  	}
-
-  	parser.allowWhitespace();
-
-  	ifFalse = converters_readExpression(parser);
-  	if (!ifFalse) {
-  		parser.error(expectedExpression);
-  	}
-
-  	return {
-  		t: CONDITIONAL,
-  		o: [expression, ifTrue, ifFalse]
-  	};
-  }
-
-  var converters_readExpression = readExpression;
-  function readExpression(parser) {
-  	// The conditional operator is the lowest precedence operator (except yield,
-  	// assignment operators, and commas, none of which are supported), so we
-  	// start there. If it doesn't match, it 'falls through' to progressively
-  	// higher precedence operators, until it eventually matches (or fails to
-  	// match) a 'primary' - a literal or a reference. This way, the abstract syntax
-  	// tree has everything in its proper place, i.e. 2 + 3 * 4 === 14, not 20.
-  	return readConditional(parser);
-  }
-
-  var utils_flattenExpression = flattenExpression;
-
-  function flattenExpression(expression) {
-  	var refs;
-
-  	extractRefs(expression, refs = []);
-
-  	return {
-  		r: refs,
-  		s: stringify(expression)
-  	};
-
-  	function stringify(node) {
-  		switch (node.t) {
-  			case BOOLEAN_LITERAL:
-  			case GLOBAL:
-  			case NUMBER_LITERAL:
-  			case REGEXP_LITERAL:
-  				return node.v;
-
-  			case STRING_LITERAL:
-  				return JSON.stringify(String(node.v));
-
-  			case ARRAY_LITERAL:
-  				return "[" + (node.m ? node.m.map(stringify).join(",") : "") + "]";
-
-  			case OBJECT_LITERAL:
-  				return "{" + (node.m ? node.m.map(stringify).join(",") : "") + "}";
-
-  			case KEY_VALUE_PAIR:
-  				return node.k + ":" + stringify(node.v);
-
-  			case PREFIX_OPERATOR:
-  				return (node.s === "typeof" ? "typeof " : node.s) + stringify(node.o);
-
-  			case INFIX_OPERATOR:
-  				return stringify(node.o[0]) + (node.s.substr(0, 2) === "in" ? " " + node.s + " " : node.s) + stringify(node.o[1]);
-
-  			case INVOCATION:
-  				return stringify(node.x) + "(" + (node.o ? node.o.map(stringify).join(",") : "") + ")";
-
-  			case BRACKETED:
-  				return "(" + stringify(node.x) + ")";
-
-  			case MEMBER:
-  				return stringify(node.x) + stringify(node.r);
-
-  			case REFINEMENT:
-  				return node.n ? "." + node.n : "[" + stringify(node.x) + "]";
-
-  			case CONDITIONAL:
-  				return stringify(node.o[0]) + "?" + stringify(node.o[1]) + ":" + stringify(node.o[2]);
-
-  			case REFERENCE:
-  				return "_" + refs.indexOf(node.n);
-
-  			default:
-  				throw new Error("Expected legal JavaScript");
-  		}
-  	}
-  }
-
-  // TODO maybe refactor this?
-  function extractRefs(node, refs) {
-  	var i, list;
-
-  	if (node.t === REFERENCE) {
-  		if (refs.indexOf(node.n) === -1) {
-  			refs.unshift(node.n);
-  		}
-  	}
-
-  	list = node.o || node.m;
-  	if (list) {
-  		if (isObject(list)) {
-  			extractRefs(list, refs);
-  		} else {
-  			i = list.length;
-  			while (i--) {
-  				extractRefs(list[i], refs);
-  			}
-  		}
-  	}
-
-  	if (node.x) {
-  		extractRefs(node.x, refs);
-  	}
-
-  	if (node.r) {
-  		extractRefs(node.r, refs);
-  	}
-
-  	if (node.v) {
-  		extractRefs(node.v, refs);
-  	}
-  }
-
-  var utils_refineExpression = refineExpression;
-
-  var arrayMemberPattern = /^[0-9][1-9]*$/;
-  function refineExpression(expression, mustache) {
-  	var referenceExpression;
-
-  	if (expression) {
-  		while (expression.t === BRACKETED && expression.x) {
-  			expression = expression.x;
-  		}
-
-  		// special case - integers should be treated as array members references,
-  		// rather than as expressions in their own right
-  		if (expression.t === REFERENCE) {
-  			mustache.r = expression.n;
-  		} else {
-  			if (expression.t === NUMBER_LITERAL && arrayMemberPattern.test(expression.v)) {
-  				mustache.r = expression.v;
-  			} else if (referenceExpression = getReferenceExpression(expression)) {
-  				mustache.rx = referenceExpression;
-  			} else {
-  				mustache.x = utils_flattenExpression(expression);
-  			}
-  		}
-
-  		return mustache;
-  	}
-  }
-
-  // TODO refactor this! it's bewildering
-  function getReferenceExpression(expression) {
-  	var members = [],
-  	    refinement;
-
-  	while (expression.t === MEMBER && expression.r.t === REFINEMENT) {
-  		refinement = expression.r;
-
-  		if (refinement.x) {
-  			if (refinement.x.t === REFERENCE) {
-  				members.unshift(refinement.x);
-  			} else {
-  				members.unshift(utils_flattenExpression(refinement.x));
-  			}
-  		} else {
-  			members.unshift(refinement.n);
-  		}
-
-  		expression = expression.x;
-  	}
-
-  	if (expression.t !== REFERENCE) {
-  		return null;
-  	}
-
-  	return {
-  		r: expression.n,
-  		m: members
-  	};
-  }
-
-  var mustache_readTriple = readTriple;
-  function readTriple(parser, tag) {
-  	var expression = converters_readExpression(parser),
-  	    triple;
-
-  	if (!expression) {
-  		return null;
-  	}
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	triple = { t: TRIPLE };
-  	utils_refineExpression(expression, triple); // TODO handle this differently - it's mysterious
-
-  	return triple;
-  }
-
-  var mustache_readUnescaped = readUnescaped;
-  function readUnescaped(parser, tag) {
-  	var expression, triple;
-
-  	if (!parser.matchString("&")) {
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	expression = converters_readExpression(parser);
-
-  	if (!expression) {
-  		return null;
-  	}
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	triple = { t: TRIPLE };
-  	utils_refineExpression(expression, triple); // TODO handle this differently - it's mysterious
-
-  	return triple;
-  }
-
-  var mustache_readPartial = readPartial;
-  function readPartial(parser, tag) {
-  	var start, nameStart, expression, context, partial;
-
-  	start = parser.pos;
-
-  	if (!parser.matchString(">")) {
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-  	nameStart = parser.pos;
-
-  	// Partial names can include hyphens, so we can't use readExpression
-  	// blindly. Instead, we use the `relaxedNames` flag to indicate that
-  	// `foo-bar` should be read as a single name, rather than 'subtract
-  	// bar from foo'
-  	parser.relaxedNames = true;
-  	expression = converters_readExpression(parser);
-  	parser.relaxedNames = false;
-
-  	parser.allowWhitespace();
-  	context = converters_readExpression(parser);
-  	parser.allowWhitespace();
-
-  	if (!expression) {
-  		return null;
-  	}
-
-  	partial = { t: PARTIAL };
-  	utils_refineExpression(expression, partial); // TODO...
-
-  	parser.allowWhitespace();
-
-  	// if we have another expression - e.g. `{{>foo bar}}` - then
-  	// we turn it into `{{#with bar}}{{>foo}}{{/with}}`
-  	if (context) {
-  		partial = {
-  			t: SECTION,
-  			n: SECTION_WITH,
-  			f: [partial]
-  		};
-
-  		utils_refineExpression(context, partial);
-  	}
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	return partial;
-  }
-
-  var readMustacheComment = readComment;
-  function readComment(parser, tag) {
-  	var index;
-
-  	if (!parser.matchString("!")) {
-  		return null;
-  	}
-
-  	index = parser.remaining().indexOf(tag.close);
-
-  	if (index !== -1) {
-  		parser.pos += index + tag.close.length;
-  		return { t: COMMENT };
-  	}
-  }
-
-  var converters_readExpressionOrReference = readExpressionOrReference;
-  function readExpressionOrReference(parser, expectedFollowers) {
-  	var start, expression, i;
-
-  	start = parser.pos;
-  	expression = converters_readExpression(parser);
-
-  	if (!expression) {
-  		return null;
-  	}
-
-  	for (i = 0; i < expectedFollowers.length; i += 1) {
-  		if (parser.remaining().substr(0, expectedFollowers[i].length) === expectedFollowers[i]) {
-  			return expression;
-  		}
-  	}
-
-  	parser.pos = start;
-  	return primary_readReference(parser);
-  }
-
-  var mustache_readInterpolator = readInterpolator;
-  function readInterpolator(parser, tag) {
-  	var start, expression, interpolator, err;
-
-  	start = parser.pos;
-
-  	// TODO would be good for perf if we could do away with the try-catch
-  	try {
-  		expression = converters_readExpressionOrReference(parser, [tag.close]);
-  	} catch (e) {
-  		err = e;
-  	}
-
-  	if (!expression) {
-  		if (parser.str.charAt(start) === "!") {
-  			// special case - comment
-  			parser.pos = start;
-  			return null;
-  		}
-
-  		if (err) {
-  			throw err;
-  		}
-  	}
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "' after reference");
-
-  		if (!expression) {
-  			// special case - comment
-  			if (parser.nextChar() === "!") {
-  				return null;
-  			}
-
-  			parser.error("Expected expression or legal reference");
-  		}
-  	}
-
-  	interpolator = { t: INTERPOLATOR };
-  	utils_refineExpression(expression, interpolator); // TODO handle this differently - it's mysterious
-
-  	return interpolator;
-  }
-
-  var mustache_readYielder = readYielder;
-  var yieldPattern = /^yield\s*/;
-  function readYielder(parser, tag) {
-  	var start, name, yielder;
-
-  	if (!parser.matchPattern(yieldPattern)) {
-  		return null;
-  	}
-
-  	start = parser.pos;
-  	name = parser.matchPattern(/^[a-zA-Z_$][a-zA-Z_$0-9\-]*/);
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("expected legal partial name");
-  	}
-
-  	yielder = { t: YIELDER };
-
-  	if (name) {
-  		yielder.n = name;
-  	}
-
-  	return yielder;
-  }
-
-  var section_readClosing = readClosing;
-  function readClosing(parser, tag) {
-  	var start, remaining, index, closing;
-
-  	start = parser.pos;
-
-  	if (!parser.matchString(tag.open)) {
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("/")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	remaining = parser.remaining();
-  	index = remaining.indexOf(tag.close);
-
-  	if (index !== -1) {
-  		closing = {
-  			t: CLOSING,
-  			r: remaining.substr(0, index).split(" ")[0]
-  		};
-
-  		parser.pos += index;
-
-  		if (!parser.matchString(tag.close)) {
-  			parser.error("Expected closing delimiter '" + tag.close + "'");
-  		}
-
-  		return closing;
-  	}
-
-  	parser.pos = start;
-  	return null;
-  }
-
-  var section_readElse = section_readElse__readElse;
-  var section_readElse__elsePattern = /^\s*else\s*/;
-  function section_readElse__readElse(parser, tag) {
-  	var start = parser.pos;
-
-  	if (!parser.matchString(tag.open)) {
-  		return null;
-  	}
-
-  	if (!parser.matchPattern(section_readElse__elsePattern)) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	return {
-  		t: ELSE
-  	};
-  }
-
-  var readElseIf = readElseIf__readElse;
-  var readElseIf__elsePattern = /^\s*elseif\s+/;
-  function readElseIf__readElse(parser, tag) {
-  	var start = parser.pos,
-  	    expression;
-
-  	if (!parser.matchString(tag.open)) {
-  		return null;
-  	}
-
-  	if (!parser.matchPattern(readElseIf__elsePattern)) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	expression = converters_readExpression(parser);
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	return {
-  		t: ELSEIF,
-  		x: expression
-  	};
-  }
-
-  var handlebarsBlockCodes = {
-  	each: SECTION_EACH,
-  	"if": SECTION_IF,
-  	"if-with": SECTION_IF_WITH,
-  	"with": SECTION_WITH,
-  	unless: SECTION_UNLESS
-  };
-
-  var mustache_readSection = readSection;
-
-  var indexRefPattern = /^\s*:\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/,
-      keyIndexRefPattern = /^\s*,\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/,
-      handlebarsBlockPattern = new RegExp("^(" + Object.keys(handlebarsBlockCodes).join("|") + ")\\b");
-  function readSection(parser, tag) {
-  	var start, expression, section, child, children, hasElse, block, unlessBlock, conditions, closed, i, expectedClose;
-
-  	start = parser.pos;
-
-  	if (parser.matchString("^")) {
-  		section = { t: SECTION, f: [], n: SECTION_UNLESS };
-  	} else if (parser.matchString("#")) {
-  		section = { t: SECTION, f: [] };
-
-  		if (parser.matchString("partial")) {
-  			parser.pos = start - parser.standardDelimiters[0].length;
-  			parser.error("Partial definitions can only be at the top level of the template, or immediately inside components");
-  		}
-
-  		if (block = parser.matchPattern(handlebarsBlockPattern)) {
-  			expectedClose = block;
-  			section.n = handlebarsBlockCodes[block];
-  		}
-  	} else {
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	expression = converters_readExpression(parser);
-
-  	if (!expression) {
-  		parser.error("Expected expression");
-  	}
-
-  	// optional index and key references
-  	if (i = parser.matchPattern(indexRefPattern)) {
-  		var extra = undefined;
-
-  		if (extra = parser.matchPattern(keyIndexRefPattern)) {
-  			section.i = i + "," + extra;
-  		} else {
-  			section.i = i;
-  		}
-  	}
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString(tag.close)) {
-  		parser.error("Expected closing delimiter '" + tag.close + "'");
-  	}
-
-  	parser.sectionDepth += 1;
-  	children = section.f;
-
-  	conditions = [];
-
-  	do {
-  		if (child = section_readClosing(parser, tag)) {
-  			if (expectedClose && child.r !== expectedClose) {
-  				parser.error("Expected " + tag.open + "/" + expectedClose + "" + tag.close);
-  			}
-
-  			parser.sectionDepth -= 1;
-  			closed = true;
-  		} else if (child = readElseIf(parser, tag)) {
-  			if (section.n === SECTION_UNLESS) {
-  				parser.error("{{else}} not allowed in {{#unless}}");
-  			}
-
-  			if (hasElse) {
-  				parser.error("illegal {{elseif...}} after {{else}}");
-  			}
-
-  			if (!unlessBlock) {
-  				unlessBlock = createUnlessBlock(expression, section.n);
-  			}
-
-  			unlessBlock.f.push({
-  				t: SECTION,
-  				n: SECTION_IF,
-  				x: utils_flattenExpression(mustache_readSection__combine(conditions.concat(child.x))),
-  				f: children = []
-  			});
-
-  			conditions.push(invert(child.x));
-  		} else if (child = section_readElse(parser, tag)) {
-  			if (section.n === SECTION_UNLESS) {
-  				parser.error("{{else}} not allowed in {{#unless}}");
-  			}
-
-  			if (hasElse) {
-  				parser.error("there can only be one {{else}} block, at the end of a section");
-  			}
-
-  			hasElse = true;
-
-  			// use an unless block if there's no elseif
-  			if (!unlessBlock) {
-  				unlessBlock = createUnlessBlock(expression, section.n);
-  				children = unlessBlock.f;
-  			} else {
-  				unlessBlock.f.push({
-  					t: SECTION,
-  					n: SECTION_IF,
-  					x: utils_flattenExpression(mustache_readSection__combine(conditions)),
-  					f: children = []
-  				});
-  			}
-  		} else {
-  			child = parser.read(READERS);
-
-  			if (!child) {
-  				break;
-  			}
-
-  			children.push(child);
-  		}
-  	} while (!closed);
-
-  	if (unlessBlock) {
-  		// special case - `with` should become `if-with` (TODO is this right?
-  		// seems to me that `with` ought to behave consistently, regardless
-  		// of the presence/absence of `else`. In other words should always
-  		// be `if-with`
-  		if (section.n === SECTION_WITH) {
-  			section.n = SECTION_IF_WITH;
-  		}
-
-  		section.l = unlessBlock;
-  	}
-
-  	utils_refineExpression(expression, section);
-
-  	// TODO if a section is empty it should be discarded. Don't do
-  	// that here though - we need to clean everything up first, as
-  	// it may contain removeable whitespace. As a temporary measure,
-  	// to pass the existing tests, remove empty `f` arrays
-  	if (!section.f.length) {
-  		delete section.f;
-  	}
-
-  	return section;
-  }
-
-  function createUnlessBlock(expression, sectionType) {
-  	var unlessBlock;
-
-  	if (sectionType === SECTION_WITH) {
-  		// special case - a `{{#with foo}}` section will render if `foo` is
-  		// truthy, so the `{{else}}` section needs to render if `foo` is falsy,
-  		// rather than adhering to the normal `{{#unless foo}}` logic (which
-  		// treats empty arrays/objects as falsy)
-  		unlessBlock = {
-  			t: SECTION,
-  			n: SECTION_IF,
-  			f: []
-  		};
-
-  		utils_refineExpression(invert(expression), unlessBlock);
-  	} else {
-  		unlessBlock = {
-  			t: SECTION,
-  			n: SECTION_UNLESS,
-  			f: []
-  		};
-
-  		utils_refineExpression(expression, unlessBlock);
-  	}
-
-  	return unlessBlock;
-  }
-
-  function invert(expression) {
-  	if (expression.t === PREFIX_OPERATOR && expression.s === "!") {
-  		return expression.o;
-  	}
-
-  	return {
-  		t: PREFIX_OPERATOR,
-  		s: "!",
-  		o: parensIfNecessary(expression)
-  	};
-  }
-
-  function mustache_readSection__combine(expressions) {
-  	if (expressions.length === 1) {
-  		return expressions[0];
-  	}
-
-  	return {
-  		t: INFIX_OPERATOR,
-  		s: "&&",
-  		o: [parensIfNecessary(expressions[0]), parensIfNecessary(mustache_readSection__combine(expressions.slice(1)))]
-  	};
-  }
-
-  function parensIfNecessary(expression) {
-  	// TODO only wrap if necessary
-  	return {
-  		t: BRACKETED,
-  		x: expression
-  	};
-  }
-
-  var converters_readHtmlComment = readHtmlComment;
-  var OPEN_COMMENT = "<!--",
-      CLOSE_COMMENT = "-->";
-  function readHtmlComment(parser) {
-  	var start, content, remaining, endIndex, comment;
-
-  	start = parser.pos;
-
-  	if (!parser.matchString(OPEN_COMMENT)) {
-  		return null;
-  	}
-
-  	remaining = parser.remaining();
-  	endIndex = remaining.indexOf(CLOSE_COMMENT);
-
-  	if (endIndex === -1) {
-  		parser.error("Illegal HTML - expected closing comment sequence ('-->')");
-  	}
-
-  	content = remaining.substr(0, endIndex);
-  	parser.pos += endIndex + 3;
-
-  	comment = {
-  		t: COMMENT,
-  		c: content
-  	};
-
-  	if (parser.includeLinePositions) {
-  		comment.p = parser.getLinePos(start);
-  	}
-
-  	return comment;
-  }
-
-  var booleanAttributes, voidElementNames, htmlEntities, controlCharacters, entityPattern, lessThan, greaterThan, amp;
-
-  // https://github.com/kangax/html-minifier/issues/63#issuecomment-37763316
-  booleanAttributes = /^(allowFullscreen|async|autofocus|autoplay|checked|compact|controls|declare|default|defaultChecked|defaultMuted|defaultSelected|defer|disabled|enabled|formNoValidate|hidden|indeterminate|inert|isMap|itemScope|loop|multiple|muted|noHref|noResize|noShade|noValidate|noWrap|open|pauseOnExit|readOnly|required|reversed|scoped|seamless|selected|sortable|translate|trueSpeed|typeMustMatch|visible)$/i;
-  voidElementNames = /^(?:area|base|br|col|command|doctype|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)$/i;
-
-  htmlEntities = { quot: 34, amp: 38, apos: 39, lt: 60, gt: 62, nbsp: 160, iexcl: 161, cent: 162, pound: 163, curren: 164, yen: 165, brvbar: 166, sect: 167, uml: 168, copy: 169, ordf: 170, laquo: 171, not: 172, shy: 173, reg: 174, macr: 175, deg: 176, plusmn: 177, sup2: 178, sup3: 179, acute: 180, micro: 181, para: 182, middot: 183, cedil: 184, sup1: 185, ordm: 186, raquo: 187, frac14: 188, frac12: 189, frac34: 190, iquest: 191, Agrave: 192, Aacute: 193, Acirc: 194, Atilde: 195, Auml: 196, Aring: 197, AElig: 198, Ccedil: 199, Egrave: 200, Eacute: 201, Ecirc: 202, Euml: 203, Igrave: 204, Iacute: 205, Icirc: 206, Iuml: 207, ETH: 208, Ntilde: 209, Ograve: 210, Oacute: 211, Ocirc: 212, Otilde: 213, Ouml: 214, times: 215, Oslash: 216, Ugrave: 217, Uacute: 218, Ucirc: 219, Uuml: 220, Yacute: 221, THORN: 222, szlig: 223, agrave: 224, aacute: 225, acirc: 226, atilde: 227, auml: 228, aring: 229, aelig: 230, ccedil: 231, egrave: 232, eacute: 233, ecirc: 234, euml: 235, igrave: 236, iacute: 237, icirc: 238, iuml: 239, eth: 240, ntilde: 241, ograve: 242, oacute: 243, ocirc: 244, otilde: 245, ouml: 246, divide: 247, oslash: 248, ugrave: 249, uacute: 250, ucirc: 251, uuml: 252, yacute: 253, thorn: 254, yuml: 255, OElig: 338, oelig: 339, Scaron: 352, scaron: 353, Yuml: 376, fnof: 402, circ: 710, tilde: 732, Alpha: 913, Beta: 914, Gamma: 915, Delta: 916, Epsilon: 917, Zeta: 918, Eta: 919, Theta: 920, Iota: 921, Kappa: 922, Lambda: 923, Mu: 924, Nu: 925, Xi: 926, Omicron: 927, Pi: 928, Rho: 929, Sigma: 931, Tau: 932, Upsilon: 933, Phi: 934, Chi: 935, Psi: 936, Omega: 937, alpha: 945, beta: 946, gamma: 947, delta: 948, epsilon: 949, zeta: 950, eta: 951, theta: 952, iota: 953, kappa: 954, lambda: 955, mu: 956, nu: 957, xi: 958, omicron: 959, pi: 960, rho: 961, sigmaf: 962, sigma: 963, tau: 964, upsilon: 965, phi: 966, chi: 967, psi: 968, omega: 969, thetasym: 977, upsih: 978, piv: 982, ensp: 8194, emsp: 8195, thinsp: 8201, zwnj: 8204, zwj: 8205, lrm: 8206, rlm: 8207, ndash: 8211, mdash: 8212, lsquo: 8216, rsquo: 8217, sbquo: 8218, ldquo: 8220, rdquo: 8221, bdquo: 8222, dagger: 8224, Dagger: 8225, bull: 8226, hellip: 8230, permil: 8240, prime: 8242, Prime: 8243, lsaquo: 8249, rsaquo: 8250, oline: 8254, frasl: 8260, euro: 8364, image: 8465, weierp: 8472, real: 8476, trade: 8482, alefsym: 8501, larr: 8592, uarr: 8593, rarr: 8594, darr: 8595, harr: 8596, crarr: 8629, lArr: 8656, uArr: 8657, rArr: 8658, dArr: 8659, hArr: 8660, forall: 8704, part: 8706, exist: 8707, empty: 8709, nabla: 8711, isin: 8712, notin: 8713, ni: 8715, prod: 8719, sum: 8721, minus: 8722, lowast: 8727, radic: 8730, prop: 8733, infin: 8734, ang: 8736, and: 8743, or: 8744, cap: 8745, cup: 8746, int: 8747, there4: 8756, sim: 8764, cong: 8773, asymp: 8776, ne: 8800, equiv: 8801, le: 8804, ge: 8805, sub: 8834, sup: 8835, nsub: 8836, sube: 8838, supe: 8839, oplus: 8853, otimes: 8855, perp: 8869, sdot: 8901, lceil: 8968, rceil: 8969, lfloor: 8970, rfloor: 8971, lang: 9001, rang: 9002, loz: 9674, spades: 9824, clubs: 9827, hearts: 9829, diams: 9830 };
-  controlCharacters = [8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141, 381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 339, 157, 382, 376];
-  entityPattern = new RegExp("&(#?(?:x[\\w\\d]+|\\d+|" + Object.keys(htmlEntities).join("|") + "));?", "g");
-
-  function decodeCharacterReferences(html) {
-  	return html.replace(entityPattern, function (match, entity) {
-  		var code;
-
-  		// Handle named entities
-  		if (entity[0] !== "#") {
-  			code = htmlEntities[entity];
-  		} else if (entity[1] === "x") {
-  			code = parseInt(entity.substring(2), 16);
-  		} else {
-  			code = parseInt(entity.substring(1), 10);
-  		}
-
-  		if (!code) {
-  			return match;
-  		}
-
-  		return String.fromCharCode(validateCode(code));
-  	});
-  }
-
-  // some code points are verboten. If we were inserting HTML, the browser would replace the illegal
-  // code points with alternatives in some cases - since we're bypassing that mechanism, we need
-  // to replace them ourselves
-  //
-  // Source: http://en.wikipedia.org/wiki/Character_encodings_in_HTML#Illegal_characters
-  function validateCode(code) {
-  	if (!code) {
-  		return 65533;
-  	}
-
-  	// line feed becomes generic whitespace
-  	if (code === 10) {
-  		return 32;
-  	}
-
-  	// ASCII range. (Why someone would use HTML entities for ASCII characters I don't know, but...)
-  	if (code < 128) {
-  		return code;
-  	}
-
-  	// code points 128-159 are dealt with leniently by browsers, but they're incorrect. We need
-  	// to correct the mistake or we'll end up with missing € signs and so on
-  	if (code <= 159) {
-  		return controlCharacters[code - 128];
-  	}
-
-  	// basic multilingual plane
-  	if (code < 55296) {
-  		return code;
-  	}
-
-  	// UTF-16 surrogate halves
-  	if (code <= 57343) {
-  		return 65533;
-  	}
-
-  	// rest of the basic multilingual plane
-  	if (code <= 65535) {
-  		return code;
-  	}
-
-  	return 65533;
-  }
-
-  lessThan = /</g;
-  greaterThan = />/g;
-  amp = /&/g;
-
-  function escapeHtml(str) {
-  	return str.replace(amp, "&amp;").replace(lessThan, "&lt;").replace(greaterThan, "&gt;");
-  }
-
-  var leadingLinebreak = /^\s*\r?\n/,
-      trailingLinebreak = /\r?\n\s*$/;
-
-  var stripStandalones = function (items) {
-  	var i, current, backOne, backTwo, lastSectionItem;
-
-  	for (i = 1; i < items.length; i += 1) {
-  		current = items[i];
-  		backOne = items[i - 1];
-  		backTwo = items[i - 2];
-
-  		// if we're at the end of a [text][comment][text] sequence...
-  		if (isString(current) && isComment(backOne) && isString(backTwo)) {
-
-  			// ... and the comment is a standalone (i.e. line breaks either side)...
-  			if (trailingLinebreak.test(backTwo) && leadingLinebreak.test(current)) {
-
-  				// ... then we want to remove the whitespace after the first line break
-  				items[i - 2] = backTwo.replace(trailingLinebreak, "\n");
-
-  				// and the leading line break of the second text token
-  				items[i] = current.replace(leadingLinebreak, "");
-  			}
-  		}
-
-  		// if the current item is a section, and it is preceded by a linebreak, and
-  		// its first item is a linebreak...
-  		if (isSection(current) && isString(backOne)) {
-  			if (trailingLinebreak.test(backOne) && isString(current.f[0]) && leadingLinebreak.test(current.f[0])) {
-  				items[i - 1] = backOne.replace(trailingLinebreak, "\n");
-  				current.f[0] = current.f[0].replace(leadingLinebreak, "");
-  			}
-  		}
-
-  		// if the last item was a section, and it is followed by a linebreak, and
-  		// its last item is a linebreak...
-  		if (isString(current) && isSection(backOne)) {
-  			lastSectionItem = lastItem(backOne.f);
-
-  			if (isString(lastSectionItem) && trailingLinebreak.test(lastSectionItem) && leadingLinebreak.test(current)) {
-  				backOne.f[backOne.f.length - 1] = lastSectionItem.replace(trailingLinebreak, "\n");
-  				items[i] = current.replace(leadingLinebreak, "");
-  			}
-  		}
-  	}
-
-  	return items;
-  };
-
-  function isString(item) {
-  	return typeof item === "string";
-  }
-
-  function isComment(item) {
-  	return item.t === COMMENT || item.t === DELIMCHANGE;
-  }
-
-  function isSection(item) {
-  	return (item.t === SECTION || item.t === INVERTED) && item.f;
-  }
-
-  var trimWhitespace = function (items, leadingPattern, trailingPattern) {
-  	var item;
-
-  	if (leadingPattern) {
-  		item = items[0];
-  		if (typeof item === "string") {
-  			item = item.replace(leadingPattern, "");
-
-  			if (!item) {
-  				items.shift();
-  			} else {
-  				items[0] = item;
-  			}
-  		}
-  	}
-
-  	if (trailingPattern) {
-  		item = lastItem(items);
-  		if (typeof item === "string") {
-  			item = item.replace(trailingPattern, "");
-
-  			if (!item) {
-  				items.pop();
-  			} else {
-  				items[items.length - 1] = item;
-  			}
-  		}
-  	}
-  };
-
-  var utils_cleanup = cleanup;
-  var contiguousWhitespace = /[ \t\f\r\n]+/g;
-  var preserveWhitespaceElements = /^(?:pre|script|style|textarea)$/i;
-  var utils_cleanup__leadingWhitespace = /^[ \t\f\r\n]+/;
-  var trailingWhitespace = /[ \t\f\r\n]+$/;
-  var leadingNewLine = /^(?:\r\n|\r|\n)/;
-  var trailingNewLine = /(?:\r\n|\r|\n)$/;
-  function cleanup(items, stripComments, preserveWhitespace, removeLeadingWhitespace, removeTrailingWhitespace) {
-  	var i, item, previousItem, nextItem, preserveWhitespaceInsideFragment, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment, key;
-
-  	// First pass - remove standalones and comments etc
-  	stripStandalones(items);
-
-  	i = items.length;
-  	while (i--) {
-  		item = items[i];
-
-  		// Remove delimiter changes, unsafe elements etc
-  		if (item.exclude) {
-  			items.splice(i, 1);
-  		}
-
-  		// Remove comments, unless we want to keep them
-  		else if (stripComments && item.t === COMMENT) {
-  			items.splice(i, 1);
-  		}
-  	}
-
-  	// If necessary, remove leading and trailing whitespace
-  	trimWhitespace(items, removeLeadingWhitespace ? utils_cleanup__leadingWhitespace : null, removeTrailingWhitespace ? trailingWhitespace : null);
-
-  	i = items.length;
-  	while (i--) {
-  		item = items[i];
-
-  		// Recurse
-  		if (item.f) {
-  			var isPreserveWhitespaceElement = item.t === ELEMENT && preserveWhitespaceElements.test(item.e);
-  			preserveWhitespaceInsideFragment = preserveWhitespace || isPreserveWhitespaceElement;
-
-  			if (!preserveWhitespace && isPreserveWhitespaceElement) {
-  				trimWhitespace(item.f, leadingNewLine, trailingNewLine);
-  			}
-
-  			if (!preserveWhitespaceInsideFragment) {
-  				previousItem = items[i - 1];
-  				nextItem = items[i + 1];
-
-  				// if the previous item was a text item with trailing whitespace,
-  				// remove leading whitespace inside the fragment
-  				if (!previousItem || typeof previousItem === "string" && trailingWhitespace.test(previousItem)) {
-  					removeLeadingWhitespaceInsideFragment = true;
-  				}
-
-  				// and vice versa
-  				if (!nextItem || typeof nextItem === "string" && utils_cleanup__leadingWhitespace.test(nextItem)) {
-  					removeTrailingWhitespaceInsideFragment = true;
-  				}
-  			}
-
-  			cleanup(item.f, stripComments, preserveWhitespaceInsideFragment, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-  		}
-
-  		// Split if-else blocks into two (an if, and an unless)
-  		if (item.l) {
-  			cleanup(item.l.f, stripComments, preserveWhitespace, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-
-  			items.splice(i + 1, 0, item.l);
-  			delete item.l; // TODO would be nice if there was a way around this
-  		}
-
-  		// Clean up element attributes
-  		if (item.a) {
-  			for (key in item.a) {
-  				if (item.a.hasOwnProperty(key) && typeof item.a[key] !== "string") {
-  					cleanup(item.a[key], stripComments, preserveWhitespace, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-  				}
-  			}
-  		}
-
-  		// Clean up conditional attributes
-  		if (item.m) {
-  			cleanup(item.m, stripComments, preserveWhitespace, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-  		}
-
-  		// Clean up event handlers
-  		if (item.v) {
-  			for (key in item.v) {
-  				if (item.v.hasOwnProperty(key)) {
-  					// clean up names
-  					if (isArray(item.v[key].n)) {
-  						cleanup(item.v[key].n, stripComments, preserveWhitespace, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-  					}
-
-  					// clean up params
-  					if (isArray(item.v[key].d)) {
-  						cleanup(item.v[key].d, stripComments, preserveWhitespace, removeLeadingWhitespaceInsideFragment, removeTrailingWhitespaceInsideFragment);
-  					}
-  				}
-  			}
-  		}
-  	}
-
-  	// final pass - fuse text nodes together
-  	i = items.length;
-  	while (i--) {
-  		if (typeof items[i] === "string") {
-  			if (typeof items[i + 1] === "string") {
-  				items[i] = items[i] + items[i + 1];
-  				items.splice(i + 1, 1);
-  			}
-
-  			if (!preserveWhitespace) {
-  				items[i] = items[i].replace(contiguousWhitespace, " ");
-  			}
-
-  			if (items[i] === "") {
-  				items.splice(i, 1);
-  			}
-  		}
-  	}
-  }
-
-  var element_readClosingTag = readClosingTag;
-  var closingTagPattern = /^([a-zA-Z]{1,}:?[a-zA-Z0-9\-]*)\s*\>/;
-  function readClosingTag(parser) {
-  	var start, tag;
-
-  	start = parser.pos;
-
-  	// are we looking at a closing tag?
-  	if (!parser.matchString("</")) {
-  		return null;
-  	}
-
-  	if (tag = parser.matchPattern(closingTagPattern)) {
-  		if (parser.inside && tag !== parser.inside) {
-  			parser.pos = start;
-  			return null;
-  		}
-
-  		return {
-  			t: CLOSING_TAG,
-  			e: tag
-  		};
-  	}
-
-  	// We have an illegal closing tag, report it
-  	parser.pos -= 2;
-  	parser.error("Illegal closing tag");
-  }
-
-  var getLowestIndex = function (haystack, needles) {
-  	var i, index, lowest;
-
-  	i = needles.length;
-  	while (i--) {
-  		index = haystack.indexOf(needles[i]);
-
-  		// short circuit
-  		if (!index) {
-  			return 0;
-  		}
-
-  		if (index === -1) {
-  			continue;
-  		}
-
-  		if (!lowest || index < lowest) {
-  			lowest = index;
-  		}
-  	}
-
-  	return lowest || -1;
-  };
-
-  var element_readAttribute = readAttribute;
-
-  var attributeNamePattern = /^[^\s"'>\/=]+/,
-      unquotedAttributeValueTextPattern = /^[^\s"'=<>`]+/;
-  function readAttribute(parser) {
-  	var attr, name, value;
-
-  	parser.allowWhitespace();
-
-  	name = parser.matchPattern(attributeNamePattern);
-  	if (!name) {
-  		return null;
-  	}
-
-  	attr = { name: name };
-
-  	value = readAttributeValue(parser);
-  	if (value != null) {
-  		// not null/undefined
-  		attr.value = value;
-  	}
-
-  	return attr;
-  }
-
-  function readAttributeValue(parser) {
-  	var start, valueStart, startDepth, value;
-
-  	start = parser.pos;
-
-  	// next character must be `=`, `/`, `>` or whitespace
-  	if (!/[=\/>\s]/.test(parser.nextChar())) {
-  		parser.error("Expected `=`, `/`, `>` or whitespace");
-  	}
-
-  	parser.allowWhitespace();
-
-  	if (!parser.matchString("=")) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	parser.allowWhitespace();
-
-  	valueStart = parser.pos;
-  	startDepth = parser.sectionDepth;
-
-  	value = readQuotedAttributeValue(parser, "'") || readQuotedAttributeValue(parser, "\"") || readUnquotedAttributeValue(parser);
-
-  	if (value === null) {
-  		parser.error("Expected valid attribute value");
-  	}
-
-  	if (parser.sectionDepth !== startDepth) {
-  		parser.pos = valueStart;
-  		parser.error("An attribute value must contain as many opening section tags as closing section tags");
-  	}
-
-  	if (!value.length) {
-  		return "";
-  	}
-
-  	if (value.length === 1 && typeof value[0] === "string") {
-  		return decodeCharacterReferences(value[0]);
-  	}
-
-  	return value;
-  }
-
-  function readUnquotedAttributeValueToken(parser) {
-  	var start, text, haystack, needles, index;
-
-  	start = parser.pos;
-
-  	text = parser.matchPattern(unquotedAttributeValueTextPattern);
-
-  	if (!text) {
-  		return null;
-  	}
-
-  	haystack = text;
-  	needles = parser.tags.map(function (t) {
-  		return t.open;
-  	}); // TODO refactor... we do this in readText.js as well
-
-  	if ((index = getLowestIndex(haystack, needles)) !== -1) {
-  		text = text.substr(0, index);
-  		parser.pos = start + text.length;
-  	}
-
-  	return text;
-  }
-
-  function readUnquotedAttributeValue(parser) {
-  	var tokens, token;
-
-  	parser.inAttribute = true;
-
-  	tokens = [];
-
-  	token = converters_readMustache(parser) || readUnquotedAttributeValueToken(parser);
-  	while (token !== null) {
-  		tokens.push(token);
-  		token = converters_readMustache(parser) || readUnquotedAttributeValueToken(parser);
-  	}
-
-  	if (!tokens.length) {
-  		return null;
-  	}
-
-  	parser.inAttribute = false;
-  	return tokens;
-  }
-
-  function readQuotedAttributeValue(parser, quoteMark) {
-  	var start, tokens, token;
-
-  	start = parser.pos;
-
-  	if (!parser.matchString(quoteMark)) {
-  		return null;
-  	}
-
-  	parser.inAttribute = quoteMark;
-
-  	tokens = [];
-
-  	token = converters_readMustache(parser) || readQuotedStringToken(parser, quoteMark);
-  	while (token !== null) {
-  		tokens.push(token);
-  		token = converters_readMustache(parser) || readQuotedStringToken(parser, quoteMark);
-  	}
-
-  	if (!parser.matchString(quoteMark)) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	parser.inAttribute = false;
-
-  	return tokens;
-  }
-
-  function readQuotedStringToken(parser, quoteMark) {
-  	var start, index, haystack, needles;
-
-  	start = parser.pos;
-  	haystack = parser.remaining();
-
-  	needles = parser.tags.map(function (t) {
-  		return t.open;
-  	}); // TODO refactor... we do this in readText.js as well
-  	needles.push(quoteMark);
-
-  	index = getLowestIndex(haystack, needles);
-
-  	if (index === -1) {
-  		parser.error("Quoted attribute value must have a closing quote");
-  	}
-
-  	if (!index) {
-  		return null;
-  	}
-
-  	parser.pos += index;
-  	return haystack.substr(0, index);
-  }
-
-  var JsonParser, specials, specialsPattern, parseJSON__numberPattern, placeholderPattern, placeholderAtStartPattern, onlyWhitespace;
-
-  specials = {
-  	"true": true,
-  	"false": false,
-  	undefined: undefined,
-  	"null": null
-  };
-
-  specialsPattern = new RegExp("^(?:" + Object.keys(specials).join("|") + ")");
-  parseJSON__numberPattern = /^(?:[+-]?)(?:(?:(?:0|[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
-  placeholderPattern = /\$\{([^\}]+)\}/g;
-  placeholderAtStartPattern = /^\$\{([^\}]+)\}/;
-  onlyWhitespace = /^\s*$/;
-
-  JsonParser = parse_Parser.extend({
-  	init: function (str, options) {
-  		this.values = options.values;
-  		this.allowWhitespace();
-  	},
-
-  	postProcess: function (result) {
-  		if (result.length !== 1 || !onlyWhitespace.test(this.leftover)) {
-  			return null;
-  		}
-
-  		return { value: result[0].v };
-  	},
-
-  	converters: [function getPlaceholder(parser) {
-  		var placeholder;
-
-  		if (!parser.values) {
-  			return null;
-  		}
-
-  		placeholder = parser.matchPattern(placeholderAtStartPattern);
-
-  		if (placeholder && parser.values.hasOwnProperty(placeholder)) {
-  			return { v: parser.values[placeholder] };
-  		}
-  	}, function getSpecial(parser) {
-  		var special;
-
-  		if (special = parser.matchPattern(specialsPattern)) {
-  			return { v: specials[special] };
-  		}
-  	}, function getNumber(parser) {
-  		var number;
-
-  		if (number = parser.matchPattern(parseJSON__numberPattern)) {
-  			return { v: +number };
-  		}
-  	}, function getString(parser) {
-  		var stringLiteral = readStringLiteral(parser),
-  		    values;
-
-  		if (stringLiteral && (values = parser.values)) {
-  			return {
-  				v: stringLiteral.v.replace(placeholderPattern, function (match, $1) {
-  					return $1 in values ? values[$1] : $1;
-  				})
-  			};
-  		}
-
-  		return stringLiteral;
-  	}, function getObject(parser) {
-  		var result, pair;
-
-  		if (!parser.matchString("{")) {
-  			return null;
-  		}
-
-  		result = {};
-
-  		parser.allowWhitespace();
-
-  		if (parser.matchString("}")) {
-  			return { v: result };
-  		}
-
-  		while (pair = getKeyValuePair(parser)) {
-  			result[pair.key] = pair.value;
-
-  			parser.allowWhitespace();
-
-  			if (parser.matchString("}")) {
-  				return { v: result };
-  			}
-
-  			if (!parser.matchString(",")) {
-  				return null;
-  			}
-  		}
-
-  		return null;
-  	}, function getArray(parser) {
-  		var result, valueToken;
-
-  		if (!parser.matchString("[")) {
-  			return null;
-  		}
-
-  		result = [];
-
-  		parser.allowWhitespace();
-
-  		if (parser.matchString("]")) {
-  			return { v: result };
-  		}
-
-  		while (valueToken = parser.read()) {
-  			result.push(valueToken.v);
-
-  			parser.allowWhitespace();
-
-  			if (parser.matchString("]")) {
-  				return { v: result };
-  			}
-
-  			if (!parser.matchString(",")) {
-  				return null;
-  			}
-
-  			parser.allowWhitespace();
-  		}
-
-  		return null;
-  	}]
-  });
-
-  function getKeyValuePair(parser) {
-  	var key, valueToken, pair;
-
-  	parser.allowWhitespace();
-
-  	key = shared_readKey(parser);
-
-  	if (!key) {
-  		return null;
-  	}
-
-  	pair = { key: key };
-
-  	parser.allowWhitespace();
-  	if (!parser.matchString(":")) {
-  		return null;
-  	}
-  	parser.allowWhitespace();
-
-  	valueToken = parser.read();
-  	if (!valueToken) {
-  		return null;
-  	}
-
-  	pair.value = valueToken.v;
-
-  	return pair;
-  }
-
-  var parseJSON = function (str, values) {
-  	var parser = new JsonParser(str, {
-  		values: values
-  	});
-
-  	return parser.result;
-  };
-
-  // TODO clean this up, it's shocking
-  var element_processDirective = processDirective;
-  var methodCallPattern = /^([a-zA-Z_$][a-zA-Z_$0-9]*)\(/,
-      methodCallExcessPattern = /\)\s*$/,
-      ExpressionParser;
-
-  ExpressionParser = parse_Parser.extend({
-  	converters: [converters_readExpression]
-  });
-  function processDirective(tokens, parentParser) {
-  	var result, match, parser, args, token, colonIndex, directiveName, directiveArgs, parsed;
-
-  	if (typeof tokens === "string") {
-  		if (match = methodCallPattern.exec(tokens)) {
-  			var end = tokens.lastIndexOf(")");
-
-  			// check for invalid method calls
-  			if (!methodCallExcessPattern.test(tokens)) {
-  				parentParser.error("Invalid input after method call expression '" + tokens.slice(end + 1) + "'");
-  			}
-
-  			result = { m: match[1] };
-  			args = "[" + tokens.slice(result.m.length + 1, end) + "]";
-
-  			parser = new ExpressionParser(args);
-  			result.a = utils_flattenExpression(parser.result[0]);
-
-  			return result;
-  		}
-
-  		if (tokens.indexOf(":") === -1) {
-  			return tokens.trim();
-  		}
-
-  		tokens = [tokens];
-  	}
-
-  	result = {};
-
-  	directiveName = [];
-  	directiveArgs = [];
-
-  	if (tokens) {
-  		while (tokens.length) {
-  			token = tokens.shift();
-
-  			if (typeof token === "string") {
-  				colonIndex = token.indexOf(":");
-
-  				if (colonIndex === -1) {
-  					directiveName.push(token);
-  				} else {
-
-  					// is the colon the first character?
-  					if (colonIndex) {
-  						// no
-  						directiveName.push(token.substr(0, colonIndex));
-  					}
-
-  					// if there is anything after the colon in this token, treat
-  					// it as the first token of the directiveArgs fragment
-  					if (token.length > colonIndex + 1) {
-  						directiveArgs[0] = token.substring(colonIndex + 1);
-  					}
-
-  					break;
-  				}
-  			} else {
-  				directiveName.push(token);
-  			}
-  		}
-
-  		directiveArgs = directiveArgs.concat(tokens);
-  	}
-
-  	if (!directiveName.length) {
-  		result = "";
-  	} else if (directiveArgs.length || typeof directiveName !== "string") {
-  		result = {
-  			// TODO is this really necessary? just use the array
-  			n: directiveName.length === 1 && typeof directiveName[0] === "string" ? directiveName[0] : directiveName
-  		};
-
-  		if (directiveArgs.length === 1 && typeof directiveArgs[0] === "string") {
-  			parsed = parseJSON("[" + directiveArgs[0] + "]");
-  			result.a = parsed ? parsed.value : directiveArgs[0].trim();
-  		} else {
-  			result.d = directiveArgs;
-  		}
-  	} else {
-  		result = directiveName;
-  	}
-
-  	return result;
-  }
-
-  var tagNamePattern = /^[a-zA-Z]{1,}:?[a-zA-Z0-9\-]*/,
-      validTagNameFollower = /^[\s\n\/>]/,
-      onPattern = /^on/,
-      proxyEventPattern = /^on-([a-zA-Z\\*\\.$_][a-zA-Z\\*\\.$_0-9\-]+)$/,
-      reservedEventNames = /^(?:change|reset|teardown|update|construct|config|init|render|unrender|detach|insert)$/,
-      directives = { "intro-outro": "t0", intro: "t1", outro: "t2", decorator: "o" },
-      exclude = { exclude: true },
-      disallowedContents;
-
-  // based on http://developers.whatwg.org/syntax.html#syntax-tag-omission
-  disallowedContents = {
-  	li: ["li"],
-  	dt: ["dt", "dd"],
-  	dd: ["dt", "dd"],
-  	p: "address article aside blockquote div dl fieldset footer form h1 h2 h3 h4 h5 h6 header hgroup hr main menu nav ol p pre section table ul".split(" "),
-  	rt: ["rt", "rp"],
-  	rp: ["rt", "rp"],
-  	optgroup: ["optgroup"],
-  	option: ["option", "optgroup"],
-  	thead: ["tbody", "tfoot"],
-  	tbody: ["tbody", "tfoot"],
-  	tfoot: ["tbody"],
-  	tr: ["tr", "tbody"],
-  	td: ["td", "th", "tr"],
-  	th: ["td", "th", "tr"]
-  };
-
-  var converters_readElement = readElement;
-
-  function readElement(parser) {
-  	var start, element, directiveName, match, addProxyEvent, attribute, directive, selfClosing, children, partials, hasPartials, child, closed, pos, remaining, closingTag;
-
-  	start = parser.pos;
-
-  	if (parser.inside || parser.inAttribute) {
-  		return null;
-  	}
-
-  	if (!parser.matchString("<")) {
-  		return null;
-  	}
-
-  	// if this is a closing tag, abort straight away
-  	if (parser.nextChar() === "/") {
-  		return null;
-  	}
-
-  	element = {};
-  	if (parser.includeLinePositions) {
-  		element.p = parser.getLinePos(start);
-  	}
-
-  	if (parser.matchString("!")) {
-  		element.t = DOCTYPE;
-  		if (!parser.matchPattern(/^doctype/i)) {
-  			parser.error("Expected DOCTYPE declaration");
-  		}
-
-  		element.a = parser.matchPattern(/^(.+?)>/);
-  		return element;
-  	}
-
-  	element.t = ELEMENT;
-
-  	// element name
-  	element.e = parser.matchPattern(tagNamePattern);
-  	if (!element.e) {
-  		return null;
-  	}
-
-  	// next character must be whitespace, closing solidus or '>'
-  	if (!validTagNameFollower.test(parser.nextChar())) {
-  		parser.error("Illegal tag name");
-  	}
-
-  	addProxyEvent = function (name, directive) {
-  		var directiveName = directive.n || directive;
-
-  		if (reservedEventNames.test(directiveName)) {
-  			parser.pos -= directiveName.length;
-  			parser.error("Cannot use reserved event names (change, reset, teardown, update, construct, config, init, render, unrender, detach, insert)");
-  		}
-
-  		element.v[name] = directive;
-  	};
-
-  	parser.allowWhitespace();
-
-  	// directives and attributes
-  	while (attribute = converters_readMustache(parser) || element_readAttribute(parser)) {
-  		// regular attributes
-  		if (attribute.name) {
-  			// intro, outro, decorator
-  			if (directiveName = directives[attribute.name]) {
-  				element[directiveName] = element_processDirective(attribute.value, parser);
-  			}
-
-  			// on-click etc
-  			else if (match = proxyEventPattern.exec(attribute.name)) {
-  				if (!element.v) element.v = {};
-  				directive = element_processDirective(attribute.value, parser);
-  				addProxyEvent(match[1], directive);
-  			} else {
-  				if (!parser.sanitizeEventAttributes || !onPattern.test(attribute.name)) {
-  					if (!element.a) element.a = {};
-  					element.a[attribute.name] = attribute.value || (attribute.value === "" ? "" : 0);
-  				}
-  			}
-  		}
-
-  		// {{#if foo}}class='foo'{{/if}}
-  		else {
-  			if (!element.m) element.m = [];
-  			element.m.push(attribute);
-  		}
-
-  		parser.allowWhitespace();
-  	}
-
-  	// allow whitespace before closing solidus
-  	parser.allowWhitespace();
-
-  	// self-closing solidus?
-  	if (parser.matchString("/")) {
-  		selfClosing = true;
-  	}
-
-  	// closing angle bracket
-  	if (!parser.matchString(">")) {
-  		return null;
-  	}
-
-  	var lowerCaseName = element.e.toLowerCase();
-  	var preserveWhitespace = parser.preserveWhitespace;
-
-  	if (!selfClosing && !voidElementNames.test(element.e)) {
-  		parser.elementStack.push(lowerCaseName);
-
-  		// Special case - if we open a script element, further tags should
-  		// be ignored unless they're a closing script element
-  		if (lowerCaseName === "script" || lowerCaseName === "style") {
-  			parser.inside = lowerCaseName;
-  		}
-
-  		children = [];
-  		partials = create(null);
-
-  		do {
-  			pos = parser.pos;
-  			remaining = parser.remaining();
-
-  			// if for example we're in an <li> element, and we see another
-  			// <li> tag, close the first so they become siblings
-  			if (!canContain(lowerCaseName, remaining)) {
-  				closed = true;
-  			}
-
-  			// closing tag
-  			else if (closingTag = element_readClosingTag(parser)) {
-  				closed = true;
-
-  				var closingTagName = closingTag.e.toLowerCase();
-
-  				// if this *isn't* the closing tag for the current element...
-  				if (closingTagName !== lowerCaseName) {
-  					// rewind parser
-  					parser.pos = pos;
-
-  					// if it doesn't close a parent tag, error
-  					if (! ~parser.elementStack.indexOf(closingTagName)) {
-  						var errorMessage = "Unexpected closing tag";
-
-  						// add additional help for void elements, since component names
-  						// might clash with them
-  						if (voidElementNames.test(closingTagName)) {
-  							errorMessage += " (<" + closingTagName + "> is a void element - it cannot contain children)";
-  						}
-
-  						parser.error(errorMessage);
-  					}
-  				}
-  			}
-
-  			// implicit close by closing section tag. TODO clean this up
-  			else if (child = section_readClosing(parser, { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] })) {
-  				closed = true;
-  				parser.pos = pos;
-  			} else {
-  				if (child = parser.read(PARTIAL_READERS)) {
-  					if (partials[child.n]) {
-  						parser.pos = pos;
-  						parser.error("Duplicate partial definition");
-  					}
-
-  					utils_cleanup(child.f, parser.stripComments, preserveWhitespace, !preserveWhitespace, !preserveWhitespace);
-
-  					partials[child.n] = child.f;
-  					hasPartials = true;
-  				} else {
-  					if (child = parser.read(READERS)) {
-  						children.push(child);
-  					} else {
-  						closed = true;
-  					}
-  				}
-  			}
-  		} while (!closed);
-
-  		if (children.length) {
-  			element.f = children;
-  		}
-
-  		if (hasPartials) {
-  			element.p = partials;
-  		}
-
-  		parser.elementStack.pop();
-  	}
-
-  	parser.inside = null;
-
-  	if (parser.sanitizeElements && parser.sanitizeElements.indexOf(lowerCaseName) !== -1) {
-  		return exclude;
-  	}
-
-  	return element;
-  }
-
-  function canContain(name, remaining) {
-  	var match, disallowed;
-
-  	match = /^<([a-zA-Z][a-zA-Z0-9]*)/.exec(remaining);
-  	disallowed = disallowedContents[name];
-
-  	if (!match || !disallowed) {
-  		return true;
-  	}
-
-  	return ! ~disallowed.indexOf(match[1].toLowerCase());
-  }
-
-  var converters_readText = readText;
-  function readText(parser) {
-  	var index, remaining, disallowed, barrier;
-
-  	remaining = parser.remaining();
-
-  	barrier = parser.inside ? "</" + parser.inside : "<";
-
-  	if (parser.inside && !parser.interpolate[parser.inside]) {
-  		index = remaining.indexOf(barrier);
-  	} else {
-  		disallowed = parser.tags.map(function (t) {
-  			return t.open;
-  		});
-  		disallowed = disallowed.concat(parser.tags.map(function (t) {
-  			return "\\" + t.open;
-  		}));
-
-  		// http://developers.whatwg.org/syntax.html#syntax-attributes
-  		if (parser.inAttribute === true) {
-  			// we're inside an unquoted attribute value
-  			disallowed.push("\"", "'", "=", "<", ">", "`");
-  		} else if (parser.inAttribute) {
-  			// quoted attribute value
-  			disallowed.push(parser.inAttribute);
-  		} else {
-  			disallowed.push(barrier);
-  		}
-
-  		index = getLowestIndex(remaining, disallowed);
-  	}
-
-  	if (!index) {
-  		return null;
-  	}
-
-  	if (index === -1) {
-  		index = remaining.length;
-  	}
-
-  	parser.pos += index;
-
-  	return parser.inside ? remaining.substr(0, index) : decodeCharacterReferences(remaining.substr(0, index));
-  }
-
-  var utils_escapeRegExp = escapeRegExp;
-  var utils_escapeRegExp__pattern = /[-/\\^$*+?.()|[\]{}]/g;
-  function escapeRegExp(str) {
-  	return str.replace(utils_escapeRegExp__pattern, "\\$&");
-  }
-
-  var converters_readPartialDefinitionComment = readPartialDefinitionComment;
-
-  var startPattern = /^<!--\s*/,
-      namePattern = /s*>\s*([a-zA-Z_$][-a-zA-Z_$0-9]*)\s*/,
-      finishPattern = /\s*-->/,
-      child;
-
-  function readPartialDefinitionComment(parser) {
-  	var firstPos = parser.pos,
-  	    open = parser.standardDelimiters[0],
-  	    close = parser.standardDelimiters[1],
-  	    content = undefined,
-  	    closed = undefined;
-
-  	if (!parser.matchPattern(startPattern) || !parser.matchString(open)) {
-  		parser.pos = firstPos;
-  		return null;
-  	}
-
-  	var name = parser.matchPattern(namePattern);
-
-  	warnOnceIfDebug("Inline partial comments are deprecated.\nUse this...\n  {{#partial " + name + "}} ... {{/partial}}\n\n...instead of this:\n  <!-- {{>" + name + "}} --> ... <!-- {{/" + name + "}} -->'");
-
-  	// make sure the rest of the comment is in the correct place
-  	if (!parser.matchString(close) || !parser.matchPattern(finishPattern)) {
-  		parser.pos = firstPos;
-  		return null;
-  	}
-
-  	content = [];
-
-  	var endPattern = new RegExp("^<!--\\s*" + utils_escapeRegExp(open) + "\\s*\\/\\s*" + name + "\\s*" + utils_escapeRegExp(close) + "\\s*-->");
-
-  	do {
-  		if (parser.matchPattern(endPattern)) {
-  			closed = true;
-  		} else {
-  			child = parser.read(READERS);
-  			if (!child) {
-  				parser.error("expected closing comment ('<!-- " + open + "/" + name + "" + close + " -->')");
-  			}
-
-  			content.push(child);
-  		}
-  	} while (!closed);
-
-  	return {
-  		t: INLINE_PARTIAL,
-  		f: content,
-  		n: name
-  	};
-  }
-
-  var converters_readPartialDefinitionSection = readPartialDefinitionSection;
-  var partialDefinitionSectionPattern = /^#\s*partial\s+/;
-  function readPartialDefinitionSection(parser) {
-  	var start, name, content, child, closed;
-
-  	start = parser.pos;
-
-  	var delimiters = parser.standardDelimiters;
-
-  	if (!parser.matchString(delimiters[0])) {
-  		return null;
-  	}
-
-  	if (!parser.matchPattern(partialDefinitionSectionPattern)) {
-  		parser.pos = start;
-  		return null;
-  	}
-
-  	name = parser.matchPattern(/^[a-zA-Z_$][a-zA-Z_$0-9\-]*/);
-
-  	if (!name) {
-  		parser.error("expected legal partial name");
-  	}
-
-  	if (!parser.matchString(delimiters[1])) {
-  		parser.error("Expected closing delimiter '" + delimiters[1] + "'");
-  	}
-
-  	content = [];
-
-  	do {
-  		// TODO clean this up
-  		if (child = section_readClosing(parser, { open: parser.standardDelimiters[0], close: parser.standardDelimiters[1] })) {
-  			if (!child.r === "partial") {
-  				parser.error("Expected " + delimiters[0] + "/partial" + delimiters[1]);
-  			}
-
-  			closed = true;
-  		} else {
-  			child = parser.read(READERS);
-
-  			if (!child) {
-  				parser.error("Expected " + delimiters[0] + "/partial" + delimiters[1]);
-  			}
-
-  			content.push(child);
-  		}
-  	} while (!closed);
-
-  	return {
-  		t: INLINE_PARTIAL,
-  		n: name,
-  		f: content
-  	};
-  }
-
-  var converters_readTemplate = readTemplate;
-  function readTemplate(parser) {
-  	var fragment = [];
-  	var partials = create(null);
-  	var hasPartials = false;
-
-  	var preserveWhitespace = parser.preserveWhitespace;
-
-  	while (parser.pos < parser.str.length) {
-  		var pos = parser.pos,
-  		    item = undefined,
-  		    partial = undefined;
-
-  		if (partial = parser.read(PARTIAL_READERS)) {
-  			if (partials[partial.n]) {
-  				parser.pos = pos;
-  				parser.error("Duplicated partial definition");
-  			}
-
-  			utils_cleanup(partial.f, parser.stripComments, preserveWhitespace, !preserveWhitespace, !preserveWhitespace);
-
-  			partials[partial.n] = partial.f;
-  			hasPartials = true;
-  		} else if (item = parser.read(READERS)) {
-  			fragment.push(item);
-  		} else {
-  			parser.error("Unexpected template content");
-  		}
-  	}
-
-  	var result = {
-  		v: TEMPLATE_VERSION,
-  		t: fragment
-  	};
-
-  	if (hasPartials) {
-  		result.p = partials;
-  	}
-
-  	return result;
-  }
-
-  var _parse = parse;
-
-  var STANDARD_READERS = [mustache_readPartial, mustache_readUnescaped, mustache_readSection, mustache_readYielder, mustache_readInterpolator, readMustacheComment];
-  var TRIPLE_READERS = [mustache_readTriple];
-  var STATIC_READERS = [mustache_readUnescaped, mustache_readSection, mustache_readInterpolator]; // TODO does it make sense to have a static section?
-
-  var StandardParser = undefined;
-  function parse(template, options) {
-  	return new StandardParser(template, options || {}).result;
-  }
-
-  var READERS = [converters_readMustache, converters_readHtmlComment, converters_readElement, converters_readText];
-  var PARTIAL_READERS = [converters_readPartialDefinitionComment, converters_readPartialDefinitionSection];
-
-  StandardParser = parse_Parser.extend({
-  	init: function (str, options) {
-  		var tripleDelimiters = options.tripleDelimiters || ["{{{", "}}}"],
-  		    staticDelimiters = options.staticDelimiters || ["[[", "]]"],
-  		    staticTripleDelimiters = options.staticTripleDelimiters || ["[[[", "]]]"];
-
-  		this.standardDelimiters = options.delimiters || ["{{", "}}"];
-
-  		this.tags = [{ isStatic: false, isTriple: false, open: this.standardDelimiters[0], close: this.standardDelimiters[1], readers: STANDARD_READERS }, { isStatic: false, isTriple: true, open: tripleDelimiters[0], close: tripleDelimiters[1], readers: TRIPLE_READERS }, { isStatic: true, isTriple: false, open: staticDelimiters[0], close: staticDelimiters[1], readers: STATIC_READERS }, { isStatic: true, isTriple: true, open: staticTripleDelimiters[0], close: staticTripleDelimiters[1], readers: TRIPLE_READERS }];
-
-  		this.sortMustacheTags();
-
-  		this.sectionDepth = 0;
-  		this.elementStack = [];
-
-  		this.interpolate = {
-  			script: !options.interpolate || options.interpolate.script !== false,
-  			style: !options.interpolate || options.interpolate.style !== false
-  		};
-
-  		if (options.sanitize === true) {
-  			options.sanitize = {
-  				// blacklist from https://code.google.com/p/google-caja/source/browse/trunk/src/com/google/caja/lang/html/html4-elements-whitelist.json
-  				elements: "applet base basefont body frame frameset head html isindex link meta noframes noscript object param script style title".split(" "),
-  				eventAttributes: true
-  			};
-  		}
-
-  		this.stripComments = options.stripComments !== false;
-  		this.preserveWhitespace = options.preserveWhitespace;
-  		this.sanitizeElements = options.sanitize && options.sanitize.elements;
-  		this.sanitizeEventAttributes = options.sanitize && options.sanitize.eventAttributes;
-  		this.includeLinePositions = options.includeLinePositions;
-  	},
-
-  	postProcess: function (result) {
-  		// special case - empty string
-  		if (!result.length) {
-  			return { t: [], v: TEMPLATE_VERSION };
-  		}
-
-  		if (this.sectionDepth > 0) {
-  			this.error("A section was left open");
-  		}
-
-  		utils_cleanup(result[0].t, this.stripComments, this.preserveWhitespace, !this.preserveWhitespace, !this.preserveWhitespace);
-
-  		return result[0];
-  	},
-
-  	converters: [converters_readTemplate],
-
-  	sortMustacheTags: function () {
-  		// Sort in order of descending opening delimiter length (longer first),
-  		// to protect against opening delimiters being substrings of each other
-  		this.tags.sort(function (a, b) {
-  			return b.open.length - a.open.length;
-  		});
-  	}
-  });
+  var parse = null;
 
   var parseOptions = ["preserveWhitespace", "sanitize", "stripComments", "delimiters", "tripleDelimiters", "interpolate"];
 
@@ -6571,11 +3541,11 @@
   }
 
   function doParse(template, parseOptions) {
-  	if (!_parse) {
+  	if (!parse) {
   		throw new Error("Missing Ractive.parse - cannot parse template. Either preparse or use the version that includes the parser");
   	}
 
-  	return _parse(template, parseOptions || this.options);
+  	return parse(template, parseOptions || this.options);
   }
 
   function fromId(id, options) {
@@ -6735,7 +3705,7 @@
   			template = template_parser.fromId(template);
   		}
 
-  		template = _parse(template, template_parser.getParseOptions(ractive));
+  		template = parse(template, template_parser.getParseOptions(ractive));
   	}
 
   	// Check that the template even exists
@@ -7167,6 +4137,501 @@
   	return null;
   }
 
+  var Parser,
+      ParseError,
+      parse_Parser__leadingWhitespace = /^\s+/;
+
+  ParseError = function (message) {
+  	this.name = "ParseError";
+  	this.message = message;
+  	try {
+  		throw new Error(message);
+  	} catch (e) {
+  		this.stack = e.stack;
+  	}
+  };
+
+  ParseError.prototype = Error.prototype;
+
+  Parser = function (str, options) {
+  	var items,
+  	    item,
+  	    lineStart = 0;
+
+  	this.str = str;
+  	this.options = options || {};
+  	this.pos = 0;
+
+  	this.lines = this.str.split("\n");
+  	this.lineEnds = this.lines.map(function (line) {
+  		var lineEnd = lineStart + line.length + 1; // +1 for the newline
+
+  		lineStart = lineEnd;
+  		return lineEnd;
+  	}, 0);
+
+  	// Custom init logic
+  	if (this.init) this.init(str, options);
+
+  	items = [];
+
+  	while (this.pos < this.str.length && (item = this.read())) {
+  		items.push(item);
+  	}
+
+  	this.leftover = this.remaining();
+  	this.result = this.postProcess ? this.postProcess(items, options) : items;
+  };
+
+  Parser.prototype = {
+  	read: function (converters) {
+  		var pos, i, len, item;
+
+  		if (!converters) converters = this.converters;
+
+  		pos = this.pos;
+
+  		len = converters.length;
+  		for (i = 0; i < len; i += 1) {
+  			this.pos = pos; // reset for each attempt
+
+  			if (item = converters[i](this)) {
+  				return item;
+  			}
+  		}
+
+  		return null;
+  	},
+
+  	getLinePos: function (char) {
+  		var lineNum = 0,
+  		    lineStart = 0,
+  		    columnNum;
+
+  		while (char >= this.lineEnds[lineNum]) {
+  			lineStart = this.lineEnds[lineNum];
+  			lineNum += 1;
+  		}
+
+  		columnNum = char - lineStart;
+  		return [lineNum + 1, columnNum + 1, char]; // line/col should be one-based, not zero-based!
+  	},
+
+  	error: function (message) {
+  		var pos = this.getLinePos(this.pos);
+  		var lineNum = pos[0];
+  		var columnNum = pos[1];
+
+  		var line = this.lines[pos[0] - 1];
+  		var numTabs = 0;
+  		var annotation = line.replace(/\t/g, function (match, char) {
+  			if (char < pos[1]) {
+  				numTabs += 1;
+  			}
+
+  			return "  ";
+  		}) + "\n" + new Array(pos[1] + numTabs).join(" ") + "^----";
+
+  		var error = new ParseError("" + message + " at line " + lineNum + " character " + columnNum + ":\n" + annotation);
+
+  		error.line = pos[0];
+  		error.character = pos[1];
+  		error.shortMessage = message;
+
+  		throw error;
+  	},
+
+  	matchString: function (string) {
+  		if (this.str.substr(this.pos, string.length) === string) {
+  			this.pos += string.length;
+  			return string;
+  		}
+  	},
+
+  	matchPattern: function (pattern) {
+  		var match;
+
+  		if (match = pattern.exec(this.remaining())) {
+  			this.pos += match[0].length;
+  			return match[1] || match[0];
+  		}
+  	},
+
+  	allowWhitespace: function () {
+  		this.matchPattern(parse_Parser__leadingWhitespace);
+  	},
+
+  	remaining: function () {
+  		return this.str.substring(this.pos);
+  	},
+
+  	nextChar: function () {
+  		return this.str.charAt(this.pos);
+  	}
+  };
+
+  Parser.extend = function (proto) {
+  	var Parent = this,
+  	    Child,
+  	    key;
+
+  	Child = function (str, options) {
+  		Parser.call(this, str, options);
+  	};
+
+  	Child.prototype = create(Parent.prototype);
+
+  	for (key in proto) {
+  		if (hasOwn.call(proto, key)) {
+  			Child.prototype[key] = proto[key];
+  		}
+  	}
+
+  	Child.extend = Parser.extend;
+  	return Child;
+  };
+
+  var parse_Parser = Parser;
+
+  var TEXT = 1;
+  var INTERPOLATOR = 2;
+  var TRIPLE = 3;
+  var SECTION = 4;
+  var INVERTED = 5;
+  var CLOSING = 6;
+  var ELEMENT = 7;
+  var PARTIAL = 8;
+  var COMMENT = 9;
+  var DELIMCHANGE = 10;
+  var ATTRIBUTE = 13;
+  var CLOSING_TAG = 14;
+  var COMPONENT = 15;
+  var YIELDER = 16;
+  var INLINE_PARTIAL = 17;
+  var DOCTYPE = 18;
+
+  var NUMBER_LITERAL = 20;
+  var STRING_LITERAL = 21;
+  var ARRAY_LITERAL = 22;
+  var OBJECT_LITERAL = 23;
+  var BOOLEAN_LITERAL = 24;
+  var REGEXP_LITERAL = 25;
+
+  var GLOBAL = 26;
+  var KEY_VALUE_PAIR = 27;
+
+  var REFERENCE = 30;
+  var REFINEMENT = 31;
+  var MEMBER = 32;
+  var PREFIX_OPERATOR = 33;
+  var BRACKETED = 34;
+  var CONDITIONAL = 35;
+  var INFIX_OPERATOR = 36;
+
+  var INVOCATION = 40;
+
+  var SECTION_IF = 50;
+  var SECTION_UNLESS = 51;
+  var SECTION_EACH = 52;
+  var SECTION_WITH = 53;
+  var SECTION_IF_WITH = 54;
+
+  var ELSE = 60;
+  var ELSEIF = 61;
+
+  var stringMiddlePattern, escapeSequencePattern, lineContinuationPattern;
+
+  // Match one or more characters until: ", ', \, or EOL/EOF.
+  // EOL/EOF is written as (?!.) (meaning there's no non-newline char next).
+  stringMiddlePattern = /^(?=.)[^"'\\]+?(?:(?!.)|(?=["'\\]))/;
+
+  // Match one escape sequence, including the backslash.
+  escapeSequencePattern = /^\\(?:['"\\bfnrt]|0(?![0-9])|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|(?=.)[^ux0-9])/;
+
+  // Match one ES5 line continuation (backslash + line terminator).
+  lineContinuationPattern = /^\\(?:\r\n|[\u000A\u000D\u2028\u2029])/;
+
+  // Helper for defining getDoubleQuotedString and getSingleQuotedString.
+  var makeQuotedStringMatcher = function (okQuote) {
+  	return function (parser) {
+  		var start, literal, done, next;
+
+  		start = parser.pos;
+  		literal = "\"";
+  		done = false;
+
+  		while (!done) {
+  			next = parser.matchPattern(stringMiddlePattern) || parser.matchPattern(escapeSequencePattern) || parser.matchString(okQuote);
+  			if (next) {
+  				if (next === "\"") {
+  					literal += "\\\"";
+  				} else if (next === "\\'") {
+  					literal += "'";
+  				} else {
+  					literal += next;
+  				}
+  			} else {
+  				next = parser.matchPattern(lineContinuationPattern);
+  				if (next) {
+  					// convert \(newline-like) into a \u escape, which is allowed in JSON
+  					literal += "\\u" + ("000" + next.charCodeAt(1).toString(16)).slice(-4);
+  				} else {
+  					done = true;
+  				}
+  			}
+  		}
+
+  		literal += "\"";
+
+  		// use JSON.parse to interpret escapes
+  		return JSON.parse(literal);
+  	};
+  };
+
+  var getSingleQuotedString = makeQuotedStringMatcher("\"");
+  var getDoubleQuotedString = makeQuotedStringMatcher("'");
+
+  var readStringLiteral = function (parser) {
+  	var start, string;
+
+  	start = parser.pos;
+
+  	if (parser.matchString("\"")) {
+  		string = getDoubleQuotedString(parser);
+
+  		if (!parser.matchString("\"")) {
+  			parser.pos = start;
+  			return null;
+  		}
+
+  		return {
+  			t: STRING_LITERAL,
+  			v: string
+  		};
+  	}
+
+  	if (parser.matchString("'")) {
+  		string = getSingleQuotedString(parser);
+
+  		if (!parser.matchString("'")) {
+  			parser.pos = start;
+  			return null;
+  		}
+
+  		return {
+  			t: STRING_LITERAL,
+  			v: string
+  		};
+  	}
+
+  	return null;
+  };
+
+  var literal_readNumberLiteral = readNumberLiteral;
+  var literal_readNumberLiteral__numberPattern = /^(?:[+-]?)0*(?:(?:(?:[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
+  function readNumberLiteral(parser) {
+  	var result;
+
+  	if (result = parser.matchPattern(literal_readNumberLiteral__numberPattern)) {
+  		return {
+  			t: NUMBER_LITERAL,
+  			v: result
+  		};
+  	}
+
+  	return null;
+  }
+
+  var patterns__name = /^[a-zA-Z_$][a-zA-Z_$0-9]*/;
+
+  // http://mathiasbynens.be/notes/javascript-properties
+  // can be any name, string literal, or number literal
+  var shared_readKey = readKey;
+  var identifier = /^[a-zA-Z_$][a-zA-Z_$0-9]*$/;
+  function readKey(parser) {
+  	var token;
+
+  	if (token = readStringLiteral(parser)) {
+  		return identifier.test(token.v) ? token.v : "\"" + token.v.replace(/"/g, "\\\"") + "\"";
+  	}
+
+  	if (token = literal_readNumberLiteral(parser)) {
+  		return token.v;
+  	}
+
+  	if (token = parser.matchPattern(patterns__name)) {
+  		return token;
+  	}
+  }
+
+  var JsonParser, specials, specialsPattern, parseJSON__numberPattern, placeholderPattern, placeholderAtStartPattern, onlyWhitespace;
+
+  specials = {
+  	"true": true,
+  	"false": false,
+  	undefined: undefined,
+  	"null": null
+  };
+
+  specialsPattern = new RegExp("^(?:" + Object.keys(specials).join("|") + ")");
+  parseJSON__numberPattern = /^(?:[+-]?)(?:(?:(?:0|[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/;
+  placeholderPattern = /\$\{([^\}]+)\}/g;
+  placeholderAtStartPattern = /^\$\{([^\}]+)\}/;
+  onlyWhitespace = /^\s*$/;
+
+  JsonParser = parse_Parser.extend({
+  	init: function (str, options) {
+  		this.values = options.values;
+  		this.allowWhitespace();
+  	},
+
+  	postProcess: function (result) {
+  		if (result.length !== 1 || !onlyWhitespace.test(this.leftover)) {
+  			return null;
+  		}
+
+  		return { value: result[0].v };
+  	},
+
+  	converters: [function getPlaceholder(parser) {
+  		var placeholder;
+
+  		if (!parser.values) {
+  			return null;
+  		}
+
+  		placeholder = parser.matchPattern(placeholderAtStartPattern);
+
+  		if (placeholder && parser.values.hasOwnProperty(placeholder)) {
+  			return { v: parser.values[placeholder] };
+  		}
+  	}, function getSpecial(parser) {
+  		var special;
+
+  		if (special = parser.matchPattern(specialsPattern)) {
+  			return { v: specials[special] };
+  		}
+  	}, function getNumber(parser) {
+  		var number;
+
+  		if (number = parser.matchPattern(parseJSON__numberPattern)) {
+  			return { v: +number };
+  		}
+  	}, function getString(parser) {
+  		var stringLiteral = readStringLiteral(parser),
+  		    values;
+
+  		if (stringLiteral && (values = parser.values)) {
+  			return {
+  				v: stringLiteral.v.replace(placeholderPattern, function (match, $1) {
+  					return $1 in values ? values[$1] : $1;
+  				})
+  			};
+  		}
+
+  		return stringLiteral;
+  	}, function getObject(parser) {
+  		var result, pair;
+
+  		if (!parser.matchString("{")) {
+  			return null;
+  		}
+
+  		result = {};
+
+  		parser.allowWhitespace();
+
+  		if (parser.matchString("}")) {
+  			return { v: result };
+  		}
+
+  		while (pair = getKeyValuePair(parser)) {
+  			result[pair.key] = pair.value;
+
+  			parser.allowWhitespace();
+
+  			if (parser.matchString("}")) {
+  				return { v: result };
+  			}
+
+  			if (!parser.matchString(",")) {
+  				return null;
+  			}
+  		}
+
+  		return null;
+  	}, function getArray(parser) {
+  		var result, valueToken;
+
+  		if (!parser.matchString("[")) {
+  			return null;
+  		}
+
+  		result = [];
+
+  		parser.allowWhitespace();
+
+  		if (parser.matchString("]")) {
+  			return { v: result };
+  		}
+
+  		while (valueToken = parser.read()) {
+  			result.push(valueToken.v);
+
+  			parser.allowWhitespace();
+
+  			if (parser.matchString("]")) {
+  				return { v: result };
+  			}
+
+  			if (!parser.matchString(",")) {
+  				return null;
+  			}
+
+  			parser.allowWhitespace();
+  		}
+
+  		return null;
+  	}]
+  });
+
+  function getKeyValuePair(parser) {
+  	var key, valueToken, pair;
+
+  	parser.allowWhitespace();
+
+  	key = shared_readKey(parser);
+
+  	if (!key) {
+  		return null;
+  	}
+
+  	pair = { key: key };
+
+  	parser.allowWhitespace();
+  	if (!parser.matchString(":")) {
+  		return null;
+  	}
+  	parser.allowWhitespace();
+
+  	valueToken = parser.read();
+  	if (!valueToken) {
+  		return null;
+  	}
+
+  	pair.value = valueToken.v;
+
+  	return pair;
+  }
+
+  var parseJSON = function (str, values) {
+  	var parser = new JsonParser(str, {
+  		values: values
+  	});
+
+  	return parser.result;
+  };
+
   var shared_processItems = processItems;
 
   function processItems(items, values, guid, counter) {
@@ -7253,6 +4718,89 @@
   	}
 
   	return this.value;
+  }
+
+  var booleanAttributes, voidElementNames, htmlEntities, controlCharacters, entityPattern, lessThan, greaterThan, amp;
+
+  // https://github.com/kangax/html-minifier/issues/63#issuecomment-37763316
+  booleanAttributes = /^(allowFullscreen|async|autofocus|autoplay|checked|compact|controls|declare|default|defaultChecked|defaultMuted|defaultSelected|defer|disabled|enabled|formNoValidate|hidden|indeterminate|inert|isMap|itemScope|loop|multiple|muted|noHref|noResize|noShade|noValidate|noWrap|open|pauseOnExit|readOnly|required|reversed|scoped|seamless|selected|sortable|translate|trueSpeed|typeMustMatch|visible)$/i;
+  voidElementNames = /^(?:area|base|br|col|command|doctype|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)$/i;
+
+  htmlEntities = { quot: 34, amp: 38, apos: 39, lt: 60, gt: 62, nbsp: 160, iexcl: 161, cent: 162, pound: 163, curren: 164, yen: 165, brvbar: 166, sect: 167, uml: 168, copy: 169, ordf: 170, laquo: 171, not: 172, shy: 173, reg: 174, macr: 175, deg: 176, plusmn: 177, sup2: 178, sup3: 179, acute: 180, micro: 181, para: 182, middot: 183, cedil: 184, sup1: 185, ordm: 186, raquo: 187, frac14: 188, frac12: 189, frac34: 190, iquest: 191, Agrave: 192, Aacute: 193, Acirc: 194, Atilde: 195, Auml: 196, Aring: 197, AElig: 198, Ccedil: 199, Egrave: 200, Eacute: 201, Ecirc: 202, Euml: 203, Igrave: 204, Iacute: 205, Icirc: 206, Iuml: 207, ETH: 208, Ntilde: 209, Ograve: 210, Oacute: 211, Ocirc: 212, Otilde: 213, Ouml: 214, times: 215, Oslash: 216, Ugrave: 217, Uacute: 218, Ucirc: 219, Uuml: 220, Yacute: 221, THORN: 222, szlig: 223, agrave: 224, aacute: 225, acirc: 226, atilde: 227, auml: 228, aring: 229, aelig: 230, ccedil: 231, egrave: 232, eacute: 233, ecirc: 234, euml: 235, igrave: 236, iacute: 237, icirc: 238, iuml: 239, eth: 240, ntilde: 241, ograve: 242, oacute: 243, ocirc: 244, otilde: 245, ouml: 246, divide: 247, oslash: 248, ugrave: 249, uacute: 250, ucirc: 251, uuml: 252, yacute: 253, thorn: 254, yuml: 255, OElig: 338, oelig: 339, Scaron: 352, scaron: 353, Yuml: 376, fnof: 402, circ: 710, tilde: 732, Alpha: 913, Beta: 914, Gamma: 915, Delta: 916, Epsilon: 917, Zeta: 918, Eta: 919, Theta: 920, Iota: 921, Kappa: 922, Lambda: 923, Mu: 924, Nu: 925, Xi: 926, Omicron: 927, Pi: 928, Rho: 929, Sigma: 931, Tau: 932, Upsilon: 933, Phi: 934, Chi: 935, Psi: 936, Omega: 937, alpha: 945, beta: 946, gamma: 947, delta: 948, epsilon: 949, zeta: 950, eta: 951, theta: 952, iota: 953, kappa: 954, lambda: 955, mu: 956, nu: 957, xi: 958, omicron: 959, pi: 960, rho: 961, sigmaf: 962, sigma: 963, tau: 964, upsilon: 965, phi: 966, chi: 967, psi: 968, omega: 969, thetasym: 977, upsih: 978, piv: 982, ensp: 8194, emsp: 8195, thinsp: 8201, zwnj: 8204, zwj: 8205, lrm: 8206, rlm: 8207, ndash: 8211, mdash: 8212, lsquo: 8216, rsquo: 8217, sbquo: 8218, ldquo: 8220, rdquo: 8221, bdquo: 8222, dagger: 8224, Dagger: 8225, bull: 8226, hellip: 8230, permil: 8240, prime: 8242, Prime: 8243, lsaquo: 8249, rsaquo: 8250, oline: 8254, frasl: 8260, euro: 8364, image: 8465, weierp: 8472, real: 8476, trade: 8482, alefsym: 8501, larr: 8592, uarr: 8593, rarr: 8594, darr: 8595, harr: 8596, crarr: 8629, lArr: 8656, uArr: 8657, rArr: 8658, dArr: 8659, hArr: 8660, forall: 8704, part: 8706, exist: 8707, empty: 8709, nabla: 8711, isin: 8712, notin: 8713, ni: 8715, prod: 8719, sum: 8721, minus: 8722, lowast: 8727, radic: 8730, prop: 8733, infin: 8734, ang: 8736, and: 8743, or: 8744, cap: 8745, cup: 8746, int: 8747, there4: 8756, sim: 8764, cong: 8773, asymp: 8776, ne: 8800, equiv: 8801, le: 8804, ge: 8805, sub: 8834, sup: 8835, nsub: 8836, sube: 8838, supe: 8839, oplus: 8853, otimes: 8855, perp: 8869, sdot: 8901, lceil: 8968, rceil: 8969, lfloor: 8970, rfloor: 8971, lang: 9001, rang: 9002, loz: 9674, spades: 9824, clubs: 9827, hearts: 9829, diams: 9830 };
+  controlCharacters = [8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141, 381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 339, 157, 382, 376];
+  entityPattern = new RegExp("&(#?(?:x[\\w\\d]+|\\d+|" + Object.keys(htmlEntities).join("|") + "));?", "g");
+
+  function decodeCharacterReferences(html) {
+  	return html.replace(entityPattern, function (match, entity) {
+  		var code;
+
+  		// Handle named entities
+  		if (entity[0] !== "#") {
+  			code = htmlEntities[entity];
+  		} else if (entity[1] === "x") {
+  			code = parseInt(entity.substring(2), 16);
+  		} else {
+  			code = parseInt(entity.substring(1), 10);
+  		}
+
+  		if (!code) {
+  			return match;
+  		}
+
+  		return String.fromCharCode(validateCode(code));
+  	});
+  }
+
+  // some code points are verboten. If we were inserting HTML, the browser would replace the illegal
+  // code points with alternatives in some cases - since we're bypassing that mechanism, we need
+  // to replace them ourselves
+  //
+  // Source: http://en.wikipedia.org/wiki/Character_encodings_in_HTML#Illegal_characters
+  function validateCode(code) {
+  	if (!code) {
+  		return 65533;
+  	}
+
+  	// line feed becomes generic whitespace
+  	if (code === 10) {
+  		return 32;
+  	}
+
+  	// ASCII range. (Why someone would use HTML entities for ASCII characters I don't know, but...)
+  	if (code < 128) {
+  		return code;
+  	}
+
+  	// code points 128-159 are dealt with leniently by browsers, but they're incorrect. We need
+  	// to correct the mistake or we'll end up with missing € signs and so on
+  	if (code <= 159) {
+  		return controlCharacters[code - 128];
+  	}
+
+  	// basic multilingual plane
+  	if (code < 55296) {
+  		return code;
+  	}
+
+  	// UTF-16 surrogate halves
+  	if (code <= 57343) {
+  		return 65533;
+  	}
+
+  	// rest of the basic multilingual plane
+  	if (code <= 65535) {
+  		return code;
+  	}
+
+  	return 65533;
+  }
+
+  lessThan = /</g;
+  greaterThan = />/g;
+  amp = /&/g;
+
+  function escapeHtml(str) {
+  	return str.replace(amp, "&amp;").replace(lessThan, "&lt;").replace(greaterThan, "&gt;");
   }
 
   var shared_detach = function () {
@@ -14933,7 +12481,7 @@
 
   var helpers_getComputationSignatures = getComputationSignatures;
 
-  var helpers_getComputationSignatures__pattern = /\$\{([^\}]+)\}/g;
+  var pattern = /\$\{([^\}]+)\}/g;
   function getComputationSignatures(ractive, computed) {
   	var signatures = {},
   	    key;
@@ -14976,7 +12524,7 @@
   function createFunctionFromString(ractive, str) {
   	var functionBody, hasThis, fn;
 
-  	functionBody = "return (" + str.replace(helpers_getComputationSignatures__pattern, function (match, keypath) {
+  	functionBody = "return (" + str.replace(pattern, function (match, keypath) {
   		hasThis = true;
   		return "__ractive.get(\"" + keypath + "\")";
   	}) + ");";
@@ -16568,7 +14116,7 @@
   	// static methods:
   	extend: { value: _extend },
   	getNodeInfo: { value: getNodeInfo },
-  	parse: { value: _parse },
+  	parse: { value: parse },
 
   	// Namespaced constructors
   	Promise: { value: utils_Promise },
@@ -16616,4 +14164,4 @@
   return _Ractive;
 
 }));
-//# sourceMappingURL=ractive.js.map
+//# sourceMappingURL=ractive.runtime.js.map

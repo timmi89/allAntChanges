@@ -1,3 +1,4 @@
+var AppMode = require('./utils/app-mode');
 var URLs = require('./utils/urls');
 
 function loadCss() {
@@ -5,7 +6,10 @@ function loadCss() {
     // element that turns off our elements *before* our CSS links. This exploits the cascade rules - our CSS files appear
     // after the inline style in the document, so they take precedence (and make everything appear) once they're loaded.
     injectCss('.antenna{display:none;}');
-    var cssHref = URLs.appServerUrl() + '/static/widget-new/debug/antenna.css'; // TODO this needs a final path. CDN for production and local file for development?
+    var cssHref = URLs.amazonS3Url() + '/widget-new/antenna.css';
+    if (AppMode.offline) {
+        cssHref = URLs.appServerUrl() + '/static/widget-new/antenna.css';
+    }
     loadFile(cssHref);
 }
 

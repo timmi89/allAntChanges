@@ -19,6 +19,7 @@ function loaded() {
     loadedRactive.events.tap = RactiveEventsTap; // Make the 'on-tap' event plugin available to all instances
     loadedRactive.defaults.data.getMessage = Messages.getMessage; // Make getMessage available to all instances
     loadedRactive.defaults.twoway = false; // Change the default to disable two-way data bindings.
+    loadedRactive.DEBUG = false;
     notifyCallbacks();
 }
 
