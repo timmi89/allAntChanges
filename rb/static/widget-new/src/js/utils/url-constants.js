@@ -3,7 +3,7 @@ var DEV_SERVER_URL = window.location.protocol + "//local-static.antenna.is:8081"
 var TEST_SERVER_URL = window.location.protocol + '//localhost:3001';
 var AMAZON_S3_URL = '//s3.amazonaws.com/readrboard';
 
-var PROD_EVENT_SERVER_URL = window.location.protocol + '//events.readrboard.com'; // TODO: update to events.antenna.is
+var PROD_EVENT_SERVER_URL = window.location.protocol + '//events.antenna.is';
 var DEV_EVENT_SERVER_URL = window.location.protocol + '//nodebq.docker:3000';
 
 //noinspection JSUnresolvedVariable
