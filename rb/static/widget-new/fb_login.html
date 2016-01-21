@@ -28,10 +28,14 @@
         window.ANT_staticUrl = ( ANT_offline ) ?
                 prot+"//local-static.antenna.is:8081/static/" :
                 prot+"//s3.amazonaws.com/readrboard/";
+
+        window.ANT_user_script = ( ANT_offline ) ?
+                "src/xdm/ant_user.js" :
+                "ant_user.min.js" ;
         
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget-new/xdm/ant_user.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget-new/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
 
     })();
     </script>
