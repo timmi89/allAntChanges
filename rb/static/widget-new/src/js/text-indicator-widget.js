@@ -7,6 +7,7 @@ var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
 var SVGs = require('./svgs');
 
+var CLASS_ACTIVE = 'antenna-active';
 
 function createIndicatorWidget(options) {
     var containerData = options.containerData;
@@ -82,10 +83,10 @@ function createIndicatorWidget(options) {
         clearTimeout(hoverTimeout);
     });
     $containerElement.on('mouseenter.antenna', function() {
-        $rootElement.addClass('active');
+        $rootElement.addClass(CLASS_ACTIVE);
     });
     $containerElement.on('mouseleave.antenna', function() {
-        $rootElement.removeClass('active');
+        $rootElement.removeClass(CLASS_ACTIVE);
     });
     return {
         element: $rootElement,

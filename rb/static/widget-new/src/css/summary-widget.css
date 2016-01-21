@@ -5,7 +5,7 @@
     margin: 10px 0;
 }
 
-.antenna-summary-widget.notloaded {
+.antenna-summary-widget.antenna-notloaded {
     visibility: hidden;
 }
 

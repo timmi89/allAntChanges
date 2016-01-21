@@ -8,6 +8,8 @@ var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 var TouchSupport = require('./utils/touch-support');
 
+var CLASS_ACTIVE = 'antenna-active';
+
 function createIndicatorWidget(options) {
     // TODO: validate that options contains all required properties (applies to all widgets).
     var element = options.element;
@@ -71,13 +73,13 @@ function createIndicatorWidget(options) {
     $containerElement.on('mouseenter.antenna', function() {
         clearTimeout(activeTimeout);
         activeTimeout = setTimeout(function() {
-            $rootElement.addClass('active');
+            $rootElement.addClass(CLASS_ACTIVE);
         }, 500);
     });
     $containerElement.on('mouseleave.antenna', function() {
         clearTimeout(activeTimeout);
         setTimeout(function() {
-            $rootElement.removeClass('active');
+            $rootElement.removeClass(CLASS_ACTIVE);
         }, 100); // We get a mouseleave event when the user hovers the indicator. Pause long enough that the reaction window can open if they hover.
     });
     setupPositioning($containerElement, groupSettings, ractive);

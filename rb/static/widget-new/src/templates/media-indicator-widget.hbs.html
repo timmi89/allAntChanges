@@ -2,8 +2,7 @@
 
 <span decorator="cssreset" class="antenna antenna-media-indicator-wrapper">
     <span class="antenna antenna-media-indicator-widget
-            {{^containerData.loaded}}notloaded{{/containerData.loaded}}
-            {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}"
+            {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}"
             {{extraAttributes}}>
         {{>logo}}
         {{#if containerData.reactionTotal }}

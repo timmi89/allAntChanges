@@ -11,7 +11,7 @@
     font-size: 100%; /* Size the text indicator to match the page text. */
 }
 
-.antenna-text-indicator-widget.notloaded {
+.antenna-text-indicator-widget.antenna-notloaded {
     visibility: hidden;
 }
 
@@ -20,11 +20,11 @@
     transition: fill 300ms ease;
 }
 
-.antenna-text-indicator-widget.active .antenna-logo-path {
+.antenna-text-indicator-widget.antenna-active .antenna-logo-path {
     fill: #000000;
 }
 
-.antenna-text-indicator-widget.active {
+.antenna-text-indicator-widget.antenna-active {
     color: #666666 !important;
     opacity: 0.66;
 }
@@ -34,7 +34,7 @@
     pointer-events: none;
 }
 
-.antenna-text-indicator-widget.hasreactions {
+.antenna-text-indicator-widget.antenna-hasreactions {
     opacity: 0.33;
 }
 
@@ -43,7 +43,7 @@
     pointer-events: none;
 }
 
-.antenna-text-indicator-widget.hasreactions.active {
+.antenna-text-indicator-widget.antenna-hasreactions.antenna-active {
     opacity: 0.75;
     color: #666666 !important;
     pointer-events: auto;
@@ -63,6 +63,6 @@
     padding: 0 8px 0 1px;
 }
 
-.antenna-text-indicator-widget.active .antenna-reaction-total {
+.antenna-text-indicator-widget.antenna-active .antenna-reaction-total {
     visibility: inherit; /* only show if the parent element is showing */
 }

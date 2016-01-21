@@ -19,7 +19,7 @@
     pointer-events: auto;
 }
 
-.antenna-media-indicator-widget.notloaded {
+.antenna-media-indicator-widget.antenna-notloaded {
     visibility: hidden;
 }
 
@@ -27,7 +27,7 @@
     fill: #ffffff;
 }
 
-.antenna-media-indicator-widget.active { /* todo qualify active class */
+.antenna-media-indicator-widget.antenna-active {
     text-shadow: none;
     background-color: rgba(0,0,0,.2);
     opacity: 1.0;
@@ -41,7 +41,7 @@
     vertical-align: middle;
 }
 
-.antenna-media-indicator-widget.active .antenna-reaction-total {
+.antenna-media-indicator-widget.antenna-active .antenna-reaction-total {
     visibility: inherit; /* only show if the parent element is showing */
 }
 
@@ -56,7 +56,7 @@
     overflow: hidden;
 }
 
-.antenna-media-indicator-widget.active .antenna-reaction-prompt {
+.antenna-media-indicator-widget.antenna-active .antenna-reaction-prompt {
     max-width: 300px;
     visibility: inherit; /* only show if the parent element is showing */
 }
