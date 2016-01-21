@@ -37,7 +37,7 @@
 .antenna-media-indicator-widget .antenna-reaction-total {
     visibility: hidden;
     font-size: 11px;
-    line-height: 16px;
+    line-height: 1em;
     vertical-align: middle;
 }
 
