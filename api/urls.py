@@ -6,7 +6,6 @@ from api.auth_handlers import *
 
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
-PageDataNew = Resource(handler=PageDataHandlerNew)
 PageDataNewer = Resource(handler=PageDataHandlerNewer)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
@@ -83,7 +82,6 @@ urlpatterns = patterns('',
 
     # Widget
     url(r'^pagenewer/', PageDataNewer),
-    url(r'^pagenew/', PageDataNew),
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
     url(r'^content/bodies/', ContentBodies),

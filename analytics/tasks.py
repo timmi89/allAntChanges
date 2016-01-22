@@ -21,7 +21,7 @@ logger = get_task_logger(__name__)
 def update_page_newer_cache(page_id):
     logger.info('UPDATE NEWER PAGE CACHE: ' + str(page_id))
     if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
-        cache_data = getSinglePageDataNewer(page_id)
+        cache_data = getSinglePageDataNewerById(page_id)
         try:
             cache.set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
             cache.set('page_data_newer_' + str(page_id), cache_data )

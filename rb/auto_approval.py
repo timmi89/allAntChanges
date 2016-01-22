@@ -58,7 +58,7 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
         addDefaultsForNewGroup(group, cookie_user)
         autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=isAutoApproved)
 
-        return group
+        return group, site
 
 
 def addDefaultsForNewGroup(group, cookie_user):

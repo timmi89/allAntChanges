@@ -210,23 +210,6 @@ def getPage(host, page_request):
             url = url,
             canonical_url = canonical
         )
-        page_changed = False
-        if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
-            page.image = image
-            page_changed = True
-        if (page.author is None or len(page.author) < 1) and author is not None and len(author) > 0:
-            page.author = author
-            page_changed = True
-        if (page.topics is None or len(page.topics) < 1) and topics is not None and len(topics) > 0:
-            page.topics = topics
-            page_changed = True
-        if (page.section is None or len(page.section) < 1) and section is not None and len(section) > 0:
-            page.section = section
-            page_changed = True
-
-        if page_changed:
-            page.save()
-        return page
     except Page.DoesNotExist:
         # rewrite branch - make the page title and image optional
         # defaults = {'site': site}
@@ -237,8 +220,24 @@ def getPage(host, page_request):
             url = url,
             canonical_url = canonical,
             defaults = {'site': site, 'title':title, 'image':image}
-        )
-        return page[0]
+        )[0]
+    page_changed = False
+    if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
+        page.image = image
+        page_changed = True
+    if (page.author is None or len(page.author) < 1) and author is not None and len(author) > 0:
+        page.author = author
+        page_changed = True
+    if (page.topics is None or len(page.topics) < 1) and topics is not None and len(topics) > 0:
+        page.topics = topics
+        page_changed = True
+    if (page.section is None or len(page.section) < 1) and section is not None and len(section) > 0:
+        page.section = section
+        page_changed = True
+
+    if page_changed:
+        page.save()
+    return page
 
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
@@ -379,8 +378,11 @@ def getSinglePageDataDict(page_id):
     return page_data
 
 
-def getSinglePageDataNewer(page_id):
-    page = Page.objects.get(id=page_id)
+def getSinglePageDataNewerById(page_id):
+    return Page.objects.get(id=page_id)
+
+
+def getSinglePageDataNewer(page):
     interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','content_id','kind','interaction_node_id','parent_id')
     interaction_dict = {}
     container_ids = set()
@@ -418,11 +420,11 @@ def getSinglePageDataNewer(page_id):
             summary_dict.setdefault(node_id, 0)
             summary_dict[node_id] += 1
         elif kind == 'com':
-            comments = content_interactions.setdefault('comments', {})
+            content_comments = content_interactions.setdefault('comments', {})
             parent_id = interaction['parent_id']
             if parent_id: # guard against corrupt data (comments should always have a parent_id).
-                comments.setdefault(parent_id, 0)
-                comments[parent_id] += 1
+                content_comments.setdefault(parent_id, 0)
+                content_comments[parent_id] += 1
 
     # Next, fetch all of the containers, content, and interaction_nodes that we need
     containers = Container.objects.filter(id__in=container_ids).values('id','hash')
@@ -489,7 +491,7 @@ def getSinglePageDataNewer(page_id):
 
     page_data = {
         'pageHash': hashlib.md5(page.url).hexdigest(),
-        'id': page_id,
+        'id': page.id,
         'containers': containers_data,
         'summaryReactions': summary_data[:15],
         'title': page.title,
