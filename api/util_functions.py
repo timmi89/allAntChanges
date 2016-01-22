@@ -379,7 +379,8 @@ def getSinglePageDataDict(page_id):
 
 
 def getSinglePageDataNewerById(page_id):
-    return Page.objects.get(id=page_id)
+    page = Page.objects.get(id=page_id)
+    return getSinglePageDataNewer(page)
 
 
 def getSinglePageDataNewer(page):
