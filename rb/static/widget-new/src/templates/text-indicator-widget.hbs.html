@@ -1,8 +1,8 @@
 
 
 <span decorator="cssreset" class="antenna antenna-text-indicator-widget
-        {{^containerData.loaded}}notloaded{{/containerData.loaded}}
-        {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}
+        {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}
+        {{#if containerData.reactionTotal > 0}}antenna-hasreactions{{/if}}
         {{#if containerData.suppress}}antenna-suppress{{/if}}
         {{extraClasses}}">
     {{>logo}}

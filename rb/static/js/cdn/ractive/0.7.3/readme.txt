@@ -1,0 +1,1 @@
+This is Ractive 0.7.3, modified to always set the global Ractive object (ignoring AMD and CommonJS).

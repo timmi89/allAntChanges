@@ -290,7 +290,7 @@ class CreateGroupForm(forms.Form):
             domain=self.cleaned_data['domain'],
         )
 
-        group = autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=isAutoApproved, querystring_content=querystring_content)          
+        group, site = autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=isAutoApproved, querystring_content=querystring_content)
         return group
         
 

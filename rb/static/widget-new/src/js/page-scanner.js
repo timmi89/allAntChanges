@@ -361,11 +361,11 @@ function computeHash($element, pageData, groupSettings) {
     switch (computeElementType($element)) {
         case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
-            hash = Hash.hashImage(imageUrl);
+            hash = Hash.hashImage(imageUrl, groupSettings);
             break;
         case TYPE_MEDIA:
             var mediaUrl = URLs.computeMediaUrl($element, groupSettings);
-            hash = Hash.hashMedia(mediaUrl);
+            hash = Hash.hashMedia(mediaUrl, groupSettings);
             break;
         case TYPE_TEXT:
             hash = Hash.hashText($element);

@@ -4,6 +4,7 @@
         <textarea on-input="inputchanged" class="antenna-comment-input" placeholder="{{getMessage('comment-area_placeholder')}}" maxlength="500"></textarea>
         <div class="antenna-comment-footer">
             <span class="antenna-comment-limit">{{{getMessage('comment-area_count')}}}</span>
+            <button id="antenna-comment-spacer"></button>
             <button class="antenna-comment-submit" on-tap="addcomment">{{getMessage('comment-area_add')}}</button>
         </div>
     </div>

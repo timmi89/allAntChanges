@@ -2,9 +2,10 @@
 .antenna-summary-widget {
     display: inline-block;
     box-shadow: 0 0 3px rgba(000,000,000,.3);
+    margin: 10px 0;
 }
 
-.antenna-summary-widget.notloaded {
+.antenna-summary-widget.antenna-notloaded {
     visibility: hidden;
 }
 

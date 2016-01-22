@@ -29,7 +29,7 @@ class Command(BaseCommand):
         
         print 'NEWER WAYS!'
         n = datetime.datetime.now()
-        spdd = util_functions.getSinglePageDataNewer(int(args[0]))
+        spdd = util_functions.getSinglePageDataNewerById(int(args[0]))
         #conts = []
         #for container in spdd['containers']:
         #    conts.append(container.hash)

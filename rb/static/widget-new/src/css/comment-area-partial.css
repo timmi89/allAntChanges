@@ -44,10 +44,15 @@
 }
 
 .antenna-comment-submit {
-    float: right;
+    float: right; /* Keep in sync with #antenna-comment-spacer */
     border: 0;
-    padding: 5px;
+    padding: 5px; /* Keep in sync with #antenna-comment-spacer */
     text-align: center;
     color: #ffffff;
     font-size: 11px;
+}
+
+#antenna-comment-spacer { /* Spacer button corresponding to the submit button, which takes up no vertical space because it is floated right. */
+    visibility: hidden;
+    padding: 5px 0;
 }

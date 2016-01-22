@@ -36,7 +36,7 @@ class CachePageRefreshHandlerNewer(AnonymousBaseHandler):
     def read(self, request, page_id = None):
         #update_page_cache.delay(page.id)
         if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
-            cache_data = getSinglePageDataNewer(page_id)
+            cache_data = getSinglePageDataNewerById(page_id)
             try:
                 logger.info('CPRH SETTING CACHE DATA page_data_newer_' + str(page_id) )
                 cache.set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
@@ -769,18 +769,19 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
             # Massage the data for the new API. the "url" parameter is now always the canonical url
             requested_page['canonical_url'] = 'same'
             page = getPage(host, requested_page)
-            pages.append({ 'page_id': page.id, 'requested_url': url})
+            pages.append({ 'page': page, 'requested_url': url})
 
         pages_data = []
 
         for page_info in pages:
-            page_id = page_info['page_id']
+            page = page_info['page']
+            page_id = page.id
             cached_result = check_and_get_locked_cache('page_data_newer_' + str(page_id))
             if cached_result is not None:
                 page_data = cached_result
             else:
                 logger.info('missed page_data_newer cache')
-                page_data = getSinglePageDataNewer(page_id)
+                page_data = getSinglePageDataNewer(page)
                 try:
                     cache.set('page_data_newer_' + str(page_id), page_data)
                 except Exception, e:
@@ -796,135 +797,6 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
                 pages_data.append(page_data)
 
         return pages_data
-
-
-class PageDataHandlerNew(AnonymousBaseHandler):
-    @status_response
-    @json_data
-    def read(self, request, data, pageid=None):
-
-        # Copied from PageDataHandler.read:
-        requested_pages = data['pages']
-        host = getHost(request)
-
-        pages = []
-        for requested_page in requested_pages:
-            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
-            requested_page['canonical_url'] = 'same'
-            # /MODIFICATION
-            pages.append(getPage(host, requested_page))
-
-        new_pages_data = []
-
-        for current_page in pages:
-            page_id = current_page.id
-            # half-imlemented caching, disabled for master
-            # cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
-            # if cached_page_data is not None:
-            #     logger.info('returning page_data_new cached result')
-            #     new_pages_data.append(cached_page_data)
-            if True:
-                logger.info('missed page_data_new cache')
-                page_data = getSinglePageDataDict(page_id)
-
-                # MODIFICATION go fetch the detailed content reaction info and merge it with the page_data
-                new_containers = {}
-                container_set = page_data['containers']
-                for container in container_set:
-                    data = { 'cross_page': False } # TODO remove all handling of cross_page and move that to a separate API call?
-
-                    # Copied from ContentSummaryHandler.read:
-                    container_id = container.id
-
-                    if data['cross_page'] == True:
-                        page = Page.objects.get(id=page_id)
-                        interactions = list(Interaction.objects.filter(
-                                container=container_id,
-                                page__site__group = page.site.group,
-                                approved=True
-                                ))
-                    else:
-                        interactions = list(Interaction.objects.filter(
-                                container=container_id,
-                                page=page_id,
-                                approved=True
-                                ))
-                    content_ids = (interaction.content_id for interaction in interactions)
-                    content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
-
-                    isCrossPage = (data['cross_page'] == True)
-                    content_summaries = getContentSummaries(interactions, content, isCrossPage=isCrossPage)
-
-                    # MODIFICATION:
-                    reactions = []
-                    for content_id in content_summaries:
-                        content_data = content_summaries[content_id]
-                        kind = content_data['kind']
-                        if kind == 'txt':
-                            content_kind = 'text'
-                        elif kind == 'pag':
-                            content_kind = 'page'
-                        elif kind == 'img':
-                            content_kind = 'img'
-                        elif kind == 'med':
-                            content_kind = 'media'
-                        top_interactions = content_data['top_interactions']
-                        comment_dict = {}
-                        comments = top_interactions['coms']
-                        for comment in comments:
-                            tag_id = comment['tag_id']
-                            count = comment_dict.get(tag_id, 0)
-                            comment_dict[tag_id] = count + 1
-                        top_tags = top_interactions['tags']
-                        for tag_id in top_tags:
-                            tag = top_tags[tag_id]
-                            if tag.get('parent_id'): # TODO: we have corrupted data in the database, with interactions pointing to parents that have different content.
-                                reactions.append({
-                                    'id': tag_id,
-                                    'text': tag['body'],
-                                    'count': tag['count'],
-                                    'parentID': tag['parent_id'],
-                                    'content': {
-                                        'id': content_id,
-                                        'location': content_data['location'], # TODO data format?
-                                        'kind': content_kind
-                                    },
-                                    'commentCount': comment_dict.get(tag_id, 0)
-                                })
-
-                    new_container = {
-                        'id': container_id,
-                        'hash': container.hash,
-                        'reactions': reactions
-                    }
-                    new_containers[container.hash] = new_container
-
-                new_page = {}
-                new_page['pageHash'] = page_data['urlhash']
-                new_page['id'] = page_id
-                summaryReactions = []
-                for toptag in page_data['toptags']:
-                    reaction = {}
-                    reaction['count'] = toptag['tag_count']
-                    reaction['text'] = toptag['body']
-                    reaction['id'] = toptag['id']
-                    summaryReactions.append(reaction)
-                new_page['summaryReactions'] = summaryReactions
-                new_page['containers'] = new_containers
-                new_pages_data.append(new_page)
-
-                # disabled for master: half-finished caching (it's missing the cache update on write)
-                # try:
-                #     cache.set('page_data_new' + str(page_id), new_page)
-                # except Exception, e:
-                #     logger.warning(traceback.format_exc(50))
-                # try:
-                #     get_cache('redundant').set('page_data_new' + str(page_id), new_page)
-                # except Exception, e:
-                #     logger.warning(traceback.format_exc(50))
-
-        return new_pages_data
-
 
 
 class SettingsHandler(AnonymousBaseHandler):
@@ -962,7 +834,7 @@ class SettingsHandler(AnonymousBaseHandler):
                         domain=host
                     )
 
-                    group = autoCreateGroup(cleaned_data, cookie_user)
+                    group, site = autoCreateGroup(cleaned_data, cookie_user)
             else:
                 group = Group.objects.get(id=group_id)
 

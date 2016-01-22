@@ -19,7 +19,13 @@ if ((function() {
     if (urlParams['antennaNewWidget'] && urlParams['antennaNewWidget'].toLowerCase() === 'true') {
         var head = document.getElementsByTagName('head')[0];
         if (head) {
-            var newScriptUrl = 'https://www.antenna.is/static/widget-new/debug/antenna.js';
+            var newScriptUrl = 'https://www.antenna.is/static/widget-new/antenna.min.js';
+            if (urlParams['antennaDebug'] && urlParams['antennaDebug'].toLowerCase() === 'true') {
+                newScriptUrl = 'https://www.antenna.is/static/widget-new/debug/antenna.js';
+            }
+            if (window.location.host === 'local.antenna.is:8081') { // offline
+                newScriptUrl = 'http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js';
+            }
             var scriptTag = document.createElement('script');
             scriptTag.setAttribute('src', newScriptUrl);
             scriptTag.setAttribute('type', 'text/javascript');

@@ -17,6 +17,7 @@ dinghy create --memory=8192 --provider=virtualbox
 # Build docker containers
 docker-compose build
 docker-compose run --rm web virtualenv virtualenvs/docker
+docker-compose run --rm web pip install http://effbot.org/downloads/Imaging-1.1.7.tar.gz
 docker-compose run --rm web pip install -r requirements.txt
 ```
 
