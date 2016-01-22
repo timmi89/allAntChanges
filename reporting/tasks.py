@@ -20,8 +20,10 @@ logger = logging.getLogger('rb.standard')
 @periodic_task(name='reporting.weekly.email.report', ignore_result=True,
                run_every=(crontab(hour="5", minute="30", day_of_week="1")))
 def weekly_email_report():
-    end_date = datetime.utcnow().date()
-    start_date = end_date - timedelta(days=7)
+    end_date = datetime.combine(
+        datetime.utcnow().date(), datetime.min.time())
+    start_date = datetime.combine(
+        end_date - timedelta(days=7), datetime.min.time())
 
     groups = Group.objects.all()
 
@@ -29,8 +31,8 @@ def weekly_email_report():
     for group in groups:
         group_weekly_email(
             group,
-            calendar.timegm(start_date) * 1000,
-            calendar.timegm(end_date) * 1000
+            calendar.timegm(start_date.timetuple()) * 1000,
+            calendar.timegm(end_date.timetuple()) * 1000
         )
 
 
