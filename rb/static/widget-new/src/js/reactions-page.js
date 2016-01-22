@@ -94,6 +94,7 @@ function sizeToFit($reactionsWindow) {
         var $reactionCount = $element.find('.antenna-reaction-count');
         var $plusOne = $element.find('.antenna-plusone');
         var minWidth = Math.max($reactionCount.width(), $plusOne.width());
+        minWidth++; // Add an extra pixel for rounding because elements that measure, for example, 17.1875px can come back with 17 as the width()
         $reactionCount.css({'min-width': minWidth});
         $plusOne.css({'min-width': minWidth});
         return ReactionsWidgetLayoutUtils.sizeToFit($reactionsWindow)(node);
