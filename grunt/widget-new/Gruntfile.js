@@ -62,7 +62,8 @@ module.exports = function(grunt) {
                 options: {
                     browserifyOptions: {
                         transform: [ 'ractivate' ],
-                        debug: true
+                        debug: true,
+                        fullPaths: false
                     },
                     watch: true,
                     keepAlive: false // Allow this task to exit so the 'watch' task can run after it.
