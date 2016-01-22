@@ -49,7 +49,7 @@ def group_weekly_email(group, start_date, end_date):
     from_email = 'broadcast@antenna.is'
 
     subject = 'Test Weekly Broadcast'
-    recipient_list = group.admin_emails()
+    recipient_list = ['brian@antenna.is', 'porter@antenna.is']  # group.admin_emails()
 
     template = get_template('emails/publisher_content_report.html')
     body = template.render(Context(group_context.to_hash()))
