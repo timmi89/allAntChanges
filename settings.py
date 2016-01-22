@@ -64,6 +64,7 @@ if DEBUG:
     BASE_URL = 'http://local.antenna.is:8081'
     BASE_URL_SECURE = 'https://local.antenna.is:8081'
     STATIC_URL = '//local.antenna.is:8081/static/'
+    EVENTS_URL = 'http://nodebq.docker'
     DATABASE_ROUTERS = ['routers.DevMasterSlaveRouter']
 
     DATABASES = {
@@ -144,6 +145,7 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
+    EVENTS_URL = 'http://events.antenna.is'
     DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
 
     DATABASES = {

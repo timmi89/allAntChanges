@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from django.template import Context
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
@@ -27,16 +28,19 @@ def weekly_email_report():
 
     # TODO: batch groups
     for group in groups:
-        group_weekly_email(
-            group,
-            calendar.timegm(start_date.timetuple()) * 1000,
-            calendar.timegm(end_date.timetuple()) * 1000
-        )
+        try:
+            group_weekly_email(
+                group,
+                calendar.timegm(start_date.timetuple()) * 1000,
+                calendar.timegm(end_date.timetuple()) * 1000
+            )
+        except ValueError:
+            logger.error('Error running report for group ' + group.short_name)
 
 
 def group_weekly_email(group, start_date, end_date):
     group_context = GroupReportContext(
-        'http://nodebq.docker',
+        settings.EVENTS_URL,
         group,
         start_date,
         end_date
