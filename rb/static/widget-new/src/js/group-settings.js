@@ -216,6 +216,7 @@ function createFromJSON(json) {
         url: {
             ignoreSubdomain: data('ignore_subdomain'),
             includeQueryString: data('querystring_content'),
+            ignoreMediaUrlQuery: data('media_url_ignore_query'),
             canonicalDomain: data('page_tld') // TODO: what to call this exactly. groupDomain? siteDomain? canonicalDomain?
         },
         summarySelector: data('summary_widget_selector'),
