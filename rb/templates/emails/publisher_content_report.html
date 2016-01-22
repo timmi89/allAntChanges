@@ -5,7 +5,7 @@
   <meta charset="utf-8"> <!-- utf-8 works for most cases -->
     <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
-  <title>{ short name } { daily/weekly } Engagement Report</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>{{ short_name }} {{ report_period }} Engagement Report</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
     
   <!-- CSS Reset -->
     <style type="text/css">
@@ -150,7 +150,7 @@
                                 {% endfor %}
                                 <br />
                                 <br />
-                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{ SHORT_NAME }/analytics/">View more at your dashboard.</a>
+                                <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
                             </td>
                           </tr>
                           <tr>
@@ -176,7 +176,7 @@
 
                                     <tr>
                                         <td style="font-size:12px;text-align:left;line-height:28px;">
-                                            <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{ SHORT_NAME }/analytics/">View more at your dashboard.</a>
+                                          <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
                                         </td>
                                     </tr>
 
@@ -215,7 +215,7 @@
 
                                     <tr>
                                         <td style="font-size:12px;text-align:left;line-height:28px;">
-                                            <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{ SHORT_NAME }/analytics/">View more at your dashboard.</a>
+                                          <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
                                         </td>
                                     </tr>
 
@@ -239,7 +239,7 @@
                     <td style="padding: 40px 10px;width: 100%;font-size: 12px; font-family: sans-serif; mso-height-rule: exactly; line-height:18px; text-align: center; color: #888888;">
                         Antenna<br><span class="mobile-link--footer">917 SW Oak St, Suite 412<br>Portland, OR, 97205 US</span><br><span class="mobile-link--footer">(123) 456-7890</span>
                         <br><br>
-                        <unsubscribe style="color:#888888; text-decoration:underline;"><a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{ SHORT_NAME }/analytics/">Manage your report preferences.</a></unsubscribe>
+                        <unsubscribe style="color:#888888; text-decoration:underline;"><a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">Manage your report preferences.</a></unsubscribe>
                     </td>
                 </tr>
             </table>
