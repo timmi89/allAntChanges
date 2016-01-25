@@ -342,12 +342,13 @@ class GroupForm(forms.ModelForm):
         if commit:
             m.save()
         cache_data = getSettingsDict(self.instance)
+        site = Site.objects.get(group=self.instance.id)
         try:
-            cache.set('group_settings_'+ str(self.instance.short_name), cache_data)
+            cache.set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:
             logger.warning(e)
         try:
-            get_cache('redundant').set('group_settings_'+ str(self.instance.short_name), cache_data)
+            get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:
             logger.warning(e)
 
