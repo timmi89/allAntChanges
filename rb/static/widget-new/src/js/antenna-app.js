@@ -2,6 +2,10 @@ if (window.ANTENNAIS || window.antenna || window.AntennaApp) {
     // Protect against multiple instances of this script being added to the page (or this script and engage.js)
     return;
 }
+if (!window.MutationObserver) {
+    // Bail out on legacy browsers.
+    return;
+}
 
 var ScriptLoader = require('./script-loader');
 var CssLoader = require('./css-loader');
