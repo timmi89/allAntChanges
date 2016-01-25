@@ -1224,19 +1224,15 @@ class BlockedTagHandler(AnonymousBaseHandler):
         for interaction in interactions:
             page = interaction.page
             container = interaction.container
-
             try:
                 cache.delete('page_data' + str(page.id))
-
+                cache.delete('page_data_newer_' + str(page.id))
                 cache.delete('page_containers' + str(page.id))
-
                 cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
-
                 #if not interaction.parent or interaction.kind == 'com':
                 #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
                 #    t = Thread(target=global_cache_updater, kwargs={})
                 #    t.start()
-
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
 
@@ -1274,19 +1270,15 @@ class ApprovedTagHandler(AnonymousBaseHandler):
         for interaction in interactions:
             page = interaction.page
             container = interaction.container
-
             try:
                 cache.delete('page_data' + str(page.id))
-
+                cache.delete('page_data_newer_' + str(page.id))
                 cache.delete('page_containers' + str(page.id))
-
                 cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
-
                 #if not interaction.parent or interaction.kind == 'com':
                 #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
                 #    t = Thread(target=global_cache_updater, kwargs={})
                 #    t.start()
-
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
 
