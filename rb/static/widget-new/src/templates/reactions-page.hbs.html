@@ -24,9 +24,11 @@
                                     {{this.commentCount}}
                                 </div>
                             {{else}}
-                                <div class="antenna-reaction-comments">
-                                    {{>commentsIcon}}
-                                </div>
+                                {{#if !hideCommentInput}}
+                                    <div class="antenna-reaction-comments">
+                                        {{>commentsIcon}}
+                                    </div>
+                                {{/if}}
                             {{/if}}
                         {{/if}}
                     </div>

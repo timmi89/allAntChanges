@@ -32,7 +32,8 @@ function createPage(options) {
         data: {
             reactions: reactionsData,
             reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
-            isSummary: isSummary
+            isSummary: isSummary,
+            hideCommentInput: groupSettings.requiresApproval() // Currently, sites that require approval don't support comment input.
         },
         decorators: {
             sizetofit: sizeToFit($reactionsWindow)

@@ -240,6 +240,7 @@ function createFromJSON(json) {
         mediaIndicatorCorner: data('img_indicator_show_side'),
         generatedCtaSelector: data('separate_cta'),
         generatedCtaExpanded: data('separate_cta_expanded'),
+        requiresApproval: data('requires_approval'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
         exclusionSelector: dataOrDeprecated('no_ant', 'no_readr'),
