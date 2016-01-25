@@ -40,8 +40,9 @@ module.exports = {
     'call-to-action-label_responses_many': '{0} Respuestas', // TODO
 
     'login-page_back': 'Volver',
-
     'blocked-page_back': 'Volver',
+
+    'pending-page_message_appear': 'Your reaction will appear once it is reviewed. All new reactions must meet our community guidelines.', // TODO: translation
 
     'tap-helper_prompt': '¡Toca un párrafo para opinar!',
     'tap-helper_close': 'Volver'

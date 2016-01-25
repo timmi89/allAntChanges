@@ -15,6 +15,7 @@ function createPage(options) {
     var groupSettings = options.groupSettings;
     var contentData = options.contentData;
     var showConfirmation = options.showConfirmation;
+    var showPendingApproval = options.showPendingApproval;
     var showProgress = options.showProgress;
     var handleReactionError = options.handleReactionError;
     var element = options.element;
@@ -89,9 +90,14 @@ function createPage(options) {
         }
 
         function success(reaction) {
-            showConfirmation(reactionData, reactionProvider); // TODO: review the reactionProvider in this case
-            reaction = PageData.registerReaction(reaction, containerData, pageData);
-            reactionProvider.reactionLoaded(reaction);
+            if (reaction.approved) {
+                showConfirmation(reactionData, reactionProvider);
+                reaction = PageData.registerReaction(reaction, containerData, pageData);
+                reactionProvider.reactionLoaded(reaction);
+            } else {
+                // If the reaction isn't approved, don't add it to our data model. Just show feedback and fire an event.
+                showPendingApproval(reaction);
+            }
             Events.postReactionCreated(pageData, containerData, reaction, groupSettings);
         }
 

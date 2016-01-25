@@ -178,7 +178,8 @@ function reactionFromResponse(response, contentLocation) {
         text: response.interaction.interaction_node.body,
         id: response.interaction.interaction_node.id,
         count: 1,
-        parentID: response.interaction.id
+        parentID: response.interaction.id,
+        approved: response.approved === undefined || response.approved
     };
     if (response.content_node) {
         reaction.content = {

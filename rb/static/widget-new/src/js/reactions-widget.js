@@ -18,6 +18,7 @@ var Events = require('./events');
 var LocationsPage = require('./locations-page');
 var LoginPage = require('./login-page');
 var PageData = require('./page-data');
+var PendingReactionPage = require('./pending-reaction-page');
 var ReactionsPage = require('./reactions-page');
 var SVGs = require('./svgs');
 
@@ -142,6 +143,7 @@ function openReactionsWidget(options, elementOrCoords) {
             containerData: containerData,
             contentData: contentData,
             showConfirmation: showConfirmation,
+            showPendingApproval: showPendingApproval,
             showProgress: showProgressPage,
             handleReactionError: handleReactionError,
             element: pageContainer(ractive),
@@ -156,7 +158,16 @@ function openReactionsWidget(options, elementOrCoords) {
         setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
         var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, groupSettings, pageContainer(ractive));
         pages.push(page);
+        // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
+        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+            showPage(page.selector, $rootElement, true);
+        }, 1);
+    }
 
+    function showPendingApproval(reaction) {
+        setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
+        var page = PendingReactionPage.createPage(reaction.text, pageContainer(ractive));
+        pages.push(page);
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
         setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
             showPage(page.selector, $rootElement, true);

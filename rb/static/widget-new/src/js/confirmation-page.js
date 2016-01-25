@@ -129,10 +129,6 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
 
 }
 
-function openShareWindow(url) {
-
-}
-
 //noinspection JSUnresolvedVariable
 module.exports = {
     create: createPage

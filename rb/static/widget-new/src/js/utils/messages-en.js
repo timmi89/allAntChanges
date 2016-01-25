@@ -43,6 +43,8 @@ module.exports = {
 
     'blocked-page_back': 'Back',
 
+    'pending-page_message_appear': 'Your reaction will appear once it is reviewed. All new reactions must meet our community guidelines.',
+
     'tap-helper_prompt': 'Tap any paragraph to respond!',
     'tap-helper_close': 'Close'
 };
