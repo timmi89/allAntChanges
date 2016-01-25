@@ -550,7 +550,6 @@ def getSettingsDict(group, site=None):
              'blocked_promo_tags',
              'all_tags',
              'approved',
-             'requires_approval',
              'share',
              'rate',
              'comment',
