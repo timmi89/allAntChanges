@@ -10,6 +10,10 @@ def clear_interaction_caches(page, container):
         cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
         t = Thread(target=cache_updater, kwargs={})
         t.start()
+
+        cache_updater = PageDataNewerCacheUpdater(method="delete", page_id=page.id)
+        t = Thread(target=cache_updater, kwargs={})
+        t.start()
         
         container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
         t = Thread(target=container_cache_updater, kwargs={})
@@ -30,6 +34,10 @@ def clear_interaction_caches(page, container):
             other_pages.add(other.page)
         for other_page in other_pages:
             cache_updater = PageDataCacheUpdater(method="delete", page_id=other_page.id)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+
+            cache_updater = PageDataNewerCacheUpdater(method="delete", page_id=other_page.id)
             t = Thread(target=cache_updater, kwargs={})
             t.start()
         

@@ -122,6 +122,18 @@ class PageDataCacheUpdater(CacheUpdater):
         self.key = 'page_data' + str(self.page_id)
         if self.method == 'update' or self.method == 'delete':  
             self.value = getSinglePageDataDict(self.page_id)
+
+
+class PageDataNewerCacheUpdater(CacheUpdater):
+
+    def __init__(self, **kwargs):
+        self.page_id = kwargs['page_id']
+        self.method = kwargs['method']
+
+    def hydrate(self):
+        self.key = 'page_data_newer_' + str(self.page_id)
+        if self.method == 'update' or self.method == 'delete':
+            self.value = getSinglePageDataNewerById(self.page_id)
         
         
 class ContainerSummaryCacheUpdater(CacheUpdater):
