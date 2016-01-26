@@ -82,7 +82,14 @@ class GroupReport():
     @property
     def top_reactions(self):
         res = self._get('/topReactions')
-        return res['reactions']
+        reactions = [
+            reaction
+            for reaction in res['reactions']
+            if self.group.blocked_tags.filter(
+                body=reaction['body']
+            ).count() == 0
+        ]
+        return reactions
 
     @property
     def popular_pages(self):
