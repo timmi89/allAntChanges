@@ -405,8 +405,8 @@
                 ANTsite.analytics.startDate = ANTsite.util.getHashValue('start') || nowDate;
                 ANTsite.analytics.endDate = ANTsite.util.getHashValue('end') || moment.utc().add(1, 'days').format("MM/DD/YYYY");
 
-                ANTsite.analytics.jsStartDate = moment.utc( ANTsite.analytics.startDate, "MM/DD/YYYY").unix() * 1000;
-                ANTsite.analytics.jsEndDate = moment.utc( ANTsite.analytics.endDate, "MM/DD/YYYY").unix() * 1000;
+                ANTsite.analytics.jsStartDate = moment.utc( ANTsite.analytics.startDate, "MM/DD/YYYY:HHmm").unix() * 1000;
+                ANTsite.analytics.jsEndDate = moment.utc( ANTsite.analytics.endDate, "MM/DD/YYYY:HHmm").unix() * 1000;
             },
             updateDates: function(){
                 ANTsite.analytics.startDate = $('input[name="start_date"]').val();
