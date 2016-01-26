@@ -14,7 +14,8 @@
             'mobi.perezhilton.com',
             'dlisted.com',
             'wral.com',
-            'channel3000.com'
+            'channel3000.com',
+            'wktv.com'
         ];
         var hostname = window.antenna_host || window.location.hostname;
         for (var i = 0; i < readyDomains.length; i++) {
