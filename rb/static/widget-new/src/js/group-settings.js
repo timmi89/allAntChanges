@@ -175,8 +175,8 @@ function createFromJSON(json) {
         // TODO: This is temporary code that migrates the current tags_bg_css setting from a raw value to a
         //       CSS declaration. We should migrate all deployed sites to use a CSS declaration and then remove this.
         var backgroundColor = backgroundColorAccessor().trim();
-        if (backgroundColor && backgroundColor.indexOf('background:') === -1) {
-            backgroundColor = 'background: ' + backgroundColor;
+        if (backgroundColor && backgroundColor.indexOf('background') === -1) {
+            backgroundColor = 'background-image: ' + backgroundColor;
         }
         return function() {
             return backgroundColor;
