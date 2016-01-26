@@ -8,24 +8,19 @@
         scriptUrl = newWidgetUrl;
     } else {
         // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
-        var readyDomains = [
-            'local.antenna.is',
-            'perezhilton.com',
-            'mobi.perezhilton.com',
-            'dlisted.com',
-            'wral.com',
-            'channel3000.com',
-            'wktv.com'
-        ];
+        var readyDomains = {
+            'local.antenna.is': 50,
+            'perezhilton.com': 0,
+            'mobi.perezhilton.com': 0,
+            'dlisted.com': 0,
+            'wral.com': 0,
+            'channel3000.com': 0,
+            'wktv.com': 0
+        };
         var hostname = window.antenna_host || window.location.hostname;
-        for (var i = 0; i < readyDomains.length; i++) {
-            if (hostname === readyDomains[i]) {
-                var percentage = 0;
-                if (Math.random() * 100 < percentage) {
-                    scriptUrl = newWidgetUrl;
-                }
-                break;
-            }
+        var percentage = readyDomains[hostname] || 0;
+        if (Math.random() * 100 < percentage) {
+            scriptUrl = newWidgetUrl;
         }
     }
     loadScript(scriptUrl);
