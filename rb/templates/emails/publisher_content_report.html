@@ -5,7 +5,7 @@
   <meta charset="utf-8"> <!-- utf-8 works for most cases -->
     <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
-    <title>{{ short_name }} {{ report_period }} Engagement Report</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>Antenna {{ report_period|capfirst }} Report for {{ short_name }}</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
     
   <!-- CSS Reset -->
     <style type="text/css">
@@ -105,7 +105,7 @@
             <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px;">
             <tr>
               <td style="padding: 0; text-align: center">
-                <img src="/static/site/images/antenna_logo_sm_white.png" width="240" height="80" border="0">
+                <img src="{{ base_url }}/static/site/images/antenna_logo_sm_white.png" width="240" height="80" border="0">
               </td>
             </tr>
             </table>
