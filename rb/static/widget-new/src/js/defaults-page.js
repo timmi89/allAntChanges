@@ -54,8 +54,8 @@ function createPage(options) {
                 newCustomReaction();
             }, 0);
         } else if (key == 27) { // Escape
-            $(event.target).val('');
-            $(rootElement(ractive)).focus();
+            event.target.value = '';
+            rootElement(ractive).focus();
         }
         event.stopPropagation();
     }
@@ -81,11 +81,13 @@ function createPage(options) {
     }
 
     function newCustomReaction() {
-        var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
+        var input = ractive.find('.antenna-defaults-footer input');
+        var body = input.value.trim();
         if (body !== '') {
             showProgress(); // Show progress for custom reactions because the server might reject them for a number of reasons
             var reactionData = { text: body };
             var reactionProvider = createReactionProvider();
+            input.blur();
             AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
         }
 
