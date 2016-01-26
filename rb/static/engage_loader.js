@@ -6,6 +6,8 @@
     if (urlParams['antennaNewWidget'] === 'true') {
         // Manual override to use the new widget
         scriptUrl = newWidgetUrl;
+    } else if (urlParams['antennaOldWidget'] === 'true') {
+        scriptUrl = currentWidgetUrl;
     } else {
         // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
         var readyDomains = {
