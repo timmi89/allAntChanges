@@ -10,7 +10,7 @@
         // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
         var readyDomains = {
             'local.antenna.is': 50,
-            'perezhilton.com': 5,
+            'perezhilton.com': 25,
             'mobi.perezhilton.com': 0,
             'dlisted.com': 0,
             'wral.com': 0,
