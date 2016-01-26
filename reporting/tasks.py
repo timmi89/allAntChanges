@@ -35,6 +35,7 @@ def weekly_email_report():
             )
 
             if(
+                group_context.reactions_count > 10 and
                 group_context.page_views_count > 250
             ):
                 group_weekly_email(group_context)
