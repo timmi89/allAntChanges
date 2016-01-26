@@ -5,7 +5,9 @@ module.exports = function(grunt) {
 
     var paths = {
         engage_js_src: [ rootDir + '/rb/static/engage_full.js' ],
-        engage_js_dest: rootDir + '/rb/static/engage.js',
+        engage_js_dest: rootDir + '/rb/static/engage.min.js',
+        engage_loader_js_src: [ rootDir + '/rb/static/engage_loader.js' ],
+        engage_loader_js_dest: rootDir + '/rb/static/engage.js',
         web_css_src: [ rootDir + '/rb/static/site/css/site_sass_compiled.css' ],
         web_css_dest: rootDir + '/rb/static/site/css/styles.min.css',
         web_scss_src: [ rootDir + '/rb/static/site/sass/*.scss' ],
@@ -87,6 +89,10 @@ module.exports = function(grunt) {
             engage_js: {
                 src: ['<%= paths.engage_js_src %>'],
                 dest: '<%= paths.engage_js_dest %>'
+            },
+            engage_loader_js: {
+                src: ['<%= paths.engage_loader_js_src %>'],
+                dest: '<%= paths.engage_loader_js_dest %>'
             }
         },
         sass: {
@@ -124,5 +130,6 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('default', [ 'uglify:web_js', 'sass', 'cssmin:web_css' ]);
     grunt.registerTask('engage', [ 'uglify:engage_js' ]);
+    grunt.registerTask('engage_loader', [ 'uglify:engage_loader_js' ]);
 
 };
