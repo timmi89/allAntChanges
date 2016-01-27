@@ -298,7 +298,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
-    "rb/templates"
+    "rb/templates",
+    "reporting/templates"
 )
 
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))

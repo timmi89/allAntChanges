@@ -17,19 +17,19 @@ urlpatterns = patterns('',
   # For widget
   url(r'^widget/(.{,25})/$', 'rb.views.widget'),
   url(r'^widgetCss/', 'rb.views.widgetCss'),
-  
+
   # For Facebook
   url(r'^fb/$', 'rb.views.fb'),
   url(r'^fblogin/$', 'rb.views.fblogin'),
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
   url(r'^fb_channel/$', 'rb.views.fb_channel'),
-  
+
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z]+)/$', 'rb.views.expander'),
   url(r'^i/(?P<short>[0-9]+)/$', 'rb.views.interaction_redirect'),
   url(r'^r/(?P<short>[0-9]+)/$', 'rb.views.click_redirect'),
-  
-  
+
+
   # For main website
   url(r'^$', 'rb.views.home'),
   url(r'^old_demo/$', 'rb.views.old_demo'),
@@ -40,7 +40,7 @@ urlpatterns = patterns('',
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
-  
+
   # Client Facing Registration & Settings
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^register/$', 'rb.views.group'),
@@ -57,13 +57,13 @@ urlpatterns = patterns('',
   url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
-  
+
   url(r'^follows/(?P<user_id>\d+)/$', 'rb.views.follow_interactions'),
-  
+
   url(r'^board_create/$', 'rb.views.create_board'),
   url(r'^board/(?P<board_id>\d+)/', 'rb.views.board'),
-  
-  
+
+
   # Specific page
   url(r'^page/(?P<page_id>\d+)/$', 'rb.views.main'),
   url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
@@ -90,16 +90,15 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'rb.views.analytics'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/$', 'rb.views.analytics'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/emails/publisher_content_report/$', 'rb.views.email_content_report'),
-  # url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_email/$', 'forecast.reporting.views.weekly_group_event_email'),
-  
+
 
   # galleries
-  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'), 
-  url(r'^gallery/$', 'rb.views.gallery'), 
-  
+  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'),
+  url(r'^gallery/$', 'rb.views.gallery'),
+
   #single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
-  
+
   # Main Site Supporting Pages
   url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
@@ -109,15 +108,15 @@ urlpatterns = patterns('',
   url(r'^publishers/$','rb.views.publishers'),
   url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
-  
+
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
-  # the error is 'str' object has no attribute 'status_code' 
+  # the error is 'str' object has no attribute 'status_code'
   # and it seems to be caused by the request.META.get('HTTP_REFERER') code, which I don't understand why we want in there.
   # fix this after we investegate and understand.
   url(r'^login/$', 'rb.views.friendlylogin'),
   url(r'^friendlylogin/$', 'rb.views.friendlylogin'),
   url(r'^friendlylogin_wordpress/$', 'rb.views.friendlylogin_wordpress'),
-  
+
   # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
@@ -129,11 +128,11 @@ urlpatterns = patterns('',
 
   # API
   url(r'^api/', include('antenna.api.urls')),
-  
+
   # CHRONS API
   url(r'^chronos/', include('antenna.chronos.urls')),
-  
-  
+
+
   # Group Supporting Pages
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
@@ -146,6 +145,7 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/unapproved_reactions/$', 'rb.views.group_unapproved_tags'),  # unapproved == unblessed
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('antenna.analytics.urls')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('antenna.analytics.urls_v1')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/reporting', include('antenna.reporting.urls')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
@@ -159,7 +159,7 @@ urlpatterns = patterns('',
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
   url(r'^wordpress_edit/$', 'rb.views.wordpress_edit'),
-  
+
   # User creation and registration
   url(r'^user_create/$', 'rb.views.create_rb_user'),
   url(r'^confirmemail/$', 'rb.views.confirm_rb_user'),
@@ -167,7 +167,7 @@ urlpatterns = patterns('',
   url(r'^change_password/$', 'rb.views.change_rb_password'),
   url(r'^request_password/$', 'rb.views.request_password_reset'),
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
-  
+
   url(r'^ant_login/$', 'rb.views.ant_login'),
   url(r'^ant_login_success/$', 'rb.views.ant_login_success'),
   # For demos
@@ -180,8 +180,8 @@ if settings.DEBUG:
     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
-        url(r'^static/(?P<path>.*)$', 'serve'),        
+        url(r'^static/(?P<path>.*)$', 'serve'),
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    
-    
-    
+
+
+
