@@ -36,6 +36,7 @@
 
 .antenna-text-indicator-widget.antenna-hasreactions {
     opacity: 0.33;
+    pointer-events: auto;
 }
 
 .antenna-text-indicator-widget.antenna-suppress {
