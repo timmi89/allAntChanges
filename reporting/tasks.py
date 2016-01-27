@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-from celery.decorators import periodic_task
+from celery.decorators import periodic_task, task
 from celery.task.schedules import crontab
 
 from antenna.rb.models import Group
@@ -43,8 +43,9 @@ def weekly_email_report():
                 group_context.page_views_count > 250
             ):
                 group_weekly_email(group_context)
-        except ValueError:
-            logger.error('Error running report for group ' + group.short_name)
+        except:
+            logger.exception(
+                'Error running report for group ' + group.short_name)
 
 
 def group_weekly_email(group_context):
