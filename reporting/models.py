@@ -94,17 +94,36 @@ class GroupReport():
     @property
     def popular_pages(self):
         res = self._get('/popularPages')
-        return res['popularPages']
+
+        popular_pages = sorted(
+            res['popularPages'],
+            key=self._engagement_score,
+            reverse=True
+        )
+
+        return popular_pages
 
     @property
     def popular_content(self):
         res = self._get('/popularContent')
 
+        popular_content = sorted(
+            res['popularContent'],
+            key=self._engagement_score,
+            reverse=True
+        )
+
         # Populate popularContent with content objects
-        for content in res['popularContent']:
+        for content in popular_content:
             content['content'] = self.content_by_id(content['content_id'])
 
-        return res['popularContent']
+        return popular_content
+
+    def _engagement_score(self, page):
+        # sort by engagement score: (reactions + reaction views) / pageviews
+        return \
+            (page['reaction_count'] + page['reaction_view_count']) \
+            / page.get('pageview_count', 1)
 
     @property
     def base_url(self):
