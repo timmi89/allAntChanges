@@ -51,6 +51,7 @@ var defaults = {
     image_selector: 'meta[property="og:image"]', // TODO: review what this should be (not from engage_full)
     image_attribute: 'content', // TODO: review what this should be (not from engage_full),
     querystring_content: false,
+    initial_pin_limit: 3,
     //the scope in which to find parents of <br> tags.
     //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
     //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
