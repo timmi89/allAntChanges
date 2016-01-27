@@ -52,7 +52,7 @@ function createPage(options) {
             event.stopPropagation();
             closeWindow();
             var targetScrollTop = $(element).offset().top - 20; // TODO: review the exact location
-            $('body').animate({scrollTop: targetScrollTop});
+            $('html,body').animate({scrollTop: targetScrollTop}, 1000);
             if (locationData.kind === 'txt') { // TODO: something better than a string compare. fix this along with the same issue in page-data
                 Range.highlight(element.get(0), locationData.location);
                 $(document).on('click.antenna', function() {
