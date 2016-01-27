@@ -5,11 +5,14 @@ import requests
 import calendar
 import settings
 
+from functools import partial
+
 from django.template import Context
 from django.template.loader import get_template
 from django.core.exceptions import ObjectDoesNotExist
 
 from antenna.rb.models import Content
+from .utils import engagement_score, unique_content_filter, Struct
 
 logger = logging.getLogger('rb.standard')
 
@@ -97,7 +100,7 @@ class GroupReport():
 
         popular_pages = sorted(
             res['popularPages'],
-            key=self._engagement_score,
+            key=engagement_score,
             reverse=True
         )
 
@@ -109,7 +112,7 @@ class GroupReport():
 
         popular_content = sorted(
             res['popularContent'],
-            key=self._engagement_score,
+            key=engagement_score,
             reverse=True
         )
 
@@ -117,13 +120,12 @@ class GroupReport():
         for content in popular_content:
             content['content'] = self.content_by_id(content['content_id'])
 
-        return popular_content
+        popular_content = filter(
+            partial(unique_content_filter, set()),
+            popular_content
+        )
 
-    def _engagement_score(self, page):
-        # sort by engagement score: (reactions + reaction views) / pageviews
-        return \
-            (page['reaction_count'] + page['reaction_view_count']) \
-            / page.get('pageview_count', 1)
+        return popular_content
 
     @property
     def base_url(self):
@@ -133,7 +135,7 @@ class GroupReport():
         try:
             return Content.objects.get(pk=content_id)
         except ObjectDoesNotExist:
-            return {"body": "unknown content id %s" % content_id}
+            return Struct(body="unknown content id %s" % content_id)
 
     def _get(self, path):
         start_date = calendar.timegm(self.start_date.timetuple()) * 1000
