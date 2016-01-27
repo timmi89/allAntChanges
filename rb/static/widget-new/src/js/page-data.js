@@ -67,7 +67,7 @@ function updatePageData(json, groupSettings) {
     var total = 0;
     var containerCounts = [];
     var containers = pageData.containers;
-    for (var hash in containers) {
+    for (var hash in json.containers) {
         if (containers.hasOwnProperty(hash)) {
             var container = containers[hash];
             var total = 0;
