@@ -1,3 +1,6 @@
+// Antenna changes from original source marked with ORIGINAL
+// See the issue we needed to work around here: https://github.com/ractivejs/ractive-events-tap/issues/8
+
 // Tap/fastclick event plugin for Ractive.js - eliminates the 300ms delay on touch-enabled devices, and normalises
 // across mouse, touch and pointer events.
 // Author: Rich Harris
@@ -26,9 +29,11 @@
 	TapHandler.prototype = {
 		bind: function bind(node) {
 			// listen for mouse/pointer events...
-			if (window.navigator.pointerEnabled) {
+			// ORIGINAL if (window.navigator.pointerEnabled) {
+			if (window.navigator.pointerEnabled && !('ontouchstart' in window)) {
 				node.addEventListener('pointerdown', handleMousedown, false);
-			} else if (window.navigator.msPointerEnabled) {
+			// ORIGINAL } else if (window.navigator.msPointerEnabled) {
+			} else if (window.navigator.msPointerEnabled && !('ontouchstart' in window)) {
 				node.addEventListener('MSPointerDown', handleMousedown, false);
 			} else {
 				node.addEventListener('mousedown', handleMousedown, false);
