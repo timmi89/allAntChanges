@@ -5,6 +5,7 @@ module.exports = {
     'summary-widget_reactions_many': "{0} Reacciones",
 
     'reactions-widget_title': "Reacciones",
+    'reactions-widget_title_think': '¿Qué piensas?',
     'reactions-widget_title_thanks': '¡Gracias por tu reacción!',
     'reactions-widget_title_signin': 'Sign in Required', // TODO: need a translation
     'reactions-widget_title_blocked': 'Blocked Reaction', // TODO: need a translation

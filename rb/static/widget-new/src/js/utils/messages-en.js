@@ -5,6 +5,7 @@ module.exports = {
     'summary-widget_reactions_many': '{0} Reactions',
 
     'reactions-widget_title': 'Reactions',
+    'reactions-widget_title_think': 'What do you think?',
     'reactions-widget_title_thanks': 'Thanks for your reaction!',
     'reactions-widget_title_signin': 'Sign in Required',
     'reactions-widget_title_blocked': 'Blocked Reaction',

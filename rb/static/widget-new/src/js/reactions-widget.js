@@ -149,6 +149,7 @@ function openReactionsWidget(options, elementOrCoords) {
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
+        setWindowTitle(Messages.getMessage('reactions-widget_title_think'));
         var page = DefaultsPage.create(options);
         pages.push(page);
         showPage(page.selector, $rootElement, animate);
