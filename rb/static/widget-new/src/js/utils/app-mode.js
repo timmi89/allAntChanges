@@ -5,14 +5,16 @@ function computeCurrentScriptSrc() {
         return document.currentScript.src;
     }
     // IE fallback...
-    var scripts = document.body.getElementsByTagName('script');
+    var scripts = document.getElementsByTagName('script');
     for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
         if (script.hasAttribute('src')) {
             var scriptSrc = script.getAttribute('src');
-            // TODO: use a regexp here
-            if (scriptSrc.indexOf('/antenna.js') !== -1 || scriptSrc.indexOf('/engage.js') != -1 || scriptSrc.indexOf('/engage_full.js') != -1) {
-                return scriptSrc;
+            var antennaScripts = [ 'antenna.js', 'antenna.min.js', 'engage.js', 'engage_full.js' ];
+            for (var j = 0; j < antennaScripts.length; j++) {
+                if (scriptSrc.indexOf(antennaScripts[j]) !== -1) {
+                    return scriptSrc;
+                }
             }
         }
     }
