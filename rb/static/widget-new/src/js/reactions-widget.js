@@ -332,12 +332,13 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
             $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
             $page.focus();
         });
+        sizeBodyToFit($rootElement, $page, animate);
     } else {
         $page.addClass('antenna-page-active');
         $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
         $page.focus();
+        sizeBodyToFit($rootElement, $page, animate);
     }
-    sizeBodyToFit($rootElement, $page, animate);
 }
 
 function goBackToPage(pages, pageSelector, $rootElement) {
