@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-from celery.decorators import periodic_task, task
+from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
 from antenna.rb.models import Group
@@ -28,7 +28,7 @@ def weekly_email_report():
         try:
             # Skip perezhilton.com groups per porter
             if group.id in [2471, 2504]:
-                next
+                continue
 
             group_context = GroupReport(
                 settings.EVENTS_URL,
