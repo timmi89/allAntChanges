@@ -12,7 +12,7 @@ from django.template.loader import get_template
 from django.core.exceptions import ObjectDoesNotExist
 
 from antenna.rb.models import Content
-from .utils import engagement_score, unique_content_filter, Struct
+from .utils import engagement_score, unique_content_filter
 
 logger = logging.getLogger('rb.standard')
 
@@ -120,6 +120,12 @@ class GroupReport():
         for content in popular_content:
             content['content'] = self.content_by_id(content['content_id'])
 
+        # Filter out unknown content
+        popular_content = filter(
+            lambda c: c['content'] != None,
+            popular_content
+        )
+
         # Ensure unique content
         popular_content = filter(
             partial(unique_content_filter, set()),
@@ -142,7 +148,7 @@ class GroupReport():
         try:
             return Content.objects.get(pk=content_id)
         except ObjectDoesNotExist:
-            return Struct(body="unknown content id %s" % content_id)
+            return None
 
     def _get(self, path):
         start_date = calendar.timegm(self.start_date.timetuple()) * 1000

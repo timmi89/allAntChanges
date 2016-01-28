@@ -11,7 +11,3 @@ def unique_content_filter(seen, item):
     else:
         seen.add(item['content'].body)
         return True
-
-class Struct(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)

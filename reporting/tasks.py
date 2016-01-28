@@ -7,7 +7,7 @@ from django.conf import settings
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
-from antenna.rb.models import Group
+from antenna.rb.models import Group, Interaction
 from antenna.reporting.models import GroupReport
 
 logger = logging.getLogger('rb.standard')
@@ -39,7 +39,10 @@ def weekly_email_report():
             )
 
             if(
-                group_context.reactions_count > 10 and
+                Interaction.objects.filter(
+                    page__site__group=group,
+                    created__range=[start_date, end_date],
+                    approved=True).count() > 10 and
                 group_context.page_views_count > 250
             ):
                 group_weekly_email(group_context)
