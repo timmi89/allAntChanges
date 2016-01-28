@@ -1,18 +1,18 @@
 <div class="antenna-page antenna-locations-page" decorator="cssreset">
     <div class="antenna-body">
-        <div on-tap="back" class="antenna-locations-back">{{>left}}{{getMessage('locations-page_back')}}</div>
+        <div on-tap="back" class="antenna-locations-back">{{>left}}{{getMessage('reactions_widget__back')}}</div>
         <table class="antenna-locations-table">
             {{#if pageReactionCount}}
                 <tr class="antenna-locations-content-row">
                     <td class="antenna-locations-count-cell">
                         {{#if pageReactionCount === 1}}
-                            {{{getMessage('locations-page_count_one')}}}
+                            {{{getMessage('locations_page__count_one')}}}
                         {{else}}
-                            {{{getMessage('locations-page_count_many', [ pageReactionCount ])}}}
+                            {{{getMessage('locations_page__count_many', [ pageReactionCount ])}}}
                         {{/if}}
                     </td>
                     <td class="antenna-locations-page-body">
-                        {{getMessage('locations-page_pagelevel')}}
+                        {{getMessage('locations_page__pagelevel')}}
                     </td>
                 </tr>
             {{/if}}
@@ -21,9 +21,9 @@
                     <tr on-tap="reveal" class="antenna-locations-content-row {{#if canLocate(this.containerHash) }}antenna-locate{{/if}}">
                         <td class="antenna-locations-count-cell">
                             {{#if this.count === 1}}
-                                {{{getMessage('locations-page_count_one')}}}
+                                {{{getMessage('locations_page__count_one')}}}
                             {{else}}
-                                {{{getMessage('locations-page_count_many', [ this.count ])}}}
+                                {{{getMessage('locations_page__count_many', [ this.count ])}}}
                             {{/if}}
                         </td>
                         {{#if this.kind === 'txt'}}
@@ -31,7 +31,7 @@
                         {{elseif this.kind === 'img'}}
                             <td class="antenna-locations-image-body"><img src="{{this.body}}"></td>
                         {{elseif this.kind === 'med'}}
-                            <td class="antenna-locations-media-body">{{>film}}<span class="antenna-locations-video">{{getMessage('locations-page_video')}}</span></td>
+                            <td class="antenna-locations-media-body">{{>film}}<span class="antenna-locations-video">{{getMessage('locations_page__video')}}</span></td>
                         {{else}}
                             <td>&nbsp;</td>
                         {{/if}}

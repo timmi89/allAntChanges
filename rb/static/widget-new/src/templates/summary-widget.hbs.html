@@ -3,11 +3,11 @@
         {{>logo}}<!--
         --><span class="antenna-summary-title">
             {{#if pageData.summaryTotal === 0}}
-                {{getMessage('summary-widget_reactions')}}
+                {{getMessage('summary_widget__reactions')}}
             {{elseif pageData.summaryTotal === 1}}
-                {{getMessage('summary-widget_reactions_one')}}
+                {{getMessage('summary_widget__reactions_one')}}
             {{else}}
-                {{getMessage('summary-widget_reactions_many', [ pageData.summaryTotal ])}}
+                {{getMessage('summary_widget__reactions_many', [ pageData.summaryTotal ])}}
             {{/if}}
         </span><!--
         -->{{# computeExpandedReactions(pageData.summaryReactions) }}

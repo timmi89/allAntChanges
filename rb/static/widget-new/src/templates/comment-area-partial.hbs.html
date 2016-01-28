@@ -1,17 +1,17 @@
 
 <div class="antenna-comment-area">
     <div class="antenna-comment-widgets">
-        <textarea on-input="inputchanged" class="antenna-comment-input" placeholder="{{getMessage('comment-area_placeholder')}}" maxlength="500"></textarea>
+        <textarea on-input="inputchanged" class="antenna-comment-input" placeholder="{{getMessage('comment_area__placeholder')}}" maxlength="500"></textarea>
         <div class="antenna-comment-footer">
-            <span class="antenna-comment-limit">{{{getMessage('comment-area_count')}}}</span>
+            <span class="antenna-comment-limit">{{{getMessage('comment_area__count')}}}</span>
             <button id="antenna-comment-spacer"></button>
-            <button class="antenna-comment-submit" on-tap="addcomment">{{getMessage('comment-area_add')}}</button>
+            <button class="antenna-comment-submit" on-tap="addcomment">{{getMessage('comment_area__add')}}</button>
         </div>
     </div>
     <div class="antenna-comment-waiting">
         ...
     </div>
     <div class="antenna-comment-received">
-        {{getMessage('comment-area_thanks')}}
+        {{getMessage('comment_area__thanks')}}
     </div>
 </div>

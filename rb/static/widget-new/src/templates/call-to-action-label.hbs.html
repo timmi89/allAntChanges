@@ -1,7 +1,7 @@
  {{#if containerData.reactionTotal === undefined || !containerData.loaded}}
-    {{getMessage('call-to-action-label_responses')}}
+    {{getMessage('call_to_action_label__responses')}}
 {{elseif containerData.reactionTotal === 1}}
-    {{getMessage('call-to-action-label_responses_one')}}
+    {{getMessage('call_to_action_label__responses_one')}}
 {{else}}
-    {{getMessage('call-to-action-label_responses_many', [ containerData.reactionTotal ])}}
+    {{getMessage('call_to_action_label__responses_many', [ containerData.reactionTotal ])}}
 {{/if}}

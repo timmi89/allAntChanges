@@ -1,7 +1,7 @@
 <div class="antenna-page antenna-comments-page" decorator="cssreset">
     <div class="antenna-body">
-        <div on-tap="back" class="antenna-comments-back">{{>left}}{{getMessage('comments-page_back')}}</div>
-        <div class="antenna-comments-header">{{getMessage('comments-page_header', [ comments.length ])}}</div>
+        <div on-tap="back" class="antenna-comments-back">{{>left}}{{getMessage('reactions_widget__back')}}</div>
+        <div class="antenna-comments-header">{{getMessage('comments_page__header', [ comments.length ])}}</div>
         {{#comments:index}}
             <div class="antenna-comment-entry {{#if this.new}}antenna-comment-new{{/if}}">
                 <table>

@@ -125,7 +125,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function backToReactions() {
-        setWindowTitle(Messages.getMessage('reactions-widget_title'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title'));
         showReactions(true, true);
     }
 
@@ -149,14 +149,14 @@ function openReactionsWidget(options, elementOrCoords) {
             element: pageContainer(ractive),
             reactionsWindow: $rootElement
         };
-        setWindowTitle(Messages.getMessage('reactions-widget_title_think'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title_think'));
         var page = DefaultsPage.create(options);
         pages.push(page);
         showPage(page.selector, $rootElement, animate);
     }
 
     function showConfirmation(reactionData, reactionProvider) {
-        setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title_thanks'));
         var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, groupSettings, pageContainer(ractive));
         pages.push(page);
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
@@ -166,7 +166,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showPendingApproval(reaction) {
-        setWindowTitle(Messages.getMessage('reactions-widget_title_thanks'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title_thanks'));
         var page = PendingReactionPage.createPage(reaction.text, pageContainer(ractive));
         pages.push(page);
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
@@ -229,12 +229,12 @@ function openReactionsWidget(options, elementOrCoords) {
 
     // Shows the login page, with a prompt to go Back to the page specified by the given page selector.
     function showLoginPage(backPageSelector, retryCallback) {
-        setWindowTitle(Messages.getMessage('reactions-widget_title_signin'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title_signin'));
         var options = {
             element: pageContainer(ractive),
             groupSettings: groupSettings,
             goBack: function() {
-                setWindowTitle(Messages.getMessage('reactions-widget_title'));
+                setWindowTitle(Messages.getMessage('reactions_widget__title'));
                 goBackToPage(pages, backPageSelector, $rootElement);
             },
             retry: retryCallback
@@ -249,12 +249,12 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showBlockedReactionPage(backPageSelector) {
-        setWindowTitle(Messages.getMessage('reactions-widget_title_blocked'));
+        setWindowTitle(Messages.getMessage('reactions_widget__title_blocked'));
         var options = {
             element: pageContainer(ractive),
             groupSettings: groupSettings,
             goBack: function() {
-                setWindowTitle(Messages.getMessage('reactions-widget_title'));
+                setWindowTitle(Messages.getMessage('reactions_widget__title'));
                 goBackToPage(pages, backPageSelector, $rootElement);
             }
         };
