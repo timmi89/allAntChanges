@@ -15,6 +15,7 @@ var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var Events = require('./events');
+var GenericErrorPage = require('./generic-error-page');
 var LocationsPage = require('./locations-page');
 var LoginPage = require('./login-page');
 var PageData = require('./page-data');
@@ -267,6 +268,24 @@ function openReactionsWidget(options, elementOrCoords) {
         }, 1);
     }
 
+    function showGenericErrorPage(backPageSelector) {
+        setWindowTitle(Messages.getMessage('reactions_widget__title_error'));
+        var options = {
+            element: pageContainer(ractive),
+            goBack: function() {
+                setWindowTitle(Messages.getMessage('reactions_widget__title'));
+                goBackToPage(pages, backPageSelector, $rootElement);
+            }
+        };
+        var page = GenericErrorPage.createPage(options);
+        pages.push(page);
+
+        // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page
+        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+            showPage(page.selector, $rootElement, true);
+        }, 1);
+    }
+
     function handleReactionError(message, retryCallback, backPageSelector) {
         if (message.indexOf('sign in required for organic reactions') !== -1) {
             showLoginPage(backPageSelector, retryCallback);
@@ -281,8 +300,8 @@ function openReactionsWidget(options, elementOrCoords) {
                 }
             });
         } else {
-            // TODO: show some kind of generic error page
             console.log("error posting reaction: " + message);
+            showGenericErrorPage(backPageSelector);
         }
 
         function isTokenError(message) {

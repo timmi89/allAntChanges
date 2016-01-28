@@ -1,0 +1,23 @@
+.antenna-error-back {
+    background-color: #bbbbbb;
+    color: #ffffff;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px 12px 2px;
+    text-transform: uppercase;
+}
+.antenna-error-back:hover {
+    background-color: #999999;
+}
+
+.antenna-error-back .antenna-left-path {
+    fill: #ffffff;
+}
+
+.antenna-error-body {
+    padding: 10px;
+}
+
+.antenna-error-message {
+    padding: 5px;
+}

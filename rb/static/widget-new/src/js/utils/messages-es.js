@@ -45,6 +45,8 @@ module.exports = {
 
     'pending_page__message_appear': 'Your reaction will appear once it is reviewed. All new reactions must meet our community guidelines.', // TODO: translation
 
+    'error_page__message': 'Oops! We really value your feedback, but something went wrong.', // TODO: translation
+
     'tap_helper__prompt': '¡Toca un párrafo para opinar!',
     'tap_helper__close': 'Volver'
 };
