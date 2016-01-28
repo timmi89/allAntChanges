@@ -100,7 +100,7 @@ function openReactionsWidget(options, elementOrCoords) {
         openInstances.push(ractive);
     }
 
-    function showReactions(animate, reverse) {
+    function showReactions(animate) {
         var options = {
             isSummary: isSummary,
             reactionsData: reactionsData,
@@ -118,16 +118,7 @@ function openReactionsWidget(options, elementOrCoords) {
         };
         var page = ReactionsPage.create(options);
         pages.push(page);
-        if (reverse) {
-            goBackToPage(pages, page.selector, $rootElement);
-        } else {
-            showPage(page.selector, $rootElement, animate, false);
-        }
-    }
-
-    function backToReactions() {
-        setWindowTitle(Messages.getMessage('reactions_widget__title'));
-        showReactions(true, true);
+        showPage(page.selector, $rootElement, animate, false);
     }
 
     function showDefaultReactionsPage(animate) {
@@ -180,14 +171,17 @@ function openReactionsWidget(options, elementOrCoords) {
         showPage('.antenna-progress-page', $rootElement, false, true);
     }
 
-    function showComments(reaction) {
+    function showComments(reaction, backPageSelector) {
         showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
-        AjaxClient.getComments(reaction, function(comments) {
+        var success = function(comments) {
             var options = {
                 reaction: reaction,
                 comments: comments,
                 element: pageContainer(ractive),
-                goBack: backToReactions,
+                goBack: function() {
+                    setWindowTitle(Messages.getMessage('reactions_widget__title'));
+                    goBackToPage(pages, backPageSelector, $rootElement);
+                },
                 containerData: containerData,
                 pageData: pageData,
                 groupSettings: groupSettings
@@ -201,13 +195,18 @@ function openReactionsWidget(options, elementOrCoords) {
             }, 1);
 
             Events.postCommentsViewed(pageData, containerData, reaction, groupSettings);
-        });
+        };
+        var error = function(message) {
+            console.log('An error occurred fetching comments: ' + message);
+            showGenericErrorPage(backPageSelector);
+        };
+        AjaxClient.getComments(reaction, success, error);
     }
 
-    function showLocations(reaction) {
+    function showLocations(reaction, backPageSelector) {
         showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
         var reactionLocationData = PageData.getReactionLocationData(reaction, pageData);
-        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, function(locationDetails) {
+        var success = function(locationDetails) {
             PageData.updateReactionLocationData(reactionLocationData, locationDetails);
             var options = { // TODO: clean up the number of these "options" objects that we create.
                 element: pageContainer(ractive),
@@ -215,7 +214,10 @@ function openReactionsWidget(options, elementOrCoords) {
                 pageData: pageData,
                 groupSettings: groupSettings,
                 closeWindow: closeAllWindows,
-                goBack: backToReactions
+                goBack: function() {
+                    setWindowTitle(Messages.getMessage('reactions_widget__title'));
+                    goBackToPage(pages, backPageSelector, $rootElement);
+                }
             };
             var page = LocationsPage.create(options);
             pages.push(page);
@@ -225,7 +227,12 @@ function openReactionsWidget(options, elementOrCoords) {
                 showPage(page.selector, $rootElement, true);
             }, 1);
             Events.postLocationsViewed(pageData, groupSettings);
-        });
+        };
+        var error = function(message) {
+            console.log('An error occurred fetching content bodies: ' + message);
+            showGenericErrorPage(backPageSelector);
+        };
+        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, success, error);
     }
 
     // Shows the login page, with a prompt to go Back to the page specified by the given page selector.
@@ -376,7 +383,7 @@ function goBackToPage(pages, pageSelector, $rootElement) {
         $targetPage.css('z-index', pageZ++); // When the animation is done, make sure the current page has the highest z-index (just for consistency)
         // Teardown all other pages. They'll be re-created if necessary.
         var remainingPages = [];
-        for (var i = 0; i < pages.length - 1; i++) {
+        for (var i = 0; i < pages.length; i++) {
             var page = pages[i];
             if (page.selector === pageSelector) {
                 remainingPages.push(page);

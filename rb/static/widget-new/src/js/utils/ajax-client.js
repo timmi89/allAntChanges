@@ -198,7 +198,7 @@ function reactionFromResponse(response, contentLocation) {
     return reaction;
 }
 
-function getComments(reaction, callback) {
+function getComments(reaction, successCallback, errorCallback) {
     User.fetchUser(function(userInfo) {
         var data = {
             reaction_id: reaction.parentID,
@@ -206,15 +206,12 @@ function getComments(reaction, callback) {
             ant_token: userInfo.ant_token
         };
         getJSONP(URLs.fetchCommentUrl(), data, function(response) {
-            callback(commentsFromResponse(response));
-        }, function(message) {
-            // TODO: error handling
-            console.log('An error occurred fetching comments: ' + message);
-        });
+            successCallback(commentsFromResponse(response));
+        }, errorCallback);
     });
 }
 
-function fetchLocationDetails(reactionLocationData, pageData, callback) {
+function fetchLocationDetails(reactionLocationData, pageData, successCallback, errorCallback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
     User.fetchUser(function(userInfo) {
         var data = {
@@ -222,12 +219,7 @@ function fetchLocationDetails(reactionLocationData, pageData, callback) {
             ant_token: userInfo.ant_token,
             content_ids: contentIDs
         };
-        getJSONP(URLs.fetchContentBodiesUrl(), data, function(response) {
-            callback(response);
-        }, function(message) {
-            // TODO: error handling
-            console.log('An error occurred fetching content bodies: ' + message);
-        });
+        getJSONP(URLs.fetchContentBodiesUrl(), data, successCallback, errorCallback);
     });
 }
 

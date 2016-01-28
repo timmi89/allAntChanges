@@ -50,8 +50,8 @@ function createPage(options) {
     }
     ractive.on('plusone', plusOne);
     ractive.on('showdefault', showDefaults);
-    ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context); return false; }); // TODO clean up
-    ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context); return false; }); // TODO clean up
+    ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
+    ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
