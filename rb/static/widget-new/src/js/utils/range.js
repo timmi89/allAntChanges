@@ -32,18 +32,33 @@ function getSelectionEndPoint(node, event, excludeNode) {
 function grabSelection(node, callback, excludeNode) {
     var selection = rangy.getSelection();
     if (isValidSelection(selection, node, excludeNode)) {
-        selection.expand('word', { trim: true, wordOptions: { wordRegex: /\S+\S*/gi } });
+        expandAndTrimRange(selection);
         if (selection.containsNode(excludeNode)) {
             var range = selection.getRangeAt(0);
             range.setEndBefore(excludeNode);
             selection.setSingleRange(range);
         }
         if (isValidSelection(selection, node, excludeNode)) {
-            var location = rangy.serializeSelection(selection, true, node);
+            var location;
+            if (selectionEncompassesNode(selection, node)) {
+                location = ':0,:1'; // The user has manually selected the entire node. Normalize the location.
+            } else {
+                location = rangy.serializeSelection(selection, true, node);
+            }
             var text = selection.toString();
             highlightSelection(selection); // Highlighting deselects the text, so do this last.
             callback(text, location);
         }
+    }
+
+    function expandAndTrimRange(rangeOrSelection) {
+        rangeOrSelection.expand('word', { trim: true, wordOptions: { wordRegex: /\S+\S*/gi } });
+    }
+
+    function selectionEncompassesNode(selection, node) {
+        var range = getNodeRange(node);
+        expandAndTrimRange(range);
+        return range.toString() === selection.toString();
     }
 }
 
@@ -61,18 +76,26 @@ function nodeContainsSelection(node, selection) {
         (commonAncestor.nodeType === 3 && node.contains(commonAncestor.parentNode));
 }
 
-function grabNode(node, callback) {
+function getNodeRange(node) {
     var range = rangy.createRange(document);
     range.selectNodeContents(node);
     var $excluded = $(node).find('.antenna-text-indicator-widget');
     if ($excluded.size() > 0) { // Remove the indicator from the end of the selected range.
         range.setEndBefore($excluded.get(0));
     }
+    return range;
+}
+
+function grabNode(node, callback) {
+    var range = getNodeRange(node);
     var selection = rangy.getSelection();
     selection.setSingleRange(range);
-    var location = rangy.serializeSelection(selection, true, node);
-    var text = selection.toString();
-    if (text.trim().length > 0) {
+    // We should just be able to serialize the selection, but this gives us inconsistent values in Safari.
+    // The value *should* always be :0,:1 when we select an entire node, so we just hardcode it.
+    //var location = rangy.serializeSelection(selection, true, node);
+    var location = ':0,:1';
+    var text = selection.toString().trim();
+    if (text.length > 0) {
         highlightSelection(selection); // Highlighting deselects the text, so do this last.
         if (callback) {
             callback(text, location);
