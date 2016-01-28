@@ -74,7 +74,15 @@ if DEBUG:
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
             'HOST':      os.getenv('DATABASE_HOST', 'localhost'),
-            'PORT':      os.getenv('DATABASE_PORT', '3306')
+            'PORT':      os.getenv('DATABASE_PORT', '3306'),
+            'OPTIONS': {
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
+            }
         },
         'readonly1': {
             'ENGINE':   'django.db.backends.mysql',
@@ -82,7 +90,15 @@ if DEBUG:
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
             'HOST':      os.getenv('DATABASE_HOST', 'localhost'),
-            'PORT':      os.getenv('DATABASE_PORT', '3306')
+            'PORT':      os.getenv('DATABASE_PORT', '3306'),
+            'OPTIONS': {
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
+            }
         },
         'readonly2': {
             'ENGINE':   'django.db.backends.mysql',
@@ -90,7 +106,15 @@ if DEBUG:
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
             'HOST':      os.getenv('DATABASE_HOST', 'localhost'),
-            'PORT':      os.getenv('DATABASE_PORT', '3306')
+            'PORT':      os.getenv('DATABASE_PORT', '3306'),
+            'OPTIONS': {
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
+            }
         }
     }
 
@@ -158,7 +182,12 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
             }
         },
         'readonly1': {
@@ -170,7 +199,12 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
             }
         },
         'readonly2': {
@@ -182,7 +216,12 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
             }
         }
     }
