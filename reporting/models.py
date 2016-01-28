@@ -120,8 +120,15 @@ class GroupReport():
         for content in popular_content:
             content['content'] = self.content_by_id(content['content_id'])
 
+        # Ensure unique content
         popular_content = filter(
             partial(unique_content_filter, set()),
+            popular_content
+        )
+
+        # Only include text and image content
+        popular_content = filter(
+            lambda c: c['content_kind'] in ('text', 'img'),
             popular_content
         )
 
