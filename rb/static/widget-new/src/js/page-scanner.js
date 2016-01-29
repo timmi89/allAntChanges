@@ -276,12 +276,12 @@ function shouldHashText($textElement, groupSettings) {
     }
     // Don't create an indicator for text elements that contain other text nodes.
     var $nestedElements = find($textElement, groupSettings.contentSelector());
-    $nestedElements.each(function() {
-        if ((computeElementType($(this)) === TYPE_TEXT)) {
+    for (var i = 0; i < $nestedElements.length; i++) {
+        if ((computeElementType($($nestedElements[i])) === TYPE_TEXT)) {
             // Don't hash a text element if it contains any other matched text elements
             return false;
         }
-    });
+    }
     return true;
 }
 
