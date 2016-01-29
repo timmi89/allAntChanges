@@ -122,7 +122,10 @@ class GroupReport():
 
         # Filter out unknown content
         popular_content = filter(
-            lambda c: c['content'] != None,
+            lambda c: (
+                c['content'] != None and
+                len(c['content'].body.strip()) > 0
+            ),
             popular_content
         )
 
