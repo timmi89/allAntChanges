@@ -293,14 +293,14 @@ function isCta($element, groupSettings) {
 // The "image" and "media" paths converge here, because we use the same indicator module for them both.
 function scanMedia($mediaElement, type, pageData, groupSettings) {
     var indicator;
-    var hash = computeHash($mediaElement, pageData, groupSettings);
-    if (hash) {
-        var containerData = PageData.getContainerData(pageData, hash);
-        containerData.type = type === TYPE_IMAGE ? 'image' : 'media';
-        var defaultReactions = groupSettings.defaultReactions($mediaElement);
-        var contentData = computeContentData($mediaElement, groupSettings);
-        if (contentData && contentData.dimensions) {
-            if (contentData.dimensions.height >= 100 && contentData.dimensions.width >= 100) { // Don't create indicator on elements that are too small
+    var contentData = computeContentData($mediaElement, groupSettings);
+    if (contentData && contentData.dimensions) {
+        if (contentData.dimensions.height >= 100 && contentData.dimensions.width >= 100) { // Don't create indicator on elements that are too small
+            var hash = computeHash($mediaElement, pageData, groupSettings);
+            if (hash) {
+                var containerData = PageData.getContainerData(pageData, hash);
+                containerData.type = type === TYPE_IMAGE ? 'image' : 'media';
+                var defaultReactions = groupSettings.defaultReactions($mediaElement);
                 indicator = MediaIndicatorWidget.create({
                         element: WidgetBucket.get(),
                         containerData: containerData,
