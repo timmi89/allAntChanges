@@ -15,7 +15,7 @@
             'perezhilton.com': 100,
             'mobi.perezhilton.com': 100,
             'dlisted.com': 100,
-            'wral.com': 0,
+            'wral.com': 100,
             'channel3000.com': 0,
             'wktv.com': 0
         };
