@@ -257,7 +257,7 @@ else:
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 # JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
 
@@ -380,7 +380,7 @@ INSTALLED_APPS = [
     'reporting',
     'storages',
     'gunicorn',
-    'djcelery'
+    'djcelery',
 ]
 
 if DEBUG:
