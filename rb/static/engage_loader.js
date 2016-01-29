@@ -14,7 +14,7 @@
             'local.antenna.is': 50,
             'perezhilton.com': 100,
             'mobi.perezhilton.com': 100,
-            'dlisted.com': 100,
+            'dlisted.com': 0,
             'wral.com': 0,
             'channel3000.com': 0,
             'wktv.com': 0
