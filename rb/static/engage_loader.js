@@ -17,7 +17,7 @@
             { domain: 'dlisted.com', percentage: 100 },
             { domain: 'wral.com', percentage: 100 },
             { domain: 'bustle.com', percentage: 100 },
-            { domain: 'channel3000.com', percentage: 0 },
+            { domain: 'channel3000.com', percentage: 100 },
             { domain: 'wktv.com', percentage: 0 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
