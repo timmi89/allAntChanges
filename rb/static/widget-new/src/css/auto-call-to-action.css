@@ -7,7 +7,7 @@
 .antenna-auto-cta-inner {
     display: inline-block;
     white-space: nowrap;
-    padding: 4px;
+    padding: 8px 10px 8px 10px;
     background: rgba(255,255,255,.7);
     max-width: 100%;
     overflow-x: auto;
