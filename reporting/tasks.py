@@ -27,7 +27,7 @@ def weekly_email_report():
     for group in groups:
         try:
             # Skip perezhilton.com groups per porter
-            if group.id in [2471, 2504]:
+            if group.id in [2471, 2504, 2352]:
                 continue
 
             group_context = GroupReport(

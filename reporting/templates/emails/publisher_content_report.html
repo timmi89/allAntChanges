@@ -141,6 +141,8 @@
                       </table>
 
                       <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                          <!-- top reactions -->
+                          {% if top_reactions %}
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
                                 <h2 class="section-headline" style="color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:0;margin:0;">Top Reactions</h2>
@@ -154,6 +156,10 @@
                                 <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
                             </td>
                           </tr>
+                          {% endif %}
+
+                          <!-- top pages -->
+                          {% if popular_pages %}
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
                                 <h2 class="section-headline" style="border-top: 1px solid #999;color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:20px 0 0;margin:0;">Top Pages</h2>
@@ -162,7 +168,7 @@
                                   <!-- show top 7 pages.  sort by engagement score:   (reactions+reaction views) / pageviews -->
 
                                   {% for page in popular_pages|slice:":7" %}
-                                    <!-- article data -->
+                                  <!-- page {{ page.page_id }} -->
                                     <tr>
                                       <td style="font-size:12px;text-align:left;line-height:28px;">
                                         <div style="margin-bottom:10px;"><a style="font-size:16px;" href="{{ page.url }}">{{ page.page_title }}</a></div>
@@ -175,18 +181,19 @@
                                     </tr>
                                   {% endfor %}
 
-                                    <tr>
-                                        <td style="font-size:12px;text-align:left;line-height:28px;">
-                                          <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
-                                        </td>
-                                    </tr>
+                                  <tr>
+                                      <td style="font-size:12px;text-align:left;line-height:28px;">
+                                        <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
+                                      </td>
+                                  </tr>
 
                                 </table>
                             </td>
                           </tr>
+                          {% endif %}
 
                           <!-- top content -->
-
+                          {% if popular_content %}
                           <tr>
                             <td style="padding: 30px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
                                 <h2 class="section-headline" style="border-top: 1px solid #999;color:#000;font-size:24px;font-weight:bold;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;line-height:24px;padding:20px 0 0;margin:0;">Top Content</h2>
@@ -194,8 +201,8 @@
                                     
                                   <!-- show top 10 pieces of content.  sort by engagement score:   (reactions+reaction views) / pageviews -->
 
-                                    <!-- content data -->
-                                    {% for content in popular_content|slice:":10" %}
+                                  {% for content in popular_content|slice:":10" %}
+                                  <!-- content {{ content.content_id }} -->
                                     <tr>
                                         <td style="font-size:14px;text-align:left;line-height:28px;">
                                           {% if content.content_kind == 'text' %}
@@ -212,17 +219,18 @@
                                             <br/>
                                         </td>
                                     </tr>
-                                    {% endfor %}
+                                  {% endfor %}
 
-                                    <tr>
-                                        <td style="font-size:12px;text-align:left;line-height:28px;">
-                                          <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
-                                        </td>
-                                    </tr>
+                                  <tr>
+                                      <td style="font-size:12px;text-align:left;line-height:28px;">
+                                        <a style="font-style:italic;color:#eda987;font-size:12px;" href="http://antenna.is/group/{{ short_name }}/analytics/">View more at your dashboard.</a>
+                                      </td>
+                                  </tr>
 
                                 </table>
                             </td>
                           </tr>
+                          {% endif %}
 
                           
                         </table>
