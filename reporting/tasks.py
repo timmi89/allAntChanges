@@ -14,10 +14,10 @@ logger = logging.getLogger('rb.standard')
 
 
 @periodic_task(name='reporting.weekly.email.report', ignore_result=True,
-               run_every=(crontab(hour="18", minute="00", day_of_week="friday")))
+               run_every=(crontab(hour="6", minute="30", day_of_week="monday")))
 def weekly_email_report():
     end_date = datetime.combine(
-        datetime.utcnow().date(), datetime.min.time())
+        datetime.now().date(), datetime.min.time())
     start_date = datetime.combine(
         end_date - timedelta(days=7), datetime.min.time())
 

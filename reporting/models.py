@@ -36,11 +36,7 @@ class GroupReport():
 
     @property
     def recipients(self):
-        return [
-            'brian@antenna.is',
-            'porter@antenna.is',
-            'jared@antenna.is',
-        ]  # self.group.admin_emails()
+        return  self.group.admin_emails()
 
     @property
     def text(self):
