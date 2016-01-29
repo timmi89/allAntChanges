@@ -36,9 +36,9 @@ module.exports = {
     'locations_page__count_many': '<span class="antenna-location-count">{0}</span><br>reacciones',
     'locations_page__video': 'Video',
 
-    'call_to_action_label__responses': 'Respuestas', // TODO: need a translation of "Responses"
-    'call_to_action_label__responses_one': '1 Respuesta', // TODO
-    'call_to_action_label__responses_many': '{0} Respuestas', // TODO
+    'call_to_action_label__responses': 'Reacciones',
+    'call_to_action_label__responses_one': '1 Reacción',
+    'call_to_action_label__responses_many': '{0} Reacciones',
 
     'blocked_page__message1': 'This site has blocked some or all of the text in that reaction.', // TODO: translation
     'blocked_page__message2': 'Please try something that will be more appropriate for this community.', // TODO: translation
