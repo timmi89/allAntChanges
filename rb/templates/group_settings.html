@@ -54,10 +54,10 @@
     		<label for="id_language"><span class="labelTitle">Language </span><span>For now, only "en" supported</span></label>
     		{{ form.language }}{{ form.language.errors }}
     		</div> -->
-    		<div class="formRow">
+    		<!--<div class="formRow">
     			<label for="id_temp_interact"><span class="labelTitle">Anonymous Reaction Limit </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
     			{{ form.temp_interact }}{{ form.temp_interact.errors }}
-    		</div>
+    		</div> -->
 
     	</section>
 
@@ -323,17 +323,17 @@
 
             <div class="formRow" style="margin: 10px 0;">    
                 {{ form.hideDoubleTapMessage }}{{ form.hideDoubleTapMessage.errors }}
-                <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can double-tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
+                <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
             </div>
             <div class="formRow" style="margin: 10px 0;">
-                <label for="id_doubleTapMessage"><span class="labelTitle">Double Tap Message </span><span>Antenna has a default message telling your visitors that they can double-tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
+                <label for="id_doubleTapMessage"><span class="labelTitle">Mobile Helper Message </span><span>Antenna has a default message telling your visitors that they can tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
                 {{ form.doubleTapMessage }}{{ form.doubleTapMessage.errors }}
             </div>
 
             <div class="formRow" style="margin: 10px 0;">
                 <label for="id_doubleTapMessagePosition">
-                    <span class="labelTitle">Double-tap Message Position</span>
-                    <span>The message telling readers that they can double-tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
+                    <span class="labelTitle">Mobile Helper Position</span>
+                    <span>The message telling readers that they can tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
                 </label>
                 {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
                 <select id="doubleTapMessagePosition_selector" class="browser-default">
