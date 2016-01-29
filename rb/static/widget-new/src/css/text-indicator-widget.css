@@ -51,13 +51,13 @@
 }
 
 .antenna-text-indicator-widget .antenna-logo svg {
-    width: 0.8em;
-    height: 0.8em;
+    width: 0.7em;
+    height: 0.7em;
 }
 
 .antenna-text-indicator-widget .antenna-reaction-total {
     visibility: hidden;
-    font-size: 80%;
+    font-size: 0.7em;
     font-weight: 700;
     color: #888888;
     line-height: 16px;
