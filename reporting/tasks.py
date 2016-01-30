@@ -57,17 +57,27 @@ def group_weekly_email(group_context):
         group_context.text,
         group_context.from_email,
         group_context.recipients,
-        html_message=group_context.html)
+        html_message=group_context.html,
+        mailgun_tags=['group_weekly_email']
+    )
     logger.debug(
         'Sent group email report to group "{}"'.format(
             group_context.short_name))
 
 
-def send_mail(subject, text, from_email, to, html_message=None):
+def send_mail(
+    subject,
+    text,
+    from_email,
+    to,
+    html_message=None,
+    mailgun_tags=[]
+):
     """
     Replace with django.core.mail.send_mail after upgrading django
     """
     msg = EmailMultiAlternatives(subject, text, from_email, to)
+    msg.extra_headers['X-Mailgun-Tag'] = mailgun_tags
 
     if html_message:
         msg.attach_alternative(html_message, "text/html")
