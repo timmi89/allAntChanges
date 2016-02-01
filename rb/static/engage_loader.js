@@ -25,6 +25,8 @@
             { domain: 'kezi.com', percentage: 0 },
             { domain: 'kdrv.com', percentage: 0 },
             { domain: 'ntrsctn.com', percentage: 0 },
+            { domain: 'geekwire.com', percentage: 100 },
+            { domain: 'blog.antenna.is', percentage: 100 },
             { domain: 'exitevent.com', percentage: 0 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
