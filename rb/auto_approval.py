@@ -55,10 +55,10 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
             querystring_content=querystring_content,
         )
 
-        addDefaultsForNewGroup(group, cookie_user)
+        blessed_tags = addDefaultsForNewGroup(group, cookie_user)
         autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=isAutoApproved)
 
-        return group, site
+        return group, site, blessed_tags
 
 
 def addDefaultsForNewGroup(group, cookie_user):
@@ -80,9 +80,11 @@ def addDefaultsForNewGroup(group, cookie_user):
     group.active_sections = default_group.active_sections
     group.save()
 
+    blessed_tags = []
     blessed = GroupBlessedTag.objects.filter(group = default_group)
     for blessing in blessed:
         GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
+        blessed_tags.append(blessing.node)
     #
 
     # //todo
@@ -101,7 +103,7 @@ def addDefaultsForNewGroup(group, cookie_user):
     msg.attach_alternative(userutils.generateGroupApprovalEmail(group), "text/html")
     msg.send(False)
 
-    return group
+    return blessed_tags
 
 
 def autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=False):

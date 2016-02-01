@@ -818,6 +818,7 @@ class SettingsHandler(AnonymousBaseHandler):
         else:
             #remove this logging after testing
             logger.warning("Settings cache miss: group_settings_"+ str(host))
+            blessed_tags = None
             if not group_id:
                 # Get site object
                 try:
@@ -834,11 +835,11 @@ class SettingsHandler(AnonymousBaseHandler):
                         domain=host
                     )
 
-                    group, site = autoCreateGroup(cleaned_data, cookie_user)
+                    group, site, blessed_tags = autoCreateGroup(cleaned_data, cookie_user)
             else:
                 group = Group.objects.get(id=group_id)
 
-            settings_dict = getSettingsDict(group, site)
+            settings_dict = getSettingsDict(group, site, blessed_tags)
             try:
                 cache.set('group_settings_'+ str(host), settings_dict)
             except Exception, e:

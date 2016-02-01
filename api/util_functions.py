@@ -540,7 +540,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     #logger.info('CACHEABLE RESULT gkucs: ' + str(cacheable_result))
     return cacheable_result
 
-def getSettingsDict(group, site=None):
+def getSettingsDict(group, site=None, blessed_tags=None):
     settings_dict = model_to_dict(
          group,
          exclude=[
@@ -573,9 +573,8 @@ def getSettingsDict(group, site=None):
         site = Site.objects.get(group = group)
     settings_dict['querystring_content'] = site.querystring_content
 
-    blessed_tags = InteractionNode.objects.filter(
-         groupblessedtag__group=group.id
-     ).order_by('groupblessedtag__order')
+    if (blessed_tags is None):
+        blessed_tags = InteractionNode.objects.filter(groupblessedtag__group=group.id).order_by('groupblessedtag__order')
 
     settings_dict['blessed_tags'] = blessed_tags # deprecated. delete once all client usage is removed.
     settings_dict['default_reactions'] = blessed_tags
