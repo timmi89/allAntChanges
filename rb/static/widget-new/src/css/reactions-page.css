@@ -18,9 +18,10 @@
 
 .antenna-reaction-comments {
     display: none;
+    float: right;
     padding: 15px;
-    margin-left: 10px;
-    margin-top: -10px; /* We have 15px of padding on top for the touch area, but need to visually only have 5px for alignment. */
+    margin-top: -10px; /* We have 15px of padding for the touch area, but need to visually only have 5px for alignment. */
+    margin-right: -10px; /* Pull the touch area into the padding that goes around the reaction box. */
     white-space: nowrap;
     opacity: 0.75;
     font-size: 10px;
@@ -40,8 +41,8 @@
     display: none;
     float: right;
     padding: 15px;
-    margin-top: -10px; /* We have 15px of padding on top for the touch area, but need to visually only have 5px for alignment. */
-    margin-right: -10px; /* We have 15px of padding on top for the touch area, but need to visually only have 5px for alignment. */
+    margin-top: -10px; /* We have 15px of padding for the touch area, but need to visually only have 5px for alignment. */
+    margin-right: -10px; /* Pull the touch area into the padding that goes around the reaction box. */
     white-space: nowrap;
     opacity: 0.75;
     font-size: 10px;
