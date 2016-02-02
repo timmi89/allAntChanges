@@ -4,7 +4,7 @@ var MD5 = require('./md5');
 function getCleanText($element) {
     var $clone = $element.clone();
     // Remove any elements that we don't want included in the text calculation
-    $clone.find('iframe, img, script, .antenna, .no-ant').remove().end();
+    $clone.find('iframe, img, script, video, .antenna, .no-ant').remove().end();
     // Then manually convert any <br> tags into spaces (otherwise, words will get appended by the text() call)
     var html = $clone.html().replace(/<\Sbr\S\/?>/gi, ' ');
     // Put the HTML back into a div and call text(), which does most of the heavy lifting
