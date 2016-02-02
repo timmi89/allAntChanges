@@ -1,14 +1,15 @@
 
-
 <span decorator="cssreset" class="antenna antenna-text-indicator-widget
         {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}
         {{#if containerData.reactionTotal > 0}}antenna-hasreactions{{/if}}
         {{#if containerData.suppress}}antenna-suppress{{/if}}
         {{extraClasses}}">
-    {{>logo}}<!--
-    -->{{#if containerData.reactionTotal }}<!--
-        --><span class="antenna-reaction-total">
-            {{containerData.reactionTotal}}
+    <span class="antenna-text-indicator-inner">
+        {{>logo}}<!--
+        -->{{#if containerData.reactionTotal }}<!--
+            --><span class="antenna-reaction-total">
+                {{containerData.reactionTotal}}
+            </span>
+        {{/if}}
         </span>
-    {{/if}}
 </span>
