@@ -11,6 +11,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
         el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
         data: {
             pageData: pageData,
+            isExpandedSummary: shouldUseExpandedSummary(groupSettings),
             computeExpandedReactions: computeExpandedReactions(groupSettings)
         },
         magic: true,
@@ -59,18 +60,16 @@ function shouldUseExpandedSummary(groupSettings) {
 
 function computeExpandedReactions(groupSettings) {
     return function(reactionsData) {
-        if (shouldUseExpandedSummary(groupSettings)) {
-            var defaultReactions = groupSettings.defaultReactions();
-            var max = 2;
-            var expandedReactions = [];
-            for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {
-                var reactionData = reactionsData[i];
-                if (isDefaultReaction(reactionData, defaultReactions)) {
-                    expandedReactions.push(reactionData);
-                }
+        var defaultReactions = groupSettings.defaultReactions();
+        var max = 2;
+        var expandedReactions = [];
+        for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {
+            var reactionData = reactionsData[i];
+            if (isDefaultReaction(reactionData, defaultReactions)) {
+                expandedReactions.push(reactionData);
             }
-            return expandedReactions;
         }
+        return expandedReactions;
     };
 }
 

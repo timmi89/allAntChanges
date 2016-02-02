@@ -1,4 +1,7 @@
-<div class="antenna antenna-summary-widget {{^pageData.summaryLoaded}}antenna-notloaded{{/pageData.summaryLoaded}}" decorator="cssreset">
+<div decorator="cssreset" class="antenna
+            antenna-summary-widget
+            {{^pageData.summaryLoaded}}antenna-notloaded{{/pageData.summaryLoaded}}
+            {{#if isExpandedSummary}}antenna-expanded-summary{{/if}}">
     <div class="antenna-summary-inner">
         {{>logo}}<!--
         --><span class="antenna-summary-title">
@@ -10,10 +13,12 @@
                 {{getMessage('summary_widget__reactions_many', [ pageData.summaryTotal ])}}
             {{/if}}
         </span><!--
-        -->{{# computeExpandedReactions(pageData.summaryReactions) }}
-            <span class="antenna-expanded-reaction {{#if @index === 0}}antenna-expanded-first{{/if}}">
-                <span class="antenna-expanded-text">{{this.text}}</span><span class="antenna-expanded-count">{{this.count}}</span>
-            </span>
-        {{/}}
+        -->{{#if isExpandedSummary}}<!--
+                -->{{# computeExpandedReactions(pageData.summaryReactions) }}
+                    <span class="antenna-expanded-reaction {{#if @index === 0}}antenna-expanded-first{{/if}}">
+                        <span class="antenna-expanded-text">{{this.text}}</span><span class="antenna-expanded-count">{{this.count}}</span>
+                    </span>
+                {{/}}
+            {{/if}}
     </div>
 </div>
