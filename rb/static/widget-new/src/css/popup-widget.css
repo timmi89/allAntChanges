@@ -24,6 +24,7 @@
     background: #464646;
     padding:8px;
     border-radius:8px;
+    box-shadow: 0 1px 40px #8A8A8A;
     font:normal 12px Helvetica, Arial, sans-serif;
 }
 
