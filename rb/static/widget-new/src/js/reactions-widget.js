@@ -347,21 +347,21 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
 
     $page.toggleClass('antenna-page-animate', animate);
 
+    var $current = $rootElement.find('.antenna-page-active').not(pageSelector);
     if (overlay) {
         // In the overlay case, size the page to match whatever page is currently showing and then make it active (there will be two 'active' pages)
-        var $current = $rootElement.find('.antenna-page-active');
         $page.height($current.height());
         $page.addClass('antenna-page-active');
     } else if (animate) {
         TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
             // After the new page slides into position, move the other pages back out of the viewable area
-            $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+            $current.removeClass('antenna-page-active');
             $page.focus();
         });
         sizeBodyToFit($rootElement, $page, animate);
     } else {
         $page.addClass('antenna-page-active');
-        $rootElement.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
+        $current.removeClass('antenna-page-active');
         $page.focus();
         sizeBodyToFit($rootElement, $page, animate);
     }
