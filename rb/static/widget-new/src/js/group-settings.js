@@ -85,9 +85,18 @@ function createFromJSON(json) {
         };
     }
 
-    function dataOrDeprecated(key, deprecatedKey) {
+    function exclusionSelector(key, deprecatedKey) {
         return function() {
-            return data(key)() || data(deprecatedKey)();
+            var selectors = [];
+            var noAnt = data('no_ant')();
+            if (noAnt) {
+                selectors.push(noAnt);
+            }
+            var noReadr = data('no_readr')();
+            if (noReadr) {
+                selectors.push(noReadr);
+            }
+            return selectors.join(',');
         }
     }
 
@@ -244,7 +253,7 @@ function createFromJSON(json) {
         requiresApproval: data('requires_approval'),
         defaultReactions: defaultReactions,
         customCSS: computeCustomCSS,
-        exclusionSelector: dataOrDeprecated('no_ant', 'no_readr'),
+        exclusionSelector: exclusionSelector(),
         language: data('language'),
         twitterAccount: data('twitter')
     }
