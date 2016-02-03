@@ -27,7 +27,7 @@ var createdWidgets = [];
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
-function scanAllPages(groupSettings) {
+function scanAllPages(groupSettings, reinitializeCallback) {
     $(groupSettings.exclusionSelector()).addClass('no-ant'); // Add the no-ant class to everything that is flagged for exclusion
     var $pages = $(groupSettings.pageSelector()); // TODO: no-ant?
     if ($pages.length == 0) {
@@ -38,7 +38,7 @@ function scanAllPages(groupSettings) {
         var $page = $(this);
         scanPage($page, groupSettings, $pages.length > 1);
     });
-    setupMutationObserver(groupSettings);
+    setupMutationObserver(groupSettings, reinitializeCallback);
 }
 
 // Scan the page using the given settings:
@@ -436,7 +436,9 @@ function computeElementType($element) {
     }
 }
 
-function setupMutationObserver(groupSettings) {
+function setupMutationObserver(groupSettings, reinitializeCallback) {
+    var originalPathname = window.location.pathname;
+    var originalSearch = window.location.search;
     MutationObserver.addAdditionListener(elementsAdded);
 
     function elementsAdded($elements) {
@@ -456,6 +458,13 @@ function setupMutationObserver(groupSettings) {
                     var $page = $element.closest(groupSettings.pageSelector());
                     if ($page.length === 0) {
                         $page = $('body'); // TODO: is this right? keep in sync with scanAllPages
+                    }
+                    var $pageIndicator = find($page, groupSettings.pageLinkSelector());
+                    if ($pageIndicator.length === 0) {
+                        if (shouldReinitializeForLocationChange()) {
+                            reinitializeCallback(groupSettings);
+                            return;
+                        }
                     }
                     var url = PageUtils.computePageUrl($page, groupSettings);
                     var pageData = PageData.getPageDataByURL(url);
@@ -485,6 +494,18 @@ function setupMutationObserver(groupSettings) {
                 }
             }
         }
+    }
+
+    function shouldReinitializeForLocationChange() {
+        // Reinitialize when the location changes in a way that we believe is meaningful.
+        // The heuristic we use is that either:
+        // 1. The query string changes and we're on a site that says the query string matters or
+        // 2. The path changes...
+        //    2a. But not if the change is an extension of the path.
+        //        2aa. Unless we're going from an empty path ('/') to some other path.
+        var newLocationPathname = window.location.pathname;
+        return groupSettings.url.includeQueryString() && originalSearch != window.location.search ||
+                newLocationPathname != originalPathname && (originalPathname === '/' || newLocationPathname.indexOf(originalPathname) === -1);
     }
 }
 

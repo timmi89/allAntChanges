@@ -51,7 +51,6 @@ function scriptLoaded() {
         fetchPageData(groupSettings);
         scanPage(groupSettings);
         setupMobileHelper(groupSettings);
-        setupReinitializer(groupSettings);
     });
 }
 
@@ -72,13 +71,9 @@ function fetchPageData(groupSettings) {
 }
 
 function scanPage(groupSettings) {
-    PageScanner.scan(groupSettings);
+    PageScanner.scan(groupSettings, Reinitializer.reinitialize);
 }
 
 function setupMobileHelper(groupSettings) {
     TapHelper.setupHelper(groupSettings);
-}
-
-function setupReinitializer(groupSettings) {
-    Reinitializer.setupReinitialization(groupSettings);
 }
