@@ -67,6 +67,14 @@ function setupMouseOver($element) {
     }
 }
 
+function isShowing() {
+    if (!ractive) {
+        return false;
+    }
+    var $element = getRootElement();
+    return $element.hasClass('antenna-show');
+}
+
 function showPopup(coordinates, callback) {
     var $element = getRootElement();
     if (!$element.hasClass('antenna-show')) {
@@ -108,6 +116,7 @@ function teardown() {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
+    isShowing: isShowing,
     show: showPopup,
     teardown: teardown
 };

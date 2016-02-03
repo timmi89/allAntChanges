@@ -19,7 +19,6 @@
 }
 
 .antenna-popup-body {
-    display: table-cell;
     white-space: nowrap;
     background: #464646;
     padding:8px;

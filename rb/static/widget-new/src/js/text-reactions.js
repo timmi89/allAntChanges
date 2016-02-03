@@ -22,7 +22,7 @@ function createReactableText(options) {
 
     var tapEvents = setupTapEvents($containerElement.get(0), reactionsWidgetOptions);
     $containerElement.on('mouseup.antenna', function(event) {
-        if (containerData.loaded) {
+        if (containerData.loaded && !PopupWidget.isShowing()) {
             var node = $containerElement.get(0);
             var point = Range.getSelectionEndPoint(node, event, excludeNode);
             if (point) {
