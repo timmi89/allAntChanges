@@ -234,6 +234,7 @@ function createFromJSON(json) {
         isHideOnMobile: data('hideOnMobile'),
         isExpandedMobileSummary: data('summary_widget_expanded_mobile'),
         isHideTapHelper: data('hideDoubleTapMessage'),
+        tapHelperPosition: data('doubleTapMessagePosition'),
         pageSelector: data('post_selector'),
         pageLinkSelector: data('post_href_selector'),
         pageImageSelector: data('image_selector'),

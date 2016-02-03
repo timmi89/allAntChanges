@@ -15,6 +15,9 @@ module.exports = function(grunt) {
         widget_css_reset_temp: rootDir + '/rb/static/widget-new/debug/reset_temp.css',
         widget_css_dest: rootDir + '/rb/static/widget-new/antenna.css',
 
+        engage_loader_js_src: [ rootDir + '/rb/static/engage_loader.js' ],
+        engage_loader_js_dest: rootDir + '/rb/static/engage.js',
+
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
         rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.js',
         rangy_min: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.min.js',
@@ -99,6 +102,10 @@ module.exports = function(grunt) {
                 src: ['<%= paths.widget_js_debug %>'],
                 dest: '<%= paths.widget_js_prod %>'
             },
+            engage_loader_js: {
+                src: ['<%= paths.engage_loader_js_src %>'],
+                dest: '<%= paths.engage_loader_js_dest %>'
+            },
             rangy: {
                 src: ['<%= paths.rangy_dest %>'],
                 dest: '<%= paths.rangy_min %>'
@@ -122,9 +129,31 @@ module.exports = function(grunt) {
                 },
                 files: [ '<%= paths.widget_css_src %>', '<%= paths.widget_css_reset %>'],
                 tasks: [ 'cssmin', 'concat:widget_css', 'clean:temp_css' ]
+            },
+            widget_js: {
+                options: {
+                    atBegin: true
+                },
+                files: [ '<%= paths.widget_js_debug %>' ],
+                tasks: [ 'uglify:widget_js' ]
+            },
+            engage_loader_js: {
+                options: {
+                    atBegin: true
+                },
+                files: [ '<%= paths.engage_loader_js_src %>' ],
+                tasks: [ 'uglify:engage_loader_js' ]
             }
             // our watch on the widget src is handled by 'watchify', included in browserify.
             // (see the 'watch' option in the browserify config.)
+        },
+        concurrent: {
+            watch_all: {
+                tasks: [ 'watch:gruntfile', 'watch:widget_js', 'watch:widget_css', 'watch:engage_loader_js' ],
+                options: {
+                    logConcurrentOutput: true
+                }
+            }
         }
         });
 
@@ -135,9 +164,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-concurrent');
 
     grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
-    grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'watch:widget_css'  ]);
+    grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'concurrent:watch_all'  ]);
     grunt.registerTask('rangy-compile', [ 'concat:rangy' ]);// This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
     grunt.registerTask('rangy-min', [ 'uglify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.
     grunt.registerTask('ractive-min', [ 'uglify:ractive' ]);

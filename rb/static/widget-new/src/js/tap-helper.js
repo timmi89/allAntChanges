@@ -8,7 +8,9 @@ function setupHelper(groupSettings) {
         var ractive = Ractive({
             el: WidgetBucket.get(),
             append: true,
-            data: {},
+            data: {
+                positionTop: groupSettings.tapHelperPosition() === 'top'
+            },
             template: require('../templates/tap-helper.hbs.html'),
             partials: {
                 logo: SVGs.logo

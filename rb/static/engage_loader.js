@@ -18,16 +18,15 @@
             { domain: 'wral.com', percentage: 100 },
             { domain: 'bustle.com', percentage: 100 },
             { domain: 'channel3000.com', percentage: 100 },
-            { domain: 'wktv.com', percentage: 0 },
-            { domain: 'fox13news.com', percentage: 0 },
-            { domain: 'dukechronicle.com', percentage: 0 },
-            { domain: 'jewishboston.com', percentage: 0 },
-            { domain: 'kezi.com', percentage: 0 },
-            { domain: 'kdrv.com', percentage: 0 },
-            { domain: 'ntrsctn.com', percentage: 0 },
+            { domain: 'wktv.com', percentage: 100 },
+            { domain: 'fox13news.com', percentage: 100 },
+            { domain: 'dukechronicle.com', percentage: 100 },
+            { domain: 'kezi.com', percentage: 100 },
+            { domain: 'kdrv.com', percentage: 100 },
+            { domain: 'ntrsctn.com', percentage: 100 },
             { domain: 'geekwire.com', percentage: 100 },
             { domain: 'blog.antenna.is', percentage: 100 },
-            { domain: 'exitevent.com', percentage: 0 }
+            { domain: 'exitevent.com', percentage: 100 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
         for (var i = 0; i < groups.length; i++) {

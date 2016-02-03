@@ -312,20 +312,19 @@ class GroupForm(forms.ModelForm):
         for tag in tags.split(';'):
             tag = tag.strip()
 
-            check_nodes = InteractionNode.objects.filter(body__exact = tag)
-        
-            if check_nodes.count() == 0:
+            case_insensitive_nodes = InteractionNode.objects.filter(body__exact = tag)
+            inode = None
+            for node in case_insensitive_nodes:
+                # InteractionNode body is case insensitive, but the group default reactions should be case sensitive
+                # so publishers can change the case of their default reactions
+                if node.body == tag:
+                    inode = node
+                    break
+
+            if inode is None:
                 inode = InteractionNode.objects.create(body=tag)
 
-            elif check_nodes.count() > 1:
-                inode = check_nodes[0]
-        
-            elif check_nodes.count() == 1:
-                inode = check_nodes[0]
-
-            new_blessed_tags.append(
-                inode
-            )
+            new_blessed_tags.append(inode)
 
         self.new_blessed_tags = new_blessed_tags
 
@@ -341,8 +340,8 @@ class GroupForm(forms.ModelForm):
             GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
-        cache_data = getSettingsDict(self.instance)
         site = Site.objects.get(group=self.instance.id)
+        cache_data = getSettingsDict(self.instance, site, self.new_blessed_tags)
         try:
             cache.set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:

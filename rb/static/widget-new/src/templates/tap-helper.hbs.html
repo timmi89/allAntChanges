@@ -1,4 +1,6 @@
-<div class="antenna antenna-tap-helper" decorator="cssreset" on-tap="dismiss">
+<div decorator="cssreset" on-tap="dismiss" class="antenna
+                antenna-tap-helper
+                 {{#if positionTop}}antenna-helper-top{{else}}antenna-helper-bottom{{/if}}">
     <div class="antenna-tap-helper-inner">
         <div>
             {{>logo}}<span class="antenna-tap-helper-prompt">{{getMessage('tap_helper__prompt')}}</span>
