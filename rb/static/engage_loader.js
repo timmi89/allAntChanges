@@ -23,7 +23,7 @@
             { domain: 'dukechronicle.com', percentage: 100 },
             { domain: 'kezi.com', percentage: 100 },
             { domain: 'kdrv.com', percentage: 100 },
-            { domain: 'ntrsctn.com', percentage: 0 },
+            { domain: 'ntrsctn.com', percentage: 100 },
             { domain: 'geekwire.com', percentage: 100 },
             { domain: 'blog.antenna.is', percentage: 100 },
             { domain: 'exitevent.com', percentage: 0 }
