@@ -31,23 +31,45 @@ function getRootElement() {
                 clickHandler();
             }
         });
-        // The :hover pseudo class can become stuck on the antenna-popup element when we bring up the reaction window
-        // in response to the click. So here we add/remove our own hover class instead.
-        // See: http://stackoverflow.com/questions/10321275/hover-state-is-sticky-after-element-is-moved-out-from-under-the-mouse-in-all-br
-        $element.on('mouseenter', function() {
-           $element.addClass('hover');
-        });
-        $element.on('mouseleave', function() {
-            $element.removeClass('hover');
-        });
+        setupMouseOver($element);
         return $element;
     }
     return $(ractive.find('.antenna-popup'));
 }
 
+function setupMouseOver($element) {
+    var closeTimer;
+
+    // The :hover pseudo class can become stuck on the antenna-popup element when we bring up the reaction window
+    // in response to the click. So here we add/remove our own hover class instead.
+    // See: http://stackoverflow.com/questions/10321275/hover-state-is-sticky-after-element-is-moved-out-from-under-the-mouse-in-all-br
+    var hoverClass = 'antenna-hover';
+    $element.on('mouseenter', function() {
+        $element.addClass(hoverClass);
+        keepOpen();
+    });
+    $element.on('mouseleave', function() {
+        $element.removeClass(hoverClass);
+        delayedClose();
+    });
+
+    function delayedClose() {
+        closeTimer = setTimeout(function() {
+            closeTimer = null;
+            hidePopup($element);
+        }, 500);
+    }
+
+    function keepOpen() {
+        if (closeTimer) {
+            clearTimeout(closeTimer);
+        }
+    }
+}
+
 function showPopup(coordinates, callback) {
     var $element = getRootElement();
-    if (!$element.hasClass('show')) {
+    if (!$element.hasClass('antenna-show')) {
         clickHandler = callback;
         $element
             .show() // still has opacity 0 at this point
@@ -55,7 +77,7 @@ function showPopup(coordinates, callback) {
                 top: coordinates.top - $element.outerHeight() - 6, // TODO find a cleaner way to account for the popup 'tail'
                 left: coordinates.left - Math.floor($element.outerWidth() / 2)
             });
-        TransitionUtil.toggleClass($element, 'show', true, function() {
+        TransitionUtil.toggleClass($element, 'antenna-show', true, function() {
             // TODO: after the appearance transition is complete, add a handler for mouseenter which then registers
             //       a handler for mouseleave that hides the popup
 
@@ -68,7 +90,7 @@ function showPopup(coordinates, callback) {
 }
 
 function hidePopup($element) {
-    TransitionUtil.toggleClass($element, 'show', false, function() {
+    TransitionUtil.toggleClass($element, 'antenna-show', false, function() {
         $element.hide(); // after we're at opacity 0, hide the element so it doesn't receive accidental clicks
     });
     $(document).off('click.antenna-popup');

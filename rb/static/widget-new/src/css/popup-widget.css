@@ -12,7 +12,7 @@
     z-index: 1000; /* TODO: z-index value? */
 }
 
-.antenna-popup.show {
+.antenna-popup.antenna-show {
     opacity: 1.0;
     -webkit-transform: scale(1.0) translate3d(0, 0, 0);
     transform: scale(1.0) translate3d(0, 0, 0);
@@ -50,7 +50,7 @@
     fill: #dddddd;
     transition: fill 500ms;
 }
-.antenna-popup.hover .antenna-logo-path {
+.antenna-popup.antenna-hover .antenna-logo-path {
     fill: #ffffff;
 }
 
@@ -65,12 +65,12 @@
     white-space: pre; /* don't wrap */
 }
 
-.antenna-popup.hover .antenna-popup-text {
+.antenna-popup.antenna-hover .antenna-popup-text {
     margin-left: 8px;
     max-width: 150px;
     visibility: inherit; /* only show if the parent element is showing */
 }
 
-.antenna-popup-text:hover {
+.antenna-popup.antenna-hover .antenna-popup-text:hover {
     color: #ffffff;
 }
