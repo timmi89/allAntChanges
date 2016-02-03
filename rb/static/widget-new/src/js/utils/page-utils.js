@@ -53,7 +53,18 @@ function computeTopLevelCanonicalUrl(groupSettings) {
 function computePageElementUrl($pageElement, groupSettings) {
     var url = $pageElement.find(groupSettings.pageLinkSelector()).attr('href');
     if (url) {
-        return removeSubdomainFromPageUrl(url, groupSettings);
+        url = removeSubdomainFromPageUrl(url, groupSettings);
+        var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+        if (url.indexOf(origin) !== 0 && // Not an absolute URL
+                !url.substr(0,2) !== '//' && // Not protocol relative
+                !groupSettings.url.ignoreSubdomain()) { // And we weren't not ignoring the subdomain
+            if (url.substr(0,1) == '/') {
+                url = origin + url;
+            } else {
+                url = origin + window.location.pathname + url;
+            }
+        }
+        return url;
     }
     return computeTopLevelCanonicalUrl(groupSettings);
 }

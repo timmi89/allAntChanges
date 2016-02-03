@@ -108,6 +108,7 @@ urlpatterns = patterns('',
   url(r'^publishers/$','rb.views.publishers'),
   url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
+  url(r'^blog$', RedirectView.as_view(url='http://blog.antenna.is')),
 
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code'
@@ -176,8 +177,8 @@ urlpatterns = patterns('',
 
 from django.conf.urls.static import static
 
-if settings.DEBUG:
-    urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
+# if settings.DEBUG:
+#     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
         url(r'^static/(?P<path>.*)$', 'serve'),
