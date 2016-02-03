@@ -1,0 +1,49 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+    service: amqp
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    name: rabbitmq
+    service: amqp
+    app: rabbitmq
+  template:
+    metadata:
+      name: rabbitmq
+      labels:
+        name: rabbitmq
+        service: amqp
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3.6.0-management
+          resources:
+            requests:
+              cpu: ".5"
+              memory: "500Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: RABBITMQ_ERLANG_COOKIE
+              value: 't#&7@1O8*6J9zqbLb9IyOJ0D'
+            - name: RABBITMQ_DEFAULT_VHOST
+              value: antenna_broker
+            - name: RABBITMQ_DEFAULT_USER
+              value: broadcast
+            - name: RABBITMQ_DEFAULT_PASS
+              value: 51gn4l5
+          ports:
+            - name: amqp
+              containerPort: 5672
+            - name: amqp-tls
+              containerPort: 5671
+            - name: rabbitmq-manage
+              containerPort: 15672
