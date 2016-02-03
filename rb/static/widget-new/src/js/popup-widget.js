@@ -91,7 +91,9 @@ function showPopup(coordinates, callback) {
 
 function hidePopup($element) {
     TransitionUtil.toggleClass($element, 'antenna-show', false, function() {
-        $element.hide(); // after we're at opacity 0, hide the element so it doesn't receive accidental clicks
+        if (!$element.hasClass('antenna-show')) { // By the time the transition finishes, the widget could be showing again.
+            $element.hide(); // after we're at opacity 0, hide the element so it doesn't receive accidental clicks
+        }
     });
     $(document).off('click.antenna-popup');
 }
