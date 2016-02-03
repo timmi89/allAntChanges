@@ -26,7 +26,7 @@
             { domain: 'ntrsctn.com', percentage: 100 },
             { domain: 'geekwire.com', percentage: 100 },
             { domain: 'blog.antenna.is', percentage: 100 },
-            { domain: 'exitevent.com', percentage: 0 }
+            { domain: 'exitevent.com', percentage: 100 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
         for (var i = 0; i < groups.length; i++) {
