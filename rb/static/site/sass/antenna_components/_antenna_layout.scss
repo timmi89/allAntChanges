@@ -37,6 +37,12 @@ section {
                 background: $black;
             }
         }
+        .antenna-text-indicator-widget .antenna-logo-path {
+            fill: $gray;
+        }
+        .antenna-text-indicator-widget.antenna-active .antenna-logo-path {
+            fill: $white;
+        }
     }
 
     &.lt-blue-section {

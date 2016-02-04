@@ -3268,7 +3268,8 @@
 	.post-single .share-post ul li.count-share {
 		text-align: center;
 		font-size: 18px;
-		padding: 29px 0 8px;
+		padding: 8px 0 8px;
+		line-height: 1em;
 	}
 
 	.post-single .share-post ul li.count-share .numb {
@@ -3280,10 +3281,6 @@
 	.post-single .share-post ul li a {
 		font-size: 14px;
 		color: #a1a1a1;
-	}
-
-	.post-single .share-post ul span {
-		display: block;
 	}
 
 	.post-single .helpful {
