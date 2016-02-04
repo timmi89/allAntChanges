@@ -5,6 +5,7 @@
     border-collapse: collapse;
     border-spacing: 0;
     box-sizing: border-box;
+    word-wrap: initial;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     font-style: normal;
     font-size: 100%;
