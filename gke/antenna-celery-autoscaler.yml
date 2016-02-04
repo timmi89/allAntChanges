@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nodebq-http
+spec:
+  cpuUtilization:
+    targetPercentage: 25
+  maxReplicas: 50
+  minReplicas: 1
+  scaleRef:
+    apiVersion: v1
+    kind: ReplicationController
+    name: nodebq-http
+    subresource: scale

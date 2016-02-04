@@ -1,0 +1,52 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: nodebq-http
+  labels:
+    name: events
+    service: http
+    app: nodebq
+spec:
+  replicas: 3
+  selector:
+    name: events
+    service: http
+    app: nodebq
+  template:
+    metadata:
+      name: nodebq-http
+      labels:
+        name: events
+        service: http
+        app: nodebq
+    spec:
+      containers:
+        - name: nodebq-http
+          image: gcr.io/antenna-array/nodebq
+          resources:
+            requests:
+              cpu: ".25"
+            limits:
+              cpu: ".5"
+              memory: "1Gi"
+          env:
+            - name: CLIENT_SECRET_PATH
+              value: /secrets/client-secrets.json
+            - name: PRIVATEKEY_PATH
+              value: /secrets/privatekey.pem
+            - name: KEY_PATH
+              value: /secrets/key.pem
+            - name: BQ_TABLE_PREFIX
+              value: test
+          ports:
+            - name: http
+              containerPort: 3000
+          volumeMounts:
+            - name: nodebq-google-api-prod-keys
+              mountPath: /secrets
+              readOnly: true
+      volumes:
+        - name: nodebq-google-api-prod-keys
+          secret:
+            secretName: nodebq-google-api-prod-keys

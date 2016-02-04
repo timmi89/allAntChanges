@@ -170,7 +170,7 @@ else:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     EVENTS_URL = 'http://events.antenna.is'
-    DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
+    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
 
     DATABASES = {
         'default': {
@@ -178,10 +178,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.99.122',
-            'PORT':     '3306',
+            'HOST':     os.getenv('DATABASE_HOST_MASTER'),
+            'PORT':     os.getenv('DATABASE_PORT_MASTER', '3306'),
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': os.getenv('DATABASE_SSL_MASTER_CLIENT_KEY'),
+                    'cert': os.getenv('DATABASE_SSL_MASTER_CLIENT_CERT'),
+                    'ca': os.getenv('DATABASE_SSL_MASTER_SERVER_CA')
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -195,10 +200,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.245.89',
-            'PORT':     '3306',
+            'HOST':     os.getenv('DATABASE_HOST_SLAVE1'),
+            'PORT':     os.getenv('DATABASE_PORT_SLAVE1', '3306'),
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': os.getenv('DATABASE_SSL_SLAVE1_CLIENT_KEY'),
+                    'cert': os.getenv('DATABASE_SSL_SLAVE1_CLIENT_CERT'),
+                    'ca': os.getenv('DATABASE_SSL_SLAVE1_SERVER_CA')
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -212,10 +222,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.4.119',
-            'PORT':     '3306',
+            'HOST':     os.getenv('DATABASE_HOST_SLAVE2'),
+            'PORT':     os.getenv('DATABASE_PORT_SLAVE2', '3306'),
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': os.getenv('DATABASE_SSL_SLAVE2_CLIENT_KEY'),
+                    'cert': os.getenv('DATABASE_SSL_SLAVE2_CLIENT_CERT'),
+                    'ca': os.getenv('DATABASE_SSL_SLAVE2_SERVER_CA')
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -251,7 +266,10 @@ else:
         }
     }
 
-    BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
+    BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
+    BROKER_URL = BROKER_URL.format(
+        host=os.getenv('RABBITMQ_HOST', 'localhost')
+    )
 
 
 CELERY_ACCEPT_CONTENT = ['json']

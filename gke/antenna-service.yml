@@ -1,0 +1,19 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nodebq
+  labels:
+    name: events
+    service: http
+    app: nodebq
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  selector:
+    name: events
+    service: http
+    app: nodebq

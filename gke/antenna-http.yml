@@ -1,0 +1,62 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: antenna-http
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: antenna-http
+      labels:
+        name: antenna
+        service: http
+        app: antenna
+    spec:
+      containers:
+        - name: antenna-http
+          image: gcr.io/antenna-array/antenna:latest
+          resources:
+            requests:
+              cpu: "1"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: DATABASE_HOST_MASTER
+              value: 104.154.91.57
+            - name: DATABASE_SSL_MASTER_CLIENT_KEY
+              value: /secrets/master-client-key.pem
+            - name: DATABASE_SSL_MASTER_CLIENT_CERT
+              value: /secrets/master-client-cert.pem
+            - name: DATABASE_SSL_MASTER_SERVER_CA
+              value: /secrets/master-server-ca.pem
+            - name: DATABASE_HOST_SLAVE1
+              value: 104.154.80.103
+            - name: DATABASE_SSL_SLAVE1_CLIENT_KEY
+              value: /secrets/slave1-client-key.pem
+            - name: DATABASE_SSL_SLAVE1_CLIENT_CERT
+              value: /secrets/slave1-client-cert.pem
+            - name: DATABASE_SSL_SLAVE1_SERVER_CA
+              value: /secrets/slave1-server-ca.pem
+            - name: DATABASE_HOST_SLAVE2
+              value: 104.154.80.103
+            - name: DATABASE_SSL_SLAVE2_CLIENT_KEY
+              value: /secrets/slave1-client-key.pem
+            - name: DATABASE_SSL_SLAVE2_CLIENT_CERT
+              value: /secrets/slave1-client-cert.pem
+            - name: DATABASE_SSL_SLAVE2_SERVER_CA
+              value: /secrets/slave1-server-ca.pem
+            - name: RABBITMQ_HOST
+              value: amqp
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: mysql-ssl-secret
+              mountPath: /secrets
+              readOnly: true
+      volumes:
+        - name: mysql-ssl-secret
+          secret:
+            secretName: mysql-ssl-secret

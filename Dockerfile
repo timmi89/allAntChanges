@@ -5,6 +5,7 @@ ENV DJANGO_SETTINGS_MODULE antenna.settings
 
 RUN mkdir -p /code/antenna
 WORKDIR /code/antenna
+ENV PYTHONPATH=/code
 
 ADD requirements.txt /code/antenna/requirements.txt
 RUN pip install http://effbot.org/downloads/Imaging-1.1.7.tar.gz
