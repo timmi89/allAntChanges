@@ -15,6 +15,7 @@
         // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
         var groups = [
             { domain: 'local.antenna.is', percentage: 100 },
+            { domain: 'www.antenna.is', percentage: 100 },
             { domain: 'mobi.perezhilton.com', percentage: 100 },
             { domain: 'perezhilton.com', percentage: 100 },
             { domain: 'dlisted.com', percentage: 100 },
@@ -29,8 +30,7 @@
             { domain: 'ntrsctn.com', percentage: 100 },
             { domain: 'geekwire.com', percentage: 100 },
             { domain: 'blog.antenna.is', percentage: 100 },
-            { domain: 'exitevent.com', percentage: 100 },
-            { domain: 'www.antenna.is', percentage: 0 }
+            { domain: 'exitevent.com', percentage: 100 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
         for (var i = 0; i < groups.length; i++) {
