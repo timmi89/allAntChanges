@@ -3,6 +3,9 @@
     var currentWidgetUrl = computeCurrentScriptUrl(urlParams);
     var newWidgetUrl = computeNewScriptUrl(urlParams);
     var scriptUrl = currentWidgetUrl;
+    if (urlParams['antennaDisabled'] === 'true') {
+        return;
+    }
     if (urlParams['antennaNewWidget'] === 'true') {
         // Manual override to use the new widget
         scriptUrl = newWidgetUrl;
