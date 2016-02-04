@@ -1,4 +1,4 @@
- {{#if containerData.reactionTotal === undefined || !containerData.loaded}}
+ {{#if !containerData.loaded || containerData.reactionTotal === undefined || containerData.reactionTotal === 0}}
     {{getMessage('call_to_action_label__responses')}}
 {{elseif containerData.reactionTotal === 1}}
     {{getMessage('call_to_action_label__responses_one')}}
