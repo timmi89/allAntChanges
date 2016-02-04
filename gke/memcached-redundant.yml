@@ -1,0 +1,29 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: memcached-redundant
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: memcached-redundant
+      labels:
+        name: memcached-redundant
+        app: memcached
+        service: memcached
+    spec:
+      containers:
+        - name: memcached
+          image: memcached:1.4
+          args: ['-m', '8092', '-c', '2048']
+          resources:
+            requests:
+              cpu: "1"
+              memory: "8Gi"
+            limits:
+              cpu: "1"
+              memory: "8.5Gi"
+          ports:
+            - name: memcached
+              containerPort: 11211

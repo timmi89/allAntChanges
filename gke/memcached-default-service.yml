@@ -1,0 +1,18 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: memcached-default
+  labels:
+    name: memcached-default
+    service: memcached
+spec:
+  ports:
+  - name: memcached
+    port: 11211
+    targetPort: memcached
+    protocol: TCP
+  selector:
+    name: memcached-default
+    service: memcached
+  type: ClusterIP
