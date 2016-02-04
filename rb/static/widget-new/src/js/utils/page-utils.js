@@ -6,7 +6,7 @@ function computeTopLevelPageTitle() {
 }
 
 function computePageTitle($page, groupSettings) {
-    var pageTitle = $page.find(groupSettings.pageLinkSelector()).text().trim();
+    var pageTitle = $page.find(groupSettings.pageUrlSelector()).text().trim();
     if (pageTitle === '') {
         pageTitle = computeTopLevelPageTitle();
     }
@@ -51,7 +51,7 @@ function computeTopLevelCanonicalUrl(groupSettings) {
 }
 
 function computePageElementUrl($pageElement, groupSettings) {
-    var url = $pageElement.find(groupSettings.pageLinkSelector()).attr('href');
+    var url = $pageElement.find(groupSettings.pageUrlSelector()).attr(groupSettings.pageUrlAttribute());
     if (url) {
         url = removeSubdomainFromPageUrl(url, groupSettings);
         var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');

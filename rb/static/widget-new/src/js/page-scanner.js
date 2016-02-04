@@ -457,10 +457,14 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     // If not an entire page/pages, see if content was added to an existing page
                     var $page = $element.closest(groupSettings.pageSelector());
                     if ($page.length === 0) {
-                        $page = $('body'); // TODO: is this right? keep in sync with scanAllPages
+                        $page = $('body');
                     }
-                    var $pageIndicator = find($page, groupSettings.pageLinkSelector());
+                    var $pageIndicator = find($page, groupSettings.pageUrlSelector());
                     if ($pageIndicator.length === 0) {
+                        // Whenever new content is added, check if we need to reinitialize all our data based on the
+                        // window.location. This accomodates single page apps that don't use browser navigation.
+                        // (As an optimization, we don't do this check if the added element contains an entire page
+                        // with a URL specified inside the content.)
                         if (shouldReinitializeForLocationChange()) {
                             reinitializeCallback(groupSettings);
                             return;
