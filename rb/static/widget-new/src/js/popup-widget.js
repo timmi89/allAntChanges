@@ -79,11 +79,13 @@ function showPopup(coordinates, callback) {
     var $element = getRootElement();
     if (!$element.hasClass('antenna-show')) {
         clickHandler = callback;
+        var bodyOffset = $('body').offset(); // account for any offset that sites apply to the entire body
+        var tail = 6; // TODO find a cleaner way to account for the popup 'tail'
         $element
             .show() // still has opacity 0 at this point
             .css({
-                top: coordinates.top - $element.outerHeight() - 6, // TODO find a cleaner way to account for the popup 'tail'
-                left: coordinates.left - Math.floor($element.outerWidth() / 2)
+                top: coordinates.top - $element.outerHeight() - tail - bodyOffset.top,
+                left: coordinates.left - bodyOffset.left - Math.floor($element.outerWidth() / 2)
             });
         TransitionUtil.toggleClass($element, 'antenna-show', true, function() {
             // TODO: after the appearance transition is complete, add a handler for mouseenter which then registers
