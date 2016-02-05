@@ -193,6 +193,13 @@
         <section class="configurationSection">
             <h3>Page Attributes</h3>
             <div class="formRow">
+                <label for="id_post_title_selector">
+                    <span class="labelTitle">Page Title Selector (jQuery selector)</span>
+                    <span>Where is the title for the page?  (e.g. "article header h1")</span>
+                </label>
+                {{ form.post_title_selector }}{{ form.post_title_selector.errors }}
+            </div>
+            <div class="formRow">
                 <label for="id_image_selector">
                     <span class="labelTitle">Page Image Selector (jQuery selector)</span>
                     <span>Where is the primary image for the page?  (e.g. "article header img.masthead")</span>

@@ -239,6 +239,7 @@ class Group(models.Model):
     post_selector = models.CharField(max_length=255, blank=True)
     post_href_selector = models.CharField(max_length=255, blank=True)
     post_href_attribute = models.CharField(max_length=255, blank=True)
+    post_title_selector = models.CharField(max_length=255, blank=True)
     summary_widget_selector = models.CharField(max_length=255, blank=True)
     summary_widget_method = models.CharField(max_length=255, blank=True)
     summary_widget_expanded_mobile = models.BooleanField(default=False)

@@ -1,14 +1,15 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
-function computeTopLevelPageTitle() {
-    // TODO: This should be a configurable group setting like the other page properties.
-    return getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
-}
-
 function computePageTitle($page, groupSettings) {
-    var pageTitle = $page.find(groupSettings.pageUrlSelector()).text().trim();
+    var titleSelector = groupSettings.pageTitleSelector();
+    if (!titleSelector) {
+        // Backwards compatibility for sites which deployed before we had a separate title selector.
+        titleSelector = groupSettings.pageUrlSelector();
+    }
+    var pageTitle = $page.find(titleSelector).text().trim();
     if (pageTitle === '') {
-        pageTitle = computeTopLevelPageTitle();
+        // If we couldn't find a title based on the group settings, fallback to some hard-coded behavior.
+        pageTitle = getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
     }
     return pageTitle;
 }

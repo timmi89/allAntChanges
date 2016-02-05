@@ -62,10 +62,10 @@ function queuePageDataLoad($pageElements, groupSettings) {
         }
     });
 
-    var pageDataParam = computePagesParam(pagesToLoad, groupSettings);
-    // TODO: delete the commented line below, which is for testing purposes
-    //pageDataParam = {pages: [{"group_id":1184, "url":"http://www.dukechronicle.com/articles/2014/02/14/portrait-porn-star","canonical_url":"same","title":"Portrait of a porn star","image":""}]};
-    loadPageData(pageDataParam, groupSettings);
+    if (pagesToLoad.length > 0) {
+        var pageDataParam = computePagesParam(pagesToLoad, groupSettings);
+        loadPageData(pageDataParam, groupSettings);
+    }
 }
 
 function isInView($element) {

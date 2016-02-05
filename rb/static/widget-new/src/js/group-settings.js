@@ -238,6 +238,7 @@ function createFromJSON(json) {
         pageSelector: data('post_selector'),
         pageUrlSelector: data('post_href_selector'),
         pageUrlAttribute: data('post_href_attribute', 'href'),
+        pageTitleSelector: data('post_title_selector'),
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
         pageAuthorSelector: data('author_selector'),
