@@ -1,34 +1,23 @@
+# -*- coding: utf-8 -*-
+from south.utils import datetime_utils as datetime
+from south.db import db
 from south.v2 import SchemaMigration
-
-from django.db import connection
-from django.conf import settings
+from django.db import models
 
 
 class Migration(SchemaMigration):
+
     def forwards(self, orm):
-        cursor = connection.cursor()
-        cursor.execute('SHOW TABLES')
+        # Adding field 'Group.post_href_attribute'
+        db.add_column(u'rb_group', 'post_href_attribute',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True),
+                      keep_default=False)
 
-        results = []
-        for row in cursor.fetchall():
-            results.append(row)
-
-        for row in results:
-            cursor.execute(
-                '''
-                ALTER TABLE %s
-                CONVERT TO CHARACTER SET utf8
-                COLLATE utf8_general_ci;
-                ''' % (row[0]))
-
-        cursor.execute(
-            '''
-            ALTER DATABASE %s
-            CHARACTER SET utf8;
-            ''' % settings.DATABASES['default']['NAME'])
 
     def backwards(self, orm):
-        "noop"
+        # Deleting field 'Group.post_href_attribute'
+        db.delete_column(u'rb_group', 'post_href_attribute')
+
 
     models = {
         u'auth.group': {
@@ -195,6 +184,7 @@ class Migration(SchemaMigration):
             'no_readr': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'page_tld': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'paragraph_helper': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'post_href_attribute': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'post_href_selector': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'post_selector': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'premium': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),

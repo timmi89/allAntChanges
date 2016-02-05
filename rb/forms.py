@@ -391,6 +391,7 @@ class GroupForm(forms.ModelForm):
             'custom_css',
             'post_selector',
             'post_href_selector',
+            'post_href_attribute',
             'summary_widget_selector',
             'summary_widget_method',
             'summary_widget_expanded_mobile',
