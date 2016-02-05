@@ -140,7 +140,7 @@ function setupPositioning($containerElement, groupSettings, ractive) {
         var corner = groupSettings.mediaIndicatorCorner();
         var elementOffset = $containerElement.offset();
         // First, show/hide the indicator based on whether the target element is within the coords of the body. (This handles things like carousels.)
-        $wrapperElement.css({display: elementOffset.left > $('body').width() || elementOffset.left < 0 ? none : ''});
+        $wrapperElement.css({display: elementOffset.left > $('body').width() || elementOffset.left < 0 ? 'none' : ''});
         var coords = {};
         if (corner.indexOf('top') !== -1) {
             coords.top = elementOffset.top;
