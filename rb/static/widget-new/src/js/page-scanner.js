@@ -469,10 +469,6 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                             reinitializeCallback(groupSettings);
                             return;
                         }
-                    } else {
-                        // If an entire page element is added after the location is changed, reset the location.
-                        originalPathname = window.location.pathname;
-                        originalSearch = window.location.search;
                     }
                     var url = PageUtils.computePageUrl($page, groupSettings);
                     var pageData = PageData.getPageDataByURL(url);
