@@ -1,8 +1,8 @@
 (function() {
     var urlParams = getUrlParams();
-    var currentWidgetUrl = computeCurrentScriptUrl(urlParams);
+    var oldWidgetUrl = computeCurrentScriptUrl(urlParams);
     var newWidgetUrl = computeNewScriptUrl(urlParams);
-    var scriptUrl = currentWidgetUrl;
+    var scriptUrl = newWidgetUrl;
     if (urlParams['antennaDisabled'] === 'true') {
         return;
     }
@@ -10,27 +10,27 @@
         // Manual override to use the new widget
         scriptUrl = newWidgetUrl;
     } else if (urlParams['antennaOldWidget'] === 'true') {
-        scriptUrl = currentWidgetUrl;
+        scriptUrl = oldWidgetUrl;
     } else {
         // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
         var groups = [
-            { domain: 'local.antenna.is', percentage: 100 },
-            { domain: 'www.antenna.is', percentage: 100 },
-            { domain: 'mobi.perezhilton.com', percentage: 100 },
-            { domain: 'perezhilton.com', percentage: 100 },
-            { domain: 'dlisted.com', percentage: 100 },
-            { domain: 'wral.com', percentage: 100 },
-            { domain: 'bustle.com', percentage: 100 },
-            { domain: 'channel3000.com', percentage: 100 },
-            { domain: 'wktv.com', percentage: 100 },
-            { domain: 'fox13news.com', percentage: 100 },
-            { domain: 'dukechronicle.com', percentage: 100 },
-            { domain: 'kezi.com', percentage: 100 },
-            { domain: 'kdrv.com', percentage: 100 },
-            { domain: 'ntrsctn.com', percentage: 100 },
-            { domain: 'geekwire.com', percentage: 100 },
-            { domain: 'blog.antenna.is', percentage: 100 },
-            { domain: 'exitevent.com', percentage: 100 }
+            //{ domain: 'local.antenna.is', percentage: 100 },
+            //{ domain: 'www.antenna.is', percentage: 100 },
+            //{ domain: 'mobi.perezhilton.com', percentage: 100 },
+            //{ domain: 'perezhilton.com', percentage: 100 },
+            //{ domain: 'dlisted.com', percentage: 100 },
+            //{ domain: 'wral.com', percentage: 100 },
+            //{ domain: 'bustle.com', percentage: 100 },
+            //{ domain: 'channel3000.com', percentage: 100 },
+            //{ domain: 'wktv.com', percentage: 100 },
+            //{ domain: 'fox13news.com', percentage: 100 },
+            //{ domain: 'dukechronicle.com', percentage: 100 },
+            //{ domain: 'kezi.com', percentage: 100 },
+            //{ domain: 'kdrv.com', percentage: 100 },
+            //{ domain: 'ntrsctn.com', percentage: 100 },
+            //{ domain: 'geekwire.com', percentage: 100 },
+            //{ domain: 'blog.antenna.is', percentage: 100 },
+            //{ domain: 'exitevent.com', percentage: 100 }
         ];
         var hostname = window.antenna_host || window.location.hostname;
         for (var i = 0; i < groups.length; i++) {
@@ -38,6 +38,8 @@
             if (hostname.indexOf(group.domain) !== -1) {
                 if (Math.random() * 100 < group.percentage) {
                     scriptUrl = newWidgetUrl;
+                } else {
+                    scriptUrl = oldWidgetUrl;
                 }
                 break;
             }
