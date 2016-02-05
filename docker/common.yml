@@ -2,6 +2,7 @@ python_environment:
   build: ./development
   environment:
     DEBUG: 'true'
+    DJANGO_LOG_LEVEL: 'DEBUG'
     DATABASE_HOST: 'db'
     MEMCACHED_HOST: 'memcached'
     VIRTUAL_HOST: 'antenna.docker'

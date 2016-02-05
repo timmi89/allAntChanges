@@ -154,13 +154,13 @@ if DEBUG:
     )
 else:
     ALLOWED_HOSTS = [
-        "linode.antenna.is",
+        "antenna.is",
         "gce.antenna.is",
         "www.antenna.is",
-        "antenna.is",
         "static.antenna.is",
-        "www.readrboard.com",
+        "staging.antenna.is",
         "readrboard.com",
+        "www.readrboard.com",
         "static.readrboard.com"
     ]
     URL_NO_PROTO = 'www.antenna.is'
@@ -448,54 +448,38 @@ LOGGING = {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(levelname)s %(module)s %(thread)d %(message)s'
         },
     },
     'filters': {
 
     },
     'handlers': {
-        'null': {
-            'level': 'INFO',
-            'class': 'django.utils.log.NullHandler',
-        },
         'console': {
-            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
         'rb_standard': {
-            'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'logs/rb_standard.log',
             'maxBytes': 1024*1024*10,  # 10 MB
             'backupCount': 50,
             'formatter': 'verbose',
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': [],
-            'class': 'django.utils.log.AdminEmailHandler',
-        }
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['console', 'rb_standard'],
             'propagate': True,
-            'level': 'INFO',
-        },
-        'django.request': {
-            'handlers': ['mail_admins', 'rb_standard'],
-            'level': 'INFO',
-            'propagate': False,
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
         'rb.standard': {
             'handlers': ['console', 'rb_standard'],
-            'level': 'INFO',
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
         'django.db': {
             'handlers': ['console', 'rb_standard'],
-            'level': 'INFO',
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         }
     }
 }

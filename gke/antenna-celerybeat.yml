@@ -2,51 +2,66 @@
 kind: ReplicationController
 apiVersion: v1
 metadata:
-  name: nodebq-http
-  labels:
-    name: events
-    service: http
-    app: nodebq
+  name: antenna-celerybeat
 spec:
-  replicas: 3
-  selector:
-    name: events
-    service: http
-    app: nodebq
+  replicas: 1
   template:
     metadata:
-      name: nodebq-http
+      name: antenna-celerybeat
       labels:
-        name: events
-        service: http
-        app: nodebq
+        name: antenna
+        service: celerybeat
+        app: antenna
     spec:
       containers:
-        - name: nodebq-http
-          image: gcr.io/antenna-array/nodebq
+        - name: antenna-celerybeat
+          image: gcr.io/antenna-array/antenna:latest
+          args: ['./manage.py', 'celerybeat', '--loglevel=debug', '--pidfile=/tmp/celerybeat.pid']
           resources:
             requests:
-              cpu: ".25"
+              cpu: "10m"
+              memory: "100Mi"
             limits:
-              cpu: ".5"
-              memory: "1Gi"
+              cpu: "20m"
+              memory: "200Mi"
           env:
-            - name: CLIENT_SECRET_PATH
-              value: /secrets/client-secrets.json
-            - name: PRIVATEKEY_PATH
-              value: /secrets/privatekey.pem
-            - name: KEY_PATH
-              value: /secrets/key.pem
+            - name: DATABASE_HOST_MASTER
+              value: 104.154.91.57
+            - name: DATABASE_SSL_MASTER_CLIENT_KEY
+              value: /secrets/master-client-key.pem
+            - name: DATABASE_SSL_MASTER_CLIENT_CERT
+              value: /secrets/master-client-cert.pem
+            - name: DATABASE_SSL_MASTER_SERVER_CA
+              value: /secrets/master-server-ca.pem
+            - name: DATABASE_HOST_SLAVE1
+              value: 104.154.80.103
+            - name: DATABASE_SSL_SLAVE1_CLIENT_KEY
+              value: /secrets/slave1-client-key.pem
+            - name: DATABASE_SSL_SLAVE1_CLIENT_CERT
+              value: /secrets/slave1-client-cert.pem
+            - name: DATABASE_SSL_SLAVE1_SERVER_CA
+              value: /secrets/slave1-server-ca.pem
+            - name: DATABASE_HOST_SLAVE2
+              value: 104.154.80.103
+            - name: DATABASE_SSL_SLAVE2_CLIENT_KEY
+              value: /secrets/slave1-client-key.pem
+            - name: DATABASE_SSL_SLAVE2_CLIENT_CERT
+              value: /secrets/slave1-client-cert.pem
+            - name: DATABASE_SSL_SLAVE2_SERVER_CA
+              value: /secrets/slave1-server-ca.pem
+            - name: MEMCACHED_HOST_DEFAULT
+              value: memcached-default
+            - name: MEMCACHED_HOST_REDUNDANT
+              value: memcached-redundant
+            - name: RABBITMQ_HOST
+              value: amqp
             - name: BQ_TABLE_PREFIX
-              value: test
-          ports:
-            - name: http
-              containerPort: 3000
+              value: gke_staging
           volumeMounts:
-            - name: nodebq-google-api-prod-keys
+            - name: mysql-ssl-secret
               mountPath: /secrets
               readOnly: true
       volumes:
-        - name: nodebq-google-api-prod-keys
+        - name: mysql-ssl-secret
           secret:
-            secretName: nodebq-google-api-prod-keys
+            secretName: mysql-ssl-secret

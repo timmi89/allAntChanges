@@ -18,11 +18,16 @@ spec:
           image: gcr.io/antenna-array/antenna:latest
           resources:
             requests:
-              cpu: "1"
+              cpu: "100m"
+              memory: "100Mi"
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "500m"
+              memory: "250Mi"
           env:
+            - name: BQ_TABLE_PREFIX
+              value: gke_staging
+            - name: DJANGO_LOG_LEVEL
+              value: DEBUG
             - name: DATABASE_HOST_MASTER
               value: 104.154.91.57
             - name: DATABASE_SSL_MASTER_CLIENT_KEY

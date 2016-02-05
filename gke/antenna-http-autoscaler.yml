@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: nodebq-http
+  name: antenna-http
 spec:
   cpuUtilization:
     targetPercentage: 25
@@ -11,5 +11,5 @@ spec:
   scaleRef:
     apiVersion: v1
     kind: ReplicationController
-    name: nodebq-http
+    name: antenna-http
     subresource: scale

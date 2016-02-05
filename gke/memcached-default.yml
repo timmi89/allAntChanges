@@ -19,7 +19,7 @@ spec:
           args: ['-m', '8092', '-c', '2048']
           resources:
             requests:
-              cpu: "1"
+              cpu: "500m"
               memory: "8Gi"
             limits:
               cpu: "1"

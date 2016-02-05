@@ -1,19 +1,25 @@
+# Adapted from https://github.com/GoogleCloudPlatform/kube-jenkins-imager
+
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: nodebq
+  name: antenna
   labels:
-    name: events
-    service: http
-    app: nodebq
+    name: antenna
+    service: load-balancer
+    app: load-balancer
 spec:
   ports:
   - name: http
     port: 80
     targetPort: http
     protocol: TCP
+  - name: https
+    port: 443
+    targetPort: https
+    protocol: TCP
   selector:
-    name: events
-    service: http
-    app: nodebq
+    name: antenna
+    service: reverse-proxy
+  type: LoadBalancer

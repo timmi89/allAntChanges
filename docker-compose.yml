@@ -2,7 +2,7 @@ web:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c 'python manage.py runserver 0.0.0.0:8081'
+  command: python manage.py runserver 0.0.0.0:8081
   ports:
     - "8081:8081"
   links:
@@ -13,7 +13,7 @@ celeryd:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c './manage.py celeryd --loglevel=debug --concurrency=1'
+  command: ./manage.py celeryd --loglevel=debug --concurrency=1
   links:
     - db
     - memcached
@@ -22,7 +22,7 @@ celerybeat:
   extends:
     file: ./docker/common.yml
     service: python_environment
-  command: bash -c './manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid'
+  command: ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid
   links:
     - db
     - memcached
