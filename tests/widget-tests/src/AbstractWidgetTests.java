@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class AbstractWidgetTests {
 
-    protected static FirefoxDriver driver;
-//    protected static ChromeDriver driver;
+//    protected static FirefoxDriver driver;
+    protected static ChromeDriver driver;
 
     private static String TEST_SERVER_URL = "http://localhost:3001";
 
@@ -29,8 +29,8 @@ public class AbstractWidgetTests {
 
     @BeforeClass
     public static void setupDriver() {
-        driver = new FirefoxDriver();
-//        driver = new ChromeDriver();
+//        driver = new FirefoxDriver();
+        driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 
