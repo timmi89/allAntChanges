@@ -52,6 +52,10 @@ spec:
               value: /secrets/slave1-client-cert.pem
             - name: DATABASE_SSL_SLAVE2_SERVER_CA
               value: /secrets/slave1-server-ca.pem
+            - name: EMAIL_BACKEND
+              value: django.core.mail.backends.smtp.EmailBackend
+            - name: EMAIL_HOST
+              value: mailcatcher
             - name: MEMCACHED_HOST_DEFAULT
               value: memcached-default
             - name: MEMCACHED_HOST_REDUNDANT

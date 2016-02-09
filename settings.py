@@ -1,7 +1,6 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
 import os
-import imp
 
 if os.uname()[0] == 'Linux':
     DEBUG = os.getenv('DEBUG', 'false') == 'true'
@@ -374,12 +373,23 @@ TEMPLATE_DIRS = (
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
+env_email_backend = os.getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend')
+
+if env_email_backend == 'django_mailgun.MailgunBackend':
     EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-    MAILGUN_ACCESS_KEY = 'key-d18e972f265717b3b43ecf0317b85cbe'
-    MAILGUN_SERVER_NAME = 'mailgun.antenna.is'
+    MAILGUN_ACCESS_KEY = os.getenv('MAILGUN_ACCESS_KEY')
+    MAILGUN_SERVER_NAME = os.getenv('MAILGN_SERVER_NAME')
+elif env_email_backend == 'django.core.mail.backends.smtp.EmailBackend':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST', '127.0.0.1')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    EMAIL_PORT = os.getenv('EMAIL_PORT', 25)
+    EMAIL_USE_TLS = False
+else:
+    EMAIL_BACKEND = env_email_backend
 
 SEEDERS = [
     119507,

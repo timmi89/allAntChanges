@@ -1,0 +1,26 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: mailcatcher
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: mailcatcher
+      labels:
+        name: mailcatcher
+        service: smtp-fake
+    spec:
+      containers:
+        - name: mailcatcher
+          image: jeanberu/mailcatcher
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "250Mi"
+          ports:
+            - name: http
+              containerPort: 1080
+            - name: smtp
+              containerPort: 1025

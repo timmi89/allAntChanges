@@ -23,12 +23,14 @@ gcloud container clusters get-credentials antenna-staging
 
 ## Create
 
-### MySQL SSL Secrets
+### Secrets
 
-Create mysql-ssl-secret from LastPass Secure Note `Shared-Infrastructure/Staging MySQL SSL Secret`
+Create secrets LastPass Secure Notes
 
 ```sh
 lpass show --note "Shared-Infrastructure/Staging MySQL SSL Secret" | kubectl create -f -
+lpass show --note "Shared-Infrastructure/staging.antenna.is antenna-oauth2-proxy-cfg" | kubectl create -f -
+lpass show --note "Shared-Infrastructure/staging.antenna.is mailcatcher-oauth2-proxy-cfg" | kubectl create -f -
 ```
 
 ### Google Container Engine services
