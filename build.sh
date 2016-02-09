@@ -15,6 +15,11 @@ if ! git diff --quiet HEAD; then
   fail 'uncommitted changes'
 fi
 
+git_sha=`git rev-parse --short HEAD`
+iso_8601=`date -u +"%Y%m%dT%H%M%SZ"`
+
+echo "$VERSION-$iso_8601-$git_sha" > ./VERSION
+
 docker build -t gcr.io/antenna-array/antenna:$VERSION .
 docker tag -f gcr.io/antenna-array/antenna:$VERSION gcr.io/antenna-array/antenna:latest
 gcloud docker push gcr.io/antenna-array/antenna:$VERSION

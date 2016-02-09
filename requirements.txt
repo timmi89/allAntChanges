@@ -48,6 +48,7 @@ pyOpenSSL==0.14
 python-dateutil==2.4.2
 python-memcached==1.53
 pytz==2015.7
+raven==5.10.2
 requests==2.9.1
 shortuuid==0.4.3
 six==1.8.0

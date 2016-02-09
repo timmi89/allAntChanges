@@ -1,6 +1,7 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
 import os
+import imp
 
 if os.uname()[0] == 'Linux':
     DEBUG = os.getenv('DEBUG', 'false') == 'true'
@@ -12,6 +13,13 @@ if DEBUG:
     SERVER_EMAIL = "devserver@antenna.is"
 else:
     SERVER_EMAIL = "server@antenna.is"
+
+version_path = os.getenv('VERSION_PATH', '/VERSION')
+try:
+    with open(version_path, 'r') as version_file:
+        VERSION = version_file.read()
+except:
+    VERSION = 'unknown'
 
 EVENTS_PROJECT_NUMBER = '774436620412'
 EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
@@ -404,6 +412,14 @@ INSTALLED_APPS = [
     'gunicorn',
     'djcelery',
 ]
+
+sentry_dsn = os.getenv('SENTRY_DSN', False)
+if sentry_dsn:
+    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
+    RAVEN_CONFIG = {
+        'dsn': sentry_dsn,
+        'release': VERSION,
+    }
 
 if DEBUG:
     INSTALLED_APPS.append('devserver')
