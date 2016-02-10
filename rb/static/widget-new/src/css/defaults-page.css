@@ -10,6 +10,9 @@
 }
 
 .antenna-defaults-footer input {
+    display: inline-block;
+    height: 2em;
+    width: 65%;
     font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
     font-size: 11px;
     color: #aaaaaa;
@@ -17,7 +20,6 @@
     letter-spacing: -.25px;
     border: none;
     padding: 3px;
-    width: 65%;
     cursor: pointer;
 }
 
@@ -37,8 +39,10 @@
 
 .antenna-defaults-footer button {
     display: none;
+    height: 2em;
     background-color: #000000;
     border: 0;
+    border-radius: initial;
     text-align: center;
     padding: 6px 8px;
     margin-left: 5px;
