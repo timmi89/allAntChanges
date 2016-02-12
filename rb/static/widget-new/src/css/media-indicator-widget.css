@@ -41,7 +41,8 @@
     vertical-align: middle;
 }
 
-.antenna-media-indicator-widget.antenna-active .antenna-reaction-total {
+.antenna-media-indicator-widget.antenna-active .antenna-reaction-total,
+.antenna-media-indicator-widget.antenna-touch .antenna-reaction-total {
     visibility: inherit; /* only show if the parent element is showing */
 }
 

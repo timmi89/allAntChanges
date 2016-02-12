@@ -4,6 +4,7 @@ var ReactionsWidget = require('./reactions-widget');
 var SVGs = require('./svgs');
 
 var AppMode = require('./utils/app-mode');
+var BrowserMetrics = require('./utils/browser-metrics');
 var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 var TouchSupport = require('./utils/touch-support');
@@ -25,6 +26,7 @@ function createIndicatorWidget(options) {
         magic: true,
         data: {
             containerData: containerData,
+            supportsTouch: BrowserMetrics.supportsTouch(),
             extraAttributes: AppMode.debug ? 'ant-hash="' + containerData.hash + '"' : '' // TODO: this about making this a decorator handled by a "Debug" module
         },
         template: require('../templates/media-indicator-widget.hbs.html'),

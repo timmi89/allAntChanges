@@ -1,9 +1,9 @@
 
 
 <span decorator="cssreset" class="antenna antenna-media-indicator-wrapper">
-    <span class="antenna antenna-media-indicator-widget
-            {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}"
-            {{extraAttributes}}>
+    <span {{extraAttributes}} class="antenna antenna-media-indicator-widget
+            {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}
+            {{#if supportsTouch}}antenna-touch{{/if}}">
         {{>logo}}
         {{#if containerData.reactionTotal }}
             <span class="antenna-reaction-total">
