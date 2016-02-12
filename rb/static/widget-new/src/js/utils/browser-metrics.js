@@ -13,8 +13,8 @@ function supportsTouch() {
 function isMobile() {
     if (isMobileDevice === undefined) {
         isMobileDevice = supportsTouch() &&
-            ((window.matchMedia("only screen and (max-width: 480px) and (orientation: portrait)")).matches ||
-            (window.matchMedia("only screen and (max-width: 640px) and (orientation: landscape)")).matches);
+            ((window.matchMedia("screen and (max-device-width: 480px) and (orientation: portrait)")).matches ||
+            (window.matchMedia("screen and (max-device-width: 768px) and (orientation: landscape)")).matches);
     }
     return isMobileDevice;
 }
