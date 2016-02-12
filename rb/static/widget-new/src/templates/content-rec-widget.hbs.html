@@ -1,0 +1,29 @@
+<div class="antenna-contentrec-inner" decorator="cssreset">
+    {{#entries:index}}
+        <div class="antenna-contentrec-entry" on-tap="goToContent:{{this.page.url}}">
+            <div class="antenna-contentrec-header">
+                <div class="antenna-contentrec-reaction-text">
+                    {{this.top_reaction.text}}
+                </div>
+                <div class="antenna-contentrec-reaction-indicator">
+                    {{>logo}}<!--
+                    --><span class="antenna-contentrec-reaction-count">
+                        {{this.reaction_count}}
+                    </span>
+                </div>
+            </div>
+            <div class="antenna-contentrec-body" style="background:{{colors[index].background}};color:{{colors[index].foreground}};">
+                {{#if this.content.type === 'image'}}
+                    <div class="antenna-contentrec-body-image">
+                        <img src="{{this.content.body}}">
+                    </div>
+                {{elseif this.content.type === 'text'}}
+                    <div class="antenna-contentrec-body-text">
+                        {{this.content.body}}
+                    </div>
+                {{/if}}
+            </div>
+            <div class="antenna-contentrec-page-title">{{this.page.title}}</div>
+        </div>
+    {{/entries}}
+</div>

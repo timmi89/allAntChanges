@@ -8,6 +8,7 @@ var WidgetBucket = require('./utils/widget-bucket');
 
 var AutoCallToAction = require('./auto-call-to-action');
 var CallToActionIndicator = require('./call-to-action-indicator');
+var ContentRec = require('./content-rec-widget');
 var HashedElements = require('./hashed-elements');
 var MediaIndicatorWidget = require('./media-indicator-widget');
 var PageData = require('./page-data');
@@ -55,6 +56,7 @@ function scanPage($page, groupSettings, isMultiPage) {
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
     scanForSummaries($page, pageData, groupSettings); // Summary widget may be on the page, but outside the active section
+    scanForContentRec($page, pageData, groupSettings);
     $activeSections.each(function() {
         var $section = $(this);
         createAutoCallsToAction($section, pageData, groupSettings);
@@ -103,6 +105,14 @@ function scanForSummaries($element, pageData, groupSettings) {
         insertContent($summary, $summaryElement, groupSettings.summaryMethod());
         createdWidgets.push(summaryWidget);
     });
+}
+
+function scanForContentRec($element, pageData, groupSettings) {
+    var $recircs = find($element, '.antenna-content-rec', true, true);
+    for (var i = 0; i < $recircs.length; i++) {
+        var contentRecContainer = $recircs[i];
+        ContentRec.createContentRec(contentRecContainer, groupSettings);
+    }
 }
 
 function scanForCallsToAction($element, pageData, groupSettings) {

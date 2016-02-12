@@ -8,6 +8,7 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 var TouchSupport = require('./utils/touch-support');
+var Visibility = require('./utils/visibility');
 
 var CLASS_ACTIVE = 'antenna-active';
 
@@ -107,7 +108,20 @@ function setupPositioning($containerElement, groupSettings, ractive) {
 
     // TODO: consider also listening to src attribute changes, which might affect the height of elements on the page
     MutationObserver.addAdditionListener(elementsAddedOrRemoved);
-    MutationObserver.addRemovalListener(elementsAddedOrRemoved);
+    MutationObserver.addRemovalListener(elementsRemoved);
+
+    function elementsRemoved($elements) {
+        // Special case: If we see that our own readmore elements are removed,
+        // always update our indicators because their visibility might have changed.
+        for (var i = 0; i < $elements.length; i++) {
+            var $element = $elements[i];
+            if ($element.hasClass('antenna-readmore')|| $element.hasClass('antenna-content-rec-readmore')) {
+                positionIndicator();
+                return;
+            }
+        }
+        elementsAddedOrRemoved($elements);
+    }
 
     function elementsAddedOrRemoved($elements) {
         // Reposition the indicator if elements which might adjust the container's position are added/removed.
@@ -137,6 +151,7 @@ function setupPositioning($containerElement, groupSettings, ractive) {
     }
 
     function positionIndicator() {
+        updateDisplayForVisibility(); // Update visibility whenever we position the element.
         // Position the wrapper element (which has a hardcoded width) in the appropriate corner. Then flip the left/right
         // positioning of the nested widget element to adjust the way it will expand when the media is hovered.
         var corner = groupSettings.mediaIndicatorCorner();
@@ -155,6 +170,12 @@ function setupPositioning($containerElement, groupSettings, ractive) {
             $rootElement.css({right:'',left:0});
         }
         $wrapperElement.css(coords);
+    }
+
+    function updateDisplayForVisibility() {
+        // Hide/show the indicator based on whether the container element is visible.
+        // Examples of where we need there are carousels and our own readmore widget.
+        $rootElement.css({display: Visibility.isVisible($containerElement.get(0)) ? '': 'none'});
     }
 }
 

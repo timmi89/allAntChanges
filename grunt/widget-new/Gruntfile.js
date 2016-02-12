@@ -18,6 +18,9 @@ module.exports = function(grunt) {
         engage_loader_js_src: [ rootDir + '/rb/static/engage_loader.js' ],
         engage_loader_js_dest: rootDir + '/rb/static/engage.js',
 
+        readmore_js_src: [ rootDir + '/rb/static/readmore/src/readmore.js' ],
+        readmore_js_dest: rootDir + '/rb/static/readmore.min.js',
+
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
         rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.js',
         rangy_min: rootDir + '/rb/static/widget-new/lib/rangy.compiled-1.3.0.min.js',
@@ -106,6 +109,10 @@ module.exports = function(grunt) {
                 src: ['<%= paths.engage_loader_js_src %>'],
                 dest: '<%= paths.engage_loader_js_dest %>'
             },
+            readmore_js: {
+                src: ['<%= paths.readmore_js_src %>'],
+                dest: '<%= paths.readmore_js_dest %>'
+            },
             rangy: {
                 src: ['<%= paths.rangy_dest %>'],
                 dest: '<%= paths.rangy_min %>'
@@ -143,13 +150,20 @@ module.exports = function(grunt) {
                 },
                 files: [ '<%= paths.engage_loader_js_src %>' ],
                 tasks: [ 'uglify:engage_loader_js' ]
+            },
+            readmore_js: {
+                options: {
+                    atBegin: true
+                },
+                files: [ '<%= paths.readmore_js_src %>' ],
+                tasks: [ 'uglify:readmore_js' ]
             }
             // our watch on the widget src is handled by 'watchify', included in browserify.
             // (see the 'watch' option in the browserify config.)
         },
         concurrent: {
             watch_all: {
-                tasks: [ 'watch:gruntfile', 'watch:widget_js', 'watch:widget_css', 'watch:engage_loader_js' ],
+                tasks: [ 'watch:gruntfile', 'watch:widget_js', 'watch:widget_css', 'watch:engage_loader_js', 'watch:readmore_js' ],
                 options: {
                     logConcurrentOutput: true
                 }
@@ -173,5 +187,6 @@ module.exports = function(grunt) {
     grunt.registerTask('ractive-min', [ 'uglify:ractive' ]);
     grunt.registerTask('antuser-min', [ 'uglify:antuser' ]);
     grunt.registerTask('widget', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
+    grunt.registerTask('readmore', [ 'uglify:readmore' ]);
 
 };
