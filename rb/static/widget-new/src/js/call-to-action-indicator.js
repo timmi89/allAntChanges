@@ -2,6 +2,7 @@ var CallToActionCounter = require('./call-to-action-counter');
 var CallToActionExpandedReactions = require('./call-to-action-expanded-reactions');
 var CallToActionLabel = require('./call-to-action-label');
 var ReactionsWidget = require('./reactions-widget');
+var TouchSupport = require('./utils/touch-support');
 
 
 function createIndicatorWidget(options) {
@@ -27,6 +28,11 @@ function createIndicatorWidget(options) {
         groupSettings: groupSettings
     };
 
+    TouchSupport.setupTap($ctaElement.get(0), function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openReactionsWindow(reactionWidgetOptions, $ctaElement);
+    });
     $ctaElement.on('mouseenter.antenna', function(event) {
         if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF
             // Don't react if the user is dragging or selecting text.
