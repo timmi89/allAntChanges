@@ -240,33 +240,35 @@ function scanText($textElement, pageData, groupSettings) {
             createdWidgets.push(textReactions);
         }
     }
-}
 
-// We use this to handle the simple case of text content that ends with some media as in
-// <p>My text. <img src="whatever"></p>.
-// This is a simplistic algorithm, not a general solution:
-// We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
-// text or some media.  If the last content node is not text, we want to insert the text indicator before the media.
-function lastContentNode(node) {
-    var lastNode;
-    var childNodes = node.childNodes;
-    for (var i = 0; i < childNodes.length; i++) {
-        var child = childNodes[i];
-        if (child.nodeType === 3) {
-            lastNode = child;
-        } else if (child.nodeType === 1) {
-            var tagName = child.tagName.toLowerCase();
-            switch (tagName) {
-                case 'img':
-                case 'iframe':
-                case 'video':
-                case 'iframe':
-                    lastNode = child;
+    // We use this to handle the case of text content that ends with some non-text node as in
+    // <p>My text. <img src="whatever"></p> or
+    // <p>My long paragraph text with a common CMS problem.<br></p>
+    // This is a simplistic algorithm, not a general solution:
+    // We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
+    // text or some media.  If the last content node is not text, we want to insert the text indicator before the media.
+    function lastContentNode(node) {
+        var lastNode;
+        var childNodes = node.childNodes;
+        for (var i = 0; i < childNodes.length; i++) {
+            var child = childNodes[i];
+            if (child.nodeType === 3) {
+                lastNode = child;
+            } else if (child.nodeType === 1) {
+                var tagName = child.tagName.toLowerCase();
+                switch (tagName) {
+                    case 'img':
+                    case 'iframe':
+                    case 'video':
+                    case 'iframe':
+                    case 'br':
+                        lastNode = child;
+                }
             }
+            lastNode = lastContentNode(child) || lastNode;
         }
-        lastNode = lastContentNode(child) || lastNode;
+        return lastNode;
     }
-    return lastNode;
 }
 
 function shouldHashText($textElement, groupSettings) {
