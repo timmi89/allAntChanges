@@ -4,7 +4,6 @@
     width: 222px;
     overflow: hidden;
     background-color: white;
-    z-index: 999; /* TODO */
     box-shadow: 0 1px 40px #8A8A8A;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
 }

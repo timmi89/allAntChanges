@@ -9,7 +9,6 @@
     transition: transform 200ms ease, opacity 200ms ease;
     white-space: nowrap;
     cursor: pointer;
-    z-index: 1000; /* TODO: z-index value? */
 }
 
 .antenna-popup.antenna-show {
