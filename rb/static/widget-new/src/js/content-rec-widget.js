@@ -31,7 +31,7 @@ function createContentRec(element, groupSettings) {
             }
             ractiveInstances = [];
         }
-    }
+    };
 
     function goToContent(ractiveEvent, url) {
         window.location.href = url;
