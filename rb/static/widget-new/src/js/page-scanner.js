@@ -111,7 +111,8 @@ function scanForContentRec($element, pageData, groupSettings) {
     var $recircs = find($element, '.antenna-content-rec', true, true);
     for (var i = 0; i < $recircs.length; i++) {
         var contentRecContainer = $recircs[i];
-        ContentRec.createContentRec(contentRecContainer, groupSettings);
+        var contentRec = ContentRec.createContentRec(contentRecContainer, groupSettings);
+        createdWidgets.push(contentRec);
     }
 }
 

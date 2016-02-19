@@ -209,7 +209,8 @@
             '    position: absolute;\n' +
             '    left: 0;\n' +
             '    bottom: 0;\n' +
-            '    width: 100%\n' +
+            '    width: 100%;\n' +
+            '    z-index: 999999;\n' +
             '}\n' +
             '.antenna-readmore-fade {\n' +
             '    height: 100px;\n' +
