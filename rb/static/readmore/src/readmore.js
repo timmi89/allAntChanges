@@ -58,7 +58,7 @@
 
     function unwrapElement(nestedElement, wrappingElement) {
         wrappingElement.removeChild(nestedElement);
-        wrappingElement.parentNode.replaceChild(nestedChild, wrappingElement);
+        wrappingElement.parentNode.replaceChild(nestedElement, wrappingElement);
     }
 
     function computeCropHeight(container, groupSettings) {
