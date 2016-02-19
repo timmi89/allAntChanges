@@ -19,6 +19,9 @@
     padding: 3px;
     width: 65%;
     cursor: pointer;
+    height:auto;
+    margin:0 auto;
+    display: inline-block;
 }
 
 .antenna-defaults-footer input:hover {

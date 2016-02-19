@@ -70,6 +70,7 @@
 }
 
 .antenna-highlight {
+    font-size:inherit;  /* helps prevent resizing of text when something gets highlighted */
     background-color: #FCF5A7;
     color: #666;
     text-decoration: none;
