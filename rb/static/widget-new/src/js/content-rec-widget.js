@@ -12,6 +12,7 @@ function createContentRec(element, groupSettings) {
             el: element,
             append: true,
             data: {
+                title: 'Reader Reactions', // TODO: get from group settings. fall back to internationalized message. (consider that group setting might need to specify message per language)
                 entries: contentEntries,
                 colors: pickColors(numEntries, groupSettings)
             },

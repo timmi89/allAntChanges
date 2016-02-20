@@ -3,11 +3,15 @@
     padding: 10px;
 }
 
+.antenna-contentrec-header {
+    text-transform: uppercase;
+}
+
 .antenna-contentrec-entry {
     margin: 20px 0 20px 0;
 }
 
-.antenna-contentrec-header {
+.antenna-contentrec-entry-header {
     margin-bottom: 4px;
 }
 

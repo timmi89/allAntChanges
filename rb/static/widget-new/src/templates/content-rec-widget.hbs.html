@@ -1,7 +1,8 @@
 <div class="antenna-contentrec-inner" decorator="cssreset">
+    <div class="antenna-contentrec-header">{{title}}</div>
     {{#entries:index}}
         <div class="antenna-contentrec-entry" on-tap="goToContent:{{this.page.url}}">
-            <div class="antenna-contentrec-header">
+            <div class="antenna-contentrec-entry-header">
                 <div class="antenna-contentrec-reaction-text">
                     {{this.top_reaction.text}}
                 </div>
