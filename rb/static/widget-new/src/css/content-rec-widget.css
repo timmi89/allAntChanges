@@ -1,6 +1,6 @@
 .antenna-contentrec-inner {
     width: 100%;
-    padding: 10px;
+    padding: 20px 0;
 }
 
 .antenna-contentrec-header {
@@ -12,7 +12,7 @@
 }
 
 .antenna-contentrec-entry-header {
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .antenna-contentrec-reaction-text {
@@ -54,5 +54,5 @@
 }
 
 .antenna-contentrec-page-title {
-    padding: 5px;
+    padding: 20px;
 }
