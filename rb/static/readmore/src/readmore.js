@@ -233,7 +233,7 @@
             '}\n' +
             '.antenna-readmore-crop {\n' +
             '    position: relative;\n' +
-            '    overflow-y: hidden;\n' +
+            '    overflow-y: hidden !important;\n' +
             '}\n';
 
         return {
