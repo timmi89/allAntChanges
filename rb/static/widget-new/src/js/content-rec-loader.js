@@ -21,7 +21,8 @@ function fetchRecommendedContent(groupSettings) {
     AjaxClient.getJSONPNative('/api/contentrec', { group_id: groupSettings.groupId()} , function(response) {
         if (response.status !== 'fail' && response.data) {
             // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
-            var newArray = shuffleArray(response.data);
+            var contentData = massageContent(response.data);
+            var newArray = shuffleArray(contentData);
             for (var i = 0; i < freshContentPool.length; i++) {
                 newArray.push(freshContentPool[i]);
             }
@@ -29,6 +30,33 @@ function fetchRecommendedContent(groupSettings) {
             serveContent(groupSettings);
         }
     });
+}
+
+// Apply any client-side filtering/modifications to the content rec data.
+function massageContent(contentData) {
+    var massagedContent = [];
+    for (var i = 0; i < contentData.length; i++) {
+        var data = contentData[i];
+        if (data.content.type === 'media') {
+            // For now, the only video we handle is YouTube, which has a known format
+            // for converting video URLs into images.
+            var youtubeMatcher = /^((http|https):)?\/\/(www\.)?youtube\.com.*/;
+            if (youtubeMatcher.test(data.content.body)) { // Is this a youtube URL? (the ID matcher below doesn't guarantee this)
+                // http://stackoverflow.com/questions/3452546/javascript-regex-how-to-get-youtube-video-id-from-url/27728417#27728417
+                var videoIDMatcher = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+                var match = videoIDMatcher.exec(data.content.body);
+                if (match.length === 2) {
+                    // Convert the content into an image.
+                    data.content.body = 'https://img.youtube.com/vi/' + match[1] + '/0.jpg';
+                    data.content.type = 'image';
+                    massagedContent.push(data);
+                }
+            }
+        } else {
+            massagedContent.push(data);
+        }
+    }
+    return massagedContent;
 }
 
 function serveContent(groupSettings) {
