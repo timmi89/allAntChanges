@@ -53,10 +53,12 @@
 }
 .antenna-touch .antenna-reaction-location {
     display: inline-block;
+    opacity: 0.25;
 }
-@media only screen and (max-width : 480px) and (orientation: portrait), only screen and (max-width: 640px) and (orientation: landscape) {
+@media only screen and (max-device-width: 480px) and (orientation: portrait), only screen and (max-device-width: 768px) and (orientation: landscape) {
     .antenna-reaction-location {
         display: inline-block;
+        opacity: 0.25;
     }
 }
 
