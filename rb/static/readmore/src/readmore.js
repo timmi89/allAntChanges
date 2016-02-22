@@ -14,14 +14,16 @@
             var cropHeight = computeCropHeight(container, groupSettings);
             if (cropHeight) {
                 insertReadMoreCSS(groupSettings);
-                var croppingWrapper = createCroppingWrapper(cropHeight);
-                wrapElement(container, croppingWrapper);
+                Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
+                Utils.addClass(container, 'antenna-readmore-crop');
                 var readMoreElement = createReadMoreElement(groupSettings);
-                croppingWrapper.appendChild(readMoreElement);
+                container.appendChild(readMoreElement);
                 var contentRecElement = createContentRecElement();
-                Utils.insertAfter(contentRecElement, croppingWrapper);
+                Utils.insertAfter(contentRecElement, container);
                 readMoreElement.addEventListener('click', function () { // TODO: touch support to remove 300ms delay? CSS?
-                    unwrapElement(container, croppingWrapper);
+                    Utils.setStyles(container, { maxHeight: '' });
+                    Utils.removeClass(container, 'antenna-readmore-crop');
+                    readMoreElement.parentNode.removeChild(readMoreElement);
                     contentRecElement.parentNode.removeChild(contentRecElement);
                 });
             }
@@ -42,23 +44,6 @@
         var dummy = document.createElement('div');
         dummy.innerHTML = Templates.contentRecHtml;
         return dummy.firstChild;
-    }
-
-    function createCroppingWrapper(cropHeight) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'antenna-readmore-crop';
-        Utils.setStyles(wrapper, {maxHeight: cropHeight + 'px'});
-        return wrapper;
-    }
-
-    function wrapElement(originalElement, wrappingElement) {
-        originalElement.parentNode.replaceChild(wrappingElement, originalElement)
-        wrappingElement.appendChild(originalElement);
-    }
-
-    function unwrapElement(nestedElement, wrappingElement) {
-        wrappingElement.removeChild(nestedElement);
-        wrappingElement.parentNode.replaceChild(nestedElement, wrappingElement);
     }
 
     function computeCropHeight(container, groupSettings) {
@@ -116,6 +101,14 @@
             }
         }
 
+        function addClass(element, className) {
+            element.classList.add(className);
+        }
+
+        function removeClass(element, className) {
+            element.classList.remove(className);
+        }
+
         function getJSONP(url, params, callback) {
             var scriptTag = document.createElement('script');
             var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
@@ -148,6 +141,8 @@
             insertAfter: insertAfter,
             removeNodes: removeNodes,
             setStyles: setStyles,
+            addClass: addClass,
+            removeClass: removeClass,
             getJSONP: getJSONP,
             isMobile: isMobile
         };
@@ -245,7 +240,7 @@
 
 
     // Check browser requirements
-    if (!document.querySelector || !Element.prototype.addEventListener || !Utils.isMobile()) {
+    if (!document.querySelector || !Element.prototype.addEventListener || !('classList' in document.createElement('div')) || !Utils.isMobile()) {
         return;
     }
 
