@@ -7,6 +7,21 @@
         });
     }
 
+    function groupSettingsLoaded(groupSettings) {
+        insertReadMore(groupSettings);
+        insertCustomCSS(groupSettings);
+    }
+
+    function insertCustomCSS(groupSettings) {
+        var customCSS = groupSettings.customCSS();
+        if (customCSS) {
+            var styleTag = document.createElement('style');
+            styleTag.setAttribute('type', 'text/css');
+            styleTag.innerHTML = customCSS;
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(styleTag);
+        }
+    }
+
     function insertReadMore(groupSettings) {
         var containerSelector = groupSettings.readMoreSelector();
         var container = document.querySelector(containerSelector);
@@ -179,7 +194,8 @@
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),
                 cropSelector: data('readmore_crop_selector'),
-                cropMaxHeight: data('readmore_crop_max')
+                cropMaxHeight: data('readmore_crop_max'),
+                customCSS: data('custom_css')
             };
         }
 
@@ -245,6 +261,6 @@
     }
 
     // Kick things off by fetching the group settings.
-    fetchGroupSettings(insertReadMore);
+    fetchGroupSettings(groupSettingsLoaded);
 
 })();
