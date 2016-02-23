@@ -526,9 +526,11 @@ def getRecommendedContent(group_id):
     # fetch all default reactions on the content and count them up.
     # organize the data for the next pass
     default_content_interactions = {}
-    interactions = Interaction.objects.filter(approved=True,content_id__in=popular_content_ids,interaction_node_id__in=default_reaction_ids,kind='tag').values('id','container_id','content_id','kind','interaction_node_id','parent_id')
+    page_ids = set()
+    interactions = Interaction.objects.filter(approved=True,content_id__in=popular_content_ids,interaction_node_id__in=default_reaction_ids,kind='tag').values('id','container_id','content_id','kind','interaction_node_id','parent_id','page_id')
     for interaction in interactions:
         content_id = interaction['content_id']
+        page_ids.add(interaction['page_id'])
         content_interactions = default_content_interactions.setdefault(content_id, { 'content_id': content_id })
         content_reactions = content_interactions.setdefault('reactions', {})
         node_id = interaction['interaction_node_id']
@@ -536,6 +538,7 @@ def getRecommendedContent(group_id):
         content_reaction['count'] += 1
         if not interaction['parent_id']: # this is a 'root' interaction
             content_reaction['interaction_id'] = interaction['id']
+            content_reaction['page_id'] = interaction['page_id']
 
     # now figure out which reaction is the top reaction for each piece of content.
     # organize the data for the next pass
@@ -552,6 +555,7 @@ def getRecommendedContent(group_id):
         top_node_ids.append(top_node_id)
         top_content_reactions[content_id] = {
             'interaction_id': top_reaction['interaction_id'],
+            'page_id': top_reaction['page_id'],
             'node_id': top_node_id
         }
 
@@ -562,6 +566,9 @@ def getRecommendedContent(group_id):
     node_dict = {}
     for node in InteractionNode.objects.filter(id__in=top_node_ids).values('id','body'):
         node_dict[node['id']] = node
+    page_reaction_counts = {}
+    for page_id in page_ids:
+        page_reaction_counts[page_id] = Interaction.objects.filter(page_id=page_id).count()
 
     # finally, go through all the content we got back from the event server and build the response augmented with
     # all the data we just built up
@@ -582,7 +589,7 @@ def getRecommendedContent(group_id):
                         'url': content_entry['url'],
                         'title': content_entry['page_title']
                     },
-                    'reaction_count': content_entry['reaction_count'],
+                    'reaction_count': page_reaction_counts[content_reaction['page_id']],
                     'top_reaction': {
                         'interaction_id': interaction_id,
                         'text': node_dict[content_reaction['node_id']]['body']
