@@ -35,12 +35,15 @@
                 container.appendChild(readMoreElement);
                 var contentRecElement = createContentRecElement();
                 Utils.insertAfter(contentRecElement, container);
-                readMoreElement.addEventListener('click', function () { // TODO: touch support to remove 300ms delay? CSS?
-                    Utils.setStyles(container, { maxHeight: '' });
-                    Utils.removeClass(container, 'antenna-readmore-crop');
-                    readMoreElement.parentNode.removeChild(readMoreElement);
-                    contentRecElement.parentNode.removeChild(contentRecElement);
-                });
+                var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
+                if (readMoreAction) {
+                    readMoreAction.addEventListener('click', function () {
+                        Utils.setStyles(container, { maxHeight: '' });
+                        Utils.removeClass(container, 'antenna-readmore-crop');
+                        readMoreElement.parentNode.removeChild(readMoreElement);
+                        contentRecElement.parentNode.removeChild(contentRecElement);
+                    });
+                }
             }
         }
     }

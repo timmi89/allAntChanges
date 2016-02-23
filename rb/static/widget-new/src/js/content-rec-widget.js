@@ -25,7 +25,7 @@ function createContentRec(element, groupSettings) {
             }
         });
         ractiveInstances.push(ractive);
-        ractive.on('goToContent', goToContent);
+        ractive.on('navigate', handleNavigate);
     });
     return {
         // TODO: Consider integrating this teardown into our reinitialization
@@ -37,10 +37,9 @@ function createContentRec(element, groupSettings) {
         }
     };
 
-    function goToContent(ractiveEvent, url) {
-        window.location.href = url;
+    function handleNavigate(ractiveEvent) {
         // TODO: fire an event
-        // TODO: consider navigation within single page apps
+        console.log('navigate');
     }
 }
 
@@ -58,6 +57,8 @@ function renderText(node) {
             node.innerHTML = text + '...';
         }
     }
+
+    return { teardown: function() {} };
 
     function cropIfNeeded(node) {
         var text = node.innerHTML;

@@ -1,6 +1,7 @@
 .antenna-contentrec-inner {
     width: 100%;
     padding: 20px;
+    font-size: 1rem; /* Default content rec to containing page font size. */
 }
 
 .antenna-contentrec-header {
