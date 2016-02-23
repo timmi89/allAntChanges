@@ -63,12 +63,21 @@
 
     function computeCropHeight(container, groupSettings) {
         var cropSelector = groupSettings.cropSelector();
-        var maxHeight = groupSettings.cropMaxHeight();
+        var minHeight = groupSettings.cropMinHeight();
         if (cropSelector) {
-            var cropElement = container.querySelector(cropSelector);
-            if (cropElement) {
-                var contentHeight = cropElement.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
-                return Math.min(contentHeight, maxHeight);
+            var cropElements = container.querySelectorAll(cropSelector);
+            if (cropElements.length > 0) {
+                for (var i = 0; i < cropElements.length; i++) {
+                    // Compute which element we should crop at based on the amount of visible content.
+                    // (Typically, this means measuring from the first P tag.)
+                    var contentHeight = cropElements[i].getBoundingClientRect().bottom - cropElements[0].getBoundingClientRect().top;
+                    if (contentHeight > minHeight) {
+                        // Compute the crop height of the container by measuring the bottom of the crop element within
+                        // the container.
+                        var cropHeight = cropElements[i].getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+                        return cropHeight;
+                    }
+                }
             }
         }
     }
@@ -169,8 +178,8 @@
         var defaults = {
              // TODO: get rid of the site-specific defaults
             readmore_selector: offline ? '.entry-post' : 'article.article-page div.container',
-            readmore_crop_selector: offline ? 'p:nth-of-type(2)' : '.article-body p:nth-of-type(1)',
-            readmore_crop_max: offline ? 1400 : 1200
+            readmore_crop_selector: offline ? 'p' : '.article-body p',
+            readmore_crop_min: offline ? 400: 400
         };
 
         function createFromJSON(json) {
@@ -194,7 +203,7 @@
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),
                 cropSelector: data('readmore_crop_selector'),
-                cropMaxHeight: data('readmore_crop_max'),
+                cropMinHeight: data('readmore_crop_min'),
                 customCSS: data('custom_css')
             };
         }
