@@ -21,7 +21,7 @@
                         <img src="{{this.content.body}}">
                     </div>
                 {{elseif this.content.type === 'text'}}
-                    <div class="antenna-contentrec-body-text">
+                    <div class="antenna-contentrec-body-text" decorator="rendertext">
                         {{this.content.body}}
                     </div>
                 {{/if}}

@@ -51,6 +51,10 @@
     overflow-y: hidden;
 }
 
+.antenna-contentrec-body-text strong {
+    font-weight: bold;
+}
+
 .antenna-contentrec-body-image {
     max-height: 7.1em; /* Keep in sync with body-text height */
     overflow-y: hidden;

@@ -19,6 +19,9 @@ function createContentRec(element, groupSettings) {
             template: require('../templates/content-rec-widget.hbs.html'),
             partials: {
                 logo: SVGs.logo
+            },
+            decorators: {
+                'rendertext': renderText
             }
         });
         ractiveInstances.push(ractive);
@@ -38,6 +41,43 @@ function createContentRec(element, groupSettings) {
         window.location.href = url;
         // TODO: fire an event
         // TODO: consider navigation within single page apps
+    }
+}
+
+function renderText(node) {
+    var text = cropIfNeeded(node);
+    if (text.length !== node.innerHTML.length) {
+        text += '...';
+    }
+    text = applyBolding(text);
+    if (text.length !== node.innerHTML.length) {
+        node.innerHTML = text;
+        // Check again, just to make sure the text fits after bolding.
+        text = cropIfNeeded(node);
+        if (text.length !== node.innerHTML.length) { //
+            node.innerHTML = text + '...';
+        }
+    }
+
+    function cropIfNeeded(node) {
+        var text = node.innerHTML;
+        var ratio = node.clientHeight / node.scrollHeight;
+        if (ratio < 1) { // If the text is larger than the client area, crop the text.
+            var cropWordBreak = text.lastIndexOf(' ', text.length * ratio - 3); // account for the '...' that we'll add
+            text = text.substring(0, cropWordBreak);
+        }
+        return text;
+    }
+
+    function applyBolding(text) {
+        var boldStartPoint = Math.floor(text.length * .25);
+        var boldEndPoint = Math.floor(text.length *.66);
+        var matches = text.substring(boldStartPoint, boldEndPoint).match(/,|\.|\?|"/gi);
+        if (matches) {
+            var boldPoint = text.lastIndexOf(matches[matches.length - 1], boldEndPoint);
+            text = '<strong>' + text.substring(0, boldPoint) + '</strong>' + text.substring(boldPoint);
+        }
+        return text;
     }
 }
 
