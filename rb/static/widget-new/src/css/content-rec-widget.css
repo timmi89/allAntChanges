@@ -19,7 +19,6 @@
 
 .antenna-contentrec-reaction-text {
     display: table-cell;
-    width: 80%;
     vertical-align: middle;
     font-size: 1.25em; /* Keep in sync with antenna-contentrec-reaction-indicator line-height for alignment */
     font-weight: 600;
@@ -27,7 +26,6 @@
 
 .antenna-contentrec-indicator-wrapper {
     display: table-cell;
-    width: 20%;
     vertical-align: middle;
     text-align: right;
 }
