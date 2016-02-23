@@ -353,6 +353,47 @@
 
 	<style>
 
+    @media only screen and (min-width: 768px) {
+        .antenna-summary-widget {
+            margin: 0;
+            box-shadow: none;
+        }
+        .antenna-summary-widget .antenna-logo {
+            display: block;
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: .5rem;
+        }
+    }
+    @media only screen and (max-width: 767px) {
+        .antenna-summary-widget {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+        .antenna-summary-widget .antenna-logo-path {
+            fill: #FFFFFF;
+        }
+    }
+    .antenna-text-indicator-widget {
+        position: absolute;
+        top: 0.25rem;
+        right: 0;
+    }
+    .antenna-text-indicator-inner {
+        left: initial;
+        right: 0;
+    }
+    .antenna-text-indicator-widget .antenna-reaction-total {
+        padding-right: 0;
+    }
+    .antenna-text-indicator-widget .antenna-logo {
+        font-size: 1.1rem;
+    }
+    .antenna-text-indicator-widget .antenna-logo svg {
+        width: 1em;
+        height: 1em;
+    }
+
 	body div.ant.ant-summary a.ant_reactions_label,
 	body div.ant.ant-summary a.ant_reactions_label span,
 	body div.ant.ant-summary .ant-antenna-logo {
@@ -363,7 +404,7 @@
 	}
 	@media only screen and (min-width: 768px) {
 		body div.ant.ant-summary {
-			margin: -1rem 0 2rem 0;
+			margin: 0 0 2rem 0;
 			padding:0;
 		}
 		body div.ant.ant-summary a.ant_logo {
@@ -382,14 +423,14 @@
 
 	body .entry-post p {
 		position:relative;
-		width:97%;
-		padding-right:1rem;
+		width:100%;
+		padding-right:2.5rem;
 	}
 
 	body div.ant_indicator_for_text {
 		position: absolute;
 		top: 0.25rem;
-		right: 0.8rem;
+        right: 2rem;
 	}
 	body div.ant_indicator_for_text .ant-antenna-logo {
 		font-size:1.1rem;
@@ -404,6 +445,7 @@
 		body .post-single .share-post {
 			display:block;
 			float:none;
+            width:100%;
 		}
 		body .post-single .share-post ul li { display:none; }
 		body .post-single .share-post ul li.count-share { display:block; margin:0; padding:0; text-align: left; }
@@ -431,7 +473,8 @@
             summary_widget_method: 'append',
             active_sections: '.entry-post',
             anno_whitelist: 'p',
-            tag_box_bg_colors: '#000;#333;#555'
+            tag_box_bg_colors: '#000;#333;#555',
+            summary_widget_expanded_mobile: true
             // no_ant: '.masthead, h1'
         };
         (function() {

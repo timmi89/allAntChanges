@@ -116,6 +116,20 @@ class CacheSettingsRefreshHandler(AnonymousBaseHandler):
             logger.warning(traceback.format_exc(50))
         return 'refresh queued'
 
+class CacheContentRecRefreshHandler(AnonymousBaseHandler):
+    def read(self, request, group_id = None):
+        recommended_content = getRecommendedContent(group_id)
+        try:
+            cache.set('recommended_content_'+ str(group_id), recommended_content)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        try:
+            get_cache('redundant').set('recommended_content_'+ str(group_id), recommended_content)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        return 'refresh queued'
+
+
 class UptimeHandler(AnonymousBaseHandler):
     def read(self, request):
         #DB LOOKUP
@@ -797,6 +811,15 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
                 pages_data.append(page_data)
 
         return pages_data
+
+
+class ContentRecHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        group_id = data['group_id']
+        recommended_content = cache.get('recommended_content_'+ str(group_id))
+        return recommended_content
 
 
 class SettingsHandler(AnonymousBaseHandler):

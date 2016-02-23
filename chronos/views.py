@@ -109,7 +109,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
                 [admin.user.email]
             )
             msg.attach_alternative(
-                generateGroupNodeEmail(interaction, admin_index),
+                generateGroupNodeEmail(interaction, group_id, admin_index),
                 "text/html"
             )
             msg.send(False)

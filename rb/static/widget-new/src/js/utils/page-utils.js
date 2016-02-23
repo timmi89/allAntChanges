@@ -1,14 +1,15 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
-function computeTopLevelPageTitle() {
-    // TODO: This should be a configurable group setting like the other page properties.
-    return getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
-}
-
 function computePageTitle($page, groupSettings) {
-    var pageTitle = $page.find(groupSettings.pageLinkSelector()).text().trim();
+    var titleSelector = groupSettings.pageTitleSelector();
+    if (!titleSelector) {
+        // Backwards compatibility for sites which deployed before we had a separate title selector.
+        titleSelector = groupSettings.pageUrlSelector();
+    }
+    var pageTitle = $page.find(titleSelector).text().trim();
     if (pageTitle === '') {
-        pageTitle = computeTopLevelPageTitle();
+        // If we couldn't find a title based on the group settings, fallback to some hard-coded behavior.
+        pageTitle = getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
     }
     return pageTitle;
 }
@@ -40,7 +41,7 @@ function getAttributeValue(elementSelector, attributeSelector) {
 function computeTopLevelCanonicalUrl(groupSettings) {
     var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
     var $canonicalLink = $('link[rel="canonical"]');
-    if ($canonicalLink.length > 0) {
+    if ($canonicalLink.length > 0 && $canonicalLink.attr('href')) {
         var overrideUrl = $canonicalLink.attr('href').trim().toLowerCase();
         var domain = (window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
         if (overrideUrl !== domain) { // fastco fix (since they sometimes rewrite their canonical to simply be their domain.)
@@ -51,7 +52,7 @@ function computeTopLevelCanonicalUrl(groupSettings) {
 }
 
 function computePageElementUrl($pageElement, groupSettings) {
-    var url = $pageElement.find(groupSettings.pageLinkSelector()).attr('href');
+    var url = $pageElement.find(groupSettings.pageUrlSelector()).attr(groupSettings.pageUrlAttribute());
     if (url) {
         url = removeSubdomainFromPageUrl(url, groupSettings);
         var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');

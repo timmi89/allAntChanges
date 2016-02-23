@@ -231,12 +231,24 @@ function registerReaction(reaction, containerData, pageData) {
     }
     containerData.reactions.push(reaction);
     containerData.reactionTotal = containerData.reactionTotal + 1;
-    var summaryReaction = {
-        text: reaction.text,
-        id: reaction.id,
-        count: reaction.count
-    };
-    pageData.summaryReactions.push(summaryReaction);
+    var existsInSummary = false;
+    var existingSummaryReactions = pageData.summaryReactions;
+    for (var j = 0; j < existingSummaryReactions.length; j++) {
+        if (existingSummaryReactions[j].id === reaction.id) {
+            // If this reaction already exists in the summary, increment the count.
+            existingSummaryReactions[j].count += 1;
+            existsInSummary = true;
+            break;
+        }
+    }
+    if (!existsInSummary) {
+        var summaryReaction = {
+            text: reaction.text,
+            id: reaction.id,
+            count: reaction.count
+        };
+        pageData.summaryReactions.push(summaryReaction);
+    }
     pageData.summaryTotal = pageData.summaryTotal + 1;
     return reaction;
 }

@@ -31,8 +31,10 @@ function computeLayoutData(reactionsData) {
             numHalfsies++;
         }
     }
-    if (numHalfsies % 2 !==0) {
-        layoutClasses[numReactions - 1] = CLASS_FULL; // If there are an odd number, the last one goes full.
+    if (numHalfsies % 2 !== 0) {
+        // If there are an odd number of half-sized boxes, make one of them full.
+        // If there are no other full-size boxes, make the first one full-size. Otherwise, make the last one full.
+        layoutClasses[numFull === 0 ? 0 : numReactions - 1] = CLASS_FULL;
     }
 
     return {

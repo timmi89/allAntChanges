@@ -466,6 +466,10 @@ body div.ant.ant-summary .ant-antenna-logo {
   text-shadow: 0px 0px 6px #222;
 }
 
+body .single-column .half-column-block img {
+  width:100% !important;
+}
+
 @media only screen and (max-width: 767px) {
   .antenna-additions {
     top:20%;
@@ -481,8 +485,25 @@ body div.ant.ant-summary .ant-antenna-logo {
   }
 }
 
-body .single-column .half-column-block img {
-  width:100% !important;
+.antenna-summary-widget {
+    margin-top: 5rem;
+    box-shadow: none;
+    border: 2px solid rgba(255,255,255,0.8);
+    color: #FFFFFF;
+}
+@media only screen and (max-width: 512px) {
+  .antenna-summary-widget {
+      margin-top: 2rem;
+  }
+}
+.antenna-summary-widget .antenna-logo-path {
+    fill: #FFFFFF;
+}
+.antenna-media-indicator-widget .antenna-logo-path {
+    fill: #808080;
+}
+.antenna-media-indicator-widget.antenna-active .antenna-logo-path {
+    fill: #FFFFFF;
 }
 </style>
 <script>
@@ -498,7 +519,6 @@ body .single-column .half-column-block img {
     };
     (function() {
         var offline = window.location.host === 'local.antenna.is:8081';
-        //var scriptSrc = offline ? 'http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js' : 'http://www.antenna.is/static/engage.js';
         var scriptSrc = offline ? 'http://local-static.antenna.is:8081/static/engage.js' : 'http://www.antenna.is/static/engage.js';
         var scriptTag = document.createElement('script');
         scriptTag.setAttribute('src', scriptSrc);

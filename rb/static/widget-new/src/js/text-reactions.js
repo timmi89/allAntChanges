@@ -22,7 +22,10 @@ function createReactableText(options) {
 
     var tapEvents = setupTapEvents($containerElement.get(0), reactionsWidgetOptions);
     $containerElement.on('mouseup.antenna', function(event) {
-        if (containerData.loaded) {
+        // Note that we have to do a preemptive check if the popup is showing because of a timing difference in Safari.
+        // We were seeing the document click handler closing the popup while the selection was being computed, which
+        // meant that calling PopupWidget.show would think it needed to reopen the popup (instead of quietly doing nothing as it should).
+        if (containerData.loaded && !PopupWidget.isShowing()) {
             var node = $containerElement.get(0);
             var point = Range.getSelectionEndPoint(node, event, excludeNode);
             if (point) {
@@ -59,7 +62,7 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
 
 function setupTapEvents(element, reactionsWidgetOptions) {
     return TouchSupport.setupTap(element, function(event) {
-        if (!ReactionsWidget.isOpen() && $(event.target).closest('a').length === 0) {
+        if (!ReactionsWidget.isOpen() && $(event.target).closest('a,.no-ant').length === 0) {
             event.preventDefault();
             event.stopPropagation();
             var touch = event.changedTouches[0];

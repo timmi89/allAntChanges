@@ -141,9 +141,16 @@
             <div class="formRow wordpressKeepDefaults">
                 <label for="id_post_href_selector">
                     <span class="labelTitle">Post HREF Selector (jQuery selector)</span>
-                    <span>Looks in each post to find an 'a' tag with an href of the post's canonical url.</span>
+                    <span>Which element in each post contains that post's canonical url? Example: <em>a.title</em></span>
                 </label>
                 {{ form.post_href_selector }}{{ form.post_href_selector.errors }}
+            </div>
+            <div class="formRow wordpressKeepDefaults">
+                <label for="id_post_href_attribute">
+                    <span class="labelTitle">Post HREF Attribute (jQuery selector)</span>
+                    <span>Which attribute contains the post's canonical url? If empty, the default is the <em>href</em> attribute.</span>
+                </label>
+                {{ form.post_href_attribute }}{{ form.post_href_attribute.errors }}
             </div>
             <div class="formRow">
                 <label for="id_separate_cta">
@@ -185,6 +192,13 @@
         </section>
         <section class="configurationSection">
             <h3>Page Attributes</h3>
+            <div class="formRow">
+                <label for="id_post_title_selector">
+                    <span class="labelTitle">Page Title Selector (jQuery selector)</span>
+                    <span>Where is the title for the page?  (e.g. "article header h1")</span>
+                </label>
+                {{ form.post_title_selector }}{{ form.post_title_selector.errors }}
+            </div>
             <div class="formRow">
                 <label for="id_image_selector">
                     <span class="labelTitle">Page Image Selector (jQuery selector)</span>

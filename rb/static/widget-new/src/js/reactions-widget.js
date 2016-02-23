@@ -72,9 +72,10 @@ function openReactionsWidget(options, elementOrCoords) {
         } else {
             var $relativeElement = $(elementOrCoords);
             var offset = $relativeElement.offset();
+            var bodyOffset = $('body').offset(); // account for any offset that sites apply to the entire body
             coords = {
-                top: offset.top,
-                left: offset.left
+                top: offset.top - bodyOffset.top,
+                left: offset.left - bodyOffset.left
             };
         }
         var horizontalOverflow = coords.left + $rootElement.width() - Math.max(document.documentElement.clientWidth, window.innerWidth || 0); // http://stackoverflow.com/questions/1248081/get-the-browser-viewport-dimensions-with-javascript/8876069#8876069

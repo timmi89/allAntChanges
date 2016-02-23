@@ -8087,6 +8087,10 @@ section {
     section.dark-section h3.line-behind span,
     section.dark-section h4.line-behind span {
       background: #000; }
+    section.dark-section .antenna-text-indicator-widget .antenna-logo-path {
+      fill: #ccc; }
+    section.dark-section .antenna-text-indicator-widget.antenna-active .antenna-logo-path {
+      fill: #fff; }
   section.lt-blue-section {
     background: #4b7185;
     color: #fff; }
@@ -8271,6 +8275,10 @@ section.big-beta-form .learn-more-boxes {
 .page-content .ant.ant-summary,
 .homepage .ant.ant-summary {
   display: none !important; }
+
+.page-content .antenna-summary-widget,
+.homepage .antenna-summary-widget {
+  display: none; }
 
 .publishers section.masthead {
   background-image: url("../images/open_mic.jpg");

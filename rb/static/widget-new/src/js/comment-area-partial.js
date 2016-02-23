@@ -5,7 +5,7 @@ var User = require('./utils/user');
 var Events = require('./events');
 
 function setupCommentArea(reactionProvider, containerData, pageData, groupSettings, callback, ractive) {
-    if (groupSettings.requiresApproval()) {
+    if (groupSettings.requiresApproval() || containerData.type === 'page') {
         // Currently, sites that require approval don't support comment input.
         $(ractive.find('.antenna-comment-widgets')).hide();
         return;

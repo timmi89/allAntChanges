@@ -108,6 +108,10 @@ function grabNode(node, callback) {
 // Highlights the given location inside the given node.
 function highlightLocation(node, location) {
     // TODO error handling in case the range is not valid?
+    if (location === ':0,:1') {
+        grabNode(node);
+        return;
+    }
     if (rangy.canDeserializeRange(location, node, document)) {
         try {
             var range = rangy.deserializeRange(location, node, document);
