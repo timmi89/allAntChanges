@@ -225,16 +225,19 @@ def getPage(host, page_request):
             defaults = {'site': site, 'title':title, 'image':image}
         )[0]
     page_changed = False
-    if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
+    if image is not None and len(image) > 0 and image != page.image:
         page.image = image
         page_changed = True
-    if (page.author is None or len(page.author) < 1) and author is not None and len(author) > 0:
+    if title is not None and len(title) > 0 and title != page.title:
+        page.title = title
+        page_changed = True
+    if author is not None and len(author) > 0 and author != page.author:
         page.author = author
         page_changed = True
-    if (page.topics is None or len(page.topics) < 1) and topics is not None and len(topics) > 0:
+    if topics is not None and len(topics) > 0 and topics != page.topics:
         page.topics = topics
         page_changed = True
-    if (page.section is None or len(page.section) < 1) and section is not None and len(section) > 0:
+    if section is not None and len(section) > 0 and section != page.section:
         page.section = section
         page_changed = True
 
@@ -566,6 +569,9 @@ def getRecommendedContent(group_id):
     node_dict = {}
     for node in InteractionNode.objects.filter(id__in=top_node_ids).values('id','body'):
         node_dict[node['id']] = node
+    page_dict = {}
+    for page in Page.objects.filter(id__in=page_ids).values('id','title'):
+        page_dict[page['id']] = page
     page_reaction_counts = {}
     for page_id in page_ids:
         page_reaction_counts[page_id] = Interaction.objects.filter(page_id=page_id).count()
@@ -579,6 +585,7 @@ def getRecommendedContent(group_id):
         if content_reaction:
             interaction_id = content_reaction.get('interaction_id')
             if interaction_id: # This can be None due to corrupt data in the DB
+                page_id = content_reaction['page_id']
                 recommended_content.append({
                     'content': {
                         'id': content_id,
@@ -587,9 +594,9 @@ def getRecommendedContent(group_id):
                     },
                     'page': {
                         'url': content_entry['url'],
-                        'title': content_entry['page_title']
+                        'title': page_dict[page_id]['title']
                     },
-                    'reaction_count': page_reaction_counts[content_reaction['page_id']],
+                    'reaction_count': page_reaction_counts[page_id],
                     'top_reaction': {
                         'interaction_id': interaction_id,
                         'text': node_dict[content_reaction['node_id']]['body']
