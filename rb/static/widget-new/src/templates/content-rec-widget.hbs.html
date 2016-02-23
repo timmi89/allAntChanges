@@ -6,11 +6,13 @@
                 <div class="antenna-contentrec-reaction-text">
                     {{this.top_reaction.text}}
                 </div>
-                <div class="antenna-contentrec-reaction-indicator">
-                    {{>logo}}<!--
-                    --><span class="antenna-contentrec-reaction-count">
-                        {{this.reaction_count}}
-                    </span>
+                <div class="antenna-contentrec-indicator-wrapper">
+                    <div class="antenna-contentrec-reaction-indicator">
+                        {{>logo}}<!--
+                        --><span class="antenna-contentrec-reaction-count">
+                            {{this.reaction_count}}
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="antenna-contentrec-body" style="background:{{colors[index].background}};color:{{colors[index].foreground}};">

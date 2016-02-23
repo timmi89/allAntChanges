@@ -12,20 +12,29 @@
 }
 
 .antenna-contentrec-entry-header {
+    display: table;
+    width: 100%;
     margin-bottom: 5px;
 }
 
 .antenna-contentrec-reaction-text {
-    display: inline-block;
-    font-size: 1.5em; /* Keep in sync with antenna-contentrec-reaction-indicator line-height for alignment */
+    display: table-cell;
+    width: 80%;
+    vertical-align: middle;
+    font-size: 1.25em; /* Keep in sync with antenna-contentrec-reaction-indicator line-height for alignment */
     font-weight: 600;
 }
 
-.antenna-contentrec-reaction-indicator {
-    float: right;
-    line-height: 1.5em; /* Keep in sync with antenna-contentrec-reaction-text font-size for alignment */
+.antenna-contentrec-indicator-wrapper {
+    display: table-cell;
+    width: 20%;
     vertical-align: middle;
-    font-size: 0.8em;
+    text-align: right;
+}
+
+.antenna-contentrec-reaction-indicator {
+    display: inline-block;
+    font-size: 0.65em;
 }
 
 .antenna-contentrec-reaction-count {
@@ -40,12 +49,12 @@
 
 .antenna-contentrec-body-text {
     line-height: 1.4em;
-    max-height: 7.1em; /* 5 lines */
+    max-height: 7.1em; /* 5 lines */ /* Keep in sync with body-image height */
     overflow-y: hidden;
 }
 
 .antenna-contentrec-body-image {
-    max-height: 200px;
+    max-height: 7.1em; /* Keep in sync with body-text height */
     overflow-y: hidden;
 }
 

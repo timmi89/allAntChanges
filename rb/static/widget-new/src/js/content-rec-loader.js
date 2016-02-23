@@ -44,7 +44,7 @@ function massageContent(contentData) {
                 var match = videoIDMatcher.exec(data.content.body);
                 if (match.length === 2) {
                     // Convert the content into an image.
-                    data.content.body = 'https://img.youtube.com/vi/' + match[1] + '/0.jpg';
+                    data.content.body = 'https://img.youtube.com/vi/' + match[1] + '/mqdefault.jpg'; /* 16:9 ratio thumbnail, so we get no black bars. */
                     data.content.type = 'image';
                     massagedContent.push(data);
                 }
