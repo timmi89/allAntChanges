@@ -113,7 +113,7 @@ function scanForContentRec($element, pageData, groupSettings) {
     // TODO: allow to configure where the content is injected. before/after/append/prepend
     var contentRecSelector = '';
     if (groupSettings.groupId() === 3714) {
-        contentRecSelector = 'article.article-page div.container';
+        //contentRecSelector = 'article.article-page div.container';
     } else if (groupSettings.groupName() === 'local.antenna.is:8081') {
         contentRecSelector = '.entry-post';
     }
