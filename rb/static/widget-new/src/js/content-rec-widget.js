@@ -5,11 +5,13 @@ var SVGs = require('./svgs');
 
 var ractiveInstances = [];
 
-function createContentRec(element, groupSettings) {
+function createContentRec(groupSettings) {
+    var contentRecContainer = document.createElement('div');
+    contentRecContainer.className = 'antenna antenna-content-rec';
     var numEntries = 2;
     ContentRecLoader.getRecommendedContent(numEntries, groupSettings, function(contentEntries) {
         var ractive = Ractive({
-            el: element,
+            el: contentRecContainer,
             append: true,
             data: {
                 title: 'Reader Reactions', // TODO: get from group settings. fall back to internationalized message. (consider that group setting might need to specify message per language)
@@ -28,7 +30,7 @@ function createContentRec(element, groupSettings) {
         ractive.on('navigate', handleNavigate);
     });
     return {
-        // TODO: Consider integrating this teardown into our reinitialization
+        element: contentRecContainer,
         teardown: function() {
             for (var i = 0; i < ractiveInstances.length; i++) {
                 ractiveInstances[i].teardown();

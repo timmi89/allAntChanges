@@ -108,10 +108,21 @@ function scanForSummaries($element, pageData, groupSettings) {
 }
 
 function scanForContentRec($element, pageData, groupSettings) {
-    var $recircs = find($element, '.antenna-content-rec', true, true);
-    for (var i = 0; i < $recircs.length; i++) {
-        var contentRecContainer = $recircs[i];
-        var contentRec = ContentRec.createContentRec(contentRecContainer, groupSettings);
+    //var contentRecSelector = groupSettings.contentRecSelector();
+    // TODO: add this to group settings.
+    // TODO: allow to configure where the content is injected. before/after/append/prepend
+    var contentRecSelector = '';
+    if (groupSettings.groupId() === 3714) {
+        contentRecSelector = 'article.article-page div.container';
+    } else if (groupSettings.groupName() === 'local.antenna.is:8081') {
+        contentRecSelector = '.entry-post';
+    }
+    var $contentRecLocations = find($element, contentRecSelector, true, true);
+    for (var i = 0; i < $contentRecLocations.length; i++) {
+        var contentRecLocation = $contentRecLocations[i];
+        var contentRec = ContentRec.createContentRec(groupSettings);
+        var contentRecElement = contentRec.element;
+        contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation.nextSibling);
         createdWidgets.push(contentRec);
     }
 }

@@ -33,15 +33,12 @@
                 Utils.addClass(container, 'antenna-readmore-crop');
                 var readMoreElement = createReadMoreElement(groupSettings);
                 container.appendChild(readMoreElement);
-                var contentRecElement = createContentRecElement();
-                Utils.insertAfter(contentRecElement, container);
                 var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
                 if (readMoreAction) {
                     readMoreAction.addEventListener('click', function () {
                         Utils.setStyles(container, { maxHeight: '' });
                         Utils.removeClass(container, 'antenna-readmore-crop');
                         readMoreElement.parentNode.removeChild(readMoreElement);
-                        contentRecElement.parentNode.removeChild(contentRecElement);
                     });
                 }
             }
@@ -55,12 +52,6 @@
         if (customLabel) {
             dummy.querySelector('.antenna-readmore-action').innerHTML = customLabel;
         }
-        return dummy.firstChild;
-    }
-
-    function createContentRecElement() {
-        var dummy = document.createElement('div');
-        dummy.innerHTML = Templates.contentRecHtml;
         return dummy.firstChild;
     }
 
@@ -224,9 +215,6 @@
             '        <div class="antenna-readmore-action">Read More</div>\n' +
             '    </div>\n' +
             '</div>\n';
-        var contentRecHtml =
-            '<div class="antenna-content-rec antenna-content-rec-readmore">\n' +
-            '</div>\n';
         var readMoreCss =
             '.antenna-readmore {\n' +
             '    position: absolute;\n' +
@@ -261,7 +249,6 @@
 
         return {
             readMoreHtml: readMoreHtml,
-            contentRecHtml: contentRecHtml,
             readMoreCSS: readMoreCss
         };
     })();
