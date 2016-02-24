@@ -65,7 +65,9 @@
 .antenna-highlight {
     background-color: #FCF5A7;
     color: #666;
-    text-decoration: none;
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: inherit;
     -webkit-user-select:none;
     -k-user-select:none;
     -moz-user-select:none;
