@@ -48,5 +48,7 @@ module.exports = {
     'error_page__message': 'Oops! We really value your feedback, but something went wrong.',
 
     'tap_helper__prompt': 'Tap any paragraph to respond!',
-    'tap_helper__close': 'Close'
+    'tap_helper__close': 'Close',
+
+    'content_rec_widget__title': 'Reader Reactions'
 };

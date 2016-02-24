@@ -1,5 +1,5 @@
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
-
+var Messages = require('./utils/messages');
 var ContentRecLoader = require('./content-rec-loader');
 var SVGs = require('./svgs');
 
@@ -14,7 +14,7 @@ function createContentRec(groupSettings) {
             el: contentRecContainer,
             append: true,
             data: {
-                title: 'Reader Reactions', // TODO: get from group settings. fall back to internationalized message. (consider that group setting might need to specify message per language)
+                title: groupSettings.contentRecTitle() || Messages.getMessage('content_rec_widget__title'),
                 entries: contentEntries,
                 colors: pickColors(numEntries, groupSettings)
             },

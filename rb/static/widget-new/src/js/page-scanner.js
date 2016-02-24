@@ -108,22 +108,29 @@ function scanForSummaries($element, pageData, groupSettings) {
 }
 
 function scanForContentRec($element, pageData, groupSettings) {
-    //var contentRecSelector = groupSettings.contentRecSelector();
-    // TODO: add this to group settings.
-    // TODO: allow to configure where the content is injected. before/after/append/prepend
-    var contentRecSelector = '';
-    if (groupSettings.groupId() === 3714) {
-        //contentRecSelector = 'article.article-page div.container';
-    } else if (groupSettings.groupName() === 'local.antenna.is:8081') {
-        contentRecSelector = '.entry-post';
-    }
-    var $contentRecLocations = find($element, contentRecSelector, true, true);
-    for (var i = 0; i < $contentRecLocations.length; i++) {
-        var contentRecLocation = $contentRecLocations[i];
-        var contentRec = ContentRec.createContentRec(groupSettings);
-        var contentRecElement = contentRec.element;
-        contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation.nextSibling);
-        createdWidgets.push(contentRec);
+    if (groupSettings.isShowContentRec()) {
+        var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
+        for (var i = 0; i < $contentRecLocations.length; i++) {
+            var contentRecLocation = $contentRecLocations[i];
+            var contentRec = ContentRec.createContentRec(groupSettings);
+            var contentRecElement = contentRec.element;
+            var method = groupSettings.contentRecMethod();
+            switch (method) {
+                case 'append':
+                    contentRecLocation.appendChild(contentRecElement);
+                    break;
+                case 'prepend':
+                    contentRecLocation.insertBefore(contentRecElement, contentRecLocation.firstChild);
+                    break;
+                case 'before':
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation);
+                    break;
+                case 'after':
+                default:
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation.nextSibling);
+            }
+            createdWidgets.push(contentRec);
+        }
     }
 }
 
