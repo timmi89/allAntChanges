@@ -1,16 +1,24 @@
 var AjaxClient = require('./utils/ajax-client');
-var PageUtils = require('./utils/page-utils');
 
 var contentFetchTriggerSize = 0; // The size of the pool at which we'll proactively fetch more content.
 var freshContentPool = [];
 var pendingCallbacks = []; // The callback model in this module is unusual because of the way content is served from a pool.
+var prefetchedGroups = {}; //
 
-function getRecommendedContent(count, groupSettings, callback) {
+function prefetchIfNeeded(groupSettings) {
+    var groupId = groupSettings.groupId();
+    if (!prefetchedGroups[groupId]) {
+        prefetchedGroups[groupId] = true;
+        fetchRecommendedContent(groupSettings);
+    }
+}
+
+function getRecommendedContent(count, pageData, groupSettings, callback) {
     contentFetchTriggerSize = Math.max(contentFetchTriggerSize, count); // Update the trigger size to the most we've been asked for.
     // Queue up the callback and try to serve. If more content is needed, it will
     // be automatically fetched.
     pendingCallbacks.push({ callback: callback, count: count });
-    serveContent(groupSettings);
+    serveContent(pageData, groupSettings);
 }
 
 function fetchRecommendedContent(groupSettings, callback) {
@@ -24,7 +32,7 @@ function fetchRecommendedContent(groupSettings, callback) {
                 newArray.push(freshContentPool[i]);
             }
             freshContentPool = newArray;
-            callback(groupSettings);
+            if (callback) { callback(groupSettings); }
         }
     });
 }
@@ -56,14 +64,13 @@ function massageContent(contentData) {
     return massagedContent;
 }
 
-function serveContent(groupSettings, preventLoop/*only used recursively*/) {
-    var currentPageUrl = PageUtils.computeTopLevelCanonicalUrl(groupSettings);
+function serveContent(pageData, groupSettings, preventLoop/*only used recursively*/) {
     for (var i = 0; i < pendingCallbacks.length; i++) {
         var entry = pendingCallbacks[i];
         var chosenContent = [];
         for (var j = 0; j < entry.count; j++) {
             var preferredType = j % 2 === 0 ? 'image':'text';
-            var data = chooseContent(preferredType, currentPageUrl);
+            var data = chooseContent(preferredType, pageData);
             if (data) {
                 chosenContent.push(data);
             }
@@ -75,7 +82,7 @@ function serveContent(groupSettings, preventLoop/*only used recursively*/) {
                 // Ran out of content. Go get more. The "preventLoop" flag tells us whether
                 // we've already tried to fetch but we just have no good content to choose.
                 fetchRecommendedContent(groupSettings, function() {
-                    serveContent(groupSettings, true);
+                    serveContent(pageData, groupSettings, true);
                 });
             }
             break;
@@ -84,11 +91,11 @@ function serveContent(groupSettings, preventLoop/*only used recursively*/) {
     pendingCallbacks = pendingCallbacks.splice(i); // Trim any callbacks that we notified.
 }
 
-function chooseContent(preferredType, currentPageUrl) {
+function chooseContent(preferredType, pageData) {
     var alternateIndex;
     for (var i = freshContentPool.length-1; i >= 0; i--) {
         var contentData = freshContentPool[i];
-        if (contentData.page.url !== currentPageUrl) {
+        if (contentData.page.url !== pageData.canonicalUrl) {
             if (contentData.content.type === preferredType) {
                 return freshContentPool.splice(i, 1)[0];
             }
@@ -113,5 +120,6 @@ function shuffleArray(array) {
 }
 
 module.exports = {
+    prefetchIfNeeded: prefetchIfNeeded,
     getRecommendedContent: getRecommendedContent
 };

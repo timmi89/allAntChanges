@@ -40,9 +40,6 @@ function getAttributeValue(elementSelector, attributeSelector) {
 
 function computeTopLevelCanonicalUrl(groupSettings) {
     var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
-    if (!groupSettings.url.includeQueryString()) {
-        canonicalUrl = canonicalUrl.split('?')[0];
-    }
     var $canonicalLink = $('link[rel="canonical"]');
     if ($canonicalLink.length > 0 && $canonicalLink.attr('href')) {
         var overrideUrl = $canonicalLink.attr('href').trim().toLowerCase();
@@ -97,7 +94,6 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     computePageUrl: computePageElementUrl,
-    computeTopLevelCanonicalUrl: computeTopLevelCanonicalUrl,
     computePageTitle: computePageTitle,
     computeTopLevelPageImage: computeTopLevelPageImage,
     computePageAuthor: computePageAuthor,

@@ -3,45 +3,62 @@ var Messages = require('./utils/messages');
 var ContentRecLoader = require('./content-rec-loader');
 var SVGs = require('./svgs');
 
-var ractiveInstances = [];
-
-function createContentRec(groupSettings) {
+function createContentRec(pageData, groupSettings) {
     var contentRecContainer = document.createElement('div');
     contentRecContainer.className = 'antenna antenna-content-rec';
+    // We can't really request content until the full page data is loaded (because we need to know the server-side computed
+    // canonical URL), but we can start prefetching the content pool for the group.
+    ContentRecLoader.prefetchIfNeeded(groupSettings);
     var numEntries = 2;
-    ContentRecLoader.getRecommendedContent(numEntries, groupSettings, function(contentEntries) {
-        var ractive = Ractive({
-            el: contentRecContainer,
-            append: true,
-            data: {
-                title: groupSettings.contentRecTitle() || Messages.getMessage('content_rec_widget__title'),
-                entries: contentEntries,
-                colors: pickColors(numEntries, groupSettings)
-            },
-            template: require('../templates/content-rec-widget.hbs.html'),
-            partials: {
-                logo: SVGs.logo
-            },
-            decorators: {
-                'rendertext': renderText
-            }
-        });
-        ractiveInstances.push(ractive);
-        ractive.on('navigate', handleNavigate);
+    var contentData = { entries: undefined }; // Need to stub out the data so Ractive can bind to it
+    var ractive = Ractive({
+        el: contentRecContainer,
+        magic: true,
+        append: true,
+        data: {
+            title: groupSettings.contentRecTitle() || Messages.getMessage('content_rec_widget__title'),
+            pageData: pageData,
+            contentData: contentData,
+            populateContentEntries: populateContentEntries(numEntries, contentData, pageData, groupSettings),
+            colors: pickColors(numEntries, groupSettings)
+        },
+        template: require('../templates/content-rec-widget.hbs.html'),
+        partials: {
+            logo: SVGs.logo
+        },
+        decorators: {
+            'rendertext': renderText
+        }
     });
+    ractive.on('navigate', handleNavigate);
+
     return {
         element: contentRecContainer,
-        teardown: function() {
-            for (var i = 0; i < ractiveInstances.length; i++) {
-                ractiveInstances[i].teardown();
-            }
-            ractiveInstances = [];
-        }
+        teardown: function() { ractive.teardown(); }
     };
 
     function handleNavigate(ractiveEvent) {
         // TODO: fire an event
         console.log('navigate');
+    }
+}
+
+// This function is triggered from within the Ractive template when the page data is loaded. Once page data is loaded,
+// we're ready to ask for content.
+function populateContentEntries(numEntries, contentData, pageData, groupSettings) {
+    return function(pageDataIsLoaded) {
+        if (pageDataIsLoaded && !contentData.entries) {
+            // Since this function is called by Ractive when pageData.summaryLoaded changes and it can potentially
+            // *trigger* a Ractive update (if content data is ready to be served, we modify contentData.entries),
+            // we need to wrap in a timeout so that the first Ractive update can complete before we trigger another.
+            // Otherwise, Ractive bails out because it thinks we're triggering an infinite update loop.
+            setTimeout(function() {
+                ContentRecLoader.getRecommendedContent(numEntries, pageData, groupSettings, function (fetchedContentEntries) {
+                    contentData.entries = fetchedContentEntries;
+                });
+            }, 0);
+        }
+        return pageDataIsLoaded;
     }
 }
 
