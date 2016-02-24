@@ -160,13 +160,15 @@ function setupPositioning($containerElement, groupSettings, ractive) {
         if (corner.indexOf('top') !== -1) {
             coords.top = elementOffset.top;
         } else {
-            coords.top = elementOffset.top + $containerElement.height() - $rootElement.outerHeight();
+            var borderTop = parseInt($containerElement.css('border-top')) || 0;
+            coords.top = elementOffset.top + $containerElement.height() + borderTop - $rootElement.outerHeight();
         }
         if (corner.indexOf('right') !== -1) {
             coords.left = elementOffset.left + $containerElement.width() - $wrapperElement.outerWidth();
             $rootElement.css({right:0,left:''});
         } else {
-            coords.left = elementOffset.left;
+            var borderLeft = parseInt($containerElement.css('border-left')) || 0;
+            coords.left = elementOffset.left + borderLeft;
             $rootElement.css({right:'',left:0});
         }
         $wrapperElement.css(coords);
