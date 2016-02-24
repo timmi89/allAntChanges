@@ -20,7 +20,7 @@
     -ms-overflow-style: none; /* Tell IE to never show their ugly element scroll bars */
 }
 
-.antenna-reset:hover, .antenna-reset:active {
+a.antenna-reset:hover, a.antenna-reset:active {
     color: inherit;
     text-decoration: none;
     outline: none;
