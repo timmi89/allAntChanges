@@ -18,11 +18,6 @@
     vertical-align: middle;
 }
 
-.antenna-logo-text svg {
-    /* TODO: real styles once we have a real SVG */
-    height: 1em;
-}
-
 .antenna-facebook svg, .antenna-twitter svg {
     width: 24px;
     height: 24px;
@@ -64,12 +59,12 @@
 
 .antenna-highlight {
     background-color: #FCF5A7;
-    color: #666;
+    color: #666666;
     font-size: inherit;
     font-weight: inherit;
     text-decoration: inherit;
-    -webkit-user-select:none;
-    -k-user-select:none;
-    -moz-user-select:none;
-    user-select:none;
+    -webkit-user-select: none;
+    -k-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
