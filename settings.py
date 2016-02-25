@@ -66,12 +66,24 @@ STATIC_ROOT = 'rb/static/'
 OTHER_DATACENTER = 'gce.antenna.is'
 CACHE_SYNCBACK = False
 
+URL_NO_PROTO = os.getenv('VIRTUAL_HOST', 'antenna.docker')
+EVENTS_URL = os.getenv('EVENTS_URL', 'http://nodebq.docker')
+
+STATIC_URL = os.getenv('STATIC_URL', False)
+if STATIC_URL:
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+else:
+    STATIC_URL = '//' + URL_NO_PROTO + '/static/'
+
+BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
+BROKER_URL = BROKER_URL.format(
+    host=os.getenv('RABBITMQ_HOST', 'localhost')
+)
+
 if DEBUG:
-    URL_NO_PROTO = 'local.antenna.is:8081'
-    BASE_URL = 'http://local.antenna.is:8081'
-    BASE_URL_SECURE = 'https://local.antenna.is:8081'
-    STATIC_URL = '//local.antenna.is:8081/static/'
-    EVENTS_URL = 'http://nodebq.docker'
+    BASE_URL = 'http://' + URL_NO_PROTO
+
     DATABASE_ROUTERS = ['routers.DevMasterSlaveRouter']
 
     DATABASES = {
@@ -154,12 +166,9 @@ if DEBUG:
             }
         },
     }
-
-    BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
-    BROKER_URL = BROKER_URL.format(
-        host=os.getenv('RABBITMQ_HOST', 'localhost')
-    )
 else:
+    BASE_URL = 'https://' + URL_NO_PROTO
+
     ALLOWED_HOSTS = [
         "antenna.is",
         "gce.antenna.is",
@@ -170,13 +179,7 @@ else:
         "www.readrboard.com",
         "static.readrboard.com"
     ]
-    URL_NO_PROTO = 'www.antenna.is'
-    BASE_URL = 'http://www.antenna.is'
-    BASE_URL_SECURE = 'https://www.antenna.is'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    EVENTS_URL = 'http://events.antenna.is'
+
     DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
 
     DATABASES = {
@@ -276,11 +279,6 @@ else:
             }
         }
     }
-
-    BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
-    BROKER_URL = BROKER_URL.format(
-        host=os.getenv('RABBITMQ_HOST', 'localhost')
-    )
 
 
 CELERY_ACCEPT_CONTENT = ['json']
