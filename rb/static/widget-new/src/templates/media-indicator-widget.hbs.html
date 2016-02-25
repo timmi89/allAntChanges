@@ -1,12 +1,10 @@
-
-
 <span decorator="cssreset" class="antenna antenna-media-indicator-wrapper">
     <span {{extraAttributes}} class="antenna antenna-media-indicator-widget
-            {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}}
-            {{#if supportsTouch}}antenna-touch{{/if}}">
+            {{^containerData.loaded}}antenna-notloaded{{/containerData.loaded}} antenna-reset
+            {{#if supportsTouch}}antenna-touch{{/if}}"> <!--The 'antenna-reset' class is explicitly required here because of the dynamic class that's updated by Ractive in response to containerData.loaded changing. The class from the decorator gets blown away when that happens. -->
         {{>logo}}
         {{#if containerData.reactionTotal }}
-            <span class="antenna-reaction-total">
+            <span class="antenna-reaction-total" decorator="cssreset">
                 {{containerData.reactionTotal}}
             </span>
         {{else}}
