@@ -416,6 +416,7 @@ INSTALLED_APPS = [
     'chronos',
     'analytics',
     'reporting',
+    'demo',
     'storages',
     'gunicorn',
     'djcelery',

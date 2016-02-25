@@ -1,0 +1,13 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <ul>
+      {% for path in pages %}
+      <li>
+        <a href={% url 'demo-show' path %} >{{ path }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
