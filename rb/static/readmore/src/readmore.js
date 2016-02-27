@@ -97,6 +97,15 @@
         });
     }
 
+    function postEvent(relativeUrl, event, callback) {
+        var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://nodebq.docker:3000' : 'http://events.antenna.is';
+        Utils.getJSONP(serverUrl + relativeUrl, event, function(response) {
+            if (response.status === 'success') {
+                callback(response.data);
+            }
+        });
+    }
+
     // Generic browser utils.
     var Utils = (function() {
 
