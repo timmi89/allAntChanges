@@ -139,10 +139,8 @@
                 }
             };
             var jsonpUrl = url + '?callback=' + responseCallback;
-            for (var param in params) {
-                if (params.hasOwnProperty(param)) {
-                    jsonpUrl += '&' + encodeURI(param) + '=' + encodeURI(params[param]);
-                }
+            if (params) {
+                jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
             }
             scriptTag.setAttribute('type', 'application/javascript');
             scriptTag.setAttribute('src', jsonpUrl);
