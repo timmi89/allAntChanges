@@ -80,8 +80,26 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     postEvent(event);
 }
 
-function postRecircClicked(pageData, reactionId, groupSettings) {
+function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
     var event = createEvent(eventTypes.recircClicked, reactionId, groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postContentRecLoaded(pageData, groupSettings) {
+    var event = createEvent(eventTypes.contentRecLoaded, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postContentRecVisible(pageData, groupSettings) {
+    var event = createEvent(eventTypes.contentRecVisible, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postContentRecClicked(pageData, targetUrl, groupSettings) {
+    var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
 }
@@ -233,7 +251,10 @@ var eventTypes = {
     commentCreated: 'c',
     reactionCreated: 're',
     commentsViewed: 'vcom',
-    recircClicked: 'rc'
+    recircClicked: 'rc',
+    contentRecLoaded: 'crl',
+    contentRecVisible: 'crv',
+    contentRecClicked: 'crc'
 };
 
 var eventValues = {
@@ -259,5 +280,8 @@ module.exports = {
     postReactionShared: postReactionShared,
     postLocationsViewed: postLocationsViewed,
     postContentViewed: postContentViewed,
-    postRecircClicked: postRecircClicked
+    postLegacyRecircClicked: postLegacyRecircClicked,
+    postContentRecLoaded: postContentRecLoaded,
+    postContentRecVisible: postContentRecVisible,
+    postContentRecClicked: postContentRecClicked
 };

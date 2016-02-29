@@ -1,6 +1,9 @@
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Messages = require('./utils/messages');
+var ThrottledEvents = require('./utils/throttled-events');
+
 var ContentRecLoader = require('./content-rec-loader');
+var Events = require('./events');
 var SVGs = require('./svgs');
 
 function createContentRec(pageData, groupSettings) {
@@ -31,6 +34,7 @@ function createContentRec(pageData, groupSettings) {
         }
     });
     ractive.on('navigate', handleNavigate);
+    setupVisibilityHandler();
 
     return {
         element: contentRecContainer,
@@ -38,8 +42,54 @@ function createContentRec(pageData, groupSettings) {
     };
 
     function handleNavigate(ractiveEvent) {
-        // TODO: fire an event
-        console.log('navigate');
+        var targetUrl = ractiveEvent.context.page.url;
+        Events.postContentRecClicked(pageData, targetUrl, groupSettings);
+    }
+
+    function setupVisibilityHandler() {
+        setTimeout(function() {
+            // When content rec loads, give it a moment and then see if we're
+            // visible. If not, start tracking scroll events.
+            if (isContentRecVisible()) {
+                Events.postContentRecVisible(pageData, groupSettings);
+            } else {
+                ThrottledEvents.on('scroll', handleScrollEvent);
+            }
+        }, 200);
+
+        function handleScrollEvent() {
+            if (isContentRecVisible()) {
+                Events.postContentRecVisible(pageData, groupSettings);
+                ThrottledEvents.off('scroll', handleScrollEvent);
+            }
+        }
+    }
+
+    function isContentRecVisible() {
+        // Because this function is called on scroll, we try to avoid unnecessary
+        // computation as much as possible here, bailing out as early as possible.
+        // First, check whether we even have page data.
+        if (pageData.summaryLoaded) {
+            // Then check if the outer content rec is in the viewport at all.
+            var contentBox = contentRecContainer.getBoundingClientRect();
+            var viewportBottom = document.documentElement.clientHeight;
+            if (contentBox.top > 0 && contentBox.top < viewportBottom ||
+                contentBox.bottom > 0 && contentBox.bottom < viewportBottom) {
+                // Finally, look to see whether any recommended content has been
+                // rendered onto the page and is on screen enough to be considered
+                // visible.
+                var entries = ractive.findAll('.antenna-contentrec-entry');
+                for (var i = 0; i < entries.length; i++) {
+                    var entry = entries[i];
+                    var entryBox = entry.getBoundingClientRect();
+                    if (entryBox.top > 0 && entryBox.bottom < viewportBottom) {
+                        // The entry is fully visible
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
 
@@ -55,6 +105,7 @@ function populateContentEntries(numEntries, contentData, pageData, groupSettings
             setTimeout(function() {
                 ContentRecLoader.getRecommendedContent(numEntries, pageData, groupSettings, function (fetchedContentEntries) {
                     contentData.entries = fetchedContentEntries;
+                    Events.postContentRecLoaded(pageData, groupSettings);
                 });
             }, 0);
         }

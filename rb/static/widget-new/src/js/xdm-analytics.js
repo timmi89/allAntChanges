@@ -10,7 +10,7 @@ function startListening() {
 function recircClicked(response) {
     var reactionId = response.detail.referring_int_id;
     getPageData(response.detail.page_hash, function(pageData) {
-        Events.postRecircClicked(pageData, reactionId, GroupSettings.get());
+        Events.postLegacyRecircClicked(pageData, reactionId, GroupSettings.get());
     });
 }
 
