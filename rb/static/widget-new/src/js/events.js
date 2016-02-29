@@ -101,7 +101,7 @@ function postContentRecVisible(pageData, groupSettings) {
 function postContentRecClicked(pageData, targetUrl, groupSettings) {
     var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
     appendPageDataParams(event, pageData);
-    postEvent(event);
+    postEvent(event, true);
 }
 
 function appendPageDataParams(event, pageData) {
@@ -146,14 +146,18 @@ function createEvent(eventType, eventValue, groupSettings) {
     return event;
 }
 
-function postEvent(event) {
+function postEvent(event, sendAsTrackingEvent) {
     User.cachedUser(function(userInfo) { // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
         if (userInfo) {
             event[attributes.userId] = userInfo.user_id;
         }
         fillInMissingProperties(event);
         // Send the event to BigQuery
-        AjaxClient.postEvent(event);
+        if (sendAsTrackingEvent) {
+            AjaxClient.postTrackingEvent(event);
+        } else {
+            AjaxClient.postEvent(event);
+        }
     });
 }
 

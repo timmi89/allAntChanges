@@ -280,6 +280,22 @@ function postEvent(event) {
     });
 }
 
+function postTrackingEvent(event) {
+    var baseUrl = URLs.eventsServerUrl();
+    if (AppMode.debug) {
+        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+    }
+    var trackingUrl = baseUrl + URLs.eventUrl() + '/event.gif';
+    if (event) {
+        trackingUrl += '?json=' + encodeURI(JSON.stringify(event));
+    }
+    var imageTag = document.createElement('img');
+    imageTag.setAttribute('height', 1);
+    imageTag.setAttribute('width', 1);
+    imageTag.setAttribute('src', trackingUrl);
+    document.getElementsByTagName('body')[0].appendChild(imageTag);
+}
+
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
 function doGetJSONP(baseUrl, url, data, success, error) {
     var options = {
@@ -349,5 +365,6 @@ module.exports = {
     getComments: getComments,
     postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
-    postEvent: postEvent
+    postEvent: postEvent,
+    postTrackingEvent: postTrackingEvent
 };
