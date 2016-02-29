@@ -5,6 +5,7 @@ function getWidgetBucket() {
     if (!bucket) {
         bucket = document.createElement('div');
         bucket.setAttribute('id', id);
+        bucket.classList.add('antenna-reset');
         document.body.appendChild(bucket);
     }
     return bucket;
