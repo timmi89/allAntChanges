@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <!--[if IE 8 ]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!--><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"><!--<![endif]-->
@@ -478,9 +480,7 @@
             // no_ant: '.masthead, h1'
         };
         (function() {
-            var offline = window.location.host === 'local.antenna.is:8081';
-            //var scriptSrc = offline ? 'http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js' : 'http://www.antenna.is/static/engage.js';
-            var scriptSrc = offline ? 'http://local-static.antenna.is:8081/static/engage.js' : 'http://www.antenna.is/static/engage.js';
+            var scriptSrc = '{% static "engage.js" %}'
             var scriptTag = document.createElement('script');
             scriptTag.setAttribute('src', scriptSrc);
             scriptTag.setAttribute('type','text/javascript');
