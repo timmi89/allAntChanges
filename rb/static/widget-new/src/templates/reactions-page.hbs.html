@@ -2,7 +2,7 @@
     <div class="antenna-body">
         {{#if reactions}}
             {{#reactions:index}}
-                <div on-tap="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                <div on-tap="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index)}}">
                     <div class="antenna-reaction-box">
                         <div class="antenna-reaction-text" decorator="sizetofit">
                             {{ this.text }}

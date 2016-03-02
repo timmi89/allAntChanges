@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./utils/app-mode');
+var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
@@ -108,11 +109,29 @@ function scanForSummaries($element, pageData, groupSettings) {
 }
 
 function scanForContentRec($element, pageData, groupSettings) {
-    var $recircs = find($element, '.antenna-content-rec', true, true);
-    for (var i = 0; i < $recircs.length; i++) {
-        var contentRecContainer = $recircs[i];
-        var contentRec = ContentRec.createContentRec(contentRecContainer, groupSettings);
-        createdWidgets.push(contentRec);
+    if (groupSettings.isShowContentRec() && BrowserMetrics.isMobile()) {
+        var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
+        for (var i = 0; i < $contentRecLocations.length; i++) {
+            var contentRecLocation = $contentRecLocations[i];
+            var contentRec = ContentRec.createContentRec(pageData, groupSettings);
+            var contentRecElement = contentRec.element;
+            var method = groupSettings.contentRecMethod();
+            switch (method) {
+                case 'append':
+                    contentRecLocation.appendChild(contentRecElement);
+                    break;
+                case 'prepend':
+                    contentRecLocation.insertBefore(contentRecElement, contentRecLocation.firstChild);
+                    break;
+                case 'before':
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation);
+                    break;
+                case 'after':
+                default:
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation.nextSibling);
+            }
+            createdWidgets.push(contentRec);
+        }
     }
 }
 

@@ -80,10 +80,28 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     postEvent(event);
 }
 
-function postRecircClicked(pageData, reactionId, groupSettings) {
+function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
     var event = createEvent(eventTypes.recircClicked, reactionId, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+}
+
+function postContentRecLoaded(pageData, groupSettings) {
+    var event = createEvent(eventTypes.contentRecLoaded, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postContentRecVisible(pageData, groupSettings) {
+    var event = createEvent(eventTypes.contentRecVisible, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postContentRecClicked(pageData, targetUrl, groupSettings) {
+    var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event, true);
 }
 
 function appendPageDataParams(event, pageData) {
@@ -128,14 +146,18 @@ function createEvent(eventType, eventValue, groupSettings) {
     return event;
 }
 
-function postEvent(event) {
+function postEvent(event, sendAsTrackingEvent) {
     User.cachedUser(function(userInfo) { // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
         if (userInfo) {
             event[attributes.userId] = userInfo.user_id;
         }
         fillInMissingProperties(event);
         // Send the event to BigQuery
-        AjaxClient.postEvent(event);
+        if (sendAsTrackingEvent) {
+            AjaxClient.postTrackingEvent(event);
+        } else {
+            AjaxClient.postEvent(event);
+        }
     });
 }
 
@@ -233,7 +255,10 @@ var eventTypes = {
     commentCreated: 'c',
     reactionCreated: 're',
     commentsViewed: 'vcom',
-    recircClicked: 'rc'
+    recircClicked: 'rc',
+    contentRecLoaded: 'crl',
+    contentRecVisible: 'crv',
+    contentRecClicked: 'crc'
 };
 
 var eventValues = {
@@ -259,5 +284,8 @@ module.exports = {
     postReactionShared: postReactionShared,
     postLocationsViewed: postLocationsViewed,
     postContentViewed: postContentViewed,
-    postRecircClicked: postRecircClicked
+    postLegacyRecircClicked: postLegacyRecircClicked,
+    postContentRecLoaded: postContentRecLoaded,
+    postContentRecVisible: postContentRecVisible,
+    postContentRecClicked: postContentRecClicked
 };

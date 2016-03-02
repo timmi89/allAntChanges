@@ -245,33 +245,33 @@
             </div>
         </section>
         <section class="configurationSection">        
-            <h3>Broadcast Widget</h3>
+            <h3>Content Recommendation</h3>
             <div class="formRow">
                 {{ form.show_recirc}}{{ form.show_recirc.errors }}
                 <label for="id_show_recirc">
-                    <span class="labelTitle">Show Broadcast widget?</span>
+                    <span class="labelTitle">Show Content Rec?</span>
                     <!-- <span>Simply ch</span> -->
                 </label>
             </div>
             <div class="recirc_options {% if group.show_recirc == True %}visible{% endif %}">
                 <div class="formRow">
                     <label for="id_recirc_title">
-                        <span class="labelTitle">Broadcast Title</span>
+                        <span class="labelTitle">Content Rec Title</span>
                         <span>What headline should the widget have?</span>
                     </label>
                     {{ form.recirc_title }}{{ form.recirc_title.errors }}
                 </div>
                 <div class="formRow">
                     <label for="id_recirc_selector">
-                        <span class="labelTitle">Broadcast Selector (jQuery selector)</span>
-                        <span>Where should the Broadcast be inserted?</span>
+                        <span class="labelTitle">Content Rec Selector (jQuery selector)</span>
+                        <span>Where should the Content Rec be inserted?</span>
                     </label>
                     {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
                 </div>
                 <div class="formRow">
                     <label for="id_recirc_jquery_method">
-                        <span class="labelTitle">Broadcast Widget Insertion Method</span>
-                        <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                        <span class="labelTitle">Content Rec Insertion Method</span>
+                        <span>How should Antenna insert the Content Rec?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
                     </label>
                     {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
                     <select id="recirc_jquery_method_selector" class="browser-default">
@@ -283,7 +283,7 @@
                 </div>
                 <div class="formRow text">
                     <label for="id_recirc_background">
-                        <span class="labelTitle">Broadcast Background</span>
+                        <span class="labelTitle">Broadcast Background (not yet implemented)</span>
                         <span>CSS Background property for the Antenna Broadcast widget</span>
                     </label>
                     {{ form.recirc_background }}{{ form.recirc_background.errors }}

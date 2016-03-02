@@ -1,7 +1,7 @@
 (function() {
 
     function fetchGroupSettings(callback) {
-        fetchJSONP('/api/settings', { json: '{}' }, function(json) {
+        fetchJSONP('/api/settings', {}, function(json) {
             var groupSettings = GroupSettings.create(json);
             callback(groupSettings);
         });
@@ -33,14 +33,14 @@
                 Utils.addClass(container, 'antenna-readmore-crop');
                 var readMoreElement = createReadMoreElement(groupSettings);
                 container.appendChild(readMoreElement);
-                var contentRecElement = createContentRecElement();
-                Utils.insertAfter(contentRecElement, container);
-                readMoreElement.addEventListener('click', function () { // TODO: touch support to remove 300ms delay? CSS?
-                    Utils.setStyles(container, { maxHeight: '' });
-                    Utils.removeClass(container, 'antenna-readmore-crop');
-                    readMoreElement.parentNode.removeChild(readMoreElement);
-                    contentRecElement.parentNode.removeChild(contentRecElement);
-                });
+                var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
+                if (readMoreAction) {
+                    readMoreAction.addEventListener('click', function () {
+                        Utils.setStyles(container, { maxHeight: '' });
+                        Utils.removeClass(container, 'antenna-readmore-crop');
+                        readMoreElement.parentNode.removeChild(readMoreElement);
+                    });
+                }
             }
         }
     }
@@ -55,20 +55,23 @@
         return dummy.firstChild;
     }
 
-    function createContentRecElement() {
-        var dummy = document.createElement('div');
-        dummy.innerHTML = Templates.contentRecHtml;
-        return dummy.firstChild;
-    }
-
     function computeCropHeight(container, groupSettings) {
         var cropSelector = groupSettings.cropSelector();
-        var maxHeight = groupSettings.cropMaxHeight();
+        var minHeight = groupSettings.cropMinHeight();
         if (cropSelector) {
-            var cropElement = container.querySelector(cropSelector);
-            if (cropElement) {
-                var contentHeight = cropElement.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
-                return Math.min(contentHeight, maxHeight);
+            var cropElements = container.querySelectorAll(cropSelector);
+            if (cropElements.length > 0) {
+                for (var i = 0; i < cropElements.length; i++) {
+                    // Compute which element we should crop at based on the amount of visible content.
+                    // (Typically, this means measuring from the first P tag.)
+                    var contentHeight = cropElements[i].getBoundingClientRect().bottom - cropElements[0].getBoundingClientRect().top;
+                    if (contentHeight > minHeight) {
+                        // Compute the crop height of the container by measuring the bottom of the crop element within
+                        // the container.
+                        var cropHeight = cropElements[i].getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+                        return cropHeight;
+                    }
+                }
             }
         }
     }
@@ -88,6 +91,15 @@
     function fetchJSONP(relativeUrl, params, callback) {
         var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://local-static.antenna.is:8081' : 'https://www.antenna.is';
         Utils.getJSONP(serverUrl + relativeUrl, params, function(response) {
+            if (response.status === 'success') {
+                callback(response.data);
+            }
+        });
+    }
+
+    function postEvent(relativeUrl, event, callback) {
+        var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://nodebq.docker:3000' : 'http://events.antenna.is';
+        Utils.getJSONP(serverUrl + relativeUrl, event, function(response) {
             if (response.status === 'success') {
                 callback(response.data);
             }
@@ -136,10 +148,8 @@
                 }
             };
             var jsonpUrl = url + '?callback=' + responseCallback;
-            for (var param in params) {
-                if (params.hasOwnProperty(param)) {
-                    jsonpUrl += '&' + encodeURI(param) + '=' + encodeURI(params[param]);
-                }
+            if (params) {
+                jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
             }
             scriptTag.setAttribute('type', 'application/javascript');
             scriptTag.setAttribute('src', jsonpUrl);
@@ -169,8 +179,8 @@
         var defaults = {
              // TODO: get rid of the site-specific defaults
             readmore_selector: offline ? '.entry-post' : 'article.article-page div.container',
-            readmore_crop_selector: offline ? 'p:nth-of-type(2)' : '.article-body p:nth-of-type(1)',
-            readmore_crop_max: offline ? 1400 : 1200
+            readmore_crop_selector: offline ? 'p' : '.article-body p',
+            readmore_crop_min: offline ? 400: 400
         };
 
         function createFromJSON(json) {
@@ -194,7 +204,7 @@
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),
                 cropSelector: data('readmore_crop_selector'),
-                cropMaxHeight: data('readmore_crop_max'),
+                cropMinHeight: data('readmore_crop_min'),
                 customCSS: data('custom_css')
             };
         }
@@ -211,9 +221,6 @@
             '    <div class="antenna-readmore-body">\n' +
             '        <div class="antenna-readmore-action">Read More</div>\n' +
             '    </div>\n' +
-            '</div>\n';
-        var contentRecHtml =
-            '<div class="antenna-content-rec antenna-content-rec-readmore">\n' +
             '</div>\n';
         var readMoreCss =
             '.antenna-readmore {\n' +
@@ -249,7 +256,6 @@
 
         return {
             readMoreHtml: readMoreHtml,
-            contentRecHtml: contentRecHtml,
             readMoreCSS: readMoreCss
         };
     })();

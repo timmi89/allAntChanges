@@ -3,20 +3,25 @@ var AjaxClient = require('./utils/ajax-client');
 var contentFetchTriggerSize = 0; // The size of the pool at which we'll proactively fetch more content.
 var freshContentPool = [];
 var pendingCallbacks = []; // The callback model in this module is unusual because of the way content is served from a pool.
+var prefetchedGroups = {}; //
 
-function getRecommendedContent(count, groupSettings, callback) {
-    if (freshContentPool.length > count) {
-        callback(freshContentPool.splice(-count));
-    } else {
-        pendingCallbacks.push({ callback: callback, count: count });
-    }
-    contentFetchTriggerSize = Math.max(contentFetchTriggerSize, count); // Update the trigger size to the most we've been asked for.
-    if (freshContentPool.length <= contentFetchTriggerSize) {
+function prefetchIfNeeded(groupSettings) {
+    var groupId = groupSettings.groupId();
+    if (!prefetchedGroups[groupId]) {
+        prefetchedGroups[groupId] = true;
         fetchRecommendedContent(groupSettings);
     }
 }
 
-function fetchRecommendedContent(groupSettings) {
+function getRecommendedContent(count, pageData, groupSettings, callback) {
+    contentFetchTriggerSize = Math.max(contentFetchTriggerSize, count); // Update the trigger size to the most we've been asked for.
+    // Queue up the callback and try to serve. If more content is needed, it will
+    // be automatically fetched.
+    pendingCallbacks.push({ callback: callback, count: count });
+    serveContent(pageData, groupSettings);
+}
+
+function fetchRecommendedContent(groupSettings, callback) {
     // TODO: Extract URL
     AjaxClient.getJSONPNative('/api/contentrec', { group_id: groupSettings.groupId()} , function(response) {
         if (response.status !== 'fail' && response.data) {
@@ -27,7 +32,7 @@ function fetchRecommendedContent(groupSettings) {
                 newArray.push(freshContentPool[i]);
             }
             freshContentPool = newArray;
-            serveContent(groupSettings);
+            if (callback) { callback(groupSettings); }
         }
     });
 }
@@ -47,7 +52,7 @@ function massageContent(contentData) {
                 var match = videoIDMatcher.exec(data.content.body);
                 if (match.length === 2) {
                     // Convert the content into an image.
-                    data.content.body = 'https://img.youtube.com/vi/' + match[1] + '/0.jpg';
+                    data.content.body = 'https://img.youtube.com/vi/' + match[1] + '/mqdefault.jpg'; /* 16:9 ratio thumbnail, so we get no black bars. */
                     data.content.type = 'image';
                     massagedContent.push(data);
                 }
@@ -59,18 +64,47 @@ function massageContent(contentData) {
     return massagedContent;
 }
 
-function serveContent(groupSettings) {
+function serveContent(pageData, groupSettings, preventLoop/*only used recursively*/) {
     for (var i = 0; i < pendingCallbacks.length; i++) {
         var entry = pendingCallbacks[i];
-        if (freshContentPool.length > entry.count) {
-            entry.callback(freshContentPool.splice(-entry.count));
+        var chosenContent = [];
+        for (var j = 0; j < entry.count; j++) {
+            var preferredType = j % 2 === 0 ? 'image':'text';
+            var data = chooseContent(preferredType, pageData);
+            if (data) {
+                chosenContent.push(data);
+            }
+        }
+        if (chosenContent.length >= entry.count) {
+            entry.callback(chosenContent);
         } else {
-            // Ran out of content. Go get more
-            fetchRecommendedContent(groupSettings);
+            if (!preventLoop) {
+                // Ran out of content. Go get more. The "preventLoop" flag tells us whether
+                // we've already tried to fetch but we just have no good content to choose.
+                fetchRecommendedContent(groupSettings, function() {
+                    serveContent(pageData, groupSettings, true);
+                });
+            }
             break;
         }
     }
     pendingCallbacks = pendingCallbacks.splice(i); // Trim any callbacks that we notified.
+}
+
+function chooseContent(preferredType, pageData) {
+    var alternateIndex;
+    for (var i = freshContentPool.length-1; i >= 0; i--) {
+        var contentData = freshContentPool[i];
+        if (contentData.page.url !== pageData.canonicalUrl) {
+            if (contentData.content.type === preferredType) {
+                return freshContentPool.splice(i, 1)[0];
+            }
+            alternateIndex = i;
+        }
+    }
+    if (alternateIndex !== undefined) {
+        return freshContentPool.splice(alternateIndex, 1)[0];
+    }
 }
 
 // Durstenfeld shuffle algorithm from: http://stackoverflow.com/a/12646864/4135431
@@ -86,5 +120,6 @@ function shuffleArray(array) {
 }
 
 module.exports = {
+    prefetchIfNeeded: prefetchIfNeeded,
     getRecommendedContent: getRecommendedContent
 };

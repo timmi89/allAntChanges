@@ -48,5 +48,7 @@ module.exports = {
     'error_page__message': 'Oops! We really value your feedback, but something went wrong.', // TODO: translation
 
     'tap_helper__prompt': '¡Toca un párrafo para opinar!',
-    'tap_helper__close': 'Volver'
+    'tap_helper__close': 'Volver',
+
+    'content_rec_widget__title': 'Reader Reactions' // TODO: translation
 };
