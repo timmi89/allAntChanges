@@ -831,8 +831,8 @@ class SettingsHandler(AnonymousBaseHandler):
     @json_data
     def read(self, request, data, group_id=None):
         host = getHost(request)
-        if data and data['host_name']:
-            host = data['host_name']
+        if data:
+            host = data.get('host_name', host)
 
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))
