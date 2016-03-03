@@ -49,7 +49,7 @@ def split_reaction(tagBodyRaw):
 
 			while len(tagBodyRawSplit) > 0:
 				tagBody2 += tagBodyRawSplit.popleft() + ' '
-			
+
 			if ' ' in tagBody2.strip():
 				tagBody2Class = "space"
 			tagBody = '<div class="'+tagBody1Class+' charCount_'+str(len(tagBody1))+'">' + tagBody1 +'</div><div class="'+tagBody2Class+' charCount_'+str(len(tagBody2))+'">' + tagBody2 + '</div>'
@@ -67,7 +67,7 @@ def cssClass(field, css):
    return field.as_widget(attrs={"class":css})
 
 @register.filter
-def keyvalue(dict, key):    
+def keyvalue(dict, key):
     try:
         return dict[key]
     except KeyError:

@@ -1090,7 +1090,7 @@ def group_unapproved_tags(request, **kwargs):
     context['group'] = group
     context['hasSubheader'] = True
 
-    
+
     # is this really inefficient?
     unapproved_interaction_node_ids = []
     for tag in AllTag.objects.filter(group=group,approved=False):
@@ -1113,7 +1113,7 @@ def group_unapproved_tags(request, **kwargs):
 
     # print 'blocked_set'
     # print blocked_set
-    
+
     # unapproved_reactions = all_set - blessed_set
     # unapproved_reactions = unapproved_reactions - blocked_set
 
@@ -1146,10 +1146,7 @@ def manage_groups(request, **kwargs):
     )
 
 
-def gallery(request, example_name):
-    if not example_name:
-        example_name="weekly_news"
-
+def gallery(request, example_name="news_magazine/"):
     cookie_user = checkCookieToken(request)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -1160,9 +1157,9 @@ def gallery(request, example_name):
         context['cookie_user'] = cookie_user
 
     examples = {
-        'tech_blog':'Tech Blog',
-        'news_magazine':'News Magazine',
-        'food_blog':'Food Blog'
+        'tech_blog/': 'Tech Blog',
+        'news_magazine/': 'News Magazine',
+        'food_blog/': 'Food Blog'
     }
 
     context['examples'] = examples

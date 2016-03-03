@@ -137,8 +137,9 @@ urlpatterns = patterns('',
 
 
   # galleries
-  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'),
   url(r'^gallery/$', 'rb.views.gallery'),
+  url(r'^gallery/(?P<example_name>[\w\-\.]+/)$',
+      'rb.views.gallery', name='gallery-show'),
 
   # single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
