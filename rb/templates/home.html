@@ -1,11 +1,11 @@
 {% extends "base/wide.html" %}
 
-{% block page_title %}Antenna{% endblock %}lock%}
+{% block page_title %}Antenna{% endblock %}
 {% block page_description %}How the web reacts{%endblock%}
 
 {% block pageHeadAdditions %}
-<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/{% else %}http://www.antenna.is/{% endif %}">
-{%endblock%}
+<link rel="canonical" href="{{ BASE_URL }}">
+{% endblock %}
 
 {% block bodyClass %}{% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
 

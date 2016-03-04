@@ -113,7 +113,7 @@
 
         // put in external file...
         ANTsite.analytics = {
-            queryHost: (document.domain != "local.antenna.is") ? "//events.antenna.is" : "//nodebq.docker:3000",
+            queryHost: {% settings 'EVENTS_URL' %},
             toggleGlobalLoader: function() {
                 // TODO animate something
             },
