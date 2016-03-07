@@ -1,4 +1,6 @@
 /*global module:false*/
+var envify = require('envify/custom');
+
 module.exports = function(grunt) {
 
     var rootDir = '../..'; // Path to the root of our repo
@@ -54,7 +56,9 @@ module.exports = function(grunt) {
             widget_js: {
                 options: {
                     browserifyOptions: {
-                        transform: [ 'ractivate' ],
+                        transform: [ 'ractivate', envify({
+                            ANTENNA_URL: '<%= process.env.ANTENNA_URL %>'
+                        }) ],
                         debug: true
                     }
                 },
@@ -64,7 +68,9 @@ module.exports = function(grunt) {
             watchify_widget_js: {
                 options: {
                     browserifyOptions: {
-                        transform: [ 'ractivate' ],
+                        transform: [ 'ractivate', envify({
+                            ANTENNA_URL: '<%= process.env.ANTENNA_URL %>'
+                        }) ],
                         debug: true,
                         fullPaths: false
                     },

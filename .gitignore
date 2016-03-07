@@ -8,6 +8,7 @@ readrdb.db
 *.sublime-project
 *.sublime-project.*
 *.orig
+*.env.js
 .settings/
 .idea/
 .pycharm_helpers

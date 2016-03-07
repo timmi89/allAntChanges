@@ -6,6 +6,7 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
+    "envify": "^3.4.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.8.0",
     "grunt-concurrent": "^2.1.0",
