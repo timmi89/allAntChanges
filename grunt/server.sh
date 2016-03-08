@@ -5,15 +5,27 @@ set -e
 NPM=`realpath ./grunt/tmp_npm.sh`
 
 pushd grunt/website
-$NPM install
+if $DEBUG; then
+  $NPM install
+fi
+
 grunt
-grunt watch &
+
+if $DEBUG; then
+  grunt watch &
+fi
 popd
 
 pushd grunt/widget-new
-$NPM install
+if $DEBUG; then
+  $NPM install
+fi
+
 grunt
-grunt watch &
+
+if $DEBUG; then
+  grunt watch &
+fi
 popd
 
 ./grunt/website/node_modules/.bin/static-server -p 8081 ./rb/static

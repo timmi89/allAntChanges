@@ -24,3 +24,8 @@ docker build -t gcr.io/antenna-array/antenna:$VERSION .
 docker tag -f gcr.io/antenna-array/antenna:$VERSION gcr.io/antenna-array/antenna:latest
 gcloud docker push gcr.io/antenna-array/antenna:$VERSION
 gcloud docker push gcr.io/antenna-array/antenna:latest
+
+docker build -t gcr.io/antenna-array/antenna-static:$VERSION -f docker/antenna-static/Dockerfile .
+docker tag -f gcr.io/antenna-array/antenna-static:$VERSION gcr.io/antenna-array/antenna-static:latest
+gcloud docker push gcr.io/antenna-array/antenna-static:$VERSION
+gcloud docker push gcr.io/antenna-array/antenna-static:latest
