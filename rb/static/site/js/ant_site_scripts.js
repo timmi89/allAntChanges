@@ -1,12 +1,10 @@
-window.ANT_offline = (window.location.href.indexOf('local.antenna.is') != -1 ) ? true:false;
-window.ANT_baseUrl = ( ANT_offline ) ? "http://local.antenna.is:8081":"https://www.antenna.is";
-window.ANT_staticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/";
-window.ANT_widgetCssStaticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/";
+window.ANT_baseUrl = process.env.ANTENNA_URL;
+window.ANT_staticUrl = process.env.ANTENNA_STATIC_URL;
+window.ANT_widgetCssStaticUrl = process.env.ANTENNA_STATIC_URL;
 
 var ANTsite = ANTsite ? ANTsite : {};
 
 ANTsite = {
-    ANT_offline: ANT_offline,
     group: {},
     querystring: function(key) {
         var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
@@ -917,9 +915,9 @@ ANTsite = {
                             contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                             //for testing offline
-                            if(ANT_offline){
-                                content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
+                            if(env.process.ANTENNA_URL != "https://www.antenna.is"){
+                              content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
+                              content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -1000,10 +998,10 @@ ANTsite = {
 
                         case "img":
                         case "image":
-                                                        //for testing offline
-                            if(ANT_offline){
-                                content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
+                            //for testing offline
+                            if(env.process.ANTENNA_URL != "https://www.antenna.is"){
+                              content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
+                              content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
                             }
 
                             mainShareText = _wrapTag(interaction_body, true);

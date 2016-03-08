@@ -1,5 +1,5 @@
 /*global module:false*/
-var envify = require('envify/custom');
+var envify = require('envify');
 
 module.exports = function(grunt) {
 
@@ -28,7 +28,10 @@ module.exports = function(grunt) {
         ractive_dest: rootDir + '/rb/static/widget-new/lib/ractive.runtime-0.7.3.min.js',
 
         antuser_src: rootDir + '/rb/static/widget-new/src/xdm/ant_user.js',
-        antuser_dest: rootDir + '/rb/static/widget-new/ant_user.min.js'
+        antuser_dest: rootDir + '/rb/static/widget-new/ant_user.min.js',
+
+        xdm_env: rootDir + '/rb/static/widget-new/xdm.env.html',
+        xdm_dest: rootDir + '/rb/static/widget-new/xdm.html',
     };
 
   // Project configuration.
@@ -56,9 +59,7 @@ module.exports = function(grunt) {
             widget_js: {
                 options: {
                     browserifyOptions: {
-                        transform: [ 'ractivate', envify({
-                            ANTENNA_URL: '<%= process.env.ANTENNA_URL %>'
-                        }) ],
+                        transform: [ 'ractivate', envify ],
                         debug: true
                     }
                 },
@@ -68,9 +69,7 @@ module.exports = function(grunt) {
             watchify_widget_js: {
                 options: {
                     browserifyOptions: {
-                        transform: [ 'ractivate', envify({
-                            ANTENNA_URL: '<%= process.env.ANTENNA_URL %>'
-                        }) ],
+                        transform: [ 'ractivate', envify ],
                         debug: true,
                         fullPaths: false
                     },
@@ -79,7 +78,16 @@ module.exports = function(grunt) {
                 },
                 src: ['<%= paths.widget_src %>'],
                 dest: '<%= paths.widget_js_debug %>'
-            }
+            },
+        },
+        preprocess : {
+          options: {
+            type: 'js'
+          },
+          xdm : {
+            src : '<%= paths.xdm_env %>',
+            dest : '<%= paths.xdm_dest %>'
+          }
         },
         concat: {
             rangy: {
@@ -161,7 +169,7 @@ module.exports = function(grunt) {
                 }
             }
         }
-        });
+    });
 
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -171,8 +179,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-concurrent');
+    grunt.loadNpmTasks('grunt-preprocess');
 
-    grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
+    grunt.registerTask('default', [ 'preprocess:xdm', 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'concurrent:watch_all'  ]);
     grunt.registerTask('rangy-compile', [ 'concat:rangy' ]);// This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
     grunt.registerTask('rangy-min', [ 'uglify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.

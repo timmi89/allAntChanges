@@ -59,7 +59,12 @@ module.exports = function(grunt) {
                         rootDir + '/rb/static/site/js/materialize/velocity.min.js',
                         rootDir + '/rb/static/widget/js/ant_user.js'],
         web_js_env: rootDir + '/rb/static/site/js/antenna-web.env.js',
-        web_js_dest: rootDir + '/rb/static/site/js/antenna-web.min.js'
+        web_js_dest: rootDir + '/rb/static/site/js/antenna-web.min.js',
+
+        xdm_env: rootDir + '/rb/static/xdm.env.html',
+        xdm_dest: rootDir + '/rb/static/xdm.html',
+        fb_login_env: rootDir + '/rb/static/fb_login.env.html',
+        fb_login_dest: rootDir + '/rb/static/fb_login.html',
     };
 
   // Project configuration.
@@ -122,6 +127,19 @@ module.exports = function(grunt) {
                 }
             }
         },
+        preprocess : {
+          options: {
+            type: 'js'
+          },
+          xdm : {
+            src : '<%= paths.xdm_env %>',
+            dest : '<%= paths.xdm_dest %>'
+          },
+          fb_login : {
+            src : '<%= paths.fb_login_env %>',
+            dest : '<%= paths.fb_login_dest %>'
+          }
+        },
         watch: {
             gruntfile: {
                 files: [ 'Gruntfile.js' ]
@@ -147,9 +165,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-envify');
+    grunt.loadNpmTasks('grunt-preprocess');
 
     // Default task.
-    grunt.registerTask('default', [ 'uglify:web_js', 'envify:web_js', 'sass', 'cssmin:web_css' ]);
+    grunt.registerTask('default', [ 'preprocess:fb_login', 'preprocess:xdm', 'uglify:web_js', 'envify:web_js', 'sass', 'cssmin:web_css' ]);
     grunt.registerTask('engage', [ 'uglify:engage_js', 'envify:engage_js' ]);
     grunt.registerTask('engage_loader', [ 'uglify:engage_loader_js', 'envify:engage_loader_js' ]);
 };

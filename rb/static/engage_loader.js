@@ -71,9 +71,8 @@
     }
 
     function computeNewScriptUrl(urlParams) {
-        var offline = window.location.hostname === 'local.antenna.is';
         var debug = urlParams['antennaDebug'] === 'true';
-        var serverUrl = offline ? 'http://local-static.antenna.is:8081' : 'https://www.antenna.is';
+        var serverUrl = process.env.ANTENNA_URL;
         if (debug) {
             return serverUrl + '/static/widget-new/debug/antenna.js';
         } else {
@@ -82,9 +81,8 @@
     }
 
     function computeCurrentScriptUrl(urlParams) {
-        var offline = window.location.hostname === 'local.antenna.is';
         var debug = urlParams['antennaDebug'] === 'true';
-        var serverUrl = offline ? 'http://local-static.antenna.is:8081' : 'https://www.antenna.is';
+        var serverUrl = process.env.ANTENNA_URL;
         if (debug) {
             return serverUrl + '/static/engage_full.js';
         } else {

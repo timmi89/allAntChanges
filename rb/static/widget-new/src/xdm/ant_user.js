@@ -19,10 +19,9 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 }
 
-var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.antenna.is/insert" : "http://nodebq.docker/insert";
+var trackingUrl = process.env.EVENTS_URL;
 
 window.ANTAuth = {
-    isOffline: (document.domain == "local.antenna.is"),
     ant_user: {},
     popups: {},
     //todo: make this stuff better
@@ -114,10 +113,6 @@ window.ANTAuth = {
                 $event = $('<img src="'+ANT_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
             $('#ant_event_pixels').append($event);
-
-            if(ANTAuth.isOffline){
-                //uncomment for debugging
-            }
         },
         trackEventToCloud: function(params){
             $.ajax({

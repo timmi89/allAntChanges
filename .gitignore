@@ -19,3 +19,26 @@ rb/static/site/css/site_sass_compiled.css.map
 celerybeat-schedule*
 celerybeat.pid
 VERSION
+
+# generated static files
+rb/static/engage_full.env.js
+rb/static/engage.min.js
+rb/static/engage_loader.env.js
+rb/static/engage.js
+rb/static/site/css/styles.min.css
+rb/static/site/css/site_sass_compiled.css
+rb/static/site/js/antenna-web.min.js
+rb/static/fb_login.html
+rb/static/xdm.html
+rb/static/widget-new/debug/antenna.js
+rb/static/widget-new/antenna.min.js
+rb/static/widget-new/debug/temp.css
+rb/static/widget-new/debug/reset_temp.css
+rb/static/widget-new/antenna.css
+rb/static/engage.js
+rb/static/widget-new/lib/rangy.compiled-1.3.0.js
+rb/static/widget-new/lib/rangy.compiled-1.3.0.min.js
+rb/static/widget-new/lib/ractive.runtime-0.7.3.min.js
+rb/static/widget-new/ant_user.min.js
+rb/static/widget-new/xdm.html
+

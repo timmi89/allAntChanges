@@ -13,6 +13,7 @@
     "grunt-contrib-uglify": "^0.9.1",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-envify": "0.0.3",
+    "grunt-preprocess": "^5.1.0",
     "ractivate": "^0.2.0"
   }
 }

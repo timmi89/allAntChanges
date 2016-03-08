@@ -19,12 +19,9 @@ if ((function() {
     if (urlParams['antennaNewWidget'] && urlParams['antennaNewWidget'].toLowerCase() === 'true') {
         var head = document.getElementsByTagName('head')[0];
         if (head) {
-            var newScriptUrl = 'https://www.antenna.is/static/widget-new/antenna.min.js';
+            var newScriptUrl = process.env.ANTENNA_URL + '/static/widget-new/antenna.min.js';
             if (urlParams['antennaDebug'] && urlParams['antennaDebug'].toLowerCase() === 'true') {
-                newScriptUrl = 'https://www.antenna.is/static/widget-new/debug/antenna.js';
-            }
-            if (window.location.host === 'local.antenna.is:8081') { // offline
-                newScriptUrl = 'http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js';
+                newScriptUrl = process.env.ANTENNA_URL + '/static/widget-new/debug/antenna.js';
             }
             var scriptTag = document.createElement('script');
             scriptTag.setAttribute('src', newScriptUrl);
@@ -73,21 +70,9 @@ ANT.engageScriptSrc = ANT.engageScript.src;
 var $ANT, //our global $ANT object (jquerified ANT object for attaching data and queues and such)
 $A, //init var: our clone of jQuery
 ANT_scriptPaths = {},
-//check if this script is the offline version
-//note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
-ANT_offline = !!(
-    ANT.engageScriptSrc.indexOf('local-static.antenna.is') != -1 ||
-    ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
-    ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
-    document.domain == "local.antenna.is" //shouldn't need this line anymore
-),
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
-
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081": window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = process.env.ANTENNA_URL,
+ANT_staticUrl = process.env.ANTENNA_STATIC_URL,
+ANT_widgetCssStaticUrl = process.env.ANTENNA_STATIC_URL;
 
 // fails on iPhone?
 // var isTouchBrowser = (
@@ -421,11 +406,7 @@ function antenna($A){
                     var data = $.toJSON( trackData );
 
                     // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
-                    var trackingUrl = "http://nodebq.docker:3000/insert";
-                    if (document.domain != "local.antenna.is") {
-                        var percentGKETraffic = 101;
-                        trackingUrl = (Math.random() * 100 < percentGKETraffic) ? "http://events.antenna.is/insert" : "http://events.readrboard.com/insert";
-                    }
+                    var trackingUrl = process.env.EVENTS_URL;
 
                     $.ajax({
                         url: trackingUrl,
@@ -9917,9 +9898,9 @@ if ( sendData.kind=="page" ) {
                                 contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
-                                if(ANT_offline){
-                                    content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                    content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
+                                if(env.process.ANTENNA_URL != "https://www.antenna.is"){
+                                    content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
+                                    content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
