@@ -69,7 +69,10 @@ CACHE_SYNCBACK = False
 URL_NO_PROTO = os.getenv('VIRTUAL_HOST', 'antenna.docker')
 EVENTS_URL = os.getenv('EVENTS_URL', 'http://nodebq.docker')
 
-STATIC_URL = os.getenv('ANTENNA_STATIC_URL', '//' + URL_NO_PROTO + '/static/')
+STATIC_URL = os.getenv(
+    'ANTENNA_STATIC_URL',
+    '//' + URL_NO_PROTO + '/static'
+) + '/'
 static_storage = os.getenv('ANTENNA_STATIC_STORAGE', False)
 if static_storage:
     STATICFILES_STORAGE = static_storage
