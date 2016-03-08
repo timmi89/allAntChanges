@@ -1,0 +1,60 @@
+# Adapted from https://github.com/GoogleCloudPlatform/kube-jenkins-imager
+
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: antenna-static-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: antenna-static-nginx
+      labels:
+        name: antenna-static
+        service: reverse-proxy
+        app: nginx
+    spec:
+      containers:
+        - name: antenna-static-nginx
+          image: gcr.io/antenna-array/nginx-ssl-proxy:latest
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: SERVICE_HOST_ENV_NAME
+              value: ANTENNA_STATIC_SERVICE_HOST
+            - name: SERVICE_PORT_ENV_NAME
+              value: ANTENNA_STATIC_SERVICE_PORT_HTTP
+            - name: SSL_PRIVATE_KEY
+              value: /secrets/antenna-static-ssl/privkey.pem
+            - name: SSL_FULLCHAIN
+              value: /secrets/antenna-static-ssl/fullchain.pem
+            - name: SSL_DHPARAM
+              value: /secrets/antenna-static-ssl/dhparam.pem
+            - name: ENABLE_BASIC_AUTH
+              value: 'false'
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+          - mountPath: /secrets/antenna-static-ssl
+            name: antenna-static-ssl
+            readOnly: true
+          - mountPath: /secrets/stackdriver
+            name: stackdriver
+            readOnly: true
+      volumes:
+      - name: antenna-static-ssl
+        secret:
+          secretName: antenna-static-ssl
+      - name: stackdriver
+        secret:
+          secretName: stackdriver
+

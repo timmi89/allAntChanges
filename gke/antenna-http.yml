@@ -25,7 +25,11 @@ spec:
               memory: "250Mi"
           env:
             - name: ANTENNA_URL
-              value: staging.antenna.is
+              value: https://www.staging.antenna.is
+            - name: ANTENNA_STATIC_URL
+              value: https://static.staging.antenna.is
+            - name: EVENTS_URL
+              value: https://events.staging.antenna.is
             - name: BQ_TABLE_PREFIX
               value: gke_staging
             - name: DJANGO_LOG_LEVEL

@@ -1,0 +1,35 @@
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: antenna-static-http
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: antenna-static-http
+      labels:
+        name: antenna-static
+        service: http
+        app: antenna-static
+    spec:
+      containers:
+        - name: antenna-static-http
+          image: gcr.io/antenna-array/antenna-static:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "250Mi"
+          env:
+            - name: ANTENNA_URL
+              value: https://www.staging.antenna.is
+            - name: ANTENNA_STATIC_URL
+              value: https://static.staging.antenna.is
+            - name: EVENTS_URL
+              value: https://events.staging.antenna.is
+          ports:
+            - name: http
+              containerPort: 8081

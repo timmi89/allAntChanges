@@ -177,6 +177,8 @@ else:
         "www.antenna.is",
         "static.antenna.is",
         "staging.antenna.is",
+        "www.staging.antenna.is",
+        "static.staging.antenna.is",
         "readrboard.com",
         "www.readrboard.com",
         "static.readrboard.com"
