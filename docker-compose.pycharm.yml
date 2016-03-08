@@ -3,6 +3,9 @@ web-pycharm:
     file: ./docker/common.yml
     service: python_environment
   build: docker/pycharm_development
+  environment:
+    VIRTUAL_HOST: antenna.docker
+    VIRTUAL_PORT: 80881
   ports:
     - "8081:8081"
     - "2222:22"
@@ -10,6 +13,15 @@ web-pycharm:
     - db
     - memcached
     - rabbitmq
+static:
+  extends:
+    file: ./docker/common.yml
+    service: python_environment
+  command: ./grunt/server.sh
+  environment:
+    VIRTUAL_HOST: antenna-static.docker
+  ports:
+    - "8082:8081"
 celeryd:
   extends:
     file: ./docker/common.yml

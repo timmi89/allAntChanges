@@ -24,6 +24,8 @@ spec:
               cpu: "500m"
               memory: "250Mi"
           env:
+            - name: ANTENNA_URL
+              value: staging.antenna.is
             - name: BQ_TABLE_PREFIX
               value: gke_staging
             - name: DJANGO_LOG_LEVEL

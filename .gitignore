@@ -15,7 +15,9 @@ readrdb.db
 nohup.out
 .sass-cache
 virtualenvs
-rb/static/site/css/site_sass_compiled.css.map
+npm-debug.log
+grunt/website/node_modules
+grunt/widget-new/node_modules
 celerybeat-schedule*
 celerybeat.pid
 VERSION
@@ -41,4 +43,4 @@ rb/static/widget-new/lib/rangy.compiled-1.3.0.min.js
 rb/static/widget-new/lib/ractive.runtime-0.7.3.min.js
 rb/static/widget-new/ant_user.min.js
 rb/static/widget-new/xdm.html
-
+rb/static/site/css/site_sass_compiled.css.map
