@@ -40,7 +40,6 @@ def show(request, path):
                 os.path.join(pages_path, path),
                 content_type=content_type(path)
             )
-            response['X-Frame-Options'] = 'ALLOW'
             return response
         elif(
             os.path.isdir(os.path.join(pages_path, path)) and
@@ -50,7 +49,6 @@ def show(request, path):
                 request,
                 os.path.join(pages_path, path, index_path)
             )
-            response['X-Frame-Options'] = 'ALLOW'
             return response
         else:
             return HttpResponse(
