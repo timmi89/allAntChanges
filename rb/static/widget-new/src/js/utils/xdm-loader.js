@@ -3,7 +3,7 @@ var AppMode = require('./app-mode');
 var URLConstants = require('./url-constants');
 var WidgetBucket = require('./widget-bucket');
 
-var XDM_ORIGIN = AppMode.offline ? URLConstants.DEVELOPMENT : URLConstants.PRODUCTION;
+var XDM_ORIGIN = URLConstants.ANTENNA;
 
 function createXDMframe(groupId) {
     var iframeUrl = XDM_ORIGIN + "/static/widget-new/xdm.html",

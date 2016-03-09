@@ -111,33 +111,28 @@ function legacyComputeMediaUrl($element) {
     return content;
 }
 
-function amazonS3Url() {
-    return URLConstants.AMAZON_S3;
+function antennaStaticUrl() {
+    return URLConstants.ANTENNA_STATIC;
 }
 
 // TODO: refactor usage of app server url + relative routes
 function appServerUrl() {
     if (AppMode.test) {
-        return URLConstants.TEST;
-    } else if (AppMode.offline) {
-        return URLConstants.DEVELOPMENT;
+        return URLConstants.TEST_ANTENNA;
     }
-    return URLConstants.PRODUCTION;
+    return URLConstants.ANTENNA;
 }
 
 // TODO: refactor usage of events server url + relative routes
 function eventsServerUrl() {
-    if (AppMode.offline) {
-        return URLConstants.DEVELOPMENT_EVENTS;
-    }
-    return URLConstants.PRODUCTION_EVENTS;
+    return URLConstants.EVENTS;
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     appServerUrl: appServerUrl,
     eventsServerUrl: eventsServerUrl,
-    amazonS3Url: amazonS3Url,
+    anntennaStaticUrl: antennaStaticUrl,
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,

@@ -1,4 +1,4 @@
-var AppMode = require('./app-mode');
+var URLs = require('./urls');
 var XDMClient = require('./xdm-client');
 
 var cachedUserInfo;
@@ -62,7 +62,7 @@ function optimisticCommentUser() {
 }
 
 function anonymousImageURL() {
-    return AppMode.offline ? '/static/widget/images/anonymousplode.png' : 'http://s3.amazonaws.com/readrboard/widget/images/anonymousplode.png';
+    return URLs.antennaStaticUrl() + '/widget/images/anonymousplode.png';
 }
 
 module.exports = {

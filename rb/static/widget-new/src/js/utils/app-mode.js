@@ -24,7 +24,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    offline: currentScriptSrc.indexOf(URLConstants.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
-    test: currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
+    offline: currentScriptSrc.indexOf(URLConstants.DEV_ANTENNA) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA) !== -1,
+    test: currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA) !== -1,
     debug: currentScriptSrc.indexOf('?debug') !== -1
 };
