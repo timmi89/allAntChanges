@@ -63,10 +63,9 @@
     ANTsite.analytics = {
         newGroups: function( args ) {},
         debugError: function(error){
-            if(!ANTsite.ANT_offline){
-                return;
-            }
+          {% if DEBUG %}
             alert("Error: " + error.code + " " + error.message);
+          {% endif %}
         },
         parse: {},
 

@@ -178,7 +178,10 @@
 
   <!-- Google Analytics -->
   <script type="text/javascript">
-  if(!ANT_offline){
+  {% if DEBUG %}
+    //just a dummy array for testing
+    _gaq = _gaq || [];
+  {% else %}
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-24372992-1']);
     _gaq.push(['_trackPageview']);
@@ -188,10 +191,7 @@
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
-  }else{
-      //just a dummy array for testing
-      _gaq = _gaq || [];
-  }
+  {% endif %}
   </script>
 
   <!--Start of Tawk.to Script-->

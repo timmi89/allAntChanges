@@ -33,6 +33,8 @@ module.exports = function(grunt) {
         antuser_src: rootDir + '/rb/static/widget-new/src/xdm/ant_user.js',
         antuser_dest: rootDir + '/rb/static/widget-new/ant_user.min.js',
 
+        fb_login_env: rootDir + '/rb/static/widget-new/fb_login.env.html',
+        fb_login_dest: rootDir + '/rb/static/widget-new/fb_login.html',
         xdm_env: rootDir + '/rb/static/widget-new/xdm.env.html',
         xdm_dest: rootDir + '/rb/static/widget-new/xdm.html',
     };
@@ -86,6 +88,10 @@ module.exports = function(grunt) {
         preprocess : {
           options: {
             type: 'js'
+          },
+          fb_login : {
+            src : '<%= paths.fb_login_env %>',
+            dest : '<%= paths.fb_login_dest %>'
           },
           xdm : {
             src : '<%= paths.xdm_env %>',
@@ -195,7 +201,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-preprocess');
 
-    grunt.registerTask('default', [ 'preprocess:xdm', 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
+    grunt.registerTask('default', [ 'preprocess:xdm', 'preprocess:fb_login', 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'concurrent:watch_all'  ]);
     grunt.registerTask('rangy-compile', [ 'concat:rangy' ]);// This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
     grunt.registerTask('rangy-min', [ 'uglify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.

@@ -262,17 +262,6 @@ DEPRECATED IN JUILY 2015 REWRITE
   </footer>
   {% endblock footer %}
 
-<script type="text/javascript">
-
-// var _sf_async_config={uid:26845,domain:"readrboard.com"};
-// var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
-
-// if(!ANTsite.ANT_offline){
-//     ANTsite.util.loadScript( {src:chartbeat_script}, function() {
-//     });
-// }
-</script>
-
 {% block page_js %}
 {% endblock %}
 
@@ -337,7 +326,10 @@ DEPRECATED IN JUILY 2015 REWRITE
     </script>
 
 <script type="text/javascript">
-if(!ANT_offline){
+{% if DEBUG %}
+  //just a dummy array for testing
+  _gaq = _gaq || [];
+{% else %}
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-24372992-1']);
   _gaq.push(['_trackPageview']);
@@ -347,10 +339,7 @@ if(!ANT_offline){
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
-}else{
-    //just a dummy array for testing
-    _gaq = _gaq || [];
-}
+{% endif %}
 </script>
 <!-- Parse JS SDK -->
 <!--<script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
