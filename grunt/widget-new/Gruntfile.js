@@ -202,6 +202,6 @@ module.exports = function(grunt) {
     grunt.registerTask('ractive-min', [ 'uglify:ractive' ]);
     grunt.registerTask('antuser-min', [ 'uglify:antuser' ]);
     grunt.registerTask('widget', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
-    grunt.registerTask('readmore', [ 'uglify:readmore' ]);
+    grunt.registerTask('readmore', [ 'uglify:readmore_js' ]);
 
 };
