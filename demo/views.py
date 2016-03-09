@@ -35,16 +35,23 @@ def show(request, path):
         # Santitize path
         path = os.path.normpath('/' + path).lstrip('/')
         if path.endswith(('.html', '.css', '.js')):
-            return render(
+            response = render(
                 request,
                 os.path.join(pages_path, path),
                 content_type=content_type(path)
             )
+            response['X-Frame-Options'] = 'ALLOW'
+            return response
         elif(
             os.path.isdir(os.path.join(pages_path, path)) and
             os.path.isfile(os.path.join(pages_path, path, index_path))
         ):
-            return render(request, os.path.join(pages_path, path, index_path))
+            response = render(
+                request,
+                os.path.join(pages_path, path, index_path)
+            )
+            response['X-Frame-Options'] = 'ALLOW'
+            return response
         else:
             return HttpResponse(
                 open(os.path.join(pages_path, path), 'rb'),
