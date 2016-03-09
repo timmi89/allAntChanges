@@ -9,7 +9,7 @@ if $DEBUG; then
   $NPM install
 fi
 
-grunt
+grunt default engage engage_loader
 
 if $DEBUG; then
   grunt watch &
@@ -21,10 +21,10 @@ if $DEBUG; then
   $NPM install
 fi
 
-grunt
+grunt default antuser-min widget readmore
 
 if $DEBUG; then
-  grunt watch &
+  grunt monitor watch &
 fi
 popd
 
