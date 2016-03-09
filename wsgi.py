@@ -2,7 +2,7 @@ import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'antenna.settings'
 
-import django.core.handlers.wsgi
+from django.core.wsgi import get_wsgi_application
 from dj_static import Cling
 
-application = Cling(django.core.handlers.wsgi.WSGIHandler())
+application = Cling(get_wsgi_application())

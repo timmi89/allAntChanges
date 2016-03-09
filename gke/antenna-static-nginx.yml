@@ -27,9 +27,9 @@ spec:
               memory: "1Gi"
           env:
             - name: SERVICE_HOST_ENV_NAME
-              value: ANTENNA_STATIC_SERVICE_HOST
+              value: ANTENNA_STATIC_HTTP_SERVICE_HOST
             - name: SERVICE_PORT_ENV_NAME
-              value: ANTENNA_STATIC_SERVICE_PORT_HTTP
+              value: ANTENNA_STATIC_HTTP_SERVICE_PORT_HTTP
             - name: SSL_PRIVATE_KEY
               value: /secrets/antenna-static-ssl/privkey.pem
             - name: SSL_FULLCHAIN

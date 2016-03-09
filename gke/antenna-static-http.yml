@@ -24,6 +24,8 @@ spec:
               cpu: "500m"
               memory: "250Mi"
           env:
+            - name: VIRTUAL_HOST
+              value: static.staging.antenna.is
             - name: ANTENNA_URL
               value: https://www.staging.antenna.is
             - name: ANTENNA_STATIC_URL
