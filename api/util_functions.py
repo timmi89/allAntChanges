@@ -7,10 +7,13 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.cache import cache
 from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
+import calendar
 import random
+import requests
 import json
 import re
 import time
+import settings
 import string
 from threading import Thread
 from exceptions import FBException, JSONException
@@ -222,16 +225,19 @@ def getPage(host, page_request):
             defaults = {'site': site, 'title':title, 'image':image}
         )[0]
     page_changed = False
-    if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
+    if image is not None and len(image) > 0 and image != page.image:
         page.image = image
         page_changed = True
-    if (page.author is None or len(page.author) < 1) and author is not None and len(author) > 0:
+    if title is not None and len(title) > 0 and title != page.title:
+        page.title = title
+        page_changed = True
+    if author is not None and len(author) > 0 and author != page.author:
         page.author = author
         page_changed = True
-    if (page.topics is None or len(page.topics) < 1) and topics is not None and len(topics) > 0:
+    if topics is not None and len(topics) > 0 and topics != page.topics:
         page.topics = topics
         page_changed = True
-    if (page.section is None or len(page.section) < 1) and section is not None and len(section) > 0:
+    if section is not None and len(section) > 0 and section != page.section:
         page.section = section
         page_changed = True
 
@@ -505,6 +511,115 @@ def getSinglePageDataNewer(page):
     return page_data
 
 
+def getRecommendedContent(group_id):
+    # Fetch the popular content from the Event server
+    popular_content = getEventsPopularContent(group_id)
+
+    # Now we need to compute the top reactions on that content (default reactions only)
+    popular_content_ids = []
+    for content_entry in popular_content: # collect all the content ids
+        content_id = content_entry['content_id']
+        popular_content_ids.append(content_id)
+
+    default_reaction_ids = []
+    group = Group.objects.get(id=group_id)
+    for blessed_tag in group.blessed_tags.values('id'): # collect the default reaction ids
+        default_reaction_ids.append(blessed_tag['id'])
+
+    # fetch all default reactions on the content and count them up.
+    # organize the data for the next pass
+    default_content_interactions = {}
+    page_ids = set()
+    interactions = Interaction.objects.filter(approved=True,content_id__in=popular_content_ids,interaction_node_id__in=default_reaction_ids,kind='tag').values('id','container_id','content_id','kind','interaction_node_id','parent_id','page_id')
+    for interaction in interactions:
+        content_id = interaction['content_id']
+        page_ids.add(interaction['page_id'])
+        content_interactions = default_content_interactions.setdefault(content_id, { 'content_id': content_id })
+        content_reactions = content_interactions.setdefault('reactions', {})
+        node_id = interaction['interaction_node_id']
+        content_reaction = content_reactions.setdefault(node_id, { 'count': 0, 'node_id': node_id })
+        content_reaction['count'] += 1
+        if not interaction['parent_id']: # this is a 'root' interaction
+            content_reaction['interaction_id'] = interaction['id']
+            content_reaction['page_id'] = interaction['page_id']
+
+    # now figure out which reaction is the top reaction for each piece of content.
+    # organize the data for the next pass
+    top_content_reactions = {}
+    top_node_ids = []
+    for content_id, content_interactions in default_content_interactions.items():
+        content_id = content_interactions['content_id']
+        content_reactions = content_interactions['reactions']
+        top_reaction = None
+        for node_id, reaction in content_reactions.items():
+            if top_reaction is None or reaction['count'] > top_reaction['count']:
+                top_reaction = reaction
+                top_node_id = node_id
+        top_node_ids.append(top_node_id)
+        top_content_reactions[content_id] = {
+            'interaction_id': top_reaction['interaction_id'],
+            'page_id': top_reaction['page_id'],
+            'node_id': top_node_id
+        }
+
+    # now that we know which content and reactions we're going to return, go fetch the bodies
+    content_dict = {}
+    for content in Content.objects.filter(id__in=popular_content_ids).values('id','body'):
+        content_dict[content['id']] = content
+    node_dict = {}
+    for node in InteractionNode.objects.filter(id__in=top_node_ids).values('id','body'):
+        node_dict[node['id']] = node
+    page_dict = {}
+    for page in Page.objects.filter(id__in=page_ids).values('id','title'):
+        page_dict[page['id']] = page
+    page_reaction_counts = {}
+    for page_id in page_ids:
+        page_reaction_counts[page_id] = Interaction.objects.filter(page_id=page_id).count()
+
+    # finally, go through all the content we got back from the event server and build the response augmented with
+    # all the data we just built up
+    recommended_content = []
+    for content_entry in popular_content:
+        content_id = content_entry['content_id']
+        content_reaction = top_content_reactions.get(content_id)
+        if content_reaction:
+            interaction_id = content_reaction.get('interaction_id')
+            if interaction_id: # This can be None due to corrupt data in the DB
+                page_id = content_reaction['page_id']
+                recommended_content.append({
+                    'content': {
+                        'id': content_id,
+                        'type': content_entry['content_kind'],
+                        'body': content_dict[content_id]['body']
+                    },
+                    'page': {
+                        'url': content_entry['url'],
+                        'title': page_dict[page_id]['title']
+                    },
+                    'reaction_count': page_reaction_counts[page_id],
+                    'top_reaction': {
+                        'interaction_id': interaction_id,
+                        'text': node_dict[content_reaction['node_id']]['body']
+                    }
+                })
+    return recommended_content
+
+
+# Asks BigQuery for popular content through our Events service
+def getEventsPopularContent(group_id):
+    end_date = datetime.utcnow() # BigQuery is GMT
+    start_date = end_date - timedelta(days=21)
+
+    res = requests.get(settings.EVENTS_URL + '/popularContent', {
+        "json": json.dumps({
+            "gid": group_id,
+            "start_date": calendar.timegm(start_date.timetuple()) * 1000,
+            "end_date": calendar.timegm(end_date.timetuple()) * 1000
+        })
+    })
+    return res.json().get('popularContent', [])
+
+
 def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
@@ -579,6 +694,7 @@ def getSettingsDict(group, site=None, blessed_tags=None):
     settings_dict['blessed_tags'] = blessed_tags # deprecated. delete once all client usage is removed.
     settings_dict['default_reactions'] = blessed_tags
     return settings_dict
+
 
 def getGlobalActivity():
     makeItLean = True

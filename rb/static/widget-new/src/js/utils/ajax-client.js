@@ -280,6 +280,22 @@ function postEvent(event) {
     });
 }
 
+function postTrackingEvent(event) {
+    var baseUrl = URLs.eventsServerUrl();
+    if (AppMode.debug) {
+        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+    }
+    var trackingUrl = baseUrl + URLs.eventUrl() + '/event.gif';
+    if (event) {
+        trackingUrl += '?json=' + encodeURI(JSON.stringify(event));
+    }
+    var imageTag = document.createElement('img');
+    imageTag.setAttribute('height', 1);
+    imageTag.setAttribute('width', 1);
+    imageTag.setAttribute('src', trackingUrl);
+    document.getElementsByTagName('body')[0].appendChild(imageTag);
+}
+
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
 function doGetJSONP(baseUrl, url, data, success, error) {
     var options = {
@@ -310,14 +326,45 @@ function doGetJSONP(baseUrl, url, data, success, error) {
     $.ajax(options);
 }
 
+// Native (no jQuery) implementation of a JSONP request.
+function getJSONPNative(relativeUrl, params, callback) {
+    // TODO: decide whether to do our json: param wrapping here or in doGetJSONPNative
+    doGetJSONPNative(URLs.appServerUrl() + relativeUrl, { json: JSON.stringify(params) }, callback);
+}
+
+// Native (no jQuery) implementation of a JSONP request.
+function doGetJSONPNative(url, params, callback) {
+    var scriptTag = document.createElement('script');
+    var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
+    window[responseCallback] = function(response) {
+        try {
+            callback(response);
+        } finally {
+            delete window[responseCallback];
+            scriptTag.parentNode.removeChild(scriptTag);
+        }
+    };
+    var jsonpUrl = url + '?callback=' + responseCallback;
+    for (var param in params) {
+        if (params.hasOwnProperty(param)) {
+            jsonpUrl += '&' + encodeURI(param) + '=' + encodeURI(params[param]);
+        }
+    }
+    scriptTag.setAttribute('type', 'application/javascript');
+    scriptTag.setAttribute('src', jsonpUrl);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(scriptTag);
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     getJSONP: getJSONP,
+    getJSONPNative: getJSONPNative,
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
     postComment: postComment,
     getComments: getComments,
     postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
-    postEvent: postEvent
+    postEvent: postEvent,
+    postTrackingEvent: postTrackingEvent
 };

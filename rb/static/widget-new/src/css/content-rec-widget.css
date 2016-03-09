@@ -1,0 +1,70 @@
+.antenna-contentrec-inner {
+    width: 100%;
+    padding: 20px;
+    font-size: 1rem; /* Default content rec to containing page font size. */
+}
+
+.antenna-contentrec-header {
+    text-transform: uppercase;
+}
+
+.antenna-contentrec-entry {
+    margin-top: 20px;
+}
+
+.antenna-contentrec-entry-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.antenna-contentrec-reaction-text {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.25em; /* Keep in sync with antenna-contentrec-reaction-indicator line-height for alignment */
+    font-weight: 600;
+}
+
+.antenna-contentrec-indicator-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.antenna-contentrec-reaction-indicator {
+    display: inline-block;
+    font-size: 0.65em;
+}
+
+.antenna-contentrec-reaction-count {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.antenna-contentrec-body {
+    padding: 10px;
+}
+
+.antenna-contentrec-body-text {
+    line-height: 1.4em;
+    max-height: 7.1em; /* 5 lines */ /* Keep in sync with body-image height */
+    overflow-y: hidden;
+}
+
+.antenna-contentrec-body-text strong {
+    font-weight: bold;
+}
+
+.antenna-contentrec-body-image {
+    max-height: 7.1em; /* Keep in sync with body-text height */
+    overflow-y: hidden;
+}
+
+.antenna-contentrec-body-image img {
+    width: 100%;
+}
+
+.antenna-contentrec-page-title {
+    padding: 10px;
+}

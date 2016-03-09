@@ -15,7 +15,6 @@
     text-shadow: 0 0 6px rgba(0,0,0,.5);
     opacity: 0.6;
     white-space: nowrap;
-    z-index: 998; /* TODO: compute programatically (e.g. container element z-index + 1) */
     pointer-events: auto;
 }
 
@@ -41,7 +40,8 @@
     vertical-align: middle;
 }
 
-.antenna-media-indicator-widget.antenna-active .antenna-reaction-total {
+.antenna-media-indicator-widget.antenna-active .antenna-reaction-total,
+.antenna-media-indicator-widget.antenna-touch .antenna-reaction-total {
     visibility: inherit; /* only show if the parent element is showing */
 }
 

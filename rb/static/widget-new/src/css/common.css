@@ -8,13 +8,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-#antenna-widget-bucket {
-    /* This gives us base 0,0 coords that the rest of our elements can position from. */
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
 .antenna-logo {
     display: inline-block;
 }
@@ -23,11 +16,6 @@
     width: 1em;
     height: 1em;
     vertical-align: middle;
-}
-
-.antenna-logo-text svg {
-    /* TODO: real styles once we have a real SVG */
-    height: 1em;
 }
 
 .antenna-facebook svg, .antenna-twitter svg {
@@ -70,11 +58,14 @@
 }
 
 .antenna-highlight {
+    font-size:inherit;  /* helps prevent resizing of text when something gets highlighted */
     background-color: #FCF5A7;
-    color: #666;
-    text-decoration: none;
-    -webkit-user-select:none;
-    -k-user-select:none;
-    -moz-user-select:none;
-    user-select:none;
+    color: #666666;
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: inherit;
+    -webkit-user-select: none;
+    -k-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }

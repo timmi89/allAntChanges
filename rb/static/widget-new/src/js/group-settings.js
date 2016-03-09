@@ -258,7 +258,11 @@ function createFromJSON(json) {
         customCSS: computeCustomCSS,
         exclusionSelector: exclusionSelector(),
         language: data('language'),
-        twitterAccount: data('twitter')
+        twitterAccount: data('twitter'),
+        isShowContentRec: data('show_recirc'),
+        contentRecSelector: data('recirc_selector'),
+        contentRecTitle: data('recirc_title'),
+        contentRecMethod: data('recirc_jquery_method')
     }
 }
 

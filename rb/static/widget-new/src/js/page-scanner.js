@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./utils/app-mode');
+var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
@@ -8,6 +9,7 @@ var WidgetBucket = require('./utils/widget-bucket');
 
 var AutoCallToAction = require('./auto-call-to-action');
 var CallToActionIndicator = require('./call-to-action-indicator');
+var ContentRec = require('./content-rec-widget');
 var HashedElements = require('./hashed-elements');
 var MediaIndicatorWidget = require('./media-indicator-widget');
 var PageData = require('./page-data');
@@ -55,6 +57,7 @@ function scanPage($page, groupSettings, isMultiPage) {
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
     scanForSummaries($page, pageData, groupSettings); // Summary widget may be on the page, but outside the active section
+    scanForContentRec($page, pageData, groupSettings);
     $activeSections.each(function() {
         var $section = $(this);
         createAutoCallsToAction($section, pageData, groupSettings);
@@ -103,6 +106,33 @@ function scanForSummaries($element, pageData, groupSettings) {
         insertContent($summary, $summaryElement, groupSettings.summaryMethod());
         createdWidgets.push(summaryWidget);
     });
+}
+
+function scanForContentRec($element, pageData, groupSettings) {
+    if (groupSettings.isShowContentRec() && BrowserMetrics.isMobile()) {
+        var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
+        for (var i = 0; i < $contentRecLocations.length; i++) {
+            var contentRecLocation = $contentRecLocations[i];
+            var contentRec = ContentRec.createContentRec(pageData, groupSettings);
+            var contentRecElement = contentRec.element;
+            var method = groupSettings.contentRecMethod();
+            switch (method) {
+                case 'append':
+                    contentRecLocation.appendChild(contentRecElement);
+                    break;
+                case 'prepend':
+                    contentRecLocation.insertBefore(contentRecElement, contentRecLocation.firstChild);
+                    break;
+                case 'before':
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation);
+                    break;
+                case 'after':
+                default:
+                    contentRecLocation.parentNode.insertBefore(contentRecElement, contentRecLocation.nextSibling);
+            }
+            createdWidgets.push(contentRec);
+        }
+    }
 }
 
 function scanForCallsToAction($element, pageData, groupSettings) {
@@ -240,33 +270,35 @@ function scanText($textElement, pageData, groupSettings) {
             createdWidgets.push(textReactions);
         }
     }
-}
 
-// We use this to handle the simple case of text content that ends with some media as in
-// <p>My text. <img src="whatever"></p>.
-// This is a simplistic algorithm, not a general solution:
-// We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
-// text or some media.  If the last content node is not text, we want to insert the text indicator before the media.
-function lastContentNode(node) {
-    var lastNode;
-    var childNodes = node.childNodes;
-    for (var i = 0; i < childNodes.length; i++) {
-        var child = childNodes[i];
-        if (child.nodeType === 3) {
-            lastNode = child;
-        } else if (child.nodeType === 1) {
-            var tagName = child.tagName.toLowerCase();
-            switch (tagName) {
-                case 'img':
-                case 'iframe':
-                case 'video':
-                case 'iframe':
-                    lastNode = child;
+    // We use this to handle the case of text content that ends with some non-text node as in
+    // <p>My text. <img src="whatever"></p> or
+    // <p>My long paragraph text with a common CMS problem.<br></p>
+    // This is a simplistic algorithm, not a general solution:
+    // We walk the DOM inside the given node and keep track of the last "content" node that we encounter, which could be either
+    // text or some media.  If the last content node is not text, we want to insert the text indicator before the media.
+    function lastContentNode(node) {
+        var lastNode;
+        var childNodes = node.childNodes;
+        for (var i = 0; i < childNodes.length; i++) {
+            var child = childNodes[i];
+            if (child.nodeType === 3) {
+                lastNode = child;
+            } else if (child.nodeType === 1) {
+                var tagName = child.tagName.toLowerCase();
+                switch (tagName) {
+                    case 'img':
+                    case 'iframe':
+                    case 'video':
+                    case 'iframe':
+                    case 'br':
+                        lastNode = child;
+                }
             }
+            lastNode = lastContentNode(child) || lastNode;
         }
-        lastNode = lastContentNode(child) || lastNode;
+        return lastNode;
     }
-    return lastNode;
 }
 
 function shouldHashText($textElement, groupSettings) {

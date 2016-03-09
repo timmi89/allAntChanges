@@ -62,7 +62,7 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
 
 function setupTapEvents(element, reactionsWidgetOptions) {
     return TouchSupport.setupTap(element, function(event) {
-        if (!ReactionsWidget.isOpen() && $(event.target).closest('a').length === 0) {
+        if (!ReactionsWidget.isOpen() && $(event.target).closest('a,.no-ant').length === 0) {
             event.preventDefault();
             event.stopPropagation();
             var touch = event.changedTouches[0];

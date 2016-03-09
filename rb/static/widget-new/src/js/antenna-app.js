@@ -2,7 +2,7 @@ if (window.ANTENNAIS || window.antenna || window.AntennaApp) {
     // Protect against multiple instances of this script being added to the page (or this script and engage.js)
     return;
 }
-if (!window.MutationObserver) {
+if (!window.MutationObserver || !Element.prototype.addEventListener || !('classList' in document.createElement('div'))) {
     // Bail out on legacy browsers.
     return;
 }

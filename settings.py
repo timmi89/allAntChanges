@@ -421,6 +421,7 @@ INSTALLED_APPS = [
     'analytics',
     'reporting',
     'demo',
+    'content_rec',
     'storages',
     'gunicorn',
     'djcelery',

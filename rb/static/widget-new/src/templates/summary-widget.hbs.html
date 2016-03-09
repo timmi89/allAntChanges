@@ -1,7 +1,7 @@
 <div decorator="cssreset" class="antenna
-            antenna-summary-widget
-            {{^pageData.summaryLoaded}}antenna-notloaded{{/pageData.summaryLoaded}}
-            {{#if isExpandedSummary}}antenna-expanded-summary{{/if}}">
+            antenna-summary-widget no-ant  
+            {{^pageData.summaryLoaded}}antenna-notloaded{{/pageData.summaryLoaded}} antenna-reset
+            {{#if isExpandedSummary}}antenna-expanded-summary{{/if}}"> <!--The 'antenna-reset' class is explicitly required here because of the dynamic class that's updated by Ractive in response to pageData.summaryLoaded changing. The class from the decorator gets blown away when that happens. -->
     <div class="antenna-summary-inner">
         {{>logo}}<!--
         --><span class="antenna-summary-title">
@@ -15,7 +15,7 @@
         </span><!--
         -->{{#if isExpandedSummary}}<!--
                 -->{{# computeExpandedReactions(pageData.summaryReactions) }}
-                    <span class="antenna-expanded-reaction {{#if @index === 0}}antenna-expanded-first{{/if}}">
+                    <span decorator="cssreset" class="antenna-expanded-reaction {{#if @index === 0}}antenna-expanded-first{{/if}}">
                         <span class="antenna-expanded-text">{{this.text}}</span><span class="antenna-expanded-count">{{this.count}}</span>
                     </span>
                 {{/}}

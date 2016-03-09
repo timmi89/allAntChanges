@@ -41,7 +41,7 @@ function getAttributeValue(elementSelector, attributeSelector) {
 function computeTopLevelCanonicalUrl(groupSettings) {
     var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
     var $canonicalLink = $('link[rel="canonical"]');
-    if ($canonicalLink.length > 0) {
+    if ($canonicalLink.length > 0 && $canonicalLink.attr('href')) {
         var overrideUrl = $canonicalLink.attr('href').trim().toLowerCase();
         var domain = (window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
         if (overrideUrl !== domain) { // fastco fix (since they sometimes rewrite their canonical to simply be their domain.)

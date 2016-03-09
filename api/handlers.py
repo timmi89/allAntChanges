@@ -116,6 +116,20 @@ class CacheSettingsRefreshHandler(AnonymousBaseHandler):
             logger.warning(traceback.format_exc(50))
         return 'refresh queued'
 
+class CacheContentRecRefreshHandler(AnonymousBaseHandler):
+    def read(self, request, group_id = None):
+        recommended_content = getRecommendedContent(group_id)
+        try:
+            cache.set('recommended_content_'+ str(group_id), recommended_content)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        try:
+            get_cache('redundant').set('recommended_content_'+ str(group_id), recommended_content)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        return 'refresh queued'
+
+
 class UptimeHandler(AnonymousBaseHandler):
     def read(self, request):
         #DB LOOKUP
@@ -799,6 +813,15 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
         return pages_data
 
 
+class ContentRecHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        group_id = data['group_id']
+        recommended_content = cache.get('recommended_content_'+ str(group_id))
+        return recommended_content
+
+
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
     """
@@ -808,8 +831,8 @@ class SettingsHandler(AnonymousBaseHandler):
     @json_data
     def read(self, request, data, group_id=None):
         host = getHost(request)
-        if data and data['host_name']:
-            host = data['host_name']
+        if data:
+            host = data.get('host_name', host)
 
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))
