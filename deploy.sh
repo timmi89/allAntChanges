@@ -12,3 +12,4 @@ else
 fi
 
 kubectl rolling-update antenna-http --image=gcr.io/antenna-array/antenna:$VERSION --update-period=1s
+kubectl rolling-update antenna-static-http --image=gcr.io/antenna-array/antenna-static:$VERSION --update-period=1s

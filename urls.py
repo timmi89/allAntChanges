@@ -173,7 +173,7 @@ urlpatterns = patterns('',
 
   # Extras
   url(r'^favicon\.ico$',
-      RedirectView.as_view(url='/static/site/images/favicon.ico')),
+      RedirectView.as_view(url='/static/images/site/favicon.ico')),
 
   # API
   url(r'^api/', include('antenna.api.urls')),
