@@ -171,6 +171,7 @@ if DEBUG:
     }
 else:
     BASE_URL = 'https://' + URL_NO_PROTO
+    CSRF_COOKIE_SECURE = True
 
     ALLOWED_HOSTS = [
         "antenna.is",
