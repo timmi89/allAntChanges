@@ -23,6 +23,7 @@ celerybeat.pid
 VERSION
 
 # generated static files
+rb/static/readmore.min.js
 rb/static/engage_full.env.js
 rb/static/engage.min.js
 rb/static/engage_loader.env.js
