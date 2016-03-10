@@ -84,6 +84,67 @@ module.exports = function(grunt) {
                 src: ['<%= paths.widget_src %>'],
                 dest: '<%= paths.widget_js_debug %>'
             },
+            uglify_widget_js: {
+                options: {
+                  banner: '<%= banner %>',
+                    browserifyOptions: {
+                        transform: [ 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.widget_js_debug %>'],
+                dest: '<%= paths.widget_js_prod %>'
+            },
+            engage_loader_js: {
+                options: {
+                    browserifyOptions: {
+                        transform: [ envify, 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.engage_loader_js_src %>'],
+                dest: '<%= paths.engage_loader_js_dest %>'
+            },
+            readmore_js: {
+                options: {
+                    browserifyOptions: {
+                        transform: [ envify, 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.readmore_js_src %>'],
+                dest: '<%= paths.readmore_js_dest %>'
+            },
+            antuser: {
+                options: {
+                    browserifyOptions: {
+                        transform: [ envify, 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.antuser_src %>'],
+                dest: '<%= paths.antuser_dest %>'
+            },
+            rangy: {
+                options: {
+                    browserifyOptions: {
+                        transform: [ envify, 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.rangy_dest %>'],
+                dest: '<%= paths.rangy_min %>'
+            },
+            ractive: {
+                options: {
+                    browserifyOptions: {
+                        transform: [ envify, 'uglifyify' ],
+                        debug: true
+                    }
+                },
+                src: ['<%= paths.ractive_src %>'],
+                dest: '<%= paths.ractive_dest %>'
+            },
         },
         preprocess : {
           options: {
@@ -116,36 +177,6 @@ module.exports = function(grunt) {
                 src: ['<%= paths.widget_css_reset_temp %>', '<%= paths.widget_css_src_temp %>']
             }
         },
-        uglify: {
-            widget_js: {
-                options: {
-                    banner: '<%= banner %>',
-                    stripBanners: true
-                },
-                src: ['<%= paths.widget_js_debug %>'],
-                dest: '<%= paths.widget_js_prod %>'
-            },
-            engage_loader_js: {
-                src: ['<%= paths.engage_loader_js_src %>'],
-                dest: '<%= paths.engage_loader_js_dest %>'
-            },
-            readmore_js: {
-                src: ['<%= paths.readmore_js_src %>'],
-                dest: '<%= paths.readmore_js_dest %>'
-            },
-            rangy: {
-                src: ['<%= paths.rangy_dest %>'],
-                dest: '<%= paths.rangy_min %>'
-            },
-            ractive: {
-                src: ['<%= paths.ractive_src %>'],
-                dest: '<%= paths.ractive_dest %>'
-            },
-            antuser: {
-                src: ['<%= paths.antuser_src %>'],
-                dest: '<%= paths.antuser_dest %>'
-            }
-        },
         watch: {
             gruntfile: {
                 files: [ 'Gruntfile.js' ]
@@ -162,21 +193,21 @@ module.exports = function(grunt) {
                     atBegin: true
                 },
                 files: [ '<%= paths.widget_js_debug %>' ],
-                tasks: [ 'uglify:widget_js' ]
+                tasks: [ 'browserify:widget_js' ]
             },
             engage_loader_js: {
                 options: {
                     atBegin: true
                 },
                 files: [ '<%= paths.engage_loader_js_src %>' ],
-                tasks: [ 'uglify:engage_loader_js' ]
+                tasks: [ 'browserify:engage_loader_js' ]
             },
             readmore_js: {
                 options: {
                     atBegin: true
                 },
                 files: [ '<%= paths.readmore_js_src %>' ],
-                tasks: [ 'uglify:readmore_js' ]
+                tasks: [ 'browserify:readmore_js' ]
             }
             // our watch on the widget src is handled by 'watchify', included in browserify.
             // (see the 'watch' option in the browserify config.)
@@ -201,13 +232,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-preprocess');
 
-    grunt.registerTask('default', [ 'preprocess:xdm', 'preprocess:fb_login', 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
+    grunt.registerTask('default', [ 'preprocess:xdm', 'preprocess:fb_login', 'browserify:widget_js', 'browserify:uglify_widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'concurrent:watch_all'  ]);
     grunt.registerTask('rangy-compile', [ 'concat:rangy' ]);// This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
-    grunt.registerTask('rangy-min', [ 'uglify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.
-    grunt.registerTask('ractive-min', [ 'uglify:ractive' ]);
-    grunt.registerTask('antuser-min', [ 'uglify:antuser' ]);
-    grunt.registerTask('widget', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
-    grunt.registerTask('readmore', [ 'uglify:readmore_js' ]);
+    grunt.registerTask('rangy-min', [ 'browserify:rangy' ]); // After manually applying our workaround to disable AMD, run this task to minify our compiled Rangy.
+    grunt.registerTask('ractive-min', [ 'browserify:ractive' ]);
+    grunt.registerTask('antuser-min', [ 'browserify:antuser' ]);
+    grunt.registerTask('widget', [ 'browserify:widget_js', 'browserify:widget_js', 'cssmin', 'concat:widget_css', 'clean:temp_css' ]);
+    grunt.registerTask('readmore', [ 'browserify:readmore_js' ]);
 
 };
