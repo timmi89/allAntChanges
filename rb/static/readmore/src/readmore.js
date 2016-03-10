@@ -17,6 +17,7 @@
         if (customCSS) {
             var styleTag = document.createElement('style');
             styleTag.setAttribute('type', 'text/css');
+            styleTag.id = 'antenna-readmore-styles';
             styleTag.innerHTML = customCSS;
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(styleTag);
         }
@@ -268,7 +269,7 @@
 
     // check that we haven't already loaded this
     // crappy check by PB.
-    if ( document.querySelector('.antenna-readmore-action') ) {
+    if ( document.querySelector('#antenna-readmore-styles') ) {
         return;
     }
 
