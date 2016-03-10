@@ -266,6 +266,12 @@
         return;
     }
 
+    // check that we haven't already loaded this
+    // crappy check by PB.
+    if ( document.querySelector('.antenna-readmore-action') ) {
+        return;
+    }
+
     // Kick things off by fetching the group settings.
     fetchGroupSettings(groupSettingsLoaded);
 
