@@ -9,7 +9,7 @@ var scripts = [
     // TODO minify our compiled Ractive and host it on a CDN
     {src: URLs.antennaStaticUrl() + '/widget-new/lib/ractive.runtime-0.7.3.min.js', callback: RactiveProvider.loaded, aboutToLoad: RactiveProvider.aboutToLoad},
     // TODO minify our compiled Randy and host it on a CDN
-    {src: URLs.anntennaStaticUrl() + '/widget-new/lib/rangy.compiled-1.3.0.min.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad}
+    {src: URLs.antennaStaticUrl() + '/widget-new/lib/rangy.compiled-1.3.0.min.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad}
 ];
 if (AppMode.offline) {
     // Use the offline versions of the libraries for development.

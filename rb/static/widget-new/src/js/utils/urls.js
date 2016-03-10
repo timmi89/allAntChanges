@@ -132,7 +132,7 @@ function eventsServerUrl() {
 module.exports = {
     appServerUrl: appServerUrl,
     eventsServerUrl: eventsServerUrl,
-    anntennaStaticUrl: antennaStaticUrl,
+    antennaStaticUrl: antennaStaticUrl,
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,
