@@ -16,6 +16,7 @@
     opacity: 0.6;
     white-space: nowrap;
     pointer-events: auto;
+    background: rgba(0,0,0,0.1);  /* temporary, until we get the drop shadow on the SVG working */
 }
 
 .antenna-media-indicator-widget.antenna-notloaded {
@@ -34,7 +35,7 @@
 }
 
 .antenna-media-indicator-widget .antenna-reaction-total {
-    visibility: hidden;
+    visibility: inherit;
     font-size: 11px;
     line-height: 1em;
     vertical-align: middle;
