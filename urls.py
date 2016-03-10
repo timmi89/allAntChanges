@@ -6,6 +6,7 @@ from django.conf.urls.defaults import url, patterns, include
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.http.response import HttpResponse
+from httpproxy.views import HttpProxy
 
 from django.contrib import admin
 admin.autodiscover()
@@ -237,8 +238,13 @@ urlpatterns = patterns('',
 if os.getenv('ANTENNA_STATIC_URL', False):
     urlpatterns += patterns(
         '',
-        url(r'^static/(?P<path>.*)$',
-            RedirectView.as_view(url=settings.STATIC_URL + '%(path)s'))
+        url(r'^static/(?P<url>.*xdm.*)$', HttpProxy.as_view(
+            base_url='http://' + settings.STATIC_HOST + '/'
+        )),
+        url(r'^static/(?P<path>.*)$', RedirectView.as_view(
+                url=settings.STATIC_URL + '%(path)s',
+                query_string=True
+        ))
     )
 else:
     urlpatterns += patterns(

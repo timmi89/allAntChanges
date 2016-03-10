@@ -30,6 +30,8 @@ spec:
               value: https://www.staging.antenna.is
             - name: ANTENNA_STATIC_URL
               value: https://static.staging.antenna.is
+            - name: ANTENNA_STATIC_HOST
+              value: antenna-static-http
             - name: EVENTS_URL
               value: https://events.staging.antenna.is
             - name: BQ_TABLE_PREFIX
