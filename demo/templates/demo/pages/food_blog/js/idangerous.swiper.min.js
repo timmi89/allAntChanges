@@ -2,11 +2,11 @@
  * Swiper 2.6.1
  * Mobile touch slider and framework with hardware accelerated transitions
  *
- * http://www.idangero.us/sliders/swiper/
+ * https://www.idangero.us/sliders/swiper/
  *
  * Copyright 2010-2014, Vladimir Kharlampidi
  * The iDangero.us
- * http://www.idangero.us/
+ * https://www.idangero.us/
  *
  * Licensed under GPL & MIT
  *

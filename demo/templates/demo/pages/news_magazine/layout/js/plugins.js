@@ -42,7 +42,7 @@ document.write('<script type="text/javascript" src="layout/plugins/mediaelement/
 document.write('<script type="text/javascript" src="layout/plugins/tools/jquery.tools.min.js"></script>');
 
 //Google Maps API
-document.write('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>');
+document.write('<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>');
 
 //Twitter
 // document.write('<script type="text/javascript" src="layout/plugins/twitter/jquery.tweet.min.js"></script>');

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <script type="text/javascript">
-  (window.NREUM||(NREUM={})).loader_config={xpid:"UgQAVVVQGwEHV1RTBAU="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),f=c.length,u=i(a,o,r),d=0;f>d;d++)c[d].apply(u,n);return u}function a(t,e){f[t]=s(t).concat(e)}function s(t){return f[t]||[]}function c(){return n(e)}var f={};return{on:a,emit:e,create:c,listeners:s,_events:f}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t){try{i.console&&console.log(t)}catch(e){}}var n,r=t("ee"),o=t(1),i={};try{n=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(i.console=!0,-1!==n.indexOf("dev")&&(i.dev=!0),-1!==n.indexOf("nr_dev")&&(i.nrDev=!0))}catch(a){}i.nrDev&&r.on("internal-error",function(t){e(t.stack)}),i.dev&&r.on("fn-err",function(t,n,r){e(r.stack)}),i.dev&&(e("NR AGENT IN DEVELOPMENT MODE"),e("flags: "+o(i,function(t){return t}).join(", ")))},{1:23,ee:"QJf3ax"}],4:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(f){try{r("ierr",[f,(new Date).getTime(),!0])}catch(u){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(6),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,t(4),window.onerror=e;try{throw new Error}catch(f){"stack"in f&&(t(1),t(5),"addEventListener"in window&&t(2),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(3),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:10,2:7,3:11,4:3,5:9,6:24,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],5:[function(t){t("loader").features.ins=!0},{loader:"G9z0Bl"}],6:[function(t){function e(){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var n=t("ee"),r=t("handle"),o=t(1);t("loader").features.stn=!0,t(2),n.on("fn-start",function(t){var e=t[0];e instanceof Event&&(this.bstStart=Date.now())}),n.on("fn-end",function(t,e){var n=t[0];n instanceof Event&&r("bst",[n,e,this.bstStart,Date.now()])}),o.on("fn-start",function(t,e,n){this.bstStart=Date.now(),this.bstType=n}),o.on("fn-end",function(t,e){r("bstTimer",[e,this.bstStart,Date.now(),this.bstType])}),n.on("pushState-start",function(){this.time=Date.now(),this.startPath=location.pathname+location.hash}),n.on("pushState-end",function(){r("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),"addEventListener"in window.performance&&(window.performance.addEventListener("webkitresourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.webkitClearResourceTimings()},!1),window.performance.addEventListener("resourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.clearResourceTimings()},!1)),document.addEventListener("scroll",e,!1),document.addEventListener("keypress",e,!1),document.addEventListener("click",e,!1)}},{1:10,2:8,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],7:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:24,2:25,ee:"QJf3ax",gos:"7eSDFh"}],8:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window.history,["pushState"],"-")},{1:25,2:24,ee:"QJf3ax"}],9:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:25,2:24,ee:"QJf3ax"}],10:[function(t,e){function n(t,e,n){var r=t[0];"string"==typeof r&&(r=new Function(r)),t[0]=o(r,"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:25,2:24,ee:"QJf3ax"}],11:[function(t,e){function n(){f.inPlace(this,p,"fn-")}function r(t,e){f.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}function i(t,e){for(var n in t)e[n]=t[n];return e}var a=t("ee").create(),s=t(1),c=t(2),f=c(a),u=c(s),d=window.XMLHttpRequest,p=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=a,window.XMLHttpRequest=function(t){var e=new d(t);try{a.emit("new-xhr",[],e),u.inPlace(e,["addEventListener","removeEventListener"],"-",function(t,e){return e}),e.addEventListener("readystatechange",n,!1)}catch(r){try{a.emit("internal-error",[r])}catch(o){}}return e},i(d,XMLHttpRequest),XMLHttpRequest.prototype=d.prototype,f.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),a.on("send-xhr-start",r),a.on("open-xhr-start",r)},{1:7,2:25,ee:"QJf3ax"}],12:[function(t){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,f="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,u=e(f);if(u&&(r.rxSize=u),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(n.cat=d.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r,this.startTime])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,f=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var f=e(o);f&&(r.txSize=f)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",[e])}catch(r){}}};for(var u=0;c>u;u++)n.addEventListener(s[u],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:13,3:11,4:7,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],13:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],14:[function(t,e){function n(t){return function(){r(t,[(new Date).getTime()].concat(i(arguments)))}}var r=t("handle"),o=t(1),i=t(2);"undefined"==typeof window.newrelic&&(newrelic=window.NREUM);var a=["setPageViewName","addPageAction","setCustomAttribute","finished","addToTrace","inlineHit","noticeError"];o(a,function(t,e){window.NREUM[e]=n("api-"+e)}),e.exports=window.NREUM},{1:23,2:24,handle:"D5DuLP"}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=l.info=NREUM.info;if(t&&t.licenseKey&&t.applicationID&&f&&f.body){s(h,function(e,n){e in t||(t[e]=n)}),l.proto="https"===p.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=f.createElement("script");e.src=l.proto+t.agent,f.body.appendChild(e)}}function r(){"complete"===f.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=t(1),c=(t(2),window),f=c.document,u="addEventListener",d="attachEvent",p=(""+location).split("?")[0],h={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-593.min.js"},l=e.exports={offset:i(),origin:p,features:{}};f[u]?(f[u]("DOMContentLoaded",o,!1),c[u]("load",n,!1)):(f[d]("onreadystatechange",r),c[d]("onload",n)),a("mark",["firstbyte",i()])},{1:23,2:14,handle:"D5DuLP"}],23:[function(t,e){function n(t,e){var n=[],o="",i=0;for(o in t)r.call(t,o)&&(n[i]=e(o,t[o]),i+=1);return n}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],24:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],25:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,f;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){u([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return f=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,f],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,f(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,f="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,f?s+o:o,i,s,t))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){u([o,e,n,r])}}function f(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){u([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function u(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:24,ee:"QJf3ax"}]},{},["G9z0Bl",4,12,6,5]);
+  (window.NREUM||(NREUM={})).loader_config={xpid:"UgQAVVVQGwEHV1RTBAU="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),f=c.length,u=i(a,o,r),d=0;f>d;d++)c[d].apply(u,n);return u}function a(t,e){f[t]=s(t).concat(e)}function s(t){return f[t]||[]}function c(){return n(e)}var f={};return{on:a,emit:e,create:c,listeners:s,_events:f}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t){try{i.console&&console.log(t)}catch(e){}}var n,r=t("ee"),o=t(1),i={};try{n=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(i.console=!0,-1!==n.indexOf("dev")&&(i.dev=!0),-1!==n.indexOf("nr_dev")&&(i.nrDev=!0))}catch(a){}i.nrDev&&r.on("internal-error",function(t){e(t.stack)}),i.dev&&r.on("fn-err",function(t,n,r){e(r.stack)}),i.dev&&(e("NR AGENT IN DEVELOPMENT MODE"),e("flags: "+o(i,function(t){return t}).join(", ")))},{1:23,ee:"QJf3ax"}],4:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(f){try{r("ierr",[f,(new Date).getTime(),!0])}catch(u){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(6),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,t(4),window.onerror=e;try{throw new Error}catch(f){"stack"in f&&(t(1),t(5),"addEventListener"in window&&t(2),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(3),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:10,2:7,3:11,4:3,5:9,6:24,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],5:[function(t){t("loader").features.ins=!0},{loader:"G9z0Bl"}],6:[function(t){function e(){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var n=t("ee"),r=t("handle"),o=t(1);t("loader").features.stn=!0,t(2),n.on("fn-start",function(t){var e=t[0];e instanceof Event&&(this.bstStart=Date.now())}),n.on("fn-end",function(t,e){var n=t[0];n instanceof Event&&r("bst",[n,e,this.bstStart,Date.now()])}),o.on("fn-start",function(t,e,n){this.bstStart=Date.now(),this.bstType=n}),o.on("fn-end",function(t,e){r("bstTimer",[e,this.bstStart,Date.now(),this.bstType])}),n.on("pushState-start",function(){this.time=Date.now(),this.startPath=location.pathname+location.hash}),n.on("pushState-end",function(){r("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),"addEventListener"in window.performance&&(window.performance.addEventListener("webkitresourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.webkitClearResourceTimings()},!1),window.performance.addEventListener("resourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.clearResourceTimings()},!1)),document.addEventListener("scroll",e,!1),document.addEventListener("keypress",e,!1),document.addEventListener("click",e,!1)}},{1:10,2:8,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],7:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:24,2:25,ee:"QJf3ax",gos:"7eSDFh"}],8:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window.history,["pushState"],"-")},{1:25,2:24,ee:"QJf3ax"}],9:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:25,2:24,ee:"QJf3ax"}],10:[function(t,e){function n(t,e,n){var r=t[0];"string"==typeof r&&(r=new Function(r)),t[0]=o(r,"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:25,2:24,ee:"QJf3ax"}],11:[function(t,e){function n(){f.inPlace(this,p,"fn-")}function r(t,e){f.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}function i(t,e){for(var n in t)e[n]=t[n];return e}var a=t("ee").create(),s=t(1),c=t(2),f=c(a),u=c(s),d=window.XMLHttpRequest,p=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=a,window.XMLHttpRequest=function(t){var e=new d(t);try{a.emit("new-xhr",[],e),u.inPlace(e,["addEventListener","removeEventListener"],"-",function(t,e){return e}),e.addEventListener("readystatechange",n,!1)}catch(r){try{a.emit("internal-error",[r])}catch(o){}}return e},i(d,XMLHttpRequest),XMLHttpRequest.prototype=d.prototype,f.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),a.on("send-xhr-start",r),a.on("open-xhr-start",r)},{1:7,2:25,ee:"QJf3ax"}],12:[function(t){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,f="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,u=e(f);if(u&&(r.rxSize=u),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(n.cat=d.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r,this.startTime])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,f=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var f=e(o);f&&(r.txSize=f)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",[e])}catch(r){}}};for(var u=0;c>u;u++)n.addEventListener(s[u],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:13,3:11,4:7,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],13:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],14:[function(t,e){function n(t){return function(){r(t,[(new Date).getTime()].concat(i(arguments)))}}var r=t("handle"),o=t(1),i=t(2);"undefined"==typeof window.newrelic&&(newrelic=window.NREUM);var a=["setPageViewName","addPageAction","setCustomAttribute","finished","addToTrace","inlineHit","noticeError"];o(a,function(t,e){window.NREUM[e]=n("api-"+e)}),e.exports=window.NREUM},{1:23,2:24,handle:"D5DuLP"}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=l.info=NREUM.info;if(t&&t.licenseKey&&t.applicationID&&f&&f.body){s(h,function(e,n){e in t||(t[e]=n)}),l.proto="https"===p.split(":")[0]||t.sslForHttp?"https://":"https://",a("mark",["onload",i()]);var e=f.createElement("script");e.src=l.proto+t.agent,f.body.appendChild(e)}}function r(){"complete"===f.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=t(1),c=(t(2),window),f=c.document,u="addEventListener",d="attachEvent",p=(""+location).split("?")[0],h={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-593.min.js"},l=e.exports={offset:i(),origin:p,features:{}};f[u]?(f[u]("DOMContentLoaded",o,!1),c[u]("load",n,!1)):(f[d]("onreadystatechange",r),c[d]("onload",n)),a("mark",["firstbyte",i()])},{1:23,2:14,handle:"D5DuLP"}],23:[function(t,e){function n(t,e){var n=[],o="",i=0;for(o in t)r.call(t,o)&&(n[i]=e(o,t[o]),i+=1);return n}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],24:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],25:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,f;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){u([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return f=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,f],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,f(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,f="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,f?s+o:o,i,s,t))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){u([o,e,n,r])}}function f(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){u([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function u(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:24,ee:"QJf3ax"}]},{},["G9z0Bl",4,12,6,5]);
   </script>
 
   <!-- Site Properities -->
@@ -34,21 +34,21 @@
   <link href="https://plus.google.com/+thenewrepublic/" rel="publisher" />
 
   <meta name="parsely-page" content='{"title":"Anti-Vaxxers Are Wrong About Why Autism Has Increased\u2014But Don\u0027t Tell Them That","link":"http:\/\/www.newrepublic.com\/article\/121103\/anti-vaccinators-unconvinced-science-showing-no-autism-link","section":"Science","pub_date":"2015-02-19T22:46:00-05:00","post_id":"121103","author":"Bill Gardner","type":"post","tags":["Science","Politics","Culture","vaccination","autism","Global Warming"]}' />
-  <link rel="canonical" href="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
-<meta property="og:image" content="http://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg" />
+  <link rel="canonical" href="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
+<meta property="og:image" content="https://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg" />
 <meta property="og:image:type" content="image/jpeg" />
 <meta property="og:image:width" content="1250" />
 <meta property="og:image:height" content="517" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="twitter:image:src" content="http://www.newrepublic.com/sites/default/files/styles/large/public/jenny-mccarthy-vaccines.jpg?itok=TqkyLI5A" />
+<meta name="twitter:image:src" content="https://www.newrepublic.com/sites/default/files/styles/large/public/jenny-mccarthy-vaccines.jpg?itok=TqkyLI5A" />
 <meta name="twitter:description" content="Condescension is not the solution." />
 <meta property="sailthru.rubric" content="Science" />
 <meta property="article:section" content="Politics" />
-<link rel="alternate" type="application/rss+xml" title="The New Republic | The Plank" href="http://www.newrepublic.com/plank-rss.xml" />
-<link rel="shortcut icon" href="http://www.newrepublic.com/sites/default/files/newrepublic-icon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" type="application/rss+xml" title="The New Republic | The Plank" href="https://www.newrepublic.com/plank-rss.xml" />
+<link rel="shortcut icon" href="https://www.newrepublic.com/sites/default/files/newrepublic-icon.ico" type="image/vnd.microsoft.icon" />
 <meta name="sailthru.articleID" content="121103" />
 <meta name="parsely-metadata" content='{"thumb_image":"http:\/\/www.newrepublic.com\/sites\/default\/files\/styles\/homepage_bottom_feature\/public\/jenny-mccarthy-vaccines.jpg?itok=t9mRWuba"}' /><meta name="keywords" content="Science, Politics, Culture, vaccination, autism, Global Warming" />
-<link rel="alternate" type="application/rss+xml" title="The New Republic" href="http://www.newrepublic.com/rss.xml" />
+<link rel="alternate" type="application/rss+xml" title="The New Republic" href="https://www.newrepublic.com/rss.xml" />
 <meta property="author" content="Bill Gardner" />
 <meta property="sailthru.date" content="2015-02-19 22:46:00" />
 <meta property="article:published_time" content="2015-02-19T22:46:00-05:00" />
@@ -59,29 +59,29 @@
 <meta property="article:tag" content="Science" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="description" content="Condescension is not the solution." />
-<meta name="generator" content="Drupal 7 (http://drupal.org)" />
+<meta name="generator" content="Drupal 7 (https://drupal.org)" />
 <meta property="og:site_name" content="The New Republic" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
+<meta property="og:url" content="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
 <meta property="og:title" content="Anti-Vaxxers Are Wrong About Why Autism Has Increased—But Don&#039;t Tell Them That" />
 <meta property="og:description" content="Condescension is not the solution." />
 <meta name="dcterms.date" content="2015-02-19T22:46-05:00" />
 <meta name="dcterms.type" content="Text" />
 <meta name="dcterms.format" content="text/html" />
-<meta name="dcterms.identifier" content="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
+<meta name="dcterms.identifier" content="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link" />
 <meta name="dcterms.language" content="und" />
-<!-- <link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_4hPmAO_Nvj6jiRjsl7yjW6iGzgIXcDYAzsF_zjCZPRU.css" media="all" />
-<link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_c5-MQkLK-UbZtocslzZqGR-l5KxWfYS-JFcOfVlbdYE.css" media="all" />
-<link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_E4oj1e5RXrsSkXHdKixW-TBgeHFFOrLgf09MH0zBfe8.css" media="all" />
+<!-- <link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_4hPmAO_Nvj6jiRjsl7yjW6iGzgIXcDYAzsF_zjCZPRU.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_c5-MQkLK-UbZtocslzZqGR-l5KxWfYS-JFcOfVlbdYE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_E4oj1e5RXrsSkXHdKixW-TBgeHFFOrLgf09MH0zBfe8.css" media="all" />
  -->
-   <link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_4hPmAO_Nvj6jiRjsl7yjW6iGzgIXcDYAzsF_zjCZPRU.css" media="all" />
- <link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_U-qmK7qJi0ZJI-PFIslxUtN0qD46SYJg_EzKu_AvhBQ.css" media="all" />
- <link type="text/css" rel="stylesheet" href="http://www.newrepublic.com/sites/default/files/css/css_TvCCwED7Z93lc01psZXylMmv0EuwFaE9MhuAuhKgYHc.css" media="all" />
+   <link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_4hPmAO_Nvj6jiRjsl7yjW6iGzgIXcDYAzsF_zjCZPRU.css" media="all" />
+ <link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_U-qmK7qJi0ZJI-PFIslxUtN0qD46SYJg_EzKu_AvhBQ.css" media="all" />
+ <link type="text/css" rel="stylesheet" href="https://www.newrepublic.com/sites/default/files/css/css_TvCCwED7Z93lc01psZXylMmv0EuwFaE9MhuAuhKgYHc.css" media="all" />
 
 
  <link rel="stylesheet" type="text/css" href="/sites/all/themes/tnr/build/devices/print.css" media="print">
   <!-- Reset JS before Page Load !-->
-<!-- <script src="http://newrepublic.com/sites/all/themes/tnr/javascript/reset.js"></script> -->
+<!-- <script src="https://newrepublic.com/sites/all/themes/tnr/javascript/reset.js"></script> -->
   <!-- Google Analytics -->
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -93,7 +93,7 @@
   _gaq.push(['_trackPageview']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
@@ -104,30 +104,30 @@ var _comscore = _comscore || [];
 _comscore.push({ c1: "2", c2: "15230262" });
 (function() {
 var s = document.createElement("script"), el = document.getElementsByTagName("script")[0]; s.async = true;
-s.src = (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js";
+s.src = (document.location.protocol == "https:" ? "https://sb" : "https://b") + ".scorecardresearch.com/beacon.js";
 el.parentNode.insertBefore(s, el);
 })();
 </script>
 
 
-<span itemscope itemtype="http://schema.org/Organization">
-  <link itemprop="url" href="http://www.newrepublic.com"> 
+<span itemscope itemtype="https://schema.org/Organization">
+  <link itemprop="url" href="https://www.newrepublic.com"> 
   <a itemprop="sameAs" href="https://www.facebook.com/thenewrepublic"></a>
   <a itemprop="sameAs" href="https://www.twitter.com/tnr"></a>
   <a itemprop="sameAs" href="https://plus.google.com/+thenewrepublic"></a>
-  <a itemprop="sameAs" href="http://instagram.com/thenewrepublic"></a>
+  <a itemprop="sameAs" href="https://instagram.com/thenewrepublic"></a>
 </span>
 
 <script type="application/ld+json">
-{ "@context" : "http://schema.org",
+{ "@context" : "https://schema.org",
   "@type" : "Organization",
   "name" : "The New Republic",
-  "url" : "http://www.newrepublic.com",
+  "url" : "https://www.newrepublic.com",
   "sameAs" : [ 
     "https://www.facebook.com/thenewrepublic",
     "https://www.twitter.com/tnr",
     "https://plus.google.com/+thenewrepublic",
-    "http://instagram.com/thenewrepublic"
+    "https://instagram.com/thenewrepublic"
   ] 
 }
 </script>  
@@ -201,9 +201,9 @@ document.onreadystatechange = function () {
 <div class="mobile advertisement" id="mobile-leaderboard-ad"></div>    <div class="ui relaxed fitted grid">
       <div class="left column">
                 <h2>New Republic</h2>
-                <span itemscope itemtype="http://schema.org/Organization">
+                <span itemscope itemtype="https://schema.org/Organization">
           <a class="logo ui image" itemprop="url" href="/" >
-            <img itemprop="logo" src="http://newrepublic.com/sites/all/themes/tnr/assets/images/logo.png">
+            <img itemprop="logo" src="https://newrepublic.com/sites/all/themes/tnr/assets/images/logo.png">
           </a>
         </span>
         <div class="ui compact basic large mobile button">
@@ -228,7 +228,7 @@ document.onreadystatechange = function () {
           <div class="ui four column fitted grid">
             <div class="column">
               <a href="/project/next-republic">
-                <img class="ui image" src="http://newrepublic.com/sites/all/themes/tnr/assets/images/suisse/next-republic-navcallout.jpg" alt="Next Republic">
+                <img class="ui image" src="https://newrepublic.com/sites/all/themes/tnr/assets/images/suisse/next-republic-navcallout.jpg" alt="Next Republic">
               </a>
             </div>
               <div class="column">
@@ -236,7 +236,7 @@ document.onreadystatechange = function () {
       <h3 class="ui rubric header">
         <a href="/tags/identity" class="title">Identity</a>      </h3>
       <a class="ui image" href="/article/120570/new-republic-exploring-identity-survey-results">
-                <img src="http://www.newrepublic.com/sites/default/files/styles/latest/public/identity_cover-04.png?itok=0_GecQoo" />
+                <img src="https://www.newrepublic.com/sites/default/files/styles/latest/public/identity_cover-04.png?itok=0_GecQoo" />
               </a>
       <h3 class="ui header">
         <a href="/article/120570/new-republic-exploring-identity-survey-results">
@@ -253,7 +253,7 @@ document.onreadystatechange = function () {
       <h3 class="ui rubric header">
         <a href="/tags/identity" class="title">Identity</a>      </h3>
       <a class="ui image" href="/article/120362/new-photobook-epilogue-explores-bulimia-its-aftermath">
-                <img src="http://www.newrepublic.com/sites/default/files/styles/latest/public/epiloguebetterlede.jpg?itok=qvcPAxaJ" />
+                <img src="https://www.newrepublic.com/sites/default/files/styles/latest/public/epiloguebetterlede.jpg?itok=qvcPAxaJ" />
               </a>
       <h3 class="ui header">
         <a href="/article/120362/new-photobook-epilogue-explores-bulimia-its-aftermath">
@@ -270,7 +270,7 @@ document.onreadystatechange = function () {
       <h3 class="ui rubric header">
         <a href="/tags/identity" class="title">Identity</a>      </h3>
       <a class="ui image" href="/article/120419/lilting-better-depiction-asian-americans-tv-and-movies">
-                <img src="http://www.newrepublic.com/sites/default/files/styles/latest/public/7f1498792129ca24a1c9897d2f89a2a8.jpg?itok=7UQFlp9n" />
+                <img src="https://www.newrepublic.com/sites/default/files/styles/latest/public/7f1498792129ca24a1c9897d2f89a2a8.jpg?itok=7UQFlp9n" />
               </a>
       <h3 class="ui header">
         <a href="/article/120419/lilting-better-depiction-asian-americans-tv-and-movies">
@@ -402,8 +402,8 @@ site.page.config = {
 </script>
 
 <div class="ui page content container">
-    <!-- <img src="http://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg"/> -->
-    <div class="story image light loaded ui transition visible" data-image="http://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg" style="background-image: url(http://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg);">
+    <!-- <img src="https://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg"/> -->
+    <div class="story image light loaded ui transition visible" data-image="https://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg" style="background-image: url(https://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg);">
   <div class="ui active flipping loader">
     <div class="shape"></div>
   </div>
@@ -411,7 +411,7 @@ site.page.config = {
     Photo: Robin Marchant / Getty Images    </span>
     </div>
     <!-- <div class="story image"
-    xdata-image="http://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg"
+    xdata-image="https://www.newrepublic.com/sites/default/files/jenny-mccarthy-vaccines.jpg"
       > -->
       <!-- <div class="ui active flipping loader">
         <div class="shape"></div>
@@ -419,9 +419,9 @@ site.page.config = {
         <!-- <span class="attribution">
       Photo: Robin Marchant / Getty Images    </span>
       </div> -->
-  <img src="http://www.newrepublic.com/sites/default/files/styles/static_cover_img_500/public/jenny-mccarthy-vaccines.jpg?itok=M02zJ05s" class="ui fluid inline image" alt="Anti-Vaxxers Are Wrong About Why Autism Has Increased—But Don't Tell Them That">
+  <img src="https://www.newrepublic.com/sites/default/files/styles/static_cover_img_500/public/jenny-mccarthy-vaccines.jpg?itok=M02zJ05s" class="ui fluid inline image" alt="Anti-Vaxxers Are Wrong About Why Autism Has Increased—But Don't Tell Them That">
   
-  <div class="article container" itemscope itemtype="http://schema.org/Article">
+  <div class="article container" itemscope itemtype="https://schema.org/Article">
 
     <div class="header">
       <div class="story title">
@@ -436,12 +436,12 @@ site.page.config = {
         <div class="inline tools">
           <div class="share module">
             <div class="twitter slim"
-              data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+              data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
               data-text="Anti-Vaxxers Are Wrong About Why Autism Has Increased&mdash;But Don't Tell Them That"
               data-title="Tweet">
             </div>
             <div class="facebook slim"
-              data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+              data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
               data-text="Anti-Vaxxers Are Wrong About Why Autism Has Increased&mdash;But Don't Tell Them That"
               data-title="Share">
             </div>
@@ -455,13 +455,13 @@ site.page.config = {
                           </h5>
                         
                                     <div class="body" itemprop="articleBody" >
-              <p><span class="dropcap">T</span>he Centers for Disease Control on Tuesday <a href="http://www.slate.com/blogs/the_slatest/2015/02/17/cdc_confirms_new_measles_cases_in_outbreak.html">announced</a> 20 new cases of measles, bringing the total to 141. It's the <a href="http://www.cdc.gov/measles/cases-outbreaks.html">largest outbreak of measles</a> in the U.S. since 2000, owing largely to the nation's growing <a href="http://www.newrepublic.com/article/120877/disneyland-measles-outbreak-caused-distrust-american-society">anti-vaccination movement</a>. These parents are afraid that vaccinations put their children at risk of developing autism, but new research that should relieve some of those fears.</p><p>Non-vaccinating parents are a small group. <a href="http://www.people-press.org/files/2015/02/2-9-15-Vaccines-release.pdf">Pew Research</a> reports that only 9 percent of Americans believe that vaccines are unsafe, and the <a href="http://www.cdc.gov/vaccines/imz-managers/coverage/imz-coverage.html">Centers for Disease C</a>ontrol reports that all but 8 percent of young children have been vaccinated for measles. However, vaccination rates have <a href="http://gamapserver.who.int/gho/interactive_charts/immunization/mcv/atlas.html">declined slightly</a> in a few advanced countries, including Canada. </p><p>If you read the <a href="http://www.ncbi.nlm.nih.gov/pubmed/21238571">scholarship on the anti-vaccination movement</a>, if you talk to anti-vaccinators, or if you read their <a href="http://www.ageofautism.com/a-welcome-from-dan-olmste.html">websites</a>, you’ll find that many of these parents believe that some childhood diseases whose origins remain uncertain<span class="em">&mdash;</span>like autism<span class="em">&mdash;</span>are environmental diseases (as opposed to genetic or infectious diseases). Vaccination, they believe, exposes children to toxic agents that cause autism. </p><p>For evidence, they point to <a href="http://www.cdc.gov/ncbddd/autism/data.html">data from the CDC</a> showing that the rate of autism diagnoses more than doubled from 2000 to 2010:</p><p><div class="pull-center"><div><a href="http://wp.newrepublic.com/wp-content/uploads/2015/02/autism_frequency-32.png" class="lightbox"><img src="http://wp.newrepublic.com/wp-content/uploads/2015/02/autism_frequency-32-624x312.png" height="312" width="624" /></a></div></div></p><p>The number of immunizations children get have also increased dramatically: Whereas there were only five recommended vaccines in 1960, today <a href="http://vec.chop.edu/service/vaccine-education-center/vaccine-schedule/history-of-vaccine-schedule.html">a child may receive 24 shots by age two</a>. Anti-vaccinators question whether the “<a href="http://www.hnehealth.nsw.gov.au/__data/assets/pdf_file/0009/62496/ParentalVaccineDecisionMaking.pdf">sudden onslaught</a>” of immunizations, as they describe it, is causing the epidemic growth of autism. </p><p>It’s not impossible. But historical correlations provide little evidence of what causes a disorder. Consider that from 2000 to 2010, children have also been exposed to increasing levels of <a href="http://epa.gov/climatechange/ghgemissions/gases/fgases.html">fluorinated gas emissions</a>. Could that instead explain the increase in autism diagnoses? </p><p>The key word there: "diagnoses." We don't know whether autism itself is increasing, or whether we're just getting better at diagnosing it. In a recent study published in <a href="http://archpedi.jamanetwork.com/article.aspx?articleid=1919642"><em>JAMA Pediatrics</em></a>, Aarhus University statistician Stefan Hansen and his colleagues examined the health records of more than 670,000 Danish children born from 1980 to 1991 to see whether the increase in autism rates could be explained by changes in how autism is diagnosed. Denmark was an ideal place to carry out this research because Scandinavian countries keep comprehensive lifetime medical records for all children based on uniform diagnostic procedures. </p><p>The investigators found that just as in the U.S., there was an increase in the rate of diagnosed autism among Danish children. However, 60 percent of the total increase in autism could be explained by a change in the diagnostic criteria for autism in 1994 and by a decision to include diagnoses made in outpatient settings in 1995. That is, at least 60 percent of the increase was attributable to specific one-time changes in how autism was identified and reported.</p><p>This doesn’t mean that 40 percent of the increase in autism was caused by increases in environmental toxins. We can't rule it out, but no environmental toxin has been definitively identified as a cause of autism. Much of the remaining 40 percent increase in the Danish study may well have resulted from better training of doctors about autism or increased awareness of autism among parents. </p><p>What this does mean is that parents shouldn’t panic about the apparently explosive growth in the rate of autism. The best explanation for the increase is that we are getting better at finding autism. There is no reason to believe that increasing numbers of vaccinations received by children is causing autism to increase.</p><p> </p><p><span class="dropcap">O</span>verall, the research evidence against the idea that the measles, mumps, and rubella (MMR) vaccine causes autism is very strong. For example, <a href="http://www.nejm.org/doi/full/10.1056/NEJMoa021134">a study</a> in the <em>New England Journal of Medicine</em> looked at all children born in Denmark from 1991 through 1998 (more than half a million kids). They found no association between vaccination and autism. (Early data suggesting an association between the MMR vaccine and autism <a href="http://www.vox.com/2015/2/2/7965885/the-research-linking-autism-to-vaccines-is-even-more-terrible-than">proved to be fraudulent</a>.) </p><p>So how can we convince anxious parents that it is safe to vaccinate their children? Of course we need to give them accurate information about vaccinations. But in a discouraging study, Dartmouth College Professor <a href="http://pediatrics.aappublications.org/content/early/2014/02/25/peds.2013-2365">Brendan Nyhan</a> found that providing corrective scientific information about vaccines increased parents’ misperceptions and, among anti-vaccinators, reduced their intention to vaccinate their children.</p><p>How can this be? Yale Law School Professor Dan Kahan has <a href="http://www.sciencemag.org/content/342/6154/53.short">found</a> that people find reasons to discount scientific evidence about policy issues that are deeply tied to their cultural identity. For instance, presenting evidence about global warming to groups of partisans <a href="http://www.nature.com/articles/nclimate1547.epdf">increases</a> the polarization of their views because we value our affiliations with our friends more than we value action on global warming. If I express a deviant opinion about global warming, I’ll experience the disapproval of my like-minded friends, whereas if I do nothing about global warming<span class="em">&mdash;</span>well, what I do as an individual will have no detectable effect on the planet.</p><p>The moral, <a href="http://papers.ssrn.com/sol3/papers.cfm?abstract_id=1630002">Kahan argues</a>, is that</p><blockquote><p>information must be transmitted in a form that makes individuals’ acceptance of it compatible with their core cultural commitments. It is not enough that the information be true; it must be framed in a manner that bears an acceptable social meaning.</p></blockquote><p>For this reason, the contemptuous tone of much recent criticism of anti-vaccinator parents has, <a href="http://theincidentaleconomist.com/wordpress/enough-hating-on-anti-vaccination-parents-please/">in my view</a>, been <a href="http://www.culturalcognition.net/blog/2015/2/13/lets-shame-them-part-and-parcel-of-the-dangerous-seat-of-the.html">counterproductive</a>.</p><p>Parents' moral energy would be better spent on protecting children from ubiquitous toxins like <a href="http://www.epa.gov/ace/pdfs/Health-Neurodevelopmental.pdf">lead</a>, whose harmful effects on cognitive and behavioral development are well documented. But we shouldn’t be telling anti-vaccinators that there is something wrong with their intelligence or character. We should speak to them in ways that respect their commitments to their children’s health and their concerns about possible associations between environmental toxins and neurodevelopmental disorders like autism. We should explain that while concerns about vaccines are misplaced, parents have a right to call for further research on the origins of autism.</p>
+              <p><span class="dropcap">T</span>he Centers for Disease Control on Tuesday <a href="https://www.slate.com/blogs/the_slatest/2015/02/17/cdc_confirms_new_measles_cases_in_outbreak.html">announced</a> 20 new cases of measles, bringing the total to 141. It's the <a href="https://www.cdc.gov/measles/cases-outbreaks.html">largest outbreak of measles</a> in the U.S. since 2000, owing largely to the nation's growing <a href="https://www.newrepublic.com/article/120877/disneyland-measles-outbreak-caused-distrust-american-society">anti-vaccination movement</a>. These parents are afraid that vaccinations put their children at risk of developing autism, but new research that should relieve some of those fears.</p><p>Non-vaccinating parents are a small group. <a href="https://www.people-press.org/files/2015/02/2-9-15-Vaccines-release.pdf">Pew Research</a> reports that only 9 percent of Americans believe that vaccines are unsafe, and the <a href="https://www.cdc.gov/vaccines/imz-managers/coverage/imz-coverage.html">Centers for Disease C</a>ontrol reports that all but 8 percent of young children have been vaccinated for measles. However, vaccination rates have <a href="https://gamapserver.who.int/gho/interactive_charts/immunization/mcv/atlas.html">declined slightly</a> in a few advanced countries, including Canada. </p><p>If you read the <a href="https://www.ncbi.nlm.nih.gov/pubmed/21238571">scholarship on the anti-vaccination movement</a>, if you talk to anti-vaccinators, or if you read their <a href="https://www.ageofautism.com/a-welcome-from-dan-olmste.html">websites</a>, you’ll find that many of these parents believe that some childhood diseases whose origins remain uncertain<span class="em">&mdash;</span>like autism<span class="em">&mdash;</span>are environmental diseases (as opposed to genetic or infectious diseases). Vaccination, they believe, exposes children to toxic agents that cause autism. </p><p>For evidence, they point to <a href="https://www.cdc.gov/ncbddd/autism/data.html">data from the CDC</a> showing that the rate of autism diagnoses more than doubled from 2000 to 2010:</p><p><div class="pull-center"><div><a href="https://wp.newrepublic.com/wp-content/uploads/2015/02/autism_frequency-32.png" class="lightbox"><img src="https://wp.newrepublic.com/wp-content/uploads/2015/02/autism_frequency-32-624x312.png" height="312" width="624" /></a></div></div></p><p>The number of immunizations children get have also increased dramatically: Whereas there were only five recommended vaccines in 1960, today <a href="https://vec.chop.edu/service/vaccine-education-center/vaccine-schedule/history-of-vaccine-schedule.html">a child may receive 24 shots by age two</a>. Anti-vaccinators question whether the “<a href="https://www.hnehealth.nsw.gov.au/__data/assets/pdf_file/0009/62496/ParentalVaccineDecisionMaking.pdf">sudden onslaught</a>” of immunizations, as they describe it, is causing the epidemic growth of autism. </p><p>It’s not impossible. But historical correlations provide little evidence of what causes a disorder. Consider that from 2000 to 2010, children have also been exposed to increasing levels of <a href="https://epa.gov/climatechange/ghgemissions/gases/fgases.html">fluorinated gas emissions</a>. Could that instead explain the increase in autism diagnoses? </p><p>The key word there: "diagnoses." We don't know whether autism itself is increasing, or whether we're just getting better at diagnosing it. In a recent study published in <a href="https://archpedi.jamanetwork.com/article.aspx?articleid=1919642"><em>JAMA Pediatrics</em></a>, Aarhus University statistician Stefan Hansen and his colleagues examined the health records of more than 670,000 Danish children born from 1980 to 1991 to see whether the increase in autism rates could be explained by changes in how autism is diagnosed. Denmark was an ideal place to carry out this research because Scandinavian countries keep comprehensive lifetime medical records for all children based on uniform diagnostic procedures. </p><p>The investigators found that just as in the U.S., there was an increase in the rate of diagnosed autism among Danish children. However, 60 percent of the total increase in autism could be explained by a change in the diagnostic criteria for autism in 1994 and by a decision to include diagnoses made in outpatient settings in 1995. That is, at least 60 percent of the increase was attributable to specific one-time changes in how autism was identified and reported.</p><p>This doesn’t mean that 40 percent of the increase in autism was caused by increases in environmental toxins. We can't rule it out, but no environmental toxin has been definitively identified as a cause of autism. Much of the remaining 40 percent increase in the Danish study may well have resulted from better training of doctors about autism or increased awareness of autism among parents. </p><p>What this does mean is that parents shouldn’t panic about the apparently explosive growth in the rate of autism. The best explanation for the increase is that we are getting better at finding autism. There is no reason to believe that increasing numbers of vaccinations received by children is causing autism to increase.</p><p> </p><p><span class="dropcap">O</span>verall, the research evidence against the idea that the measles, mumps, and rubella (MMR) vaccine causes autism is very strong. For example, <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa021134">a study</a> in the <em>New England Journal of Medicine</em> looked at all children born in Denmark from 1991 through 1998 (more than half a million kids). They found no association between vaccination and autism. (Early data suggesting an association between the MMR vaccine and autism <a href="https://www.vox.com/2015/2/2/7965885/the-research-linking-autism-to-vaccines-is-even-more-terrible-than">proved to be fraudulent</a>.) </p><p>So how can we convince anxious parents that it is safe to vaccinate their children? Of course we need to give them accurate information about vaccinations. But in a discouraging study, Dartmouth College Professor <a href="https://pediatrics.aappublications.org/content/early/2014/02/25/peds.2013-2365">Brendan Nyhan</a> found that providing corrective scientific information about vaccines increased parents’ misperceptions and, among anti-vaccinators, reduced their intention to vaccinate their children.</p><p>How can this be? Yale Law School Professor Dan Kahan has <a href="https://www.sciencemag.org/content/342/6154/53.short">found</a> that people find reasons to discount scientific evidence about policy issues that are deeply tied to their cultural identity. For instance, presenting evidence about global warming to groups of partisans <a href="https://www.nature.com/articles/nclimate1547.epdf">increases</a> the polarization of their views because we value our affiliations with our friends more than we value action on global warming. If I express a deviant opinion about global warming, I’ll experience the disapproval of my like-minded friends, whereas if I do nothing about global warming<span class="em">&mdash;</span>well, what I do as an individual will have no detectable effect on the planet.</p><p>The moral, <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1630002">Kahan argues</a>, is that</p><blockquote><p>information must be transmitted in a form that makes individuals’ acceptance of it compatible with their core cultural commitments. It is not enough that the information be true; it must be framed in a manner that bears an acceptable social meaning.</p></blockquote><p>For this reason, the contemptuous tone of much recent criticism of anti-vaccinator parents has, <a href="https://theincidentaleconomist.com/wordpress/enough-hating-on-anti-vaccination-parents-please/">in my view</a>, been <a href="https://www.culturalcognition.net/blog/2015/2/13/lets-shame-them-part-and-parcel-of-the-dangerous-seat-of-the.html">counterproductive</a>.</p><p>Parents' moral energy would be better spent on protecting children from ubiquitous toxins like <a href="https://www.epa.gov/ace/pdfs/Health-Neurodevelopmental.pdf">lead</a>, whose harmful effects on cognitive and behavioral development are well documented. But we shouldn’t be telling anti-vaccinators that there is something wrong with their intelligence or character. We should speak to them in ways that respect their commitments to their children’s health and their concerns about possible associations between environmental toxins and neurodevelopmental disorders like autism. We should explain that while concerns about vaccines are misplaced, parents have a right to call for further research on the origins of autism.</p>
                             <div id="ad-teads"></div>
               
               
               
                               <div class="ui tertiary biography segment">
-                  <p>Bill Gardner is a health services researcher in Ottawa, Ontario. He blogs at <a href="http://theincidentaleconomist.com/">The Incidental Economist</a> and tweets @<a href="https://twitter.com/Bill_Gardner">Bill_Gardner</a>.</p>                </div>
+                  <p>Bill Gardner is a health services researcher in Ottawa, Ontario. He blogs at <a href="https://theincidentaleconomist.com/">The Incidental Economist</a> and tweets @<a href="https://twitter.com/Bill_Gardner">Bill_Gardner</a>.</p>                </div>
               
               
             </div>
@@ -478,7 +478,7 @@ site.page.config = {
           </div>
 
                     <div class="inline category">
-            <a href="/tags/politics"><img typeof="foaf:Image" src="http://newrepublic.com/sites/all/themes/tnr/assets/images/tags/tnr-politics-187x80.gif" alt="Politics" /></a>          </div>
+            <a href="/tags/politics"><img typeof="foaf:Image" src="https://newrepublic.com/sites/all/themes/tnr/assets/images/tags/tnr-politics-187x80.gif" alt="Politics" /></a>          </div>
           
                     <div class="ui basic vertical inline tag segment">
             <h4 class="ui header">More articles tagged as</h4>
@@ -561,12 +561,12 @@ site.page.config = {
             <div class="share module">
   <div class="social">
     <div class="vertical facebook"
-      data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+      data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
       data-text="Let’s Really Be Friends"
       data-title="Share">
     </div>
     <div class="vertical twitter"
-      data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+      data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
       data-text="Anti-Vaxxers Are Wrong About Why Autism Has Increased&mdash;But Don't Tell Them That"
       data-title="Tweet"></div>
   </div>
@@ -583,10 +583,10 @@ site.page.config = {
         <div class="header item">
           Choose Service
         </div>
-        <a class="item" target="_blank" href="http://www.instapaper.com/hello2?url=http%3A%2F%2Fwww.newrepublic.com%2Farticle%2F121103%2Fanti-vaccinators-unconvinced-science-showing-no-autism-link&amp;title=Anti-Vaxxers+Are+Wrong+About+Why+Autism+Has+Increased%E2%80%94But+Don%27t+Tell+Them+That&amp;description=Condescension+is+not+the+solution.">
+        <a class="item" target="_blank" href="https://www.instapaper.com/hello2?url=http%3A%2F%2Fwww.newrepublic.com%2Farticle%2F121103%2Fanti-vaccinators-unconvinced-science-showing-no-autism-link&amp;title=Anti-Vaxxers+Are+Wrong+About+Why+Autism+Has+Increased%E2%80%94But+Don%27t+Tell+Them+That&amp;description=Condescension+is+not+the+solution.">
           Save to Instapaper
         </a>
-        <a class="item" target="_blank" href="http://readability.com/save?url=http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link">
+        <a class="item" target="_blank" href="https://readability.com/save?url=https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link">
           Save to Readability
         </a>
         <div class="item">
@@ -635,7 +635,7 @@ site.page.config = {
   <div class="ui headlines">
     <div class="article headline">
     <div class="image">
-    <a href="/article/121229/ringling-brothers-circus-phases-out-elephants-2018"><img src="http://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/98100604.jpg"></a>
+    <a href="/article/121229/ringling-brothers-circus-phases-out-elephants-2018"><img src="https://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/98100604.jpg"></a>
   </div>
     <h4 class="header">
     <a href="/article/121229/ringling-brothers-circus-phases-out-elephants-2018">
@@ -644,7 +644,7 @@ site.page.config = {
 </div>
 <div class="article headline">
     <div class="image">
-    <a href="/article/121233/why-purim-judaisms-answer-halloween-shook-my-faith"><img src="http://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/lede_art_p_1.jpg"></a>
+    <a href="/article/121233/why-purim-judaisms-answer-halloween-shook-my-faith"><img src="https://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/lede_art_p_1.jpg"></a>
   </div>
     <h4 class="header">
     <a href="/article/121233/why-purim-judaisms-answer-halloween-shook-my-faith">
@@ -653,7 +653,7 @@ site.page.config = {
 </div>
 <div class="article headline">
     <div class="image">
-    <a href="/article/121221/koch-brothers-rand-perry-and-lee-reform-criminal-justice-system"><img src="http://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/107517319.jpg"></a>
+    <a href="/article/121221/koch-brothers-rand-perry-and-lee-reform-criminal-justice-system"><img src="https://newrepublic.com/sites/default/files/styles/static_cover_img_500/public/107517319.jpg"></a>
   </div>
     <h4 class="header">
     <a href="/article/121221/koch-brothers-rand-perry-and-lee-reform-criminal-justice-system">
@@ -679,7 +679,7 @@ site.page.config = {
   <h5 class="ui dividing header">Sign Up For The New Republic Daily</h5>
   <p>Sign up now to get your dose of politics, culture, and big ideas with our free daily newsletter.</p>
 
-  <form class="ui form" method="post" action="http://link.newrepublic.com/s/TNR">
+  <form class="ui form" method="post" action="https://link.newrepublic.com/s/TNR">
     <input type="hidden" name="list[Master List]" value="1" />
     <input type="hidden" name="vars[marketing]" value="TRUE" />
     <input type="hidden" name="vars[source]" value="daily_article" />
@@ -707,12 +707,12 @@ site.page.config = {
               <div class="share module">
   <div class="social">
     <div class="inline facebook"
-      data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+      data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
       data-text="Why Conservatives' Prison Reform Plans Won't Work"
       data-title="Share">
     </div>
     <div class="inline twitter"
-      data-url="http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
+      data-url="https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link"
       data-text="Anti-Vaxxers Are Wrong About Why Autism Has Increased&mdash;But Don't Tell Them That"
       data-title="Tweet"></div>
   </div>
@@ -821,10 +821,10 @@ site.page.config = {
       <div class="header item">
         Choose Service
       </div>
-      <a class="item" target="_blank" href="http://www.instapaper.com/hello2?url=http%3A%2F%2Fwww.newrepublic.com%2Farticle%2F121103%2Fanti-vaccinators-unconvinced-science-showing-no-autism-link&amp;title=Anti-Vaxxers+Are+Wrong+About+Why+Autism+Has+Increased%E2%80%94But+Don%27t+Tell+Them+That&amp;description=Condescension+is+not+the+solution.">
+      <a class="item" target="_blank" href="https://www.instapaper.com/hello2?url=http%3A%2F%2Fwww.newrepublic.com%2Farticle%2F121103%2Fanti-vaccinators-unconvinced-science-showing-no-autism-link&amp;title=Anti-Vaxxers+Are+Wrong+About+Why+Autism+Has+Increased%E2%80%94But+Don%27t+Tell+Them+That&amp;description=Condescension+is+not+the+solution.">
         Save to Instapaper
       </a>
-      <a class="item" target="_blank" href="http://readability.com/save?url=http://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link">
+      <a class="item" target="_blank" href="https://readability.com/save?url=https://www.newrepublic.com/article/121103/anti-vaccinators-unconvinced-science-showing-no-autism-link">
         Save to Readability
       </a>
       <!--div class="item">
@@ -847,7 +847,7 @@ site.page.config = {
 </div><div class="ui email modal">
   <i class="close icon"></i>
   <div class="header">
-    <img src="http://newrepublic.com/sites/all/themes/tnr/assets/images/logo-white.png" class="ui small left floated image">
+    <img src="https://newrepublic.com/sites/all/themes/tnr/assets/images/logo-white.png" class="ui small left floated image">
     Share by e-mail
   </div>
   <div class="content">
@@ -990,7 +990,7 @@ site.page.config = {
       </div>
       <h4 class="ui red header">Sign Up For The New Republic Daily</h4>
       <p>Sign up now to get your dose of politics, culture, and big ideas with our free daily newsletter.</p>
-      <form class="ui form" method="post" action="http://link.newrepublic.com/s/TNR">
+      <form class="ui form" method="post" action="https://link.newrepublic.com/s/TNR">
   <input type="hidden" name="list[Master List]" value="1" />
   <input type="hidden" name="vars[marketing]" value="TRUE" />
   <input type="hidden" name="vars[source]" value="daily_footer" />
@@ -1018,7 +1018,7 @@ site.page.config = {
         Get The New Republic for <b>$19.97/year</b>
       </h5>
        <a class="ui left floated image" href="/subscription/self/footer/callout">
-        <img typeof="foaf:Image" src="http://www.newrepublic.com/sites/default/files/styles/curr_issue_cover_footer/public/u184683/03-2015_cover.online.jpg?itok=4tFt4k7S" alt="" />      </a>
+        <img typeof="foaf:Image" src="https://www.newrepublic.com/sites/default/files/styles/curr_issue_cover_footer/public/u184683/03-2015_cover.online.jpg?itok=4tFt4k7S" alt="" />      </a>
       <div class="ui small inverted fitted selection list" style="margin-left:0;">
         <a class="item" href="/subscription/self/footer/callout">
           <i class="book icon"></i>
@@ -1040,20 +1040,20 @@ site.page.config = {
     </div>
   </div>
   <a class="ui centered small logo image" href="/">
-    <img src="http://newrepublic.com/sites/all/themes/tnr/assets/images/logo-white.png">
+    <img src="https://newrepublic.com/sites/all/themes/tnr/assets/images/logo-white.png">
   </a>
   <div class="social">
     <div class="slim twitter sharrre"
       data-user="tnr"
-      data-url="http://www.newrepublic.com"
+      data-url="https://www.newrepublic.com"
       data-title="Follow"
     ></div>
     <div class="slim facebook sharrre"
-      data-url="http://www.facebook.com/thenewrepublic"
+      data-url="https://www.facebook.com/thenewrepublic"
       data-title="Like">
     </div>
     <div class="slim google sharrre"
-      data-url="http://www.newrepublic.com"
+      data-url="https://www.newrepublic.com"
       data-title="Plus">
     </div>
   </div>
@@ -1070,10 +1070,10 @@ site.page.config = {
   <!--[if (gte IE 9) | (!IE)]><!-->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <!--<![endif]-->
-<script type="text/javascript" src="http://www.newrepublic.com/sites/default/files/js/js_tq-YeSrxS9vDNXNLJO-YjsX7QjVFN_b0h0E0DkK1KMg.js"></script>
+<script type="text/javascript" src="https://www.newrepublic.com/sites/default/files/js/js_tq-YeSrxS9vDNXNLJO-YjsX7QjVFN_b0h0E0DkK1KMg.js"></script>
 
   <!-- Site Config !-->
-  <script src="http://newrepublic.com/sites/all/themes/tnr/dist/minified/ui/definitions/globals/site.min.js"></script>
+  <script src="https://newrepublic.com/sites/all/themes/tnr/dist/minified/ui/definitions/globals/site.min.js"></script>
 
   <!-- Site Overlay !-->
   <script type="text/javascript">
@@ -1083,7 +1083,7 @@ site.page.config = {
     // $.site('disable console');
     </script>
 
-  <script type="text/javascript" src="http://www.newrepublic.com/sites/default/files/js/js_I5T0dpVeGNrAvm2NbPOEoJ7eFcW7n-KQ-zichS55J5I.js"></script>
+  <script type="text/javascript" src="https://www.newrepublic.com/sites/default/files/js/js_I5T0dpVeGNrAvm2NbPOEoJ7eFcW7n-KQ-zichS55J5I.js"></script>
 
 </div>  <div class="tracking">
 

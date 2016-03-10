@@ -3,7 +3,7 @@ Theme Name: Glue
 Theme URI:
 Description: AdGlue Theme
 Author: SearcherMag.net/DianaSmith
-Author URI: http://searchermag.net
+Author URI: https://searchermag.net
 Version: 0.1
  
 */
@@ -131,7 +131,7 @@ img.placeholder{cursor:pointer;}
 #footer .right {float:right;width: 50%;}
 
 #footer {color:white;}
-#splash{position:relative;background-image:url(http://www.adglue.com/wp-content/themes/Glue/images/woodgrain3.jpg);min-height: 601px;background-color: #796347;background-position:top left;background-repeat:no-repeat;}
+#splash{position:relative;background-image:url(https://www.adglue.com/wp-content/themes/Glue/images/woodgrain3.jpg);min-height: 601px;background-color: #796347;background-position:top left;background-repeat:no-repeat;}
 #splash .wide {padding-top:103px;padding-bottom:30px}
 .sticky {position: fixed !important;background: black !important;z-index: 800000000 !important;width:100%;top: 0;right: 0;left: 0;}
 
@@ -150,8 +150,8 @@ img.placeholder{cursor:pointer;}
 .partners img {padding:30px;}
 
 
-.wall{background-image:url(http://www.adglue.com/wp-content/themes/Glue/images/wall.png);background-position: top center;background-repeat: no-repeat;}
-.forpublishers .middle {background-image: url(http://www.adglue.com/wp-content/themes/Glue/images/second.png);}
+.wall{background-image:url(https://www.adglue.com/wp-content/themes/Glue/images/wall.png);background-position: top center;background-repeat: no-repeat;}
+.forpublishers .middle {background-image: url(https://www.adglue.com/wp-content/themes/Glue/images/second.png);}
 .forpublishers .wide {padding:0;}
 
 .wall .wide{min-height: 476px;padding-top:30px}
@@ -198,7 +198,7 @@ img.placeholder{cursor:pointer;}
 .fifty {width:46%;float: left;}
 .green .thirtythree {-webkit-transform: skewX(-11deg);}
 .green .thirtythree .info {-webkit-transform: skewX(11deg);}
-.forpublishers{background-image:url(http://www.adglue.com/wp-content/themes/Glue/images/first.png);background-position: bottom left;background-size: 50% 100%;background-repeat: no-repeat;}
+.forpublishers{background-image:url(https://www.adglue.com/wp-content/themes/Glue/images/first.png);background-position: bottom left;background-size: 50% 100%;background-repeat: no-repeat;}
 .quote h2{font-size: 1.5em;}
 .thumbhome{width:30%;height:180px;float: right;margin: 0 0 20px 20px;background-position:center center;background-size:cover;}
 
@@ -206,7 +206,7 @@ img.placeholder{cursor:pointer;}
 @media only screen and (max-width: 746px) {
 .thumbhome{height:180px;margin: 20px 0;background-position:center center;background-size:cover;}
 
-.first{background-image:url(http://www.adglue.com/wp-content/themes/Glue/images/first.png);}
+.first{background-image:url(https://www.adglue.com/wp-content/themes/Glue/images/first.png);}
 .quote h2{font-size: 1em;}
 .quote h3{font-size: .8em;}
 

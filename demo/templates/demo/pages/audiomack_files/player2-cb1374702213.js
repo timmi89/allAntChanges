@@ -1,5 +1,5 @@
 var playerTPL = '<i class="caPlayer" id="audiomack-embed">' +
-	'<a href="http://www.audiomack.com" class="plogo" target="_blank">Audiomack</a>' +
+	'<a href="https://www.audiomack.com" class="plogo" target="_blank">Audiomack</a>' +
 	'<i class="border"><a href="#" class="ps paused"></a></i>' +
 	'<i class="pinfo"><span class="pband"></span><span class="psong"></span></i>' +
 	'<i class="next"></i>' +

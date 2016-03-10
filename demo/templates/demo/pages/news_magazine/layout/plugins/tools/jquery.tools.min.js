@@ -9,7 +9,7 @@
  * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
  * 
- * http://flowplayer.org/tools/
+ * https://flowplayer.org/tools/
  * 
  */
  
