@@ -237,8 +237,8 @@ urlpatterns = patterns('',
 if os.getenv('ANTENNA_STATIC_URL', False):
     urlpatterns += patterns(
         '',
-        url(r'^static/',
-            RedirectView.as_view(url=settings.STATIC_URL))
+        url(r'^static/(?P<path>.*)$',
+            RedirectView.as_view(url=settings.STATIC_URL + '%(path)s'))
     )
 else:
     urlpatterns += patterns(
