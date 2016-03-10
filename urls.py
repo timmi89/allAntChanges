@@ -1,3 +1,4 @@
+import os
 from textwrap import dedent
 
 from django.conf import settings
@@ -233,7 +234,14 @@ urlpatterns = patterns('',
   url(r'^ant_login_success/$', 'rb.views.ant_login_success'),
 )
 
-urlpatterns += patterns(
-    'django.contrib.staticfiles.views',
-    url(r'^static/(?P<path>.*)$', 'serve'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if os.getenv('ANTENNA_STATIC_URL', False):
+    urlpatterns += patterns(
+        '',
+        url(r'^static/',
+            RedirectView.as_view(url=settings.STATIC_URL))
+    )
+else:
+    urlpatterns += patterns(
+        'django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$', 'serve'),
+    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
