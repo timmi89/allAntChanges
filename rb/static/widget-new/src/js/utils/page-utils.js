@@ -52,7 +52,12 @@ function computeTopLevelCanonicalUrl(groupSettings) {
 }
 
 function computePageElementUrl($pageElement, groupSettings) {
-    var url = $pageElement.find(groupSettings.pageUrlSelector()).attr(groupSettings.pageUrlAttribute());
+    var pageUrlSelector = groupSettings.pageUrlSelector();
+    var $pageUrlElement = $pageElement.find(pageUrlSelector);
+    if (pageUrlSelector) { // with an undefined selector, addBack will match and always return the input element (unlike find() which returns an empty match)
+        $pageUrlElement = $pageUrlElement.addBack(pageUrlSelector);
+    }
+    var url = $pageUrlElement.attr(groupSettings.pageUrlAttribute());
     if (url) {
         url = removeSubdomainFromPageUrl(url, groupSettings);
         var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
