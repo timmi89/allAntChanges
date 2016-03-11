@@ -7,12 +7,11 @@ module.exports = {
     'reactions_widget__title': 'Reacciones',
     'reactions_widget__title_think': '¿Qué piensas?',
     'reactions_widget__title_thanks': '¡Gracias por tu reacción!',
-    'reactions_widget__title_signin': 'Sign in Required', // TODO: need a translation
-    'reactions_widget__title_blocked': 'Blocked Reaction', // TODO: need a translation
-    'reactions_widget__title_error': 'Error', // TODO: need a translation
+    'reactions_widget__title_signin': 'Es necesario iniciar sesión', // TODO: check translation
+    'reactions_widget__title_blocked': 'Reacción bloqueado', // TODO: check translation
+    'reactions_widget__title_error': 'Error', // TODO: check translation
     'reactions_widget__back': 'Volver',
-
-    'reactions_page__no_reactions': '¡No reacciones!', // TODO: need a translation of "No reactions yet!"
+    'reactions_page__no_reactions': '¡No reacciones ya!', // TODO: check translation 
     'reactions_page__think': '¿Qué piensas?',
 
     'media_indicator__think': '¿Qué piensas?',
@@ -40,15 +39,11 @@ module.exports = {
     'call_to_action_label__responses_one': '1 Reacción',
     'call_to_action_label__responses_many': '{0} Reacciones',
 
-    'blocked_page__message1': 'This site has blocked some or all of the text in that reaction.', // TODO: translation
-    'blocked_page__message2': 'Please try something that will be more appropriate for this community.', // TODO: translation
-
-    'pending_page__message_appear': 'Your reaction will appear once it is reviewed. All new reactions must meet our community guidelines.', // TODO: translation
-
-    'error_page__message': 'Oops! We really value your feedback, but something went wrong.', // TODO: translation
-
+    'blocked_page__message1': 'Este sitio web ha bloqueado esa reacción.', // TODO: check translation
+    'blocked_page__message2': 'Por favor, intente algo que será más apropiado para esta comunidad.', // TODO: check translation
+    'pending_page__message_appear': 'Aparecerá su reacción una vez que se revisa. Todas las nuevas reacciones deben cumplir con normas de la comunidad.', // TODO: check translation
+    'error_page__message': '¡Lo siento! Valoramos sus comentarios, pero algo salió mal.', // TODO: check translation
     'tap_helper__prompt': '¡Toca un párrafo para opinar!',
     'tap_helper__close': 'Volver',
-
-    'content_rec_widget__title': 'Reader Reactions' // TODO: translation
+    'content_rec_widget__title': 'Reacciones de la gente' // TODO: check translation
 };
