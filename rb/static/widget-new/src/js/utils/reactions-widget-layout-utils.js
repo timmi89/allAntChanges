@@ -2,6 +2,7 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
 var CLASS_FULL = 'antenna-full';
 var CLASS_HALF = 'antenna-half';
+var CLASS_HALF_STRETCH = CLASS_HALF + ' antenna-stretch';
 
 function computeLayoutData(reactionsData) {
     var numReactions = reactionsData.length;
@@ -33,8 +34,13 @@ function computeLayoutData(reactionsData) {
     }
     if (numHalfsies % 2 !== 0) {
         // If there are an odd number of half-sized boxes, make one of them full.
-        // If there are no other full-size boxes, make the first one full-size. Otherwise, make the last one full.
-        layoutClasses[numFull === 0 ? 0 : numReactions - 1] = CLASS_FULL;
+        if (numFull === 0) {
+            // If there are no other full-size boxes, make the first one full-size.
+            layoutClasses[0] = CLASS_FULL;
+        } else {
+            // Otherwise, simply stretch the last box to fill the available width (this keeps the smaller font size).
+            layoutClasses[numReactions - 1] = CLASS_HALF_STRETCH;
+        }
     }
 
     return {
