@@ -76,9 +76,9 @@ function sizeReactionTextToFit($reactionsWindow) {
                     node.innerHTML = text;
                     scaleFactor = horizontalRatio;
                 }
-                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * scaleFactor) - 1));
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * scaleFactor)));
             } else {
-                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * horizontalRatio) - 1));
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * horizontalRatio)));
             }
         }
         if (originalDisplay === 'none') {
