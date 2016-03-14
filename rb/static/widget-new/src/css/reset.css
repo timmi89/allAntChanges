@@ -17,6 +17,7 @@
     text-decoration: none;
     line-height: 1em;
     transition: initial;
+    position: initial;
     overflow: visible;
     -ms-overflow-style: none; /* Tell IE to never show their ugly element scroll bars */
 }
