@@ -71,14 +71,17 @@ function sizeReactionTextToFit($reactionsWindow) {
             if (wrappedHorizontalRatio < 1) {
                 $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * wrappedHorizontalRatio)));
             }
-            // Shrink the containing box padding if necessary
-            var approxHeight = parseInt($element.css('font-size')) * 2; // At this point the browser won't give us a real height, so we need to estimate ourselves
-            var clientArea = computeAvailableClientArea(node.parentNode);
-            var remainingSpace = clientArea - approxHeight;
-            var neededSpace = computeNeededHeight(node.parentNode.querySelector('.antenna-reaction-count'));
-            if (remainingSpace < neededSpace) {
-                var $parent = $(node.parentNode);
-                $parent.css('padding-top', parseInt($parent.css('padding-top')) - ((neededSpace-remainingSpace)/2) );
+            // Shrink the containing box padding if necessary to fit the 'count'
+            var count = node.parentNode.querySelector('.antenna-reaction-count');
+            if (count) {
+                var approxHeight = parseInt($element.css('font-size')) * 2; // At this point the browser won't give us a real height, so we need to estimate ourselves
+                var clientArea = computeAvailableClientArea(node.parentNode);
+                var remainingSpace = clientArea - approxHeight;
+                var countHeight = computeNeededHeight(count);
+                if (remainingSpace < countHeight) {
+                    var $parent = $(node.parentNode);
+                    $parent.css('padding-top', parseInt($parent.css('padding-top')) - ((countHeight-remainingSpace)/2) );
+                }
             }
         }
         if (originalDisplay === 'none') {
