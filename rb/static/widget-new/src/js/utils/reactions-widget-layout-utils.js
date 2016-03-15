@@ -10,9 +10,7 @@ function computeLayoutData(reactionsData) {
         return {}; // TODO clean this up
     }
     // TODO: Copied code from engage_full.createTagBuckets
-    var max = reactionsData[0].count;
     var median = reactionsData[ Math.floor(reactionsData.length/2) ].count;
-    var min = reactionsData[ reactionsData.length-1 ].count;
     var total = 0;
     for (var i = 0; i < numReactions; i++) {
         total += reactionsData[i].count;
@@ -23,12 +21,12 @@ function computeLayoutData(reactionsData) {
     var layoutClasses = [];
     var numHalfsies = 0;
     var numFull = 0;
-    for (var i = 0; i < numReactions; i++) {
-        if (reactionsData[i].count > midValue) {
-            layoutClasses[i] = CLASS_FULL;
+    for (var j = 0; j < numReactions; j++) {
+        if (reactionsData[j].count > midValue) {
+            layoutClasses[j] = CLASS_FULL;
             numFull++;
         } else {
-            layoutClasses[i] = CLASS_HALF;
+            layoutClasses[j] = CLASS_HALF;
             numHalfsies++;
         }
     }
@@ -62,29 +60,16 @@ function sizeReactionTextToFit($reactionsWindow) {
             var secondHalfIndex = text.indexOf(' ', mid);
             var firstHalfIndex = text.lastIndexOf(' ', mid);
             var splitIndex = Math.abs(secondHalfIndex - mid) < Math.abs(mid - firstHalfIndex) ? secondHalfIndex : firstHalfIndex;
-            var verticalRatio;
-            if (splitIndex > 1) {
-                // Split the text and then see how it fits.
-                node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
-                var wrappedHorizontalRatio = node.clientWidth / node.scrollWidth;
-                var parentAvailableHeight = computeAvailableClientArea(node.parentNode);
-                verticalRatio = node.scrollHeight / parentAvailableHeight;
-
-                var verticalRatioMax = 0.4;
-                if (verticalRatio && verticalRatio > verticalRatioMax) {
-                    var scaleFactor = verticalRatioMax / verticalRatio;
-                }
-                if (wrappedHorizontalRatio < 1.0) {
-                    scaleFactor = Math.min(scaleFactor, wrappedHorizontalRatio);
-                }
-                if (scaleFactor <= horizontalRatio) {
-                    // If we ended up having to make the text small
-                    node.innerHTML = text;
-                    scaleFactor = horizontalRatio;
-                }
-                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * scaleFactor)));
-            } else {
-                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * horizontalRatio)));
+            if (splitIndex < 1) {
+                // If there's no space in the text, just split the text. Split on the overflow ratio if the top line will
+                // have more characters than the bottom (so it looks like the text naturally wraps) or otherwise in the middle.
+                splitIndex = horizontalRatio > 0.5 ? Math.ceil(text.length * horizontalRatio) : Math.ceil(text.length / 2);
+            }
+            // Split the text and then see how it fits.
+            node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
+            var wrappedHorizontalRatio = node.clientWidth / node.scrollWidth;
+            if (wrappedHorizontalRatio < 1) {
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * wrappedHorizontalRatio)));
             }
         }
         if (originalDisplay === 'none') {
@@ -94,11 +79,6 @@ function sizeReactionTextToFit($reactionsWindow) {
             teardown: function() {}
         };
     };
-}
-
-function computeAvailableClientArea(node) {
-    var nodeStyle = window.getComputedStyle(node);
-    return parseInt(nodeStyle.height) - parseInt(nodeStyle.paddingTop) - parseInt(nodeStyle.paddingBottom);
 }
 
 module.exports = {
