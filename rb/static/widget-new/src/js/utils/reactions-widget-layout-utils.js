@@ -71,6 +71,15 @@ function sizeReactionTextToFit($reactionsWindow) {
             if (wrappedHorizontalRatio < 1) {
                 $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * wrappedHorizontalRatio)));
             }
+            // Shrink the containing box padding if necessary
+            var approxHeight = parseInt($element.css('font-size')) * 2; // At this point the browser won't give us a real height, so we need to estimate ourselves
+            var clientArea = computeAvailableClientArea(node.parentNode);
+            var remainingSpace = clientArea - approxHeight;
+            var neededSpace = computeNeededHeight(node.parentNode.querySelector('.antenna-reaction-count'));
+            if (remainingSpace < neededSpace) {
+                var $parent = $(node.parentNode);
+                $parent.css('padding-top', parseInt($parent.css('padding-top')) - ((neededSpace-remainingSpace)/2) );
+            }
         }
         if (originalDisplay === 'none') {
             $reactionsWindow.css({display: '', left: ''});
@@ -79,6 +88,16 @@ function sizeReactionTextToFit($reactionsWindow) {
             teardown: function() {}
         };
     };
+}
+
+function computeAvailableClientArea(node) {
+    var nodeStyle = window.getComputedStyle(node);
+    return parseInt(nodeStyle.height) - parseInt(nodeStyle.paddingTop) - parseInt(nodeStyle.paddingBottom);
+}
+
+function computeNeededHeight(node) {
+    var nodeStyle = window.getComputedStyle(node);
+    return parseInt(nodeStyle.height) + parseInt(nodeStyle.marginTop) + parseInt(nodeStyle.marginBottom);
 }
 
 module.exports = {
