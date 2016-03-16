@@ -22,7 +22,8 @@ except:
 
 EVENTS_PROJECT_NUMBER = '774436620412'
 EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
-EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@developer.gserviceaccount.com'
+EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@'\
+                               'developer.gserviceaccount.com'
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -476,42 +477,34 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
         'simple': {
-            'format': '%(levelname)s %(module)s %(thread)d %(message)s'
+            'format': '%(asctime)s %(levelname)s '
+                      '%(module)s %(thread)d %(message)s'
         },
-    },
-    'filters': {
-
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-        },
-        'rb_standard': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/rb_standard.log',
-            'maxBytes': 1024*1024*10,  # 10 MB
-            'backupCount': 50,
-            'formatter': 'verbose',
-        },
+        }
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'rb_standard'],
+            'handlers': ['console'],
             'propagate': True,
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
         },
-        'rb.standard': {
-            'handlers': ['console', 'rb_standard'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        'django.request': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
         },
         'django.db': {
-            'handlers': ['console', 'rb_standard'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
+        'httpproxy.views': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
         }
     }
 }
