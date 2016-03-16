@@ -1,4 +1,5 @@
 var AjaxClient = require('./utils/ajax-client');
+var URLs = require('./utils/urls');
 
 var contentFetchTriggerSize = 0; // The size of the pool at which we'll proactively fetch more content.
 var freshContentPool = [];
@@ -22,18 +23,18 @@ function getRecommendedContent(count, pageData, groupSettings, callback) {
 }
 
 function fetchRecommendedContent(groupSettings, callback) {
-    // TODO: Extract URL
-    AjaxClient.getJSONPNative('/api/contentrec', { group_id: groupSettings.groupId()} , function(response) {
-        if (response.status !== 'fail' && response.data) {
-            // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
-            var contentData = massageContent(response.data);
-            var newArray = shuffleArray(contentData);
-            for (var i = 0; i < freshContentPool.length; i++) {
-                newArray.push(freshContentPool[i]);
-            }
-            freshContentPool = newArray;
-            if (callback) { callback(groupSettings); }
+    AjaxClient.getJSONP(URLs.fetchContentRecommendationUrl(), { group_id: groupSettings.groupId()} , function(jsonData) {
+        // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
+        var contentData = massageContent(jsonData);
+        var newArray = shuffleArray(contentData);
+        for (var i = 0; i < freshContentPool.length; i++) {
+            newArray.push(freshContentPool[i]);
         }
+        freshContentPool = newArray;
+        if (callback) { callback(groupSettings); }
+    }, function(errorMessage) {
+        /* TODO: Error handling */
+        console.log('An error occurred fetching recommended content: ' + errorMessage);
     });
 }
 

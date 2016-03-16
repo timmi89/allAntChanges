@@ -1,10 +1,6 @@
-// TODO: needs a better name once the scope is clear
-
-var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./app-mode');
 var URLs = require('./urls');
 var User = require('./user');
-
 
 function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
     var contentBody = contentData.body;
@@ -297,58 +293,27 @@ function postTrackingEvent(event) {
 }
 
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
-function doGetJSONP(baseUrl, url, data, success, error) {
-    var options = {
-        url: baseUrl + url,
-        type: "get",
-        contentType: "application/json",
-        dataType: "jsonp",
-        success: function(response, textStatus, XHR) {
-            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
-            //       the status code in the XHR
-            // Note: The server comes back with 200 responses with a nested status of "fail"...
-            if (textStatus === 'success' && response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
-                success(response.data);
-            } else {
-                // For JSONP requests, jQuery doesn't call it's error callback. It calls success instead.
-                error(response.message || response.data.message);
-            }
-        },
-        error: function(xhr, textStatus, message) {
-            // Okay, apparently jQuery *does* call its error callback for JSONP requests sometimes...
-            // Specifically, when the response status is OK but an error occurs client-side processing the response.
-            error (message);
-        }
-    };
-    if (data) {
-        options.data = { json: JSON.stringify(data) };
-    }
-    $.ajax(options);
-}
-
-// Native (no jQuery) implementation of a JSONP request.
-function getJSONPNative(relativeUrl, params, callback) {
-    // TODO: decide whether to do our json: param wrapping here or in doGetJSONPNative
-    doGetJSONPNative(URLs.appServerUrl() + relativeUrl, { json: JSON.stringify(params) }, callback);
-}
-
-// Native (no jQuery) implementation of a JSONP request.
-function doGetJSONPNative(url, params, callback) {
+function doGetJSONP(baseUrl, url, params, success, error) {
     var scriptTag = document.createElement('script');
     var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
     window[responseCallback] = function(response) {
         try {
-            callback(response);
+            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
+            //       the status code in the XHR
+            // Note: The server comes back with 200 responses with a nested status of "fail"...
+            if (response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
+                success(response.data);
+            } else {
+                if (error) { error(response.message || response.data.message); }
+            }
         } finally {
             delete window[responseCallback];
             scriptTag.parentNode.removeChild(scriptTag);
         }
     };
-    var jsonpUrl = url + '?callback=' + responseCallback;
-    for (var param in params) {
-        if (params.hasOwnProperty(param)) {
-            jsonpUrl += '&' + encodeURI(param) + '=' + encodeURI(params[param]);
-        }
+    var jsonpUrl = baseUrl + url + '?callback=' + responseCallback;
+    if (params) {
+        jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
     }
     scriptTag.setAttribute('type', 'application/javascript');
     scriptTag.setAttribute('src', jsonpUrl);
@@ -358,7 +323,6 @@ function doGetJSONPNative(url, params, callback) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     getJSONP: getJSONP,
-    getJSONPNative: getJSONPNative,
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
     postComment: postComment,

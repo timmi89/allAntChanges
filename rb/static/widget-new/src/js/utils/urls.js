@@ -25,6 +25,10 @@ function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
 }
 
+function getFetchContentRecommendationUrl() {
+    return '/api/contentrec';
+}
+
 function getShareReactionUrl() {
     return '/api/share/;'
 }
@@ -144,6 +148,7 @@ module.exports = {
     createCommentUrl: getCreateCommentUrl,
     fetchCommentUrl: getFetchCommentUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
+    fetchContentRecommendationUrl: getFetchContentRecommendationUrl,
     shareReactionUrl: getShareReactionUrl,
     shareWindowUrl: getShareWindowUrl,
     loginPageUrl: getLoginPageUrl,
