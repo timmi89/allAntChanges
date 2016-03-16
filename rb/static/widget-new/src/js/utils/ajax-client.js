@@ -295,6 +295,8 @@ function postTrackingEvent(event) {
 
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
 function doGetJSONP(baseUrl, url, params, success, error) {
+    doGetJSONPjQuery(baseUrl, url, params, success, error);
+    return;
     var scriptTag = document.createElement('script');
     var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
     window[responseCallback] = function(response) {
@@ -319,6 +321,35 @@ function doGetJSONP(baseUrl, url, params, success, error) {
     scriptTag.setAttribute('type', 'application/javascript');
     scriptTag.setAttribute('src', jsonpUrl);
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(scriptTag);
+}
+
+function doGetJSONPjQuery(baseUrl, url, data, success, error) {
+    var options = {
+        url: baseUrl + url,
+        type: "get",
+        contentType: "application/json",
+        dataType: "jsonp",
+        success: function(response, textStatus, XHR) {
+            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
+            //       the status code in the XHR
+            // Note: The server comes back with 200 responses with a nested status of "fail"...
+            if (textStatus === 'success' && response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
+                success(response.data);
+            } else {
+                // For JSONP requests, jQuery doesn't call it's error callback. It calls success instead.
+                error(response.message || response.data.message);
+            }
+        },
+        error: function(xhr, textStatus, message) {
+            // Okay, apparently jQuery *does* call its error callback for JSONP requests sometimes...
+            // Specifically, when the response status is OK but an error occurs client-side processing the response.
+            error (message);
+        }
+    };
+    if (data) {
+        options.data = { json: JSONUtils.stringify(data) };
+    }
+    $.ajax(options);
 }
 
 //noinspection JSUnresolvedVariable
