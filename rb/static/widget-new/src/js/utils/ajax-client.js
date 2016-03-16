@@ -1,3 +1,4 @@
+var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./app-mode');
 var JSONUtils = require('./json-utils');
 var URLs = require('./urls');
@@ -296,7 +297,10 @@ function postTrackingEvent(event) {
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
 function doGetJSONP(baseUrl, url, params, success, error) {
 
-    doGetJSONPjQuery(baseUrl, url, params, success, error); return;
+    if (!window.antennaEnableNativeJSONP) {
+        doGetJSONPjQuery(baseUrl, url, params, success, error);
+        return;
+    }
 
     var scriptTag = document.createElement('script');
     var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
