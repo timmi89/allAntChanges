@@ -321,7 +321,7 @@ function doGetJSONP(baseUrl, url, params, success, error) {
     };
     var jsonpUrl = baseUrl + url + '?callback=' + responseCallback;
     if (params) {
-        jsonpUrl += '&json=' + encodeURI(JSONUtils.stringify(params));
+        jsonpUrl += '&json=' + encodeURIComponent(JSONUtils.stringify(params));
     }
     scriptTag.setAttribute('type', 'application/javascript');
     scriptTag.setAttribute('src', jsonpUrl);
