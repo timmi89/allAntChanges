@@ -1,10 +1,7 @@
-// TODO: needs a better name once the scope is clear
-
-var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AppMode = require('./app-mode');
+var JSONUtils = require('./json-utils');
 var URLs = require('./urls');
 var User = require('./user');
-
 
 function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
     var contentBody = contentData.body;
@@ -272,7 +269,7 @@ function getJSONP(url, data, success, error) {
 function postEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
     if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
     }
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
         // TODO: error handling
@@ -283,11 +280,11 @@ function postEvent(event) {
 function postTrackingEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
     if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
     }
     var trackingUrl = baseUrl + URLs.eventUrl() + '/event.gif';
     if (event) {
-        trackingUrl += '?json=' + encodeURI(JSON.stringify(event));
+        trackingUrl += '?json=' + encodeURI(JSONUtils.stringify(event));
     }
     var imageTag = document.createElement('img');
     imageTag.setAttribute('height', 1);
@@ -297,7 +294,37 @@ function postTrackingEvent(event) {
 }
 
 // Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
-function doGetJSONP(baseUrl, url, data, success, error) {
+function doGetJSONP(baseUrl, url, params, success, error) {
+
+    doGetJSONPjQuery(baseUrl, url, params, success, error); return;
+
+    var scriptTag = document.createElement('script');
+    var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
+    window[responseCallback] = function(response) {
+        try {
+            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
+            //       the status code in the XHR
+            // Note: The server comes back with 200 responses with a nested status of "fail"...
+            if (response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
+                success(response.data);
+            } else {
+                if (error) { error(response.message || response.data.message); }
+            }
+        } finally {
+            delete window[responseCallback];
+            scriptTag.parentNode.removeChild(scriptTag);
+        }
+    };
+    var jsonpUrl = baseUrl + url + '?callback=' + responseCallback;
+    if (params) {
+        jsonpUrl += '&json=' + encodeURI(JSONUtils.stringify(params));
+    }
+    scriptTag.setAttribute('type', 'application/javascript');
+    scriptTag.setAttribute('src', jsonpUrl);
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(scriptTag);
+}
+
+function doGetJSONPjQuery(baseUrl, url, data, success, error) {
     var options = {
         url: baseUrl + url,
         type: "get",
@@ -321,44 +348,14 @@ function doGetJSONP(baseUrl, url, data, success, error) {
         }
     };
     if (data) {
-        options.data = { json: JSON.stringify(data) };
+        options.data = { json: JSONUtils.stringify(data) };
     }
     $.ajax(options);
-}
-
-// Native (no jQuery) implementation of a JSONP request.
-function getJSONPNative(relativeUrl, params, callback) {
-    // TODO: decide whether to do our json: param wrapping here or in doGetJSONPNative
-    doGetJSONPNative(URLs.appServerUrl() + relativeUrl, { json: JSON.stringify(params) }, callback);
-}
-
-// Native (no jQuery) implementation of a JSONP request.
-function doGetJSONPNative(url, params, callback) {
-    var scriptTag = document.createElement('script');
-    var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
-    window[responseCallback] = function(response) {
-        try {
-            callback(response);
-        } finally {
-            delete window[responseCallback];
-            scriptTag.parentNode.removeChild(scriptTag);
-        }
-    };
-    var jsonpUrl = url + '?callback=' + responseCallback;
-    for (var param in params) {
-        if (params.hasOwnProperty(param)) {
-            jsonpUrl += '&' + encodeURI(param) + '=' + encodeURI(params[param]);
-        }
-    }
-    scriptTag.setAttribute('type', 'application/javascript');
-    scriptTag.setAttribute('src', jsonpUrl);
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(scriptTag);
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     getJSONP: getJSONP,
-    getJSONPNative: getJSONPNative,
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
     postComment: postComment,
