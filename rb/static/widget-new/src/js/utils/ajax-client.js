@@ -1,4 +1,5 @@
 var AppMode = require('./app-mode');
+var JSONUtils = require('./json-utils');
 var URLs = require('./urls');
 var User = require('./user');
 
@@ -268,7 +269,7 @@ function getJSONP(url, data, success, error) {
 function postEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
     if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
     }
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
         // TODO: error handling
@@ -279,11 +280,11 @@ function postEvent(event) {
 function postTrackingEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
     if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSON.stringify(event));
+        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
     }
     var trackingUrl = baseUrl + URLs.eventUrl() + '/event.gif';
     if (event) {
-        trackingUrl += '?json=' + encodeURI(JSON.stringify(event));
+        trackingUrl += '?json=' + encodeURI(JSONUtils.stringify(event));
     }
     var imageTag = document.createElement('img');
     imageTag.setAttribute('height', 1);
@@ -313,7 +314,7 @@ function doGetJSONP(baseUrl, url, params, success, error) {
     };
     var jsonpUrl = baseUrl + url + '?callback=' + responseCallback;
     if (params) {
-        jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
+        jsonpUrl += '&json=' + encodeURI(JSONUtils.stringify(params));
     }
     scriptTag.setAttribute('type', 'application/javascript');
     scriptTag.setAttribute('src', jsonpUrl);

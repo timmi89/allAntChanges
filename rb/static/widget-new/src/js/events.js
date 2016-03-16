@@ -1,5 +1,6 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
+var JSONUtils = require('./utils/json-utils');
 var User = require('./utils/user');
 
 function postGroupSettingsLoaded(groupSettings) {
@@ -201,7 +202,7 @@ function getShortTermSessionId() {
         };
     }
     try {
-        localStorage.setItem('ant_sts', JSON.stringify(session));
+        localStorage.setItem('ant_sts', JSONUtils.stringify(session));
     } catch(error) {
         // Some browsers (mobile Safari) throw an exception when in private browsing mode.
         // Nothing we can do about it. Just fall through and return the value we generated.

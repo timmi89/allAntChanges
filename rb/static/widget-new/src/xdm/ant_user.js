@@ -19,6 +19,14 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 }
 
+function stringify(jsonObject) {
+    var toJSON = Array.prototype.toJSON;
+    delete Array.prototype.toJSON;
+    var string = JSON.stringify(jsonObject);
+    Array.prototype.toJSON = toJSON;
+    return string;
+}
+
 var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.antenna.is/insert" : "http://nodebq.docker/insert";
 
 window.ANTAuth = {
@@ -126,7 +134,7 @@ window.ANTAuth = {
                 contentType: "application/json",
                 dataType: "jsonp",
                 data: {
-                    json: JSON.stringify( params )
+                    json: stringify( params )
                 },
                 success : function(response)
                 {
@@ -238,7 +246,7 @@ window.ANTAuth = {
                 contentType: "application/json",
                 dataType: "jsonp",
                 data: {
-                    json: JSON.stringify( sendData )
+                    json: stringify( sendData )
                 },
                 success: function(response){
                     if ( response.status == "fail" ) {
@@ -274,7 +282,7 @@ window.ANTAuth = {
                 contentType: "application/json",
                 dataType: "jsonp",
                 data: {
-                    json: JSON.stringify( sendData )
+                    json: stringify( sendData )
                 },
                 success: function(response) {
                     if (!ANTAuth.ant_user.user_id || !ANTAuth.ant_user.ant_token || !ANTAuth.ant_user.temp_user) {
@@ -460,7 +468,7 @@ window.ANTAuth = {
         ANTAuth.ant_user.first_name = response.data.full_name;
         ANTAuth.ant_user.img_url = response.data.img_url;
         ANTAuth.ant_user.user_type = response.data.user_type;
-        ANTAuth.ant_user.user_boards = JSON.stringify(response.data.user_boards);
+        ANTAuth.ant_user.user_boards = stringify(response.data.user_boards);
 
         var session_expiry = new Date(); 
         session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
@@ -528,7 +536,7 @@ window.ANTAuth = {
                 contentType: "application/json",
                 dataType: "jsonp",
                 data: {
-                    json: JSON.stringify( sendData )
+                    json: stringify( sendData )
                 },
                 success: function(response) {
                     ANTAuth.clearSessionCookies();
@@ -610,7 +618,7 @@ window.ANTAuth = {
     decodeDjangoCookie : function(value) {
         if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
     }
-}
+};
 
 $(document).ready(function(){
 
