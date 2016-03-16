@@ -12,6 +12,7 @@ web:
     - db
     - memcached
     - rabbitmq
+    - static
 static:
   extends:
     file: ./docker/common.yml

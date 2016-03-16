@@ -504,7 +504,7 @@ LOGGING = {
         },
         'httpproxy.views': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+            'level': 'INFO'
         }
     }
 }
