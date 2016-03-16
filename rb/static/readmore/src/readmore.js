@@ -150,7 +150,7 @@
             };
             var jsonpUrl = url + '?callback=' + responseCallback;
             if (params) {
-                jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
+                jsonpUrl += '&json=' + encodeURIComponent(JSON.stringify(params));
             }
             scriptTag.setAttribute('type', 'application/javascript');
             scriptTag.setAttribute('src', jsonpUrl);
