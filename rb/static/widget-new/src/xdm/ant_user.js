@@ -19,11 +19,15 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 }
 
+// There are libraries in the wild that modify Array.prototype with a toJSON function that breaks JSON.stringify.
+// Workaround this problem by temporarily removing the function when we stringify our objects.
 function stringify(jsonObject) {
     var toJSON = Array.prototype.toJSON;
     delete Array.prototype.toJSON;
     var string = JSON.stringify(jsonObject);
-    Array.prototype.toJSON = toJSON;
+    if (toJSON) {
+        Array.prototype.toJSON = toJSON;
+    }
     return string;
 }
 

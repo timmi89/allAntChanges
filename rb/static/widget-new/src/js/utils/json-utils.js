@@ -5,7 +5,9 @@ function stringify(jsonObject) {
     var toJSON = Array.prototype.toJSON;
     delete Array.prototype.toJSON;
     var string = JSON.stringify(jsonObject);
-    Array.prototype.toJSON = toJSON;
+    if (toJSON) {
+        Array.prototype.toJSON = toJSON;
+    }
     return string;
 }
 
