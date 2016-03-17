@@ -99,8 +99,9 @@ function postContentRecVisible(pageData, groupSettings) {
     postEvent(event);
 }
 
-function postContentRecClicked(pageData, targetUrl, groupSettings) {
+function postContentRecClicked(pageData, targetUrl, contentId, groupSettings) {
     var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
+    event[attributes.contentId] = contentId;
     appendPageDataParams(event, pageData);
     postEvent(event, true);
 }

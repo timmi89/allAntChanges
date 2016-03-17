@@ -43,7 +43,8 @@ function createContentRec(pageData, groupSettings) {
 
     function handleNavigate(ractiveEvent) {
         var targetUrl = ractiveEvent.context.page.url;
-        Events.postContentRecClicked(pageData, targetUrl, groupSettings);
+        var contentId = ractiveEvent.context.content.id;
+        Events.postContentRecClicked(pageData, targetUrl, contentId, groupSettings);
     }
 
     function setupVisibilityHandler() {
