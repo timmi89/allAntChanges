@@ -50,7 +50,7 @@ def main():
         'https://www.googleapis.com/auth/monitoring'
     )
     http = credentials.authorize(httplib2.Http())
-    service = build(serviceName="cloudmonitoring", version="v2beta2", http=http)
+    service = build(serviceName="cloudmonitoring", version="v3", http=http)
 
     proc = os.popen(
         "/usr/sbin/rabbitmqctl list_queues -p antenna_broker name messages consumers | grep -v utility | grep -v celeryev | grep celery | awk '{print $2;}'"
