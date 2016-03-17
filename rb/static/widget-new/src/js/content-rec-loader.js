@@ -25,7 +25,8 @@ function getRecommendedContent(count, pageData, groupSettings, callback) {
 function fetchRecommendedContent(groupSettings, callback) {
     AjaxClient.getJSONP(URLs.fetchContentRecommendationUrl(), { group_id: groupSettings.groupId()} , function(jsonData) {
         // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
-        var contentData = massageContent(jsonData);
+        var contentData = jsonData || [];
+        contentData = massageContent(contentData);
         var newArray = shuffleArray(contentData);
         for (var i = 0; i < freshContentPool.length; i++) {
             newArray.push(freshContentPool[i]);

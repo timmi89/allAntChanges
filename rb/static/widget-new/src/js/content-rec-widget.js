@@ -33,7 +33,7 @@ function createContentRec(pageData, groupSettings) {
             'rendertext': renderText
         }
     });
-    ractive.on('navigate', handleNavigate);
+    setupNavigationHandler();
     setupVisibilityHandler();
 
     return {
@@ -41,10 +41,19 @@ function createContentRec(pageData, groupSettings) {
         teardown: function() { ractive.teardown(); }
     };
 
-    function handleNavigate(ractiveEvent) {
-        var targetUrl = ractiveEvent.context.page.url;
-        var contentId = ractiveEvent.context.content.id;
-        Events.postContentRecClicked(pageData, targetUrl, contentId, groupSettings);
+    function setupNavigationHandler() {
+        var pendingNavigation = false;
+        ractive.on('navigate', function(ractiveEvent) {
+            if (!pendingNavigation) {
+                pendingNavigation = true;
+                var targetUrl = ractiveEvent.context.page.url;
+                var contentId = ractiveEvent.context.content.id;
+                Events.postContentRecClicked(pageData, targetUrl, contentId, groupSettings);
+                setTimeout(function() { // Give the event some time to post.
+                    window.location.href = targetUrl;
+                }, 100);
+            }
+        });
     }
 
     function setupVisibilityHandler() {
