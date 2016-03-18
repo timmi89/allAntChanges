@@ -123,13 +123,8 @@
 
         function createSegment(groupSettings) {
             // TODO: let group settings control the segments
-            var random = Math.random() * 100;
-            if (random < 33) {
-                return 'ao';
-            } else if (random < 66) {
-                return 'rm';
-            }
-            return 'rm_cr';
+            var segments = [ 'ao', 'rm', 'rm_cr' ];
+            return segments[Math.floor(Math.random() * 3)];
         }
 
         return {
