@@ -14,7 +14,7 @@ function postGroupSettingsLoaded(groupSettings) {
 function postPageDataLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.pageDataLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
-    event[attributes.contentAttributes] = pageData.metrics.isMultiPage ? eventValues.multiplePages : eventValues.singlePage;
+    // event[attributes.contentAttributes] = pageData.metrics.isMultiPage ? eventValues.multiplePages : eventValues.singlePage;
     postEvent(event);
 }
 
