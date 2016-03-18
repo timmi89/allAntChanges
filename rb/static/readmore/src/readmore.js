@@ -108,15 +108,15 @@
         }
 
         function getSegment(groupSettings) {
+            var segmentOverride = Utils.getUrlParams()['antennaSegment'];
+            if (segmentOverride) {
+                storeSegment(segmentOverride);
+                return segmentOverride;
+            }
             var segment = localStorage.getItem('ant_segment');
             if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
                 segment = createSegment(groupSettings);
-                try {
-                    localStorage.setItem('ant_segment', segment);
-                } catch(error) {
-                    // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-                    // Nothing we can do about it. Just fall through and return the value we generated.
-                }
+                storeSegment(segment);
             }
             return segment;
         }
@@ -125,6 +125,15 @@
             // TODO: let group settings control the segments
             var segments = [ 'ao', 'rm', 'rm_cr' ];
             return segments[Math.floor(Math.random() * 3)];
+        }
+
+        function storeSegment(segment) {
+            try {
+                localStorage.setItem('ant_segment', segment);
+            } catch(error) {
+                // Some browsers (mobile Safari) throw an exception when in private browsing mode.
+                // Nothing we can do about it. Just fall through and return the value we generated.
+            }
         }
 
         return {
@@ -189,6 +198,21 @@
                     window.matchMedia("screen and (max-device-width: 768px) and (orientation: landscape)").matches);
         }
 
+        function getUrlParams() {
+            var queryString = window.location.search;
+            var urlParams = {};
+            var e,
+            a = /\+/g,  // Regex for replacing addition symbol with a space
+            r = /([^&=]+)=?([^&]*)/g,
+            d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+            q = queryString.substring(1);
+
+            while (e = r.exec(q)) {
+                urlParams[d(e[1])] = d(e[2]);
+            }
+            return urlParams;
+        }
+
         return {
             insertAfter: insertAfter,
             removeNodes: removeNodes,
@@ -196,7 +220,8 @@
             addClass: addClass,
             removeClass: removeClass,
             getJSONP: getJSONP,
-            isMobile: isMobile
+            isMobile: isMobile,
+            getUrlParams: getUrlParams
         };
     })();
 
