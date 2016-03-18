@@ -8,8 +8,10 @@
     }
 
     function groupSettingsLoaded(groupSettings) {
-        insertReadMore(groupSettings);
-        insertCustomCSS(groupSettings);
+        if (SessionData.isInReadMoreSegment(groupSettings)) {
+            insertReadMore(groupSettings);
+            insertCustomCSS(groupSettings);
+        }
     }
 
     function insertCustomCSS(groupSettings) {
@@ -98,14 +100,43 @@
         });
     }
 
-    function postEvent(relativeUrl, event, callback) {
-        var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://nodebq.docker:3000' : 'http://events.antenna.is';
-        Utils.getJSONP(serverUrl + relativeUrl, event, function(response) {
-            if (response.status === 'success') {
-                callback(response.data);
+    var SessionData = (function() {
+
+        function isInReadMoreSegment(groupSettings) {
+            var segment = getSegment(groupSettings);
+            return segment === 'rm' || segment === 'rm_cr';
+        }
+
+        function getSegment(groupSettings) {
+            var segment = localStorage.getItem('ant_segment');
+            if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
+                segment = createSegment(groupSettings);
+                try {
+                    localStorage.setItem('ant_segment', segment);
+                } catch(error) {
+                    // Some browsers (mobile Safari) throw an exception when in private browsing mode.
+                    // Nothing we can do about it. Just fall through and return the value we generated.
+                }
             }
-        });
-    }
+            return segment;
+        }
+
+        function createSegment(groupSettings) {
+            // TODO: let group settings control the segments
+            var random = Math.random() * 100;
+            if (random < 33) {
+                return 'ao';
+            } else if (random < 66) {
+                return 'rm';
+            }
+            return 'rm_cr';
+        }
+
+        return {
+            getSegment: getSegment,
+            isInReadMoreSegment: isInReadMoreSegment
+        }
+    })();
 
     // Generic browser utils.
     var Utils = (function() {
@@ -142,7 +173,7 @@
             var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
             window[responseCallback] = function(response) {
                 try {
-                    callback(response);
+                    if (callback) { callback(response) };
                 } finally {
                     delete window[responseCallback];
                     scriptTag.parentNode.removeChild(scriptTag);
@@ -201,6 +232,7 @@
             }
 
             return {
+                groupId: data('id'),
                 readMoreSelector: data('readmore_selector'),
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),
@@ -229,7 +261,7 @@
             '    left: 0;\n' +
             '    bottom: 0;\n' +
             '    width: 100%;\n' +
-            '    z-index: 999999;\n' +
+            '    z-index: 9999999;\n' +
             '}\n' +
             '.antenna-readmore-fade {\n' +
             '    height: 100px;\n' +

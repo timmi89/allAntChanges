@@ -1,6 +1,7 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
 var JSONUtils = require('./utils/json-utils');
+var Segment = require('./utils/segment');
 var User = require('./utils/user');
 
 function postGroupSettingsLoaded(groupSettings) {
@@ -145,6 +146,10 @@ function createEvent(eventType, eventValue, groupSettings) {
     event[attributes.screenHeight] = screen.height;
     event[attributes.pixelDensity] = window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth); // TODO: review this engage_full code, which doesn't seem correct
     event[attributes.userAgent] = navigator.userAgent;
+    var segment = Segment.getSegment(groupSettings);
+    if (segment) {
+        event[attributes.contentAttributes] = segment;
+    }
     return event;
 }
 

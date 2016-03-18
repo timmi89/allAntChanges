@@ -4,6 +4,7 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
+var Segment = require('./utils/segment');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
@@ -109,7 +110,7 @@ function scanForSummaries($element, pageData, groupSettings) {
 }
 
 function scanForContentRec($element, pageData, groupSettings) {
-    if (groupSettings.isShowContentRec() && BrowserMetrics.isMobile()) {
+    if (groupSettings.isShowContentRec() && BrowserMetrics.isMobile() && Segment.isInContentRecSegment(groupSettings)) {
         var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
         for (var i = 0; i < $contentRecLocations.length; i++) {
             var contentRecLocation = $contentRecLocations[i];
