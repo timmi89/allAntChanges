@@ -14,6 +14,7 @@ function postGroupSettingsLoaded(groupSettings) {
 function postPageDataLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.pageDataLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
+    // TODO: recording of single/multi is disabled so we can instead record A/B/C segment data
     // event[attributes.contentAttributes] = pageData.metrics.isMultiPage ? eventValues.multiplePages : eventValues.singlePage;
     postEvent(event);
 }
@@ -197,16 +198,15 @@ function getShortTermSessionId() {
     if (json) {
         session = JSON.parse(json);
         if (Date.now() > session.expires) {
-            session = null;
+            session = null; // expire the session
         }
     }
     if (!session) {
-        var minutes = 15;
-        session = {
-            guid: createGuid(),
-            expires: Date.now() + minutes * 60000
-        };
+        session = { guid: createGuid() };
     }
+    // Always set a new expires time, so that we keep extending the time as long as the user is active
+    var minutes = 15;
+    session.expires = Date.now() + minutes * 60000;
     try {
         localStorage.setItem('ant_sts', JSONUtils.stringify(session));
     } catch(error) {
