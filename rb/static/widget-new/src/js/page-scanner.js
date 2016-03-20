@@ -15,6 +15,7 @@ var HashedElements = require('./hashed-elements');
 var MediaIndicatorWidget = require('./media-indicator-widget');
 var PageData = require('./page-data');
 var PageDataLoader = require('./page-data-loader');
+var ReadMoreEvents = require('./readmore-events');
 var SummaryWidget = require('./summary-widget');
 var TextIndicatorWidget = require('./text-indicator-widget');
 var TextReactions = require('./text-reactions');
@@ -58,6 +59,7 @@ function scanPage($page, groupSettings, isMultiPage) {
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
     scanForSummaries($page, pageData, groupSettings); // Summary widget may be on the page, but outside the active section
+    scanForReadMore($page, pageData, groupSettings);
     scanForContentRec($page, pageData, groupSettings);
     $activeSections.each(function() {
         var $section = $(this);
@@ -107,6 +109,10 @@ function scanForSummaries($element, pageData, groupSettings) {
         insertContent($summary, $summaryElement, groupSettings.summaryMethod());
         createdWidgets.push(summaryWidget);
     });
+}
+
+function scanForReadMore($element, pageData, groupSettings) {
+    ReadMoreEvents.setupReadMoreEvents($element.get(0), pageData, groupSettings);
 }
 
 function scanForContentRec($element, pageData, groupSettings) {

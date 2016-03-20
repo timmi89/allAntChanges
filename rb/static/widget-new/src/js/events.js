@@ -108,6 +108,24 @@ function postContentRecClicked(pageData, targetUrl, contentId, groupSettings) {
     postEvent(event, true);
 }
 
+function postReadMoreLoaded(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreLoaded, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postReadMoreVisible(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreVisible, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
+function postReadMoreClicked(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreClicked, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+}
+
 function appendPageDataParams(event, pageData) {
     event[attributes.pageId] = pageData.pageId;
     event[attributes.pageTitle] = pageData.title;
@@ -265,7 +283,10 @@ var eventTypes = {
     recircClicked: 'rc',
     contentRecLoaded: 'crl',
     contentRecVisible: 'crv',
-    contentRecClicked: 'crc'
+    contentRecClicked: 'crc',
+    readMoreLoaded: 'rml',
+    readMoreVisible: 'rmv',
+    readMoreClicked: 'rmc'
 };
 
 var eventValues = {
@@ -294,5 +315,8 @@ module.exports = {
     postLegacyRecircClicked: postLegacyRecircClicked,
     postContentRecLoaded: postContentRecLoaded,
     postContentRecVisible: postContentRecVisible,
-    postContentRecClicked: postContentRecClicked
+    postContentRecClicked: postContentRecClicked,
+    postReadMoreLoaded: postReadMoreLoaded,
+    postReadMoreVisible: postReadMoreVisible,
+    postReadMoreClicked: postReadMoreClicked
 };
