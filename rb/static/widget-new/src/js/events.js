@@ -1,7 +1,7 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
-var JSONUtils = require('./utils/json-utils');
 var Segment = require('./utils/segment');
+var SessionData = require('./utils/session-data');
 var User = require('./utils/user');
 
 function postGroupSettingsLoaded(groupSettings) {
@@ -157,8 +157,8 @@ function createEvent(eventType, eventValue, groupSettings) {
     event[attributes.eventType] = eventType;
     event[attributes.eventValue] = eventValue;
     event[attributes.groupId] = groupSettings.groupId();
-    event[attributes.shortTermSession] = getShortTermSessionId();
-    event[attributes.longTermSession] = getLongTermSessionId();
+    event[attributes.shortTermSession] = SessionData.getShortTermSession();
+    event[attributes.longTermSession] = SessionData.getLongTermSession();
     event[attributes.referrerUrl] = referrerDomain;
     event[attributes.isTouchBrowser] = BrowserMetrics.supportsTouch();
     event[attributes.screenWidth] = screen.width;
@@ -194,52 +194,6 @@ function fillInMissingProperties(event) {
             event[attributes[attr]] = null;
         }
     }
-}
-
-function getLongTermSessionId() {
-    var guid = localStorage.getItem('ant_lts');
-    if (!guid) {
-        guid = createGuid();
-        try {
-            localStorage.setItem('ant_lts', guid);
-        } catch(error) {
-            // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-            // Nothing we can do about it. Just fall through and return the value we generated.
-        }
-    }
-    return guid;
-}
-
-function getShortTermSessionId() {
-    var session;
-    var json = localStorage.getItem('ant_sts');
-    if (json) {
-        session = JSON.parse(json);
-        if (Date.now() > session.expires) {
-            session = null; // expire the session
-        }
-    }
-    if (!session) {
-        session = { guid: createGuid() };
-    }
-    // Always set a new expires time, so that we keep extending the time as long as the user is active
-    var minutes = 15;
-    session.expires = Date.now() + minutes * 60000;
-    try {
-        localStorage.setItem('ant_sts', JSONUtils.stringify(session));
-    } catch(error) {
-        // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-        // Nothing we can do about it. Just fall through and return the value we generated.
-    }
-    return session.guid;
-}
-
-function createGuid() {
-    // Code copied from engage_full (originally, http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript)
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
 }
 
 var attributes = {

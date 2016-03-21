@@ -116,7 +116,7 @@
             var segment = localStorage.getItem('ant_segment');
             if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
                 segment = createSegment(groupSettings);
-                storeSegment(segment);
+                segment = storeSegment(segment);
             }
             return segment;
         }
@@ -132,7 +132,8 @@
                 localStorage.setItem('ant_segment', segment);
             } catch(error) {
                 // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-                // Nothing we can do about it. Just fall through and return the value we generated.
+                // If this happens, fall back to a default value that will at least give us stable behavior.
+                return 'ao';
             }
         }
 
