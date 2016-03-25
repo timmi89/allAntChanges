@@ -48,12 +48,12 @@ class FBHandler(BaseHandler):
     @status_response
     def read(self, request, admin_req=False):
         data = json.loads(request.GET['json'])
-        fb_session = data['fb']
+        fb_auth = data['fb']
         group_id = data['group_id']
-        access_token = fb_session.get('accessToken', None)
+        access_token = fb_auth.get('accessToken', None)
         user_id = data.get('user_id', None)
 
-        if(access_token):
+        if access_token:
             graph = GraphAPI(access_token)
         else:
             raise JSONException(u"No access token")
@@ -64,13 +64,13 @@ class FBHandler(BaseHandler):
         except GraphAPIError:
             raise JSONException(u'Error getting graph object from Facebook')
 
-        django_user = createDjangoUser(profile);
+        django_user = createDjangoUser(profile)
         social_user = createSocialUser(django_user, profile)
         social_auth = createSocialAuth(
             social_user,
             django_user,
             group_id,
-            fb_session
+            fb_auth
         )
 
         # Check to see if user passed in was temporary, if yes, convert

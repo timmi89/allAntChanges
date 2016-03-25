@@ -1,3 +1,4 @@
+var AppMode = require('./app-mode');
 var GroupSettings = require('../group-settings');
 
 var EnglishMessages = require('./messages-en');
@@ -8,7 +9,9 @@ function validateTranslations() {
     for (var englishKey in EnglishMessages) {
         if (EnglishMessages.hasOwnProperty(englishKey)) {
             if (!SpanishMessages.hasOwnProperty(englishKey)) {
-                console.debug('Antenna warning: Spanish translation missing for key ' + englishKey);
+                if (AppMode.offline || AppMode.debug) {
+                    console.debug('Antenna warning: Spanish translation missing for key ' + englishKey);
+                }
             }
         }
     }

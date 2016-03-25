@@ -71,7 +71,7 @@ function createPage(options) {
             }
         };
         showConfirmation(reactionData, reactionProvider);
-        AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
+        AjaxClient.postPlusOne(reactionData, containerData, pageData, groupSettings, success, error);
 
         function success(reactionData) {
             Events.postReactionCreated(pageData, containerData, reactionData, groupSettings);
@@ -79,7 +79,7 @@ function createPage(options) {
 
         function error(message) {
             var retry = function() {
-                AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
+                AjaxClient.postPlusOne(reactionData, containerData, pageData, groupSettings, success, error);
             };
             handleReactionError(message, retry, pageSelector);
         }

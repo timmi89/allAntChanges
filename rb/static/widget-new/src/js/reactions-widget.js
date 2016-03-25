@@ -202,7 +202,7 @@ function openReactionsWidget(options, elementOrCoords) {
             console.log('An error occurred fetching comments: ' + message);
             showGenericErrorPage(backPageSelector);
         };
-        AjaxClient.getComments(reaction, success, error);
+        AjaxClient.getComments(reaction, groupSettings, success, error);
     }
 
     function showLocations(reaction, backPageSelector) {
@@ -234,7 +234,7 @@ function openReactionsWidget(options, elementOrCoords) {
             console.log('An error occurred fetching content bodies: ' + message);
             showGenericErrorPage(backPageSelector);
         };
-        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, success, error);
+        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, groupSettings, success, error);
     }
 
     // Shows the login page, with a prompt to go Back to the page specified by the given page selector.

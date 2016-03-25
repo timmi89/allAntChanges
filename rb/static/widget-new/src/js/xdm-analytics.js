@@ -3,14 +3,18 @@ var Events = require('./events');
 var GroupSettings = require('./group-settings');
 var PageData = require('./page-data');
 
-function startListening() {
-    XDMClient.setMessageHandler('recircClick', recircClicked);
-}
-
-function recircClicked(response) {
-    var reactionId = response.detail.referring_int_id;
-    getPageData(response.detail.page_hash, function(pageData) {
-        Events.postLegacyRecircClicked(pageData, reactionId, GroupSettings.get());
+function checkAnalyticsCookies() {
+    // When the widget loads, check for any cookies that have been written by the legacy content rec.
+    // If those cookies exist, fire the event and clear them.
+    XDMClient.sendMessage('getCookies', [ 'redirect_type', 'referring_int_id', 'page_hash' ], function(cookies) {
+        if (cookies.redirect_type) {
+            var reactionId = cookies.referring_int_id;
+            var pageHash = cookies.page_hash;
+            getPageData(pageHash, function(pageData) {
+                Events.postLegacyRecircClicked(pageData, reactionId, GroupSettings.get());
+                XDMNewClient.sendMessage('removeCookies', [ 'redirect_type', 'referring_int_id', 'page_hash' ]);
+            });
+        }
     });
 }
 
@@ -33,5 +37,5 @@ function getPageData(pageHash, callback) {
 }
 
 module.exports = {
-    start: startListening
+    start: checkAnalyticsCookies
 };

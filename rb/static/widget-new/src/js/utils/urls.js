@@ -33,6 +33,10 @@ function getShareReactionUrl() {
     return '/api/share/;'
 }
 
+function getCreateTempUserUrl() {
+    return '/api/tempuser';
+}
+
 function getShareWindowUrl() {
     return '/static/share.html';
 }
@@ -41,8 +45,8 @@ function getEventUrl() {
     return '/insert'; // Note that this URL is for the event server, not the app server.
 }
 
-function getLoginPageUrl() {
-    return '/static/widget-new/fb_login.html';
+function antennaLoginUrl() {
+    return '/ant_login/';
 }
 
 function computeImageUrl($element, groupSettings) {
@@ -150,8 +154,9 @@ module.exports = {
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     fetchContentRecommendationUrl: getFetchContentRecommendationUrl,
     shareReactionUrl: getShareReactionUrl,
+    createTempUserUrl: getCreateTempUserUrl,
     shareWindowUrl: getShareWindowUrl,
-    loginPageUrl: getLoginPageUrl,
+    antennaLoginUrl: antennaLoginUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
     eventUrl: getEventUrl

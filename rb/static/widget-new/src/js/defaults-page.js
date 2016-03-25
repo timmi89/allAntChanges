@@ -64,7 +64,7 @@ function createPage(options) {
         var reactionData = ractiveEvent.context;
         var reactionProvider = createReactionProvider();
         showConfirmation(reactionData, reactionProvider); // Optimistically show confirmation for default reactions because they should always be accepted.
-        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, groupSettings, success, error);
 
         function success(reaction) {
             reaction = PageData.registerReaction(reaction, containerData, pageData);
@@ -74,7 +74,7 @@ function createPage(options) {
 
         function error(message) {
             var retry = function() {
-                AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+                AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, groupSettings, success, error);
             };
             handleReactionError(message, retry, pageSelector);
         }
@@ -88,7 +88,7 @@ function createPage(options) {
             var reactionData = { text: body };
             var reactionProvider = createReactionProvider();
             input.blur();
-            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, groupSettings, success, error);
         }
 
         function success(reaction) {
@@ -105,7 +105,7 @@ function createPage(options) {
 
         function error(message) {
             var retry = function() {
-                AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
+                AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, groupSettings, success, error);
             };
             handleReactionError(message, retry, pageSelector);
         }

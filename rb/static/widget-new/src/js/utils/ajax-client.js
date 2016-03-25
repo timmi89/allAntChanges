@@ -1,14 +1,15 @@
 var AppMode = require('./app-mode');
+var JSONPClient = require('./jsonp-client');
 var JSONUtils = require('./json-utils');
 var URLs = require('./urls');
 var User = require('./user');
 
-function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
+function postNewReaction(reactionData, containerData, pageData, contentData, groupSettings, success, error) {
     var contentBody = contentData.body;
     var contentType = contentData.type;
     var contentLocation = contentData.location;
     var contentDimensions = contentData.dimensions;
-    User.fetchUser(function(userInfo) {
+    User.fetchUser(groupSettings, function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         var data = {
             tag: {
@@ -41,8 +42,8 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
     });
 }
 
-function postPlusOne(reactionData, containerData, pageData, success, error) {
-    User.fetchUser(function(userInfo) {
+function postPlusOne(reactionData, containerData, pageData, groupSettings, success, error) {
+    User.fetchUser(groupSettings, function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
@@ -85,9 +86,9 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
     });
 }
 
-function postComment(comment, reactionData, containerData, pageData, success, error) {
+function postComment(comment, reactionData, containerData, pageData, groupSettings, success, error) {
     // TODO: refactor the post functions to eliminate all the copied code
-    User.fetchUser(function(userInfo) {
+    User.fetchUser(groupSettings, function(userInfo) {
         // TODO extract the shape of this data and possibly the whole API call
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
@@ -195,8 +196,8 @@ function reactionFromResponse(response, contentLocation) {
     return reaction;
 }
 
-function getComments(reaction, successCallback, errorCallback) {
-    User.fetchUser(function(userInfo) {
+function getComments(reaction, groupSettings, successCallback, errorCallback) {
+    User.fetchUser(groupSettings, function(userInfo) {
         var data = {
             reaction_id: reaction.parentID,
             user_id: userInfo.user_id,
@@ -208,9 +209,9 @@ function getComments(reaction, successCallback, errorCallback) {
     });
 }
 
-function fetchLocationDetails(reactionLocationData, pageData, successCallback, errorCallback) {
+function fetchLocationDetails(reactionLocationData, pageData, groupSettings, successCallback, errorCallback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
-    User.fetchUser(function(userInfo) {
+    User.fetchUser(groupSettings, function(userInfo) {
         var data = {
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
@@ -235,8 +236,8 @@ function commentsFromResponse(jsonComments) {
     return comments;
 }
 
-function postShareReaction(reactionData, containerData, pageData, success, failure) {
-    User.fetchUser(function(userInfo) {
+function postShareReaction(reactionData, containerData, pageData, groupSettings, success, failure) {
+    User.fetchUser(groupSettings, function(userInfo) {
         var contentData = reactionData.content;
         var data = {
             tag: { // TODO: why does the ShareHandler create a reaction if it doesn't exist? How can you share a reaction that hasn't happened?
@@ -277,6 +278,11 @@ function postEvent(event) {
     });
 }
 
+// Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
+function doGetJSONP(baseUrl, url, params, success, error) {
+    JSONPClient.doGetJSONP(baseUrl, url, params, success, error);
+}
+
 function postTrackingEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
     if (AppMode.debug) {
@@ -291,34 +297,6 @@ function postTrackingEvent(event) {
     imageTag.setAttribute('width', 1);
     imageTag.setAttribute('src', trackingUrl);
     document.getElementsByTagName('body')[0].appendChild(imageTag);
-}
-
-// Issues a JSONP request to a given server. To send a request to the application server, use getJSONP instead.
-function doGetJSONP(baseUrl, url, params, success, error) {
-    var scriptTag = document.createElement('script');
-    var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
-    window[responseCallback] = function(response) {
-        try {
-            // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
-            //       the status code in the XHR
-            // Note: The server comes back with 200 responses with a nested status of "fail"...
-            if (response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
-                success(response.data);
-            } else {
-                if (error) { error(response.message || response.data.message); }
-            }
-        } finally {
-            delete window[responseCallback];
-            scriptTag.parentNode.removeChild(scriptTag);
-        }
-    };
-    var jsonpUrl = baseUrl + url + '?callback=' + responseCallback;
-    if (params) {
-        jsonpUrl += '&json=' + encodeURIComponent(JSONUtils.stringify(params));
-    }
-    scriptTag.setAttribute('type', 'application/javascript');
-    scriptTag.setAttribute('src', jsonpUrl);
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(scriptTag);
 }
 
 //noinspection JSUnresolvedVariable

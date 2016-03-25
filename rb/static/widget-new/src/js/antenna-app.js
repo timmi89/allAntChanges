@@ -62,7 +62,7 @@ function initCustomCSS(groupSettings) {
 }
 
 function initXdmFrame(groupSettings) {
-    XDMAnalytics.start(); // The XDM iframe has a number of messages it fires on load related to analytics. Start listening.
+    XDMAnalytics.start();
     XDMLoader.createXDMframe(groupSettings.groupId());
 }
 

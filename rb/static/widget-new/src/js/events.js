@@ -126,6 +126,26 @@ function postReadMoreClicked(pageData, groupSettings) {
     postEvent(event);
 }
 
+function postFacebookLoginStart(groupSettings) {
+    var event = createEvent(eventTypes.facebookLoginAttempt, eventValues.start, groupSettings);
+    postEvent(event);
+}
+
+function postFacebookLoginFail(groupSettings) {
+    var event = createEvent(eventTypes.facebookLoginAttempt, eventValues.fail, groupSettings);
+    postEvent(event);
+}
+
+function postAntennaLoginStart(groupSettings) {
+    var event = createEvent(eventTypes.antennaLoginAttempt, eventValues.start, groupSettings);
+    postEvent(event);
+}
+
+function postAntennaLoginFail(groupSettings) {
+    var event = createEvent(eventTypes.antennaLoginAttempt, eventValues.fail, groupSettings);
+    postEvent(event);
+}
+
 function appendPageDataParams(event, pageData) {
     event[attributes.pageId] = pageData.pageId;
     event[attributes.pageTitle] = pageData.title;
@@ -173,18 +193,17 @@ function createEvent(eventType, eventValue, groupSettings) {
 }
 
 function postEvent(event, sendAsTrackingEvent) {
-    User.cachedUser(function(userInfo) { // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
-        if (userInfo) {
-            event[attributes.userId] = userInfo.user_id;
-        }
-        fillInMissingProperties(event);
-        // Send the event to BigQuery
-        if (sendAsTrackingEvent) {
-            AjaxClient.postTrackingEvent(event);
-        } else {
-            AjaxClient.postEvent(event);
-        }
-    });
+    var userInfo = User.cachedUser(); // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
+    if (userInfo) {
+        event[attributes.userId] = userInfo.user_id;
+    }
+    fillInMissingProperties(event);
+    // Send the event to BigQuery
+    if (sendAsTrackingEvent) {
+        AjaxClient.postTrackingEvent(event);
+    } else {
+        AjaxClient.postEvent(event);
+    }
 }
 
 // Fill in any optional properties with null values.
@@ -240,7 +259,9 @@ var eventTypes = {
     contentRecClicked: 'crc',
     readMoreLoaded: 'rml',
     readMoreVisible: 'rmv',
-    readMoreClicked: 'rmc'
+    readMoreClicked: 'rmc',
+    facebookLoginAttempt: 'login attempt facebook',
+    antennaLoginAttempt: 'login attempt antenna'
 };
 
 var eventValues = {
@@ -251,7 +272,9 @@ var eventValues = {
     singlePage: 'si',
     multiplePages: 'mu',
     viewReactions: 'vw',
-    viewDefaults: 'ad'
+    viewDefaults: 'ad',
+    start: 'start',
+    fail: 'fail'
 };
 
 //noinspection JSUnresolvedVariable
@@ -272,5 +295,9 @@ module.exports = {
     postContentRecClicked: postContentRecClicked,
     postReadMoreLoaded: postReadMoreLoaded,
     postReadMoreVisible: postReadMoreVisible,
-    postReadMoreClicked: postReadMoreClicked
+    postReadMoreClicked: postReadMoreClicked,
+    postFacebookLoginStart: postFacebookLoginStart,
+    postFacebookLoginFail: postFacebookLoginFail,
+    postAntennaLoginStart: postAntennaLoginStart,
+    postAntennaLoginFail: postAntennaLoginFail
 };

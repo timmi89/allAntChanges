@@ -39,12 +39,12 @@ def generateUsername():
     except User.DoesNotExist:
         return username
 
-def createSocialAuth(social_user, django_user, group_id, fb_session):
+def createSocialAuth(social_user, django_user, group_id, fb_auth):
     # Create expiration time from Facebook timestamp.
     # We know this exists because we aren't asking for 
     # offline access. If not we would need to check.
-    access_token = fb_session['accessToken']
-    expires_in = fb_session['expiresIn']
+    access_token = fb_auth['accessToken']
+    expires_in = fb_auth['expiresIn']
     expires = datetime.now() + timedelta(minutes=expires_in)
 
     # Store the information and link it to the SocialUser
