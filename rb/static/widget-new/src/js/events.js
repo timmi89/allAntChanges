@@ -84,7 +84,6 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
 }
 
 function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
-    return;
     var event = createEvent(eventTypes.recircClicked, reactionId, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);

@@ -7,12 +7,12 @@ function checkAnalyticsCookies() {
     // When the widget loads, check for any cookies that have been written by the legacy content rec.
     // If those cookies exist, fire the event and clear them.
     XDMClient.sendMessage('getCookies', [ 'redirect_type', 'referring_int_id', 'page_hash' ], function(cookies) {
-        if (cookies.redirect_type) {
+        if (cookies.redirect_type === '/r/') {
             var reactionId = cookies.referring_int_id;
             var pageHash = cookies.page_hash;
             getPageData(pageHash, function(pageData) {
                 Events.postLegacyRecircClicked(pageData, reactionId, GroupSettings.get());
-                XDMNewClient.sendMessage('removeCookies', [ 'redirect_type', 'referring_int_id', 'page_hash' ]);
+                XDMClient.sendMessage('removeCookies', [ 'redirect_type', 'referring_int_id', 'page_hash' ]);
             });
         }
     });
