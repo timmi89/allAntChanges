@@ -60,7 +60,7 @@ def main():
 
     # Set up the write request.
     now = GetNowRfc3339()
-    print "Writing %d at %s" % (queue_size, now)
+    print "cloud_metrics writing queue size %d at %s" % (queue_size, now)
     body = {
         "timeSeries": [
             {
@@ -88,12 +88,13 @@ def main():
             name="projects/{0}".format(project_id),
             body=body)
         write_request.execute()  # Ignore the response.
+        print "cloud_metrics timeseries successfully written"
     except Exception as e:
-        print "Failed to read custom metric data: exception=%s" % e
+        print "cloud_metrics failed to write custom metric data: exception=%s" % e
         raise  # propagate exception
 
     if queue_size > 50:
-        print "Restarting celery: queue_size=%d" % queue_size
+        print "cloud_metrics restarting celery: queue_size=%d" % queue_size
         os.putenv('PYTHONPATH', '/home/broadcaster')
         res_proc = os.popen(
             "su broadcaster --preserve-environment -c /home/broadcaster/antenna/restart_celery.sh"
