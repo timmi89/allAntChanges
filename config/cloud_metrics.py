@@ -22,7 +22,7 @@ from apiclient.discovery import build
 import httplib2
 from oauth2client.client import GoogleCredentials
 
-CUSTOM_METRIC_NAME = "custom.cloudmonitoring.googleapis.com/celery.queue.size"
+CUSTOM_METRIC_TYPE = "custom.googleapis.com/celery.queue.size"
 
 
 def GetProjectId():
@@ -60,24 +60,40 @@ def main():
 
     # Set up the write request.
     now = GetNowRfc3339()
-    desc = {"project": project_id,
-            "metric": CUSTOM_METRIC_NAME}
-    point = {"start": now,
-             "end": now,
-             "doubleValue": queue_size}
-    print "Writing %d at %s" % (point["doubleValue"], now)
+    print "Writing %d at %s" % (queue_size, now)
+    body = {
+        "timeSeries": [
+            {
+                "metricKind": "GAUGE",
+                "metric": {
+                    "type": CUSTOM_METRIC_TYPE
+                },
+                "points": [
+                    {
+                        "interval": {
+                            "endTime": now
+                        },
+                        "value": {
+                            "int64Value": queue_size
+                        }
+                    }
+                ]
+            }
+        ]
+    }
 
     # Write a new data point.
     try:
-        write_request = service.timeseries().write(
-            project=project_id,
-            body={"timeseries": [{"timeseriesDesc": desc, "point": point}]})
+        write_request = service.timeseries().create(
+            name="projects/{0}".format(project_id),
+            body=body)
         write_request.execute()  # Ignore the response.
     except Exception as e:
         print "Failed to read custom metric data: exception=%s" % e
         raise  # propagate exception
 
     if queue_size > 50:
+        print "Restarting celery: queue_size=%d" % queue_size
         os.putenv('PYTHONPATH', '/home/broadcaster')
         res_proc = os.popen(
             "su broadcaster --preserve-environment -c /home/broadcaster/antenna/restart_celery.sh"
