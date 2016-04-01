@@ -1,6 +1,7 @@
 var AppMode = require('./app-mode');
 var JSONPClient = require('./jsonp-client');
 var JSONUtils = require('./json-utils');
+var Logging = require('./logging');
 var URLs = require('./urls');
 var User = require('./user');
 
@@ -269,12 +270,9 @@ function getJSONP(url, data, success, error) {
 
 function postEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
-    if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
-    }
     doGetJSONP(baseUrl, URLs.eventUrl(), event, function() { /*success*/ }, function(error) {
         // TODO: error handling
-        console.log('An error occurred posting event: ', error);
+        Logging.debugMessage('An error occurred posting event: ', error);
     });
 }
 
@@ -285,9 +283,6 @@ function doGetJSONP(baseUrl, url, params, success, error) {
 
 function postTrackingEvent(event) {
     var baseUrl = URLs.eventsServerUrl();
-    if (AppMode.debug) {
-        console.log('ANTENNA Posting event: ' + JSONUtils.stringify(event));
-    }
     var trackingUrl = baseUrl + URLs.eventUrl() + '/event.gif';
     if (event) {
         trackingUrl += '?json=' + encodeURI(JSONUtils.stringify(event));

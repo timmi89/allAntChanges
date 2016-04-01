@@ -1,34 +1,38 @@
 {{#if populateContentEntries(pageData.summaryLoaded) && contentData.entries}}
     <div class="antenna antenna-contentrec-inner" decorator="cssreset">
         <div class="antenna-contentrec-header">{{title}}</div>
-        {{#contentData.entries:index}}
-            <div class="antenna-contentrec-entry" on-tap="navigate">
-                <div class="antenna-contentrec-entry-header">
-                    <div class="antenna-contentrec-reaction-text">
-                        {{this.top_reaction.text}}
+        <div class="antenna-contentrec-entries">
+            {{#contentData.entries:index}}
+                <a href="{{computeEntryUrl(this)}}" target="{{#if isMobile}}_self{{else}}_target{{/if}}">
+                    <div class="antenna-contentrec-entry antenna-reset {{^isMobile}}antenna-desktop{{/isMobile}}" style="width: {{entryWidth}};">
+                        <div class="antenna-contentrec-entry-header">
+                            <div class="antenna-contentrec-reaction-text">
+                                {{this.top_reaction.text}}
+                            </div>
+                            <div class="antenna-contentrec-indicator-wrapper">
+                                <div class="antenna-contentrec-reaction-indicator">
+                                    {{>logo}}<!--
+                                    --><span class="antenna-contentrec-reaction-count">
+                                        {{this.reaction_count}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="antenna-contentrec-body" style="background:{{colors[index].background}};color:{{colors[index].foreground}};">
+                            {{#if this.content.type === 'image'}}
+                                <div class="antenna-contentrec-body-image">
+                                    <img src="{{this.content.body}}">
+                                </div>
+                            {{elseif this.content.type === 'text'}}
+                                <div class="antenna-contentrec-body-text" decorator="renderText">
+                                    {{this.content.body}}
+                                </div>
+                            {{/if}}
+                        </div>
+                        <div class="antenna-contentrec-page-title">{{this.page.title}}</div>
                     </div>
-                    <div class="antenna-contentrec-indicator-wrapper">
-                        <div class="antenna-contentrec-reaction-indicator">
-                            {{>logo}}<!--
-                            --><span class="antenna-contentrec-reaction-count">
-                                {{this.reaction_count}}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="antenna-contentrec-body" style="background:{{colors[index].background}};color:{{colors[index].foreground}};">
-                    {{#if this.content.type === 'image'}}
-                        <div class="antenna-contentrec-body-image">
-                            <img src="{{this.content.body}}">
-                        </div>
-                    {{elseif this.content.type === 'text'}}
-                        <div class="antenna-contentrec-body-text" decorator="rendertext">
-                            {{this.content.body}}
-                        </div>
-                    {{/if}}
-                </div>
-                <div class="antenna-contentrec-page-title">{{this.page.title}}</div>
-            </div>
-        {{/entries}}
+                </a>
+            {{/entries}}
+        </div>
     </div>
 {{/if}}

@@ -1,4 +1,5 @@
 var URLConstants = require('./url-constants');
+var URLParams = require('./url-params');
 
 function computeCurrentScriptSrc() {
     if (document.currentScript) {
@@ -26,5 +27,5 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 module.exports = {
     offline: currentScriptSrc.indexOf(URLConstants.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
     test: currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
-    debug: currentScriptSrc.indexOf('?debug') !== -1
+    debug: URLParams.getUrlParam('antennaDebug') === 'true'
 };
