@@ -1,5 +1,6 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
+var Logging = require('./utils/logging');
 var Segment = require('./utils/segment');
 var SessionData = require('./utils/session-data');
 var User = require('./utils/user');
@@ -26,7 +27,9 @@ function postReactionWidgetOpened(isShowReactions, pageData, containerData, cont
     event[attributes.containerHash] = containerData.hash;
     event[attributes.containerKind] = contentData.type;
     postEvent(event);
-    emitEvent('antenna.reactionView', event);
+
+    var customEvent = createCustomEvent('antenna.reactionView');
+    emitEvent(customEvent);
 }
 
 function postSummaryOpened(isShowReactions, pageData, groupSettings) {
@@ -34,7 +37,9 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
-    emitEvent('antenna.reactionView', event);
+
+    var customEvent = createCustomEvent('antenna.reactionView');
+    emitEvent(customEvent);
 }
 
 function postReactionCreated(pageData, containerData, reactionData, groupSettings) {
@@ -43,7 +48,14 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
-    emitEvent('antenna.reaction', event, { 'reaction':reactionData.text, 'content':reactionData.content.body, 'content_type':reactionData.content.kind });
+
+    var eventDetail = {
+        reaction: reactionData.text,
+        content: reactionData.content.body,
+        contentType: reactionData.content.kind
+    };
+    var customEvent = createCustomEvent('antenna.reactionCreate', eventDetail);
+    emitEvent(customEvent);
 }
 
 function postReactionShared(target, pageData, containerData, reactionData, groupSettings) {
@@ -53,14 +65,18 @@ function postReactionShared(target, pageData, containerData, reactionData, group
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
-    emitEvent('antenna.share', event);
+
+    var customEvent = createCustomEvent('antenna.reactionShare');
+    emitEvent(customEvent);
 }
 
 function postLocationsViewed(pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValues.locationsViewed, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
-    emitEvent('antenna.viewContentWithReaction', event);
+
+    var customEvent = createCustomEvent('antenna.contentWithReactionView');
+    emitEvent(customEvent);
 }
 
 function postContentViewed(pageData, containerData, locationData, groupSettings) {
@@ -70,7 +86,9 @@ function postContentViewed(pageData, containerData, locationData, groupSettings)
     event[attributes.contentId] = locationData.contentId;
     event[attributes.contentLocation] = locationData.location;
     postEvent(event);
-    emitEvent('antenna.findContentInPage', event);
+
+    var customEvent = createCustomEvent('antenna.contentWithReactionFind');
+    emitEvent(customEvent);
 }
 
 function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
@@ -79,7 +97,9 @@ function postCommentsViewed(pageData, containerData, reactionData, groupSettings
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
-    emitEvent('antenna.viewComments', event);
+
+    var customEvent = createCustomEvent('antenna.commentsView');
+    emitEvent(customEvent);
 }
 
 function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
@@ -88,7 +108,9 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
-    emitEvent('antenna.comment', event);
+
+    var customEvent = createCustomEvent('antenna.commentCreate');
+    emitEvent(customEvent);
 }
 
 function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
@@ -127,21 +149,27 @@ function postReadMoreLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
-    emitEvent('antenna.readMoreLoaded', event);
+
+    var customEvent = createCustomEvent('antenna.readMoreLoad');
+    emitEvent(customEvent);
 }
 
 function postReadMoreVisible(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreVisible, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
-    emitEvent('antenna.readMoreViewable', event);
+
+    var customEvent = createCustomEvent('antenna.readMoreView');
+    emitEvent(customEvent);
 }
 
 function postReadMoreClicked(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreClicked, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
-    emitEvent('antenna.readMoreClicked', event);
+
+    var customEvent = createCustomEvent('antenna.readMoreClick');
+    emitEvent(customEvent);
 }
 
 function postFacebookLoginStart(groupSettings) {
@@ -224,27 +252,23 @@ function postEvent(event, sendAsTrackingEvent) {
     }
 }
 
-function emitEvent(event_name, default_event_data, supplementary_event_data) {
-    var eventDetail = { 
-        'antennaUserId':default_event_data.lts,
-        'antennaContentType': (default_event_data.ck) ? default_event_data.ck:'undefined',
-        'antennaContentHash': (default_event_data.ch) ? default_event_data.ch:'undefined'
-    };
+function createCustomEvent(eventType, eventDetail) {
+    eventDetail = eventDetail || {};
+    eventDetail.userId = SessionData.getLongTermSession();
 
-    // merge passed-in supplementary_event_data into eventDetail
-    for (var attrname in supplementary_event_data) { eventDetail[attrname] = supplementary_event_data[attrname]; }
+    var customEvent;
+    if (typeof window.CustomEvent === "function" ) {
+        customEvent = new CustomEvent(eventType, { detail: eventDetail });
+    } else {
+        // Deprecated API for backwards compatibility + IE
+        customEvent = document.createEvent('CustomEvent');
+        customEvent.initCustomEvent(eventType, true, true, eventDetail);
+    }
+    Logging.debugMessage('Emitting event. type: ' + eventType + ' detail: ' + JSON.stringify(eventDetail));
+    return customEvent;
+}
 
-    // debug only:
-    console.log(event_name);
-    console.log(eventDetail);
-
-    // New Custom Event method
-    // var event = new CustomEvent( event_name, eventDetail );
-    // document.dispatchEvent(event);
-
-    // Old (deprecated but IE-compatible) Custom Event method
-    var customEvent = document.createEvent('CustomEvent');
-    customEvent.initCustomEvent( event_name, true, true, eventDetail);
+function emitEvent(customEvent) {
     document.dispatchEvent(customEvent);
 }
 
