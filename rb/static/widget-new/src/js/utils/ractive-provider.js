@@ -29,8 +29,8 @@ function cssResetDecorator(node) {
 }
 
 function tagNodeAndChildren(node, clazz) {
-    node.classList.add(clazz);
-    if (node.children) { // Safari returns undefined when asking for children on an SVG element
+    if (node.tagName.toLowerCase() != 'svg') { // IE returns no classList for SVG elements and Safari can't compute SVG element children
+        node.classList.add(clazz);
         for (var i = 0; i < node.children.length; i++) {
             tagNodeAndChildren(node.children[i], clazz);
         }
