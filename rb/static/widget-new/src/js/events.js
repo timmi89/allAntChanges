@@ -28,7 +28,7 @@ function postReactionWidgetOpened(isShowReactions, pageData, containerData, cont
     event[attributes.containerKind] = contentData.type;
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.reactionView');
+    var customEvent = createCustomEvent(emitEventTypes.reactionView);
     emitEvent(customEvent);
 }
 
@@ -38,7 +38,7 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     appendPageDataParams(event, pageData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.reactionView');
+    var customEvent = createCustomEvent(emitEventTypes.reactionView);
     emitEvent(customEvent);
 }
 
@@ -52,9 +52,21 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
     var eventDetail = {
         reaction: reactionData.text,
         content: reactionData.content.body,
-        contentType: reactionData.content.kind
     };
-    var customEvent = createCustomEvent('antenna.reactionCreate', eventDetail);
+    switch (reactionData.content.kind) { // Map our internal content types to better values for consumers
+        case 'txt':
+            eventDetail.contentType = 'text';
+            break;
+        case 'img':
+            eventDetail.contentType = 'image';
+            break;
+        case 'med':
+            eventDetail.contentType = 'media';
+            break;
+        default:
+            eventDetail.contentType = reactionData.content.kind;
+    }
+    var customEvent = createCustomEvent(emitEventTypes.reactionCreate, eventDetail);
     emitEvent(customEvent);
 }
 
@@ -66,7 +78,7 @@ function postReactionShared(target, pageData, containerData, reactionData, group
     appendReactionDataParams(event, reactionData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.reactionShare');
+    var customEvent = createCustomEvent(emitEventTypes.reactionShare);
     emitEvent(customEvent);
 }
 
@@ -75,7 +87,7 @@ function postLocationsViewed(pageData, groupSettings) {
     appendPageDataParams(event, pageData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.contentWithReactionView');
+    var customEvent = createCustomEvent(emitEventTypes.contentWithReactionView);
     emitEvent(customEvent);
 }
 
@@ -87,7 +99,7 @@ function postContentViewed(pageData, containerData, locationData, groupSettings)
     event[attributes.contentLocation] = locationData.location;
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.contentWithReactionFind');
+    var customEvent = createCustomEvent(emitEventTypes.contentWithReactionFind);
     emitEvent(customEvent);
 }
 
@@ -98,7 +110,7 @@ function postCommentsViewed(pageData, containerData, reactionData, groupSettings
     appendReactionDataParams(event, reactionData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.commentsView');
+    var customEvent = createCustomEvent(emitEventTypes.commentView);
     emitEvent(customEvent);
 }
 
@@ -109,7 +121,7 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     appendReactionDataParams(event, reactionData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.commentCreate');
+    var customEvent = createCustomEvent(emitEventTypes.commentCreate);
     emitEvent(customEvent);
 }
 
@@ -150,7 +162,7 @@ function postReadMoreLoaded(pageData, groupSettings) {
     appendPageDataParams(event, pageData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.readMoreLoad');
+    var customEvent = createCustomEvent(emitEventTypes.readMoreLoad);
     emitEvent(customEvent);
 }
 
@@ -159,7 +171,7 @@ function postReadMoreVisible(pageData, groupSettings) {
     appendPageDataParams(event, pageData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.readMoreView');
+    var customEvent = createCustomEvent(emitEventTypes.readMoreView);
     emitEvent(customEvent);
 }
 
@@ -168,7 +180,7 @@ function postReadMoreClicked(pageData, groupSettings) {
     appendPageDataParams(event, pageData);
     postEvent(event);
 
-    var customEvent = createCustomEvent('antenna.readMoreClick');
+    var customEvent = createCustomEvent(emitEventTypes.readMoreClick);
     emitEvent(customEvent);
 }
 
@@ -341,6 +353,19 @@ var eventValues = {
     viewDefaults: 'ad',
     start: 'start',
     fail: 'fail'
+};
+
+var emitEventTypes = {
+    reactionView: 'antenna.reactionView',
+    reactionCreate: 'antenna.reactionCreate',
+    reactionShare: 'antenna.reactionShare',
+    contentWithReactionView: 'antenna.contentWithReactionView',
+    contentWithReactionFind: 'antenna.contentWithReactionFind',
+    commentView: 'antenna.commentView',
+    commentCreate: 'antenna.commentCreate',
+    readMoreLoad: 'antenna.readMoreLoad',
+    readMoreView: 'antenna.readMoreView',
+    readMoreClick: 'antenna.readMoreClick'
 };
 
 //noinspection JSUnresolvedVariable
