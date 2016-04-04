@@ -26,6 +26,7 @@ function postReactionWidgetOpened(isShowReactions, pageData, containerData, cont
     event[attributes.containerHash] = containerData.hash;
     event[attributes.containerKind] = contentData.type;
     postEvent(event);
+    emitEvent('antenna.reactionView', event);
 }
 
 function postSummaryOpened(isShowReactions, pageData, groupSettings) {
@@ -33,6 +34,7 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+    emitEvent('antenna.reactionView', event);
 }
 
 function postReactionCreated(pageData, containerData, reactionData, groupSettings) {
@@ -41,6 +43,7 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+    emitEvent('antenna.reaction', event, { 'reaction':reactionData.text, 'content':reactionData.content.body, 'content_type':reactionData.content.kind });
 }
 
 function postReactionShared(target, pageData, containerData, reactionData, groupSettings) {
@@ -50,12 +53,14 @@ function postReactionShared(target, pageData, containerData, reactionData, group
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+    emitEvent('antenna.share', event);
 }
 
 function postLocationsViewed(pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValues.locationsViewed, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+    emitEvent('antenna.viewContentWithReaction', event);
 }
 
 function postContentViewed(pageData, containerData, locationData, groupSettings) {
@@ -65,6 +70,7 @@ function postContentViewed(pageData, containerData, locationData, groupSettings)
     event[attributes.contentId] = locationData.contentId;
     event[attributes.contentLocation] = locationData.location;
     postEvent(event);
+    emitEvent('antenna.findContentInPage', event);
 }
 
 function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
@@ -73,6 +79,7 @@ function postCommentsViewed(pageData, containerData, reactionData, groupSettings
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+    emitEvent('antenna.viewComments', event);
 }
 
 function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
@@ -81,6 +88,7 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+    emitEvent('antenna.comment', event);
 }
 
 function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
@@ -112,18 +120,21 @@ function postReadMoreLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+    emitEvent('antenna.readMoreLoaded', event);
 }
 
 function postReadMoreVisible(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreVisible, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+    emitEvent('antenna.readMoreViewable', event);
 }
 
 function postReadMoreClicked(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreClicked, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+    emitEvent('antenna.readMoreClicked', event);
 }
 
 function postFacebookLoginStart(groupSettings) {
@@ -204,6 +215,30 @@ function postEvent(event, sendAsTrackingEvent) {
     } else {
         AjaxClient.postEvent(event);
     }
+}
+
+function emitEvent(event_name, default_event_data, supplementary_event_data) {
+    var eventDetail = { 
+        'antennaUserId':default_event_data.lts,
+        'antennaContentType': (default_event_data.ck) ? default_event_data.ck:'undefined',
+        'antennaContentHash': (default_event_data.ch) ? default_event_data.ch:'undefined'
+    };
+
+    // merge passed-in supplementary_event_data into eventDetail
+    for (var attrname in supplementary_event_data) { eventDetail[attrname] = supplementary_event_data[attrname]; }
+
+    // debug only:
+    console.log(event_name);
+    console.log(eventDetail);
+
+    // New Custom Event method
+    // var event = new CustomEvent( event_name, eventDetail );
+    // document.dispatchEvent(event);
+
+    // Old (deprecated but IE-compatible) Custom Event method
+    var customEvent = document.createEvent('CustomEvent');
+    customEvent.initCustomEvent( event_name, true, true, eventDetail);
+    document.dispatchEvent(customEvent);
 }
 
 // Fill in any optional properties with null values.
