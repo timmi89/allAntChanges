@@ -207,23 +207,23 @@ else:
                 '''
             }
         },
-        # 'readonly2': {
-        #     'ENGINE':   'django.db.backends.mysql',
-        #     'NAME':     'readrboard',
-        #     'USER':     'antenna-array',
-        #     'PASSWORD': 'r34drsl4v3',
-        #     'HOST':     '10.240.4.119',
-        #     'PORT':     '3306',
-        #     'CONN_MAX_AGE':  60,
-        #     'OPTIONS': {
-        #         'charset': 'utf8',
-        #         'init_command': '''
-        #             SET
-        #             default_storage_engine=INNODB,
-        #             character_set_connection=utf8
-        #         '''
-        #     }
-        # }
+        'readonly2': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'antenna-array',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '10.240.4.119',
+            'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'OPTIONS': {
+                'charset': 'utf8',
+                'init_command': '''
+                    SET
+                    default_storage_engine=INNODB,
+                    character_set_connection=utf8
+                '''
+            }
+        }
     }
 
     CACHES = {

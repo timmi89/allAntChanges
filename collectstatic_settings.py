@@ -213,18 +213,18 @@ else:
             "init_command": "SET storage_engine=INNODB",
         }
       },
-      # 'readonly2': {
-      #   'ENGINE':   'django.db.backends.mysql',
-      #   'NAME':     'readrboard',
-      #   'USER':     'antenna-array',
-      #   'PASSWORD': 'r34drsl4v3',
-      #   'HOST':     '10.240.4.119',
-      #   'PORT':     '3306',
-      #   'CONN_MAX_AGE':  60,
-      #   'OPTIONS': {
-      #       "init_command": "SET storage_engine=INNODB",
-      #   }
-      # }
+      'readonly2': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'antenna-array',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '10.240.4.119',
+        'PORT':     '3306',
+        'CONN_MAX_AGE':  60,
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      }
 
     }
 
