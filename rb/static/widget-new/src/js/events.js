@@ -116,6 +116,13 @@ function postContentRecClicked(pageData, targetUrl, contentId, groupSettings) {
     postEvent(event, true);
 }
 
+function createContentRecClickedEvent(pageData, targetUrl, contentId, groupSettings) {
+    var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
+    event[attributes.contentId] = contentId;
+    appendPageDataParams(event, pageData);
+    return event;
+}
+
 function postReadMoreLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.readMoreLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
@@ -328,6 +335,7 @@ module.exports = {
     postContentRecLoaded: postContentRecLoaded,
     postContentRecVisible: postContentRecVisible,
     postContentRecClicked: postContentRecClicked,
+    createContentRecClickedEvent: createContentRecClickedEvent,
     postReadMoreLoaded: postReadMoreLoaded,
     postReadMoreVisible: postReadMoreVisible,
     postReadMoreClicked: postReadMoreClicked,

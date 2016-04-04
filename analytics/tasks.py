@@ -49,6 +49,13 @@ def update_page_newer_cache(page_id):
     else:
         logger.info('LOCKED PAGE CACHE: ' + str(page_id))
 
+@task(name='events.register')
+def register_event(event):
+    logger.info('REGISTERING EVENT: ' + str(event))
+    requests.get(settings.EVENTS_URL + '/insert', {
+        "json": json.dumps(event)
+    })
+
 @task(name='page.cache.update')
 def update_page_cache(page_id):
     logger.info('UPDATE PAGE CACHE: ' + str(page_id))

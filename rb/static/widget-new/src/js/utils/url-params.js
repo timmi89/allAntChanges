@@ -1,11 +1,11 @@
 
 var urlParams;
 
-function getUrlParams() {
+function getUrlParam(key) {
     if (!urlParams) {
         urlParams = parseUrlParams();
     }
-    return urlParams;
+    return urlParams[key];
 }
 
 function parseUrlParams() {
@@ -24,5 +24,5 @@ function parseUrlParams() {
 }
 
 module.exports = {
-    getUrlParams: getUrlParams
+    getUrlParam: getUrlParam
 };

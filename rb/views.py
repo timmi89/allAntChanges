@@ -33,6 +33,8 @@ from django.utils import simplejson
 from django.core.cache import cache
 from chronos.jobs import *
 from threading import Thread
+from antenna.analytics.tasks import register_event
+import json
 import random
 import hashlib
 import logging
@@ -959,6 +961,7 @@ def interaction_redirect(request, short):
 
     return redirect_response
 
+
 def click_redirect(request, short):
 
     try:
@@ -985,6 +988,14 @@ def click_redirect(request, short):
     redirect_response['Referer'] = 'www.antenna.is/r/'
     return redirect_response
 
+
+def content_rec_redirect(request):
+    event = json.loads(request.GET['event'])
+    register_event.delay(event)
+    url = request.GET['targetUrl']
+    redirect_response = HttpResponseRedirect(unicode(url))
+    redirect_response['Referer'] = 'www.antenna.is/cr/'
+    return redirect_response
 
 
 def follow_interactions(request, user_id):

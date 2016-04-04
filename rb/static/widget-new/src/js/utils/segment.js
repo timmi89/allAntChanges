@@ -10,7 +10,7 @@ function getSegment(groupSettings) {
 }
 
 function computeSegment(groupSettings) {
-    var segmentOverride = UrlParams.getUrlParams()['antennaSegment'];
+    var segmentOverride = UrlParams.getUrlParam('antennaSegment');
     if (segmentOverride) {
         storeSegment(segmentOverride);
         return segmentOverride;
