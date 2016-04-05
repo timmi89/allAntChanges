@@ -1,13 +1,12 @@
 ---
-kind: ReplicationController
-apiVersion: v1
+kind: Deployment
+apiVersion: extensions/v1beta1
 metadata:
   name: antenna-http
 spec:
   replicas: 1
   template:
     metadata:
-      name: antenna-http
       labels:
         name: antenna
         service: http

@@ -9,7 +9,7 @@ spec:
   maxReplicas: 50
   minReplicas: 1
   scaleRef:
-    apiVersion: v1
-    kind: ReplicationController
+    apiVersion: extensions/v1beta1
+    kind: Deployment
     name: antenna-http
     subresource: scale

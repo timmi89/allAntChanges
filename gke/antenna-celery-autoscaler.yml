@@ -2,14 +2,14 @@
 apiVersion: extensions/v1beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: antenna-http
+  name: antenna-celery
 spec:
   cpuUtilization:
     targetPercentage: 25
   maxReplicas: 50
   minReplicas: 1
   scaleRef:
-    apiVersion: v1
-    kind: ReplicationController
-    name: antenna-http
+    kind: Deployment
+    apiVersion: extensions/v1beta1
+    name: antenna-celery
     subresource: scale
