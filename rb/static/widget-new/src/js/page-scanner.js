@@ -523,7 +523,7 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
                     // Next, see if any entire active sections were added
-                    var $activeSections = find($element, groupSettings.activeSections());
+                    var $activeSections = find($element, groupSettings.activeSections(), true);
                     if ($activeSections.length > 0) {
                         $activeSections.each(function () {
                             createAutoCallsToAction($(this), pageData, groupSettings);
