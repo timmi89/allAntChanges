@@ -277,6 +277,12 @@ function scanText($textElement, pageData, groupSettings) {
                 excludeNode: $indicatorElement.get(0)
             });
             createdWidgets.push(textReactions);
+
+            MutationObserver.addOneTimeElementRemovalListener($textElement.get(0), function() {
+                HashedElements.removeElement(hash, pageData.pageHash, $textElement);
+                textIndicator.teardown();
+                textReactions.teardown();
+            });
         }
     }
 
@@ -353,6 +359,11 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
                     }
                 );
                 createdWidgets.push(indicator);
+
+                MutationObserver.addOneTimeElementRemovalListener($mediaElement.get(0), function() {
+                    HashedElements.removeElement(hash, pageData.pageHash, $mediaElement);
+                    indicator.teardown();
+                });
             }
         }
     }

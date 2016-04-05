@@ -1,6 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
-var Range = require('./utils/range');
 var TouchSupport = require('./utils/touch-support');
 
 var PopupWidget = require('./popup-widget');
