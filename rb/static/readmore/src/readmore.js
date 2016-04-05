@@ -232,7 +232,7 @@
         var defaults = {
              // TODO: get rid of the site-specific defaults
             readmore_selector: offline ? '.entry-post' : 'article.article-page div.container',
-            readmore_crop_selector: offline ? 'p' : '.article-body p',
+            readmore_crop_selector: offline ? 'p' : '.post-body p',
             readmore_crop_min: offline ? 400: 400
         };
 
