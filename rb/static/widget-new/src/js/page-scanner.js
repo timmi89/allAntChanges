@@ -533,12 +533,16 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     var pageData = PageData.getPageDataByURL(url);
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
+                    scanForReadMore($page, pageData, groupSettings);
+                    scanForContentRec($page, pageData, groupSettings);
                     // Next, see if any entire active sections were added
                     var $activeSections = find($element, groupSettings.activeSections(), true);
                     if ($activeSections.length > 0) {
                         $activeSections.each(function () {
-                            createAutoCallsToAction($(this), pageData, groupSettings);
+                            var $section = $(this);
+                            createAutoCallsToAction($section, pageData, groupSettings);
                         });
+                        scanForCallsToAction($element, pageData, groupSettings);
                         $activeSections.each(function () {
                             var $section = $(this);
                             scanActiveElement($section, pageData, groupSettings);
@@ -548,6 +552,7 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                         var $activeSection = $element.closest(groupSettings.activeSections());
                         if ($activeSection.length > 0) {
                             createAutoCallsToAction($element, pageData, groupSettings);
+                            scanForCallsToAction($element, pageData, groupSettings);
                             scanActiveElement($element, pageData, groupSettings);
                         } else {
                             // If the element is added outside an active section, just check it for CTAs
