@@ -50,6 +50,10 @@ function antennaLoginUrl() {
 }
 
 function computeImageUrl($element, groupSettings) {
+    var transform = getImageURLTransform(groupSettings);
+    if (transform) {
+        return transform($element.get(0));
+    }
     if (groupSettings.legacyBehavior()) {
         return legacyComputeImageUrl($element);
     }
@@ -67,6 +71,16 @@ function computeImageUrl($element, groupSettings) {
         }
     }
     return content;
+}
+
+function getImageURLTransform(groupSettings) {
+    if (groupSettings.groupName().indexOf('.about.com') !== -1) {
+        var pattern = /(http:\/\/f\.tqn\.com\/y\/[^\/]*\/1)\/[LW]\/([^\/]\/[^\/]\/[^\/]\/[^\/]\/[^\/]*)/gi;
+        return function(element) {
+            var src = element.getAttribute('src');
+            return src.replace(pattern, '$1/S/$2');
+        }
+    }
 }
 
 // Legacy implementation which maintains the old behavior of engage_full
