@@ -423,7 +423,6 @@ INSTALLED_APPS = [
     'chronos',
     'analytics',
     'reporting',
-    'demo',
     'content_rec',
     'storages',
     'gunicorn',

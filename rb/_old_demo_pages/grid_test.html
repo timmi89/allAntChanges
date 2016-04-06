@@ -1,0 +1,239 @@
+<html>
+<head>
+  <link rel="stylesheet" href="/static/css/site.css?v=2">
+  <script src="/static/js/jquery-1.9.0.min.js"></script>
+  <script src="/static/js/jquery.browser_detect.js"></script>
+  <script src="/static/js/jquery.bigtext.js"></script>
+  <script src="/static/js/jquery.isotope.min.js"></script>
+</head>
+<body>
+  <style>
+  * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing:border-box; }
+  section[role="tag cloud grid"] { background:#000; width:320px !important; height:auto;}
+  .box1 { width:320px; height:110px; padding:20px 15px 0;}
+  .box2 { width:160px; height:110px; padding:35px 10px 0;}
+  .box3 { width:160px; height:55px; padding:15px 5px 0;}
+  .contains1 .box3 { width:160px; height:110px; padding:20px 10px 0;}
+  .box2.wide { width:320px; height:80px; padding:20px 10px 0;}
+  .box3.wide { width:320px; height:55px; padding-top:13px;}
+  .box3.container { padding:0; height:110px;}
+  .box3.container.wide { height:55px;}
+  </style>
+
+  <section role="tag cloud grid"></section>
+
+<script>
+
+var ints_1 = [
+  { body:"Tag One", count: 3 },
+  { body:"Huzzah", count: 3 },
+  { body:"lol", count: 2 },
+  { body:"Love It", count:1  }
+];
+
+var ints_2 = [
+  { body:"Tag One", count: 18 },
+  { body:"Dizzamn", count: 30 },
+  { body:"Huzzah", count: 3 },
+  { body:"lol", count: 42 },
+  { body:"WHATEVER", count: 39 },
+  { body:"Love It", count:7  },
+  { body:"Wow", count:5  },
+  { body:"oooomg", count:25  },
+  { body:"That's ridiculous", count:5  }
+];
+
+var ints_3 = [
+  { body:"Tag One", count: 11 },
+  { body:"Dizzamn", count: 10 },
+  { body:"Huzzah", count: 3 },
+  // { body:"Huzzah", count: 7 },
+  { body:"lol", count: 4 },
+  { body:"Love It", count:7  },
+  { body:"Wow", count:5  },
+  { body:"oooomg", count:5  },
+  { body:"That's ridiculous", count:5  }
+];
+
+function createTagBuckets( tagList ) {
+  function SortByTagCount(a,b) { return b.count - a.count; }
+  tagList.sort( SortByTagCount ); // each as a .body and a .count
+  var buckets = {
+    big: [],
+    medium: [],
+    small: []
+  },
+  max = tagList[0].count,
+  median = tagList[ Math.floor(tagList.length/2) ].count,
+  min = tagList[ tagList.length-1 ].count,
+  avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.count }); return Math.floor(total/arr.length); })(tagList),
+  midValue = ( median > avg ) ? median:avg;
+
+  $.each( tagList, function(idx, tag) {
+      if ( max > 15 && tag.count >= (Math.floor( max*0.8 )) ) {
+        buckets.big.push( tag );
+        return;
+      } else if ( tag.count > midValue ) {
+        buckets.medium.push( tag );
+        return;
+      } else {
+        buckets.small.push( tag );
+        return;
+      }
+
+  });
+  return buckets;
+}
+
+function writeTagBoxes( tagList ) {
+  var buckets = createTagBuckets( tagList ),
+      $container = $('section[role="tag cloud grid"]'),
+      colorInt = 1;
+
+  while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+
+    if ( buckets.big.length ) {
+      var thisTag = buckets.big.shift();
+      writeTagBox( thisTag, "big");        
+    } else {
+      
+      if ( buckets.medium.length ) {
+        var thisTag = buckets.medium.shift();
+        writeTagBox( thisTag, "medium");
+      }  
+      if ( buckets.small.length ) {
+        var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
+            $smContainer = $('<div class="box box3 container contains'+numSmallTags+'"></div>').appendTo( $container );
+
+        for ( i=0; i < numSmallTags; i++ ) {
+          var thisTag = buckets.small.shift();
+          writeTagBox( thisTag, "small", $smContainer );
+        }
+
+      }
+    }
+    
+    function writeTagBox( tag, size, $tagContainer ) {
+      if ( !$tagContainer ) { $tagContainer = $container; }
+      // this can go away if we change CSS class names
+      var boxSize = ( size == "big" ) ? "box1" : ( size == "medium" ) ? "box2" : "box3",
+          wideBox = "";
+
+      $thisBox = $( '<div class="color'+colorInt+' '+boxSize+' box '+wideBox+'"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div>' );
+      $tagContainer.append( $thisBox );
+
+      // set next color 
+      colorInt++;
+      if ( colorInt == 6 ) colorInt = 1;
+    }
+
+  }
+
+  // is it the last thing?  i.e. should it be wide?
+  if ( $container.children('.box').not('.box1').length % 2 != 0 ) {
+    $container.children('.box').not('.box1').last().addClass('wide').find('.box3').addClass('wide');
+  }
+
+  function isotopeTags( $container ) {
+    $container.isotope({
+      masonry: {
+        columnWidth: 160
+      }
+    }, function() {
+        $('.box1').bigtext({ maxfontsize:48 });
+        $('.box2').bigtext({ maxfontsize:24 });
+        $('.box3').bigtext({ maxfontsize:14 });
+
+        var tagBoxesCount = $('section[role="tag cloud grid"] div.box').length,
+            currentTagBoxAnimating = 0;
+        var animationQueue = setInterval( animateNextBox, 50 );
+
+        function animateNextBox() {
+            var $thisBox = $('section[role="tag cloud grid"] div.box:eq('+currentTagBoxAnimating+')');
+            if ( $thisBox.hasClass('box1') ) {
+                $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+            } else {
+                $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+            }
+            currentTagBoxAnimating++;
+            if ( currentTagBoxAnimating > tagBoxesCount ) {
+                clearInterval( animationQueue );
+            }
+        }
+    });
+  }
+  isotopeTags( $container );
+}
+
+writeTagBoxes( ints_2 );
+// $('.box1').bigtext({ maxfontsize:48 });
+// $('.box2').bigtext({ maxfontsize:24 });
+// $('.box3').bigtext({ maxfontsize:14 });
+
+// box size and font container size
+/*
+container dimension determined by # of reactions
+  sometimes determined by other conditions
+    like a thin image
+
+tagBox dimension determined by reaction weight
+font size determined by reaction weight
+      DIM   160px       320px       480px
+SIZE    
+big
+med
+sm
+
+logic
+  start with just the 320px for now.  add 160 and 480 later.
+  create buckets of sm, med, large
+  arrange sm into containers so you have
+    sm_cont, med_cont?, large
+  append to rindow in some order
+    large, med, sm_cont probably?
+  isotope it
+    how will this handle thin and wide sm_containers?
+
+
+160px containers
+  small containers
+    ( %2 == 0 ) ? add to sm_container : add as new row/container (sm font)
+  med & big containers
+    add new row (font size displays weight)
+
+320px containers
+  small containers
+    ( sm >= 2 ) 
+      split 
+    
+    ( sm > 4 ) ? add 4 to sm_container_sq : 
+      else ( sm >= 2 && sm < 4 ) ? add 2 to sm_container_row : 
+      else add 1 to sm_container_row
+
+480px containers
+  small containers
+    ( sm > 4 ) ? add 4 to sm_container_sq : 
+      else ( sm < 4 ) ? add 2 to sm_container_row : 
+      else add 1 to sm_container_row
+
+*/
+
+
+// $tagCloud.isotope({
+//   layoutMode: 'fitRows',
+  // masonry: {
+  //   columnWidth: 320
+  // }
+// }, function() {
+// });
+
+
+
+</script>
+
+</body>
+</html>
+
+
+
+

@@ -2,8 +2,6 @@ import os
 from textwrap import dedent
 
 from django.conf import settings
-from django.conf.urls.defaults import url, patterns, include
-from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.http.response import HttpResponse
 from httpproxy.views import HttpProxy
@@ -12,26 +10,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-  url(r'^robots.txt$', lambda r: HttpResponse(
-      dedent('''\
-      User-agent: *
-      Allow: /
-      Disallow: /admin/
-      Disallow: /demo/
-      Disallow: /static/
-      Disallow: /stream/
-      Disallow: /follows/
-      Disallow: /user/
-      Disallow: /i/
-      '''),
-      mimetype="text/plain"
-  )),
-
   # For admin
   url(r'^admin/', include(admin.site.urls)),
-
-  # For demo pages
-  url(r'^demo/', include('antenna.demo.urls')),
 
   # For widget
   url(r'^widget/(.{,25})/$', 'rb.views.widget'),
@@ -48,21 +28,17 @@ urlpatterns = patterns('',
   url(r'^i/(?P<short>[0-9]+)/$', 'rb.views.interaction_redirect'),
   url(r'^r/(?P<short>[0-9]+)/$', 'rb.views.click_redirect'),
 
+
   # For main website
   url(r'^$', 'rb.views.home'),
-  # url(r'^$', 'rb.views.main',
-  #     kwargs={"view": "index", "filtered": "charcoal"}),
+  url(r'^old_demo/$', 'rb.views.old_demo'),
+  #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
 
-  url(r'^unfiltered/$', 'rb.views.main',
-      kwargs={"view": "index"}),
-  url(r'^stream/$', 'rb.views.main',
-      kwargs={"view": "index"}),
-  url(r'^tags/$', 'rb.views.main',
-      kwargs={"view": "tags"}),
-  url(r'^comments/$', 'rb.views.main',
-      kwargs={"view": "comments"}),
-  url(r'^shares/$', 'rb.views.main',
-      kwargs={"view": "shares"}),
+  url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
+  url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
+  url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
 
   # Client Facing Registration & Settings
   url(r'^settings/$', 'rb.views.settings'),
@@ -71,20 +47,15 @@ urlpatterns = patterns('',
   # url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
   # url(r'^(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
-  url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$',
-      'rb.views.settings_wordpress'),
+  url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings_wordpress'),
 
 
   # User profile pages
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),
-  url(r'^user/(?P<user_id>\d+)/tags/$', 'rb.views.main',
-      kwargs={"view": "tags"}),
-  url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main',
-      kwargs={"view": "comments"}),
-  url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main',
-      kwargs={"view": "shares"}),
-  url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main',
-      kwargs={"view": "bookmarks"}),
+  url(r'^user/(?P<user_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^user/(?P<user_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^user/(?P<user_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^user/(?P<user_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   url(r'^follows/(?P<user_id>\d+)/$', 'rb.views.follow_interactions'),
 
@@ -94,48 +65,30 @@ urlpatterns = patterns('',
 
   # Specific page
   url(r'^page/(?P<page_id>\d+)/$', 'rb.views.main'),
-  url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main',
-      kwargs={"admin": "not_approved"}),
-  url(r'^page/(?P<page_id>\d+)/tags/$', 'rb.views.main',
-      kwargs={"view": "tags"}),
-  url(r'^page/(?P<page_id>\d+)/comments/$', 'rb.views.main',
-      kwargs={"view": "comments"}),
-  url(r'^page/(?P<page_id>\d+)/shares/$', 'rb.views.main',
-      kwargs={"view": "shares"}),
-  url(r'^page/(?P<page_id>\d+)/bookmarks/$', 'rb.views.main',
-      kwargs={"view": "bookmarks"}),
+  url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^page/(?P<page_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^page/(?P<page_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^page/(?P<page_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^page/(?P<page_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   # Specific site
   url(r'^site/(?P<site_id>\d+)/$', 'rb.views.main'),
-  url(r'^site/(?P<site_id>\d+)/not_approved/$', 'rb.views.main',
-      kwargs={"admin": "not_approved"}),
-  url(r'^site/(?P<site_id>\d+)/tags/$', 'rb.views.main',
-      kwargs={"view": "tags"}),
-  url(r'^site/(?P<site_id>\d+)/comments/$', 'rb.views.main',
-      kwargs={"view": "comments"}),
-  url(r'^site/(?P<site_id>\d+)/shares/$', 'rb.views.main',
-      kwargs={"view": "shares"}),
-  url(r'^site/(?P<site_id>\d+)/bookmarks/$', 'rb.views.main',
-      kwargs={"view": "bookmarks"}),
+  url(r'^site/(?P<site_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^site/(?P<site_id>\d+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^site/(?P<site_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^site/(?P<site_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^site/(?P<site_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
   # Specific group
   url(r'^group/(?P<short_name>[\w\-\.]+)/$', 'rb.views.main'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/not_approved/$', 'rb.views.main',
-      kwargs={"admin": "not_approved"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/tags/$', 'rb.views.main',
-      kwargs={"view": "tags"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main',
-      kwargs={"view": "comments"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main',
-      kwargs={"view": "shares"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main',
-      kwargs={"view": "bookmarks"}),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/' +
-      '(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$',
-      'rb.views.analytics'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'rb.views.analytics'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics/$', 'rb.views.analytics'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/emails/publisher_content_report/$',
-      'rb.views.email_content_report'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/emails/publisher_content_report/$', 'rb.views.email_content_report'),
 
 
   # galleries
@@ -143,7 +96,7 @@ urlpatterns = patterns('',
   url(r'^gallery/(?P<example_name>[\w\-\.]+/)$',
       'rb.views.gallery', name='gallery-show'),
 
-  # single interaction
+  #single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
 
   # Main Site Supporting Pages
@@ -152,16 +105,14 @@ urlpatterns = patterns('',
   url(r'^terms/$', 'rb.views.terms'),
   url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
-  url(r'^publishers/$', 'rb.views.publishers'),
-  url(r'^retailers/$', 'rb.views.retailers'),
-  url(r'^about/$', 'rb.views.about'),
-  url(r'^blog$', RedirectView.as_view(url='http: //blog.antenna.is')),
+  url(r'^publishers/$','rb.views.publishers'),
+  url(r'^retailers/$','rb.views.retailers'),
+  url(r'^about/$','rb.views.about'),
+  url(r'^blog$', RedirectView.as_view(url='http://blog.antenna.is')),
 
-  # changed to rb.views.friendlylogin instead of rb.views.login,
-  # because login sometimes throws an error.
+  # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code'
-  # and it seems to be caused by the request.META.get('HTTP_REFERER') code,
-  # which I don't understand why we want in there.
+  # and it seems to be caused by the request.META.get('HTTP_REFERER') code, which I don't understand why we want in there.
   # fix this after we investegate and understand.
   url(r'^login/$', 'rb.views.friendlylogin'),
   url(r'^friendlylogin/$', 'rb.views.friendlylogin'),
@@ -171,11 +122,10 @@ urlpatterns = patterns('',
   url(r'^sidebar/$', 'rb.views.sidebar'),
   url(r'^sidebar/user/(?P<user_id>\d+)/$', 'rb.views.sidebar'),
   url(r'^sidebar/group/(?P<short_name>[\w\-\.]+)/$', 'rb.views.sidebar'),
-  # url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
+  #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   # Extras
-  url(r'^favicon\.ico$',
-      RedirectView.as_view(url='/static/images/site/favicon.ico')),
+  url(r'^favicon\.ico$', RedirectView.as_view(url='/static/site/images/favicon.ico')),
 
   # API
   url(r'^api/', include('antenna.api.urls')),
@@ -185,36 +135,24 @@ urlpatterns = patterns('',
 
 
   # Group Supporting Pages
-  # dont expose the signup form anymore for now.
-  # We'll use the wufoo form and onboard ourselves - redirect them.
+  # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
   url(r'^manage/', 'rb.views.manage_groups'),
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$',
-      'rb.views.group_blocked_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$',
-      'rb.views.group_allowed_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$',
-      'rb.views.group_allowed_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/unapproved_reactions/$',
-      'rb.views.group_unapproved_tags'),
-  # unapproved == unblessed
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics',
-      include('antenna.analytics.urls')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1',
-      include('antenna.analytics.urls_v1')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/reporting',
-      include('antenna.reporting.urls')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$',
-      'rb.views.admin_request'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_allowed_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$', 'rb.views.group_allowed_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/unapproved_reactions/$', 'rb.views.group_unapproved_tags'),  # unapproved == unblessed
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('antenna.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('antenna.analytics.urls_v1')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/reporting', include('antenna.reporting.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$',
-      'rb.views.admin_approve'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$',
-      'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
-  # inhouse
+  #inhouse
   url(r'^analytics', include('antenna.analytics.urls')),
   url(r'^analytics_v1', include('antenna.analytics.urls_v1')),
 
@@ -233,6 +171,8 @@ urlpatterns = patterns('',
 
   url(r'^ant_login/$', 'rb.views.ant_login'),
   url(r'^ant_login_success/$', 'rb.views.ant_login_success'),
+  # For demos
+  #url(r'^demo/', settings.STATIC_URL)
 )
 
 if os.getenv('ANTENNA_STATIC_URL', False):
