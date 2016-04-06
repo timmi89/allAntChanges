@@ -533,8 +533,8 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     var pageData = PageData.getPageDataByURL(url);
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
-                    scanForReadMore($page, pageData, groupSettings);
-                    scanForContentRec($page, pageData, groupSettings);
+                    scanForReadMore($element, pageData, groupSettings);
+                    scanForContentRec($element, pageData, groupSettings);
                     // Next, see if any entire active sections were added
                     var $activeSections = find($element, groupSettings.activeSections(), true);
                     if ($activeSections.length > 0) {
