@@ -17,6 +17,7 @@ function createContentRec(pageData, groupSettings) {
     ContentRecLoader.prefetchIfNeeded(groupSettings);
     var numEntries = BrowserMetrics.isMobile() ? 2 : 3; // TODO: make this configurable in groupSettings
     var numEntriesPerRow = BrowserMetrics.isMobile() ? 1 : 3;
+    var entryWidth = Math.floor(100/numEntriesPerRow) + '%';
     var contentData = { entries: undefined }; // Need to stub out the data so Ractive can bind to it
     var ractive = Ractive({
         el: contentRecContainer,
@@ -29,6 +30,7 @@ function createContentRec(pageData, groupSettings) {
             populateContentEntries: populateContentEntries(numEntries, contentData, pageData, groupSettings),
             colors: pickColors(numEntries, groupSettings),
             isMobile: BrowserMetrics.isMobile(),
+            entryWidth: entryWidth,
             computeEntryUrl: computeEntryUrl
         },
         template: require('../templates/content-rec-widget.hbs.html'),
@@ -36,8 +38,7 @@ function createContentRec(pageData, groupSettings) {
             logo: SVGs.logo
         },
         decorators: {
-            renderText: renderText,
-            setEntryWidth: setEntryWidth
+            renderText: renderText
         }
     });
     setupVisibilityHandler();
@@ -46,21 +47,6 @@ function createContentRec(pageData, groupSettings) {
         element: contentRecContainer,
         teardown: function() { ractive.teardown(); }
     };
-
-    function setEntryWidth(node) {
-        if (numEntriesPerRow > 1) {
-            // When there are multiple entries per row, adjust the width so they all fit.
-            var entryWidth = Math.floor(100/numEntriesPerRow);
-            var nodeStyle = window.getComputedStyle(node);
-            var margins = parseInt(nodeStyle.marginLeft) + parseInt(nodeStyle.marginRight);
-            if (margins > 0) { // If there are margins, adjust so the entries still fit on one line.
-                node.style['width'] = 'calc(' + entryWidth + '% - ' + margins + 'px)';
-            } else {
-                node.style['width'] = entryWidth + '%';
-            }
-        }
-        return { teardown: function() {} };
-    }
 
     function computeEntryUrl(contentEntry) {
         var targetUrl = contentEntry.page.url;

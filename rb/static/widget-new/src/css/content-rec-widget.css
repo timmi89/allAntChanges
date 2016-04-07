@@ -6,18 +6,20 @@
 
 .antenna-contentrec-header {
     text-transform: uppercase;
+    margin-bottom: 20px;
 }
 
 .antenna-contentrec-entry {
     display: block;
     vertical-align: top;
-    cursor: pointer;
-    padding: 5px 10px;
-    margin-top: 20px;
 }
 
 .antenna-contentrec-entry.antenna-desktop {
     display: inline-block;
+}
+
+.antenna-contentrec-entry-inner {
+    padding: 5px 10px;
 }
 
 @media only screen and (max-width: 768px) {
