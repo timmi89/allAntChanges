@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load staticfiles %}
 {% load custom_filters %}
 
 {% block layoutHeadAdditions %}{% endblock %}
@@ -28,7 +29,7 @@
 
 {% block layout %}
   <div class="page-content">
-    <iframe id="gallery-frame" frameborder="0" src="{% url 'demo-show' current_example_name %}" style="width:100%;height:100%;"></iframe>
+    <iframe id="gallery-frame" frameborder="0" src="{% static "site/gallery" %}/{{ current_example_name }}index.html" style="width:100%;height:100%;"></iframe>
   </div>
 {% endblock %}
 

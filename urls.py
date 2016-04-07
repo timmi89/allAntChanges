@@ -2,6 +2,7 @@ import os
 from textwrap import dedent
 
 from django.conf import settings
+from django.conf.urls import patterns, url, include
 from django.views.generic import RedirectView
 from django.http.response import HttpResponse
 from httpproxy.views import HttpProxy
