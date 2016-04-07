@@ -78,7 +78,9 @@ function getImageURLTransform(groupSettings) {
         var pattern = /(http:\/\/f\.tqn\.com\/y\/[^\/]*\/1)\/[LW]\/([^\/]\/[^\/]\/[^\/]\/[^\/]\/[^\/]*)/gi;
         return function(element) {
             var src = element.getAttribute('src');
-            return src.replace(pattern, '$1/S/$2');
+            if (src) {
+                return src.replace(pattern, '$1/S/$2');
+            }
         }
     }
 }
