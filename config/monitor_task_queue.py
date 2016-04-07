@@ -9,8 +9,9 @@ def main():
     queue_size = int(proc.readline().strip())
     proc.close()
 
+    print "celery queue size: %d" % queue_size
     if queue_size > 50:
-        print "cloud_metrics restarting celery: queue_size=%d" % queue_size
+        print "cloud_metrics restarting celery"
         os.putenv('PYTHONPATH', '/home/broadcaster')
         res_proc = os.popen(
             "su broadcaster --preserve-environment -c /home/broadcaster/antenna/restart_celery.sh"
