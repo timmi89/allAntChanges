@@ -4,7 +4,7 @@
         <div class="antenna-contentrec-entries">
             {{#contentData.entries:index}}
                 <a href="{{computeEntryUrl(this)}}" target="{{#if isMobile}}_self{{else}}_target{{/if}}">
-                    <div class="antenna-contentrec-entry antenna-reset {{^isMobile}}antenna-desktop{{/isMobile}}" style="width: {{entryWidth}};">
+                    <div class="antenna-contentrec-entry antenna-reset {{^isMobile}}antenna-desktop{{/isMobile}}" decorator="setEntryWidth">
                         <div class="antenna-contentrec-entry-header">
                             <div class="antenna-contentrec-reaction-text">
                                 {{this.top_reaction.text}}

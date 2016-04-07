@@ -15,9 +15,8 @@ function createContentRec(pageData, groupSettings) {
     // We can't really request content until the full page data is loaded (because we need to know the server-side computed
     // canonical URL), but we can start prefetching the content pool for the group.
     ContentRecLoader.prefetchIfNeeded(groupSettings);
-    var numEntries = BrowserMetrics.isMobile() ? 2 : 3;
+    var numEntries = BrowserMetrics.isMobile() ? 2 : 3; // TODO: make this configurable in groupSettings
     var numEntriesPerRow = BrowserMetrics.isMobile() ? 1 : 3;
-    var entryWidth = Math.floor(100/numEntriesPerRow) + '%';
     var contentData = { entries: undefined }; // Need to stub out the data so Ractive can bind to it
     var ractive = Ractive({
         el: contentRecContainer,
@@ -29,7 +28,6 @@ function createContentRec(pageData, groupSettings) {
             contentData: contentData,
             populateContentEntries: populateContentEntries(numEntries, contentData, pageData, groupSettings),
             colors: pickColors(numEntries, groupSettings),
-            entryWidth: entryWidth,
             isMobile: BrowserMetrics.isMobile(),
             computeEntryUrl: computeEntryUrl
         },
@@ -38,7 +36,8 @@ function createContentRec(pageData, groupSettings) {
             logo: SVGs.logo
         },
         decorators: {
-            renderText: renderText
+            renderText: renderText,
+            setEntryWidth: setEntryWidth
         }
     });
     setupVisibilityHandler();
@@ -47,6 +46,21 @@ function createContentRec(pageData, groupSettings) {
         element: contentRecContainer,
         teardown: function() { ractive.teardown(); }
     };
+
+    function setEntryWidth(node) {
+        if (numEntriesPerRow > 1) {
+            // When there are multiple entries per row, adjust the width so they all fit.
+            var entryWidth = Math.floor(100/numEntriesPerRow);
+            var nodeStyle = window.getComputedStyle(node);
+            var margins = parseInt(nodeStyle.marginLeft) + parseInt(nodeStyle.marginRight);
+            if (margins > 0) { // If there are margins, adjust so the entries still fit on one line.
+                node.style['width'] = 'calc(' + entryWidth + '% - ' + margins + 'px)';
+            } else {
+                node.style['width'] = entryWidth + '%';
+            }
+        }
+        return { teardown: function() {} };
+    }
 
     function computeEntryUrl(contentEntry) {
         var targetUrl = contentEntry.page.url;
