@@ -51,6 +51,7 @@
 .antenna-contentrec-reaction-indicator {
     display: inline-block;
     font-size: 0.65em;
+    white-space: nowrap;
 }
 
 .antenna-contentrec-reaction-count {
@@ -67,6 +68,10 @@
     line-height: 1.4em;
     max-height: 7.1em; /* 5 lines */ /* Keep in sync with body-image height */
     overflow-y: hidden;
+}
+
+.antenna-contentrec-entry.antenna-desktop .antenna-contentrec-body-text {
+    height: 7.1em; /* Stable height for desktop entries since they're in the same row. */ /* Keep in sync with body-image height */
 }
 
 .antenna-contentrec-body-text strong {

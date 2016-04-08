@@ -279,6 +279,16 @@ class Group(models.Model):
     recirc_title = models.CharField(max_length=255, blank=True)
     recirc_background = models.TextField(blank=True, null=True)
     recirc_jquery_method = models.CharField(max_length=255, blank=True)
+    recirc_count_desktop = models.PositiveSmallIntegerField(default=3)
+    recirc_count_mobile = models.PositiveSmallIntegerField(default=2)
+    recirc_rowcount_desktop = models.PositiveSmallIntegerField(default=3)
+    recirc_rowcount_mobile = models.PositiveSmallIntegerField(default=1)
+
+    show_readmore = models.BooleanField(default=False)
+    readmore_label = models.CharField(max_length=255, blank=True)
+    readmore_selector = models.CharField(max_length=255, blank=True)
+    readmore_crop_selector = models.CharField(max_length=255, blank=True)
+    readmore_crop_min = models.IntegerField(max_length=255, default=400)
 
     image_selector = models.CharField(max_length=255, blank=True)
     image_attribute = models.CharField(max_length=255, blank=True)

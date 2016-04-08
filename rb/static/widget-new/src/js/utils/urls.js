@@ -1,4 +1,5 @@
 var AppMode = require('./app-mode');
+var JSONUtils = require('./json-utils');
 var URLConstants = require('./url-constants');
 
 function getGroupSettingsUrl() {
@@ -135,6 +136,11 @@ function legacyComputeMediaUrl($element) {
     return content;
 }
 
+// Returns a URL for content rec which will take the user to the target url and record the given click event
+function computeContentRecUrl(targetUrl, clickEvent) {
+    return appServerUrl() + '/cr/?targetUrl=' + encodeURIComponent(targetUrl) + '&event=' + encodeURIComponent(JSONUtils.stringify(clickEvent))
+}
+
 function amazonS3Url() {
     return URLConstants.AMAZON_S3;
 }
@@ -175,5 +181,6 @@ module.exports = {
     antennaLoginUrl: antennaLoginUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
+    computeContentRecUrl: computeContentRecUrl,
     eventUrl: getEventUrl
 };

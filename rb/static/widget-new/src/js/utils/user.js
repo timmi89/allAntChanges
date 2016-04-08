@@ -116,7 +116,7 @@ function reAuthorizeUser(groupSettings, callback) {
 
     function notifyHasNewToken() {
         var hasNewToken = cachedUserInfo && cachedUserInfo.ant_token && cachedUserInfo.ant_token !== oldToken;
-        callback(hasNewToken);
+        if (callback) { callback(hasNewToken) };
     }
 }
 

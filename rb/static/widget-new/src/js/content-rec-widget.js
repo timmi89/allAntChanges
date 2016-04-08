@@ -15,8 +15,8 @@ function createContentRec(pageData, groupSettings) {
     // We can't really request content until the full page data is loaded (because we need to know the server-side computed
     // canonical URL), but we can start prefetching the content pool for the group.
     ContentRecLoader.prefetchIfNeeded(groupSettings);
-    var numEntries = BrowserMetrics.isMobile() ? 2 : 3; // TODO: make this configurable in groupSettings
-    var numEntriesPerRow = BrowserMetrics.isMobile() ? 1 : 3;
+    var numEntries = BrowserMetrics.isMobile() ? groupSettings.contentRecCountMobile() : groupSettings.contentRecCountDesktop();
+    var numEntriesPerRow = BrowserMetrics.isMobile() ? groupSettings.contentRecRowCountMobile() : groupSettings.contentRecRowCountDesktop();
     var entryWidth = Math.floor(100/numEntriesPerRow) + '%';
     var contentData = { entries: undefined }; // Need to stub out the data so Ractive can bind to it
     var ractive = Ractive({
@@ -52,9 +52,7 @@ function createContentRec(pageData, groupSettings) {
         var targetUrl = contentEntry.page.url;
         var contentId = contentEntry.content.id;
         var event = Events.createContentRecClickedEvent(pageData, targetUrl, contentId, groupSettings);
-        // TODO: move this into urls component
-        var url = URLs.appServerUrl() + '/cr/?targetUrl=' + encodeURIComponent(contentEntry.page.url) + '&event=' + encodeURIComponent(JSONUtils.stringify(event));
-        return url;
+        return URLs.computeContentRecUrl(targetUrl, event);
     }
 
     function setupVisibilityHandler() {
@@ -164,12 +162,20 @@ function renderText(node) {
 }
 
 function pickColors(count, groupSettings) {
-    var colorPallete = [ // TODO: get this from groupsettings
-        { background: '#41e7d0', foreground: '#FFFFFF' },
-        { background: '#86bbfd', foreground: '#FFFFFF' },
-        { background: '#FF6666', foreground: '#FFFFFF' }
-        // { background: '#979797', foreground: '#FFFFFF' }
-    ];
+    var colorPallete = [];
+    var colorData = groupSettings.contentRecColors();
+    if (colorData) {
+        var colorPairs = colorData.split(';');
+        for (var i = 0; i < colorPairs.length; i++) {
+            var colors = colorPairs[i].split('/');
+            if (colors.length === 2) {
+                colorPallete.push({ background: colors[0], foreground: colors[1] });
+            }
+        }
+    }
+    if (colorPallete.length === 0) {
+        colorPallete.push({ background: '#000000', foreground: '#FFFFFF' });
+    }
     if (count < colorPallete.length) {
         return shuffleArray(colorPallete).slice(0, count);
     } else { // If we're asking for more colors than we have, just repeat the same colors as necessary.
@@ -185,7 +191,7 @@ function pickColors(count, groupSettings) {
     function randomIndex(avoid) {
         do {
             var picked = Math.floor(Math.random() * colorPallete.length);
-        } while (picked === avoid);
+        } while (picked === avoid && colorPallete.length > 1);
         return picked;
     }
 }

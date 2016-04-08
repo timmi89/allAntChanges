@@ -8,7 +8,7 @@
     }
 
     function groupSettingsLoaded(groupSettings) {
-        if (SessionData.isInReadMoreSegment(groupSettings)) {
+        if (SessionData.isInReadMoreSegment(groupSettings) && groupSettings.showReadMore()) {
             insertReadMore(groupSettings);
             insertCustomCSS(groupSettings);
         }
@@ -27,22 +27,24 @@
 
     function insertReadMore(groupSettings) {
         var containerSelector = groupSettings.readMoreSelector();
-        var container = document.querySelector(containerSelector);
-        if (container) {
-            var cropHeight = computeCropHeight(container, groupSettings);
-            if (cropHeight) {
-                insertReadMoreCSS(groupSettings);
-                Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
-                Utils.addClass(container, 'antenna-readmore-crop');
-                var readMoreElement = createReadMoreElement(groupSettings);
-                container.appendChild(readMoreElement);
-                var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
-                if (readMoreAction) {
-                    readMoreAction.addEventListener('click', function () {
-                        Utils.setStyles(container, { maxHeight: '' });
-                        Utils.removeClass(container, 'antenna-readmore-crop');
-                        readMoreElement.parentNode.removeChild(readMoreElement);
-                    });
+        if (containerSelector) {
+            var container = document.querySelector(containerSelector);
+            if (container) {
+                var cropHeight = computeCropHeight(container, groupSettings);
+                if (cropHeight) {
+                    insertReadMoreCSS(groupSettings);
+                    Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
+                    Utils.addClass(container, 'antenna-readmore-crop');
+                    var readMoreElement = createReadMoreElement(groupSettings);
+                    container.appendChild(readMoreElement);
+                    var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
+                    if (readMoreAction) {
+                        readMoreAction.addEventListener('click', function () {
+                            Utils.setStyles(container, { maxHeight: '' });
+                            Utils.removeClass(container, 'antenna-readmore-crop');
+                            readMoreElement.parentNode.removeChild(readMoreElement);
+                        });
+                    }
                 }
             }
         }
@@ -231,22 +233,27 @@
         var offline = window.location.host === 'local.antenna.is:8081';
         var defaults = {
              // TODO: get rid of the site-specific defaults
-            readmore_selector: offline ? '.entry-post' : 'article.article-page div.container',
+            readmore_selector: offline ? undefined : 'article.article-page div.container',
             readmore_crop_selector: offline ? 'p' : '.post-body p',
-            readmore_crop_min: offline ? 400: 400
+            readmore_crop_min: 400
         };
 
         function createFromJSON(json) {
 
-            function data(key) {
+            function data(key, ifAbsent) {
                 return function() {
                     var value;
-                    if (window.antenna_extend && window.antenna_extend.hasOwnProperty(key)) {
+                    if (window.antenna_extend) {
                         value = window.antenna_extend[key];
-                    } else if (json.hasOwnProperty(key)) {
+                    }
+                    if (value === undefined) {
                         value = json[key];
-                    } else {
-                        value = defaults[key];
+                        if (value === undefined || value === '' || value === null) {
+                            value = defaults[key];
+                        }
+                    }
+                    if (value === undefined) {
+                        return ifAbsent;
                     }
                     return value;
                 };
@@ -254,6 +261,7 @@
 
             return {
                 groupId: data('id'),
+                showReadMore: data('show_readmore'),
                 readMoreSelector: data('readmore_selector'),
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),
