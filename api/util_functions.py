@@ -602,7 +602,7 @@ def getRecommendedContent(group_id):
 # Asks BigQuery for popular content through our Events service
 def getEventsPopularContent(group_id):
     end_date = datetime.utcnow() # BigQuery is GMT
-    start_date = end_date - timedelta(days=10)
+    start_date = end_date - timedelta(days=21)
 
     res = requests.get(settings.EVENTS_URL + '/popularContent', {
         "json": json.dumps({
