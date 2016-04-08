@@ -517,6 +517,12 @@
                 </div>
             </div>
         </section>
+        {% else %}
+            {{ form.show_readmore.as_hidden }}
+            {{ form.readmore_label.as_hidden }}
+            {{ form.readmore_selector.as_hidden }}
+            {{ form.readmore_crop_selector.as_hidden }}
+            {{ form.readmore_crop_min.as_hidden }}
         {% endif %}
     </div>
 {% comment %}
