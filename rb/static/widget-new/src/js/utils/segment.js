@@ -1,5 +1,6 @@
 var UrlParams = require('./url-params');
 
+var segments = [ '250', '400', '700' ];
 var segment;
 
 function getSegment(groupSettings) {
@@ -15,7 +16,7 @@ function computeSegment(groupSettings) {
         storeSegment(segmentOverride);
         return segmentOverride;
     }
-    var segment = localStorage.getItem('ant_segment');
+    var segment = readSegment();
     if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
         segment = createSegment(groupSettings);
         segment = storeSegment(segment);
@@ -23,10 +24,20 @@ function computeSegment(groupSettings) {
     return segment;
 }
 
+function readSegment() {
+    // Returns the stored segment, but only if it is one of the current valid segments.
+    var segment = localStorage.getItem('ant_segment');
+    if (segment) {
+        for (var i = 0; i < segments.length; i++) {
+            if (segment === segments[i]) {
+                return segment; // Valid segment. Return.
+            }
+        }
+    }
+}
+
 function createSegment(groupSettings) {
-    // TODO: let group settings control the segments
-    var segments = [ 'ao', 'rm', 'rm_cr' ];
-    return segments[Math.floor(Math.random() * 3)];
+    return segments[Math.floor(Math.random() * segments.length)];
 }
 
 function storeSegment(segment) {
@@ -35,18 +46,12 @@ function storeSegment(segment) {
     } catch(error) {
         // Some browsers (mobile Safari) throw an exception when in private browsing mode.
         // If this happens, fall back to a default value that will at least give us stable behavior.
-        segment = 'ao';
+        segment = segments[0];
     }
     return segment;
 }
 
-function isInContentRecSegment(groupSettings) {
-    var segment = getSegment(groupSettings);
-    return segment === 'rm_cr';
-}
-
 
 module.exports = {
-    getSegment: getSegment,
-    isInContentRecSegment: isInContentRecSegment
+    getSegment: getSegment
 };
