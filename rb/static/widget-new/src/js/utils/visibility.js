@@ -78,6 +78,15 @@ function isVisible(element) {
                     //-- Our target element is out of bounds:
                     return false;
                 }
+                // ANTENNA modification: use the bounding client rect, which accounts for things like CSS transforms
+                var elr = el.getBoundingClientRect();
+                var pr = p.getBoundingClientRect();
+                if (elr.left >= pr.right ||
+                    elr.right <= pr.left ||
+                    elr.top >= pr.bottom ||
+                    elr.bottom <= pr.top) {
+                    return false;
+                }
             }
             //-- Add the offset parent's left/top coords to our element's offset:
             if ( el.offsetParent === p ) {
