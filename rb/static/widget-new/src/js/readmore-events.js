@@ -5,6 +5,7 @@ var ThrottledEvents = require('./utils/throttled-events');
 var Events = require('./events');
 
 function setupReadMoreEvents(element, pageData, groupSettings) {
+    var visibilityFired = false;
     var readMoreElement = element.querySelector('.antenna-readmore');
     if (readMoreElement) {
         var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
@@ -15,7 +16,6 @@ function setupReadMoreEvents(element, pageData, groupSettings) {
             readMoreAction.addEventListener('click', fireClicked);
         }
     }
-    var visibilityFired = false;
 
     function setupVisibilityListener() {
         if (isVisible()) {
@@ -46,8 +46,10 @@ function setupReadMoreEvents(element, pageData, groupSettings) {
     }
 
     function fireVisible() {
-        Events.postReadMoreVisible(pageData, groupSettings);
-        ThrottledEvents.off('scroll', handleScrollEvent);
+        if (!visibilityFired) { // don't fire more than once
+            Events.postReadMoreVisible(pageData, groupSettings);
+            ThrottledEvents.off('scroll', handleScrollEvent);
+        }
         visibilityFired = true;
     }
 }
