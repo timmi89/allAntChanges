@@ -5,7 +5,7 @@ metadata:
   name: antenna-celery
 spec:
   cpuUtilization:
-    targetPercentage: 25
+    targetPercentage: 75
   maxReplicas: 50
   minReplicas: 1
   scaleRef:

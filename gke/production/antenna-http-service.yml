@@ -8,6 +8,7 @@ metadata:
     service: http
     app: antenna
 spec:
+  clusterIP: 10.71.254.178
   ports:
   - name: http
     port: 80

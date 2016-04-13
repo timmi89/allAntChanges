@@ -25,8 +25,38 @@ spec:
               cpu: "20m"
               memory: "200Mi"
           env:
+            - name: DJANGO_LOG_LEVEL
+              value: DEBUG
+            - name: VIRTUAL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: antenna-env-secret
+                  key: virtual-host
+            - name: ANTENNA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: antenna-env-secret
+                  key: antenna-url
+            - name: ANTENNA_STATIC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: antenna-env-secret
+                  key: antenna-static-url
+            - name: ANTENNA_INTERNAL_STATIC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: antenna-env-secret
+                  key: antenna-internal-static-url
+            - name: EVENTS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: antenna-env-secret
+                  key: events-url
             - name: DATABASE_HOST_MASTER
-              value: 104.154.91.57
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-ssl-secret
+                  key: database-host-master
             - name: DATABASE_SSL_MASTER_CLIENT_KEY
               value: /secrets/master-client-key.pem
             - name: DATABASE_SSL_MASTER_CLIENT_CERT
@@ -34,7 +64,10 @@ spec:
             - name: DATABASE_SSL_MASTER_SERVER_CA
               value: /secrets/master-server-ca.pem
             - name: DATABASE_HOST_SLAVE1
-              value: 104.154.80.103
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-ssl-secret
+                  key: database-host-slave1
             - name: DATABASE_SSL_SLAVE1_CLIENT_KEY
               value: /secrets/slave1-client-key.pem
             - name: DATABASE_SSL_SLAVE1_CLIENT_CERT
@@ -42,7 +75,10 @@ spec:
             - name: DATABASE_SSL_SLAVE1_SERVER_CA
               value: /secrets/slave1-server-ca.pem
             - name: DATABASE_HOST_SLAVE2
-              value: 104.154.80.103
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-ssl-secret
+                  key: database-host-slave2
             - name: DATABASE_SSL_SLAVE2_CLIENT_KEY
               value: /secrets/slave1-client-key.pem
             - name: DATABASE_SSL_SLAVE2_CLIENT_CERT
@@ -56,12 +92,44 @@ spec:
             - name: RABBITMQ_HOST
               value: amqp
             - name: BQ_TABLE_PREFIX
-              value: gke_staging
+              valueFrom:
+                secretKeyRef:
+                  name: bigquery-secret
+                  key: bq-table-prefix
+            - name: EMAIL_BACKEND
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: email-backend
+            - name: MAILGUN_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: mailgun-access-key
+            - name: MAILGUN_SERVER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: mailgun-server-name
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: email-host
           volumeMounts:
             - name: mysql-ssl-secret
               mountPath: /secrets
               readOnly: true
       volumes:
+        - name: antenna-env-secret
+          secret:
+            secretName: antenna-env-secret
         - name: mysql-ssl-secret
           secret:
             secretName: mysql-ssl-secret
+        - name: bigquery-secret
+          secret:
+            secretName: bigquery-secret
+        - name: email-secret
+          secret:
+            secretName: email-secret

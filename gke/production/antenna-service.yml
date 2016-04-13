@@ -1,0 +1,27 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: antenna
+  labels:
+    name: antenna
+    service: load-balancer
+    app: load-balancer
+    letsencrypt: 'production'
+  annotations:
+    vhosts: api.antenna.is
+spec:
+  clusterIP: 10.71.242.148
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: https
+    protocol: TCP
+  selector:
+    name: antenna
+    service: reverse-proxy
+  type: LoadBalancer

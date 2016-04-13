@@ -1,5 +1,3 @@
-# Adapted from https://github.com/GoogleCloudPlatform/kube-jenkins-imager
-
 ---
 kind: Deployment
 apiVersion: extensions/v1beta1
