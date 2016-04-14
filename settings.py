@@ -169,7 +169,7 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    EVENTS_URL = 'http://events.antenna.is'
+    EVENTS_URL = 'https://events.antenna.is'
     DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
 
     DATABASES = {
