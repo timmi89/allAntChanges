@@ -16,6 +16,10 @@
     font-size: 12px;
 }
 
+.antenna-reaction-zero {
+    opacity: 0.7;
+}
+
 .antenna-reaction-comments {
     display: none;
     float: right;
