@@ -3,7 +3,7 @@ var DEV_SERVER_URL = "http://local-static.antenna.is:8081";
 var TEST_SERVER_URL = 'http://localhost:3001';
 var AMAZON_S3_URL = '//cdn.antenna.is';
 
-var PROD_EVENT_SERVER_URL = 'http://events.antenna.is';
+var PROD_EVENT_SERVER_URL = 'https://events.antenna.is';
 var DEV_EVENT_SERVER_URL = 'http://nodebq.docker:3000';
 
 //noinspection JSUnresolvedVariable
