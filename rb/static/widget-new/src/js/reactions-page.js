@@ -92,8 +92,10 @@ function createPage(options) {
         showConfirmation(reactionData, reactionProvider);
         AjaxClient.postPlusOne(reactionData, containerData, pageData, groupSettings, success, error);
 
-        function success(reactionData) {
-            Events.postReactionCreated(pageData, containerData, reactionData, groupSettings);
+        function success(reactionData, existing) {
+            if (!existing) {
+                Events.postReactionCreated(pageData, containerData, reactionData, groupSettings);
+            }
         }
 
         function error(message) {
