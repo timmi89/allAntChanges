@@ -24,6 +24,7 @@
     height:auto;
     margin:0 auto;
     display: inline-block;
+    float: none;
 }
 
 .antenna-defaults-footer input:hover {

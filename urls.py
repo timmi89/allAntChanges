@@ -29,6 +29,8 @@ urlpatterns = patterns('',
   url(r'^i/(?P<short>[0-9]+)/$', 'rb.views.interaction_redirect'),
   url(r'^r/(?P<short>[0-9]+)/$', 'rb.views.click_redirect'),
 
+  # For content rec
+  url(r'^cr/', 'rb.views.content_rec_redirect'),
 
   # For main website
   url(r'^$', 'rb.views.home'),

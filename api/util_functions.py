@@ -249,25 +249,19 @@ def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
     if node_id:
         # ID known retrieve existing
-        inode = InteractionNode.objects.get(id=node_id)
+        return InteractionNode.objects.get(id=node_id)
 
     # Body was passed rather than id
     elif body:
         body = strip_tags(body)
         # No id provided, using body to get_or_create
-        check_nodes = InteractionNode.objects.filter(body__exact = body)
+        case_insensitive_nodes = InteractionNode.objects.filter(body__exact = body)
+        for node in case_insensitive_nodes:
+            # InteractionNode body is case insensitive, but reactions should be case sensitive
+            if node.body == body:
+                return node
 
-        if check_nodes.count() == 0:
-            inode = InteractionNode.objects.get_or_create(body=body)[0]
-
-        elif check_nodes.count() > 1:
-            inode = check_nodes[0]
-
-        elif check_nodes.count() == 1:
-            inode = check_nodes[0]
-
-
-    return inode
+        return InteractionNode.objects.create(body=body)
 
 def isTemporaryUser(user):
     return len(SocialUser.objects.filter(user__id=user.id)) == 0

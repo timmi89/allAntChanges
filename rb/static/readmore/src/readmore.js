@@ -8,8 +8,10 @@
     }
 
     function groupSettingsLoaded(groupSettings) {
-        insertReadMore(groupSettings);
-        insertCustomCSS(groupSettings);
+        if (groupSettings.showReadMore()) {
+            insertReadMore(groupSettings);
+            insertCustomCSS(groupSettings);
+        }
     }
 
     function insertCustomCSS(groupSettings) {
@@ -25,22 +27,24 @@
 
     function insertReadMore(groupSettings) {
         var containerSelector = groupSettings.readMoreSelector();
-        var container = document.querySelector(containerSelector);
-        if (container) {
-            var cropHeight = computeCropHeight(container, groupSettings);
-            if (cropHeight) {
-                insertReadMoreCSS(groupSettings);
-                Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
-                Utils.addClass(container, 'antenna-readmore-crop');
-                var readMoreElement = createReadMoreElement(groupSettings);
-                container.appendChild(readMoreElement);
-                var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
-                if (readMoreAction) {
-                    readMoreAction.addEventListener('click', function () {
-                        Utils.setStyles(container, { maxHeight: '' });
-                        Utils.removeClass(container, 'antenna-readmore-crop');
-                        readMoreElement.parentNode.removeChild(readMoreElement);
-                    });
+        if (containerSelector) {
+            var container = document.querySelector(containerSelector);
+            if (container) {
+                var cropHeight = computeCropHeight(container, groupSettings);
+                if (cropHeight) {
+                    insertReadMoreCSS(groupSettings);
+                    Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
+                    Utils.addClass(container, 'antenna-readmore-crop');
+                    var readMoreElement = createReadMoreElement(groupSettings);
+                    container.appendChild(readMoreElement);
+                    var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
+                    if (readMoreAction) {
+                        readMoreAction.addEventListener('click', function () {
+                            Utils.setStyles(container, { maxHeight: '' });
+                            Utils.removeClass(container, 'antenna-readmore-crop');
+                            readMoreElement.parentNode.removeChild(readMoreElement);
+                        });
+                    }
                 }
             }
         }
@@ -58,7 +62,7 @@
 
     function computeCropHeight(container, groupSettings) {
         var cropSelector = groupSettings.cropSelector();
-        var minHeight = groupSettings.cropMinHeight();
+        var minHeight = SessionData.getSegmentCropDepth(groupSettings);// groupSettings.cropMinHeight();
         if (cropSelector) {
             var cropElements = container.querySelectorAll(cropSelector);
             if (cropElements.length > 0) {
@@ -98,14 +102,61 @@
         });
     }
 
-    function postEvent(relativeUrl, event, callback) {
-        var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://nodebq.docker:3000' : 'http://events.antenna.is';
-        Utils.getJSONP(serverUrl + relativeUrl, event, function(response) {
-            if (response.status === 'success') {
-                callback(response.data);
+    var SessionData = (function() {
+
+        var segments = [ '250', '400', '700' ];
+
+        function getSegmentCropDepth(groupSettings) {
+            var segment = getSegment(groupSettings);
+            return parseInt(segment);
+        }
+
+        function getSegment(groupSettings) {
+            var segmentOverride = Utils.getUrlParams()['antennaSegment'];
+            if (segmentOverride) {
+                storeSegment(segmentOverride);
+                return segmentOverride;
             }
-        });
-    }
+            var segment = readSegment();
+            if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
+                segment = createSegment(groupSettings);
+                segment = storeSegment(segment);
+            }
+            return segment;
+        }
+
+        function readSegment() {
+            // Returns the stored segment, but only if it is one of the current valid segments.
+            var segment = localStorage.getItem('ant_segment');
+            if (segment) {
+                for (var i = 0; i < segments.length; i++) {
+                    if (segment === segments[i]) {
+                        return segment; // Valid segment. Return.
+                    }
+                }
+            }
+        }
+
+        function createSegment(groupSettings) {
+            return segments[Math.floor(Math.random() * segments.length)];
+        }
+
+        function storeSegment(segment) {
+            try {
+                localStorage.setItem('ant_segment', segment);
+            } catch(error) {
+                // Some browsers (mobile Safari) throw an exception when in private browsing mode.
+                // If this happens, fall back to a default value that will at least give us stable behavior.
+                return segments[0];
+            }
+            return segment;
+        }
+
+        return {
+            getSegment: getSegment,
+            getSegmentCropDepth: getSegmentCropDepth
+        }
+    })();
 
     // Generic browser utils.
     var Utils = (function() {
@@ -142,7 +193,7 @@
             var responseCallback = 'antenna' + Math.random().toString(16).slice(2);
             window[responseCallback] = function(response) {
                 try {
-                    callback(response);
+                    if (callback) { callback(response) };
                 } finally {
                     delete window[responseCallback];
                     scriptTag.parentNode.removeChild(scriptTag);
@@ -150,7 +201,7 @@
             };
             var jsonpUrl = url + '?callback=' + responseCallback;
             if (params) {
-                jsonpUrl += '&json=' + encodeURI(JSON.stringify(params));
+                jsonpUrl += '&json=' + encodeURIComponent(JSON.stringify(params));
             }
             scriptTag.setAttribute('type', 'application/javascript');
             scriptTag.setAttribute('src', jsonpUrl);
@@ -163,6 +214,21 @@
                     window.matchMedia("screen and (max-device-width: 768px) and (orientation: landscape)").matches);
         }
 
+        function getUrlParams() {
+            var queryString = window.location.search;
+            var urlParams = {};
+            var e,
+            a = /\+/g,  // Regex for replacing addition symbol with a space
+            r = /([^&=]+)=?([^&]*)/g,
+            d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+            q = queryString.substring(1);
+
+            while (e = r.exec(q)) {
+                urlParams[d(e[1])] = d(e[2]);
+            }
+            return urlParams;
+        }
+
         return {
             insertAfter: insertAfter,
             removeNodes: removeNodes,
@@ -170,7 +236,8 @@
             addClass: addClass,
             removeClass: removeClass,
             getJSONP: getJSONP,
-            isMobile: isMobile
+            isMobile: isMobile,
+            getUrlParams: getUrlParams
         };
     })();
 
@@ -179,28 +246,35 @@
         var offline = window.location.host === 'local.antenna.is:8081';
         var defaults = {
              // TODO: get rid of the site-specific defaults
-            readmore_selector: offline ? '.entry-post' : 'article.article-page div.container',
-            readmore_crop_selector: offline ? 'p' : '.article-body p',
-            readmore_crop_min: offline ? 400: 400
+            readmore_selector: offline ? undefined : 'article.article-page div.container',
+            readmore_crop_selector: offline ? 'p' : '.post-body p',
+            readmore_crop_min: 400
         };
 
         function createFromJSON(json) {
 
-            function data(key) {
+            function data(key, ifAbsent) {
                 return function() {
                     var value;
-                    if (window.antenna_extend && window.antenna_extend.hasOwnProperty(key)) {
+                    if (window.antenna_extend) {
                         value = window.antenna_extend[key];
-                    } else if (json.hasOwnProperty(key)) {
+                    }
+                    if (value === undefined) {
                         value = json[key];
-                    } else {
-                        value = defaults[key];
+                        if (value === undefined || value === '' || value === null) {
+                            value = defaults[key];
+                        }
+                    }
+                    if (value === undefined) {
+                        return ifAbsent;
                     }
                     return value;
                 };
             }
 
             return {
+                groupId: data('id'),
+                showReadMore: data('show_readmore'),
                 readMoreSelector: data('readmore_selector'),
                 readMoreLabel: data('readmore_label'),
                 readMoreCSS: data('readmore_css'),

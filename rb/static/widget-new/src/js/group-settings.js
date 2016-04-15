@@ -262,7 +262,12 @@ function createFromJSON(json) {
         isShowContentRec: data('show_recirc'),
         contentRecSelector: data('recirc_selector'),
         contentRecTitle: data('recirc_title'),
-        contentRecMethod: data('recirc_jquery_method')
+        contentRecMethod: data('recirc_jquery_method'),
+        contentRecColors: data('recirc_background'),
+        contentRecCountDesktop: data('recirc_count_desktop'),
+        contentRecCountMobile: data('recirc_count_mobile'),
+        contentRecRowCountDesktop: data('recirc_rowcount_desktop'),
+        contentRecRowCountMobile: data('recirc_rowcount_mobile')
     }
 }
 

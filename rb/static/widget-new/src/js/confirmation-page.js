@@ -67,7 +67,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
         reactionProvider.get(function(reactionData) {
             var window = openShareWindow();
             if (window) {
-                AjaxClient.postShareReaction(reactionData, containerData, pageData, function (response) {
+                AjaxClient.postShareReaction(reactionData, containerData, pageData, groupSettings, function (response) {
                     var url = computeWindowLocation(reactionData, response.short_url);
                     redirectShareWindow(url);
                 }, function (message) {

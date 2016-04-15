@@ -1,4 +1,3 @@
-
 .antenna-login-back {
     background-color: #bbbbbb;
     color: #ffffff;
@@ -16,7 +15,66 @@
     fill: #ffffff;
 }
 
-.antenna-login-iframe {
-    width: 100%;
-    height: 250px;
+.antenna-login-container {
+    padding: 5px 10px 10px 10px;
+}
+
+.antenna-login-message {
+    margin-bottom: 5px;
+}
+
+.antenna-login-message a {
+    text-decoration: underline;
+}
+
+.antenna-login-group {
+    font-weight: bold;
+}
+
+.antenna-login-buttons {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.fb-login-button {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.antenna-or {
+    margin: 10px 0;
+    text-align: center;
+    color: #666666;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.antenna-login-button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 5px 0;
+    width: 170px;
+    border-radius: 3px;
+    text-align: center;
+    background: #222222;
+    color: #FFFFFF;
+}
+
+.antenna-login-button .antenna-logo-path {
+    fill: #FFFFFF;
+}
+
+.antenna-login-text {
+    font-weight: bold;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.antenna-privacy-text a, .antenna-privacy-text a:hover,
+.antenna-login-pending a, .antenna-login-pending a:hover {
+    text-decoration: underline;
+}
+
+.antenna-login-pending {
+    display: none;
 }

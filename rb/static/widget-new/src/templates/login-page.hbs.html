@@ -2,7 +2,25 @@
     <div class="antenna-body">
         <div on-tap="back" class="antenna-login-back">{{>left}}{{getMessage('reactions_widget__back')}}</div>
         <div class="antenna-login-container">
-            <iframe class="antenna-login-iframe" src="{{loginPageUrl}}" seamless></iframe>
+            <div class="antenna-login-content">
+                <div class="antenna-login-message">
+                    {{{getMessage('login_page__message_1', [ groupName ])}}}
+                </div>
+                <div class="antenna-login-message">
+                    {{getMessage('login_page__message_2')}}
+                </div>
+                <div class="antenna-login-buttons">
+                    <div class="fb-login-button" on-tap="facebookLogin"><img src="/static/widget/images/fb-login_to_readrboard.png" /></div>
+                    <div class="antenna-or">or</div>
+                    <div class="antenna-login-button" on-tap="antennaLogin">{{>logo}}<span class="antenna-login-text">Login to Antenna</span></div>
+                </div>
+                <div class="antenna-privacy-text">
+                    {{{getMessage('login_page__privacy')}}}
+                </div>
+            </div>
+            <div class="antenna-login-pending">
+                {{getMessage('login_page__pending_pre')}}<a href="javascript:void(0);" on-tap="retry">{{getMessage('login_page__pending_click')}}</a>{{getMessage('login_page__pending_post')}}
+            </div>
         </div>
     </div>
 </div>

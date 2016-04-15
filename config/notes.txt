@@ -1,0 +1,7 @@
+#set to master with server-id and relay-bin-log
+mysqldump -p4rc4n30n3 --add-drop-table --create-options --disable-keys --master-data=2 --databases readrboard > readrboard.dump
+
+#master
+mysql -p
+show master status
+

@@ -281,10 +281,26 @@
                         <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
                     </select>
                 </div>
+                <div class="formRow">
+                    <label for="id_recirc_count_desktop"><span class="labelTitle">Desktop Entry Count </span><span>How many entries to show on desktop.</span></label>
+                    {{ form.recirc_count_desktop }}{{ form.recirc_count_desktop.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_recirc_count_mobile"><span class="labelTitle">Mobile Entry Count </span><span>How many entries to show on mobile.</span></label>
+                    {{ form.recirc_count_mobile }}{{ form.recirc_count_mobile.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_recirc_rowcount_desktop"><span class="labelTitle">Desktop Entries per Row </span><span>How many entries to show per row on desktop.</span></label>
+                    {{ form.recirc_rowcount_desktop }}{{ form.recirc_rowcount_desktop.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_recirc_rowcount_mobile"><span class="labelTitle">Mobile Entries per Row </span><span>How many entries to show per row on mobile.</span></label>
+                    {{ form.recirc_rowcount_mobile }}{{ form.recirc_rowcount_mobile.errors }}
+                </div>
                 <div class="formRow text">
                     <label for="id_recirc_background">
-                        <span class="labelTitle">Broadcast Background (not yet implemented)</span>
-                        <span>CSS Background property for the Antenna Broadcast widget</span>
+                        <span class="labelTitle">Content Background Colors</span>
+                        <span>Background/foreground colors for content rec entries. (e.g. "#41e7d0/#FFFFFF;#86bbfd/#FFFFFF")</span>
                     </label>
                     {{ form.recirc_background }}{{ form.recirc_background.errors }}
                 </div>
@@ -455,15 +471,63 @@
                 {{ form.ignore_subdomain }}{{ form.ignore_subdomain.errors }}
                 <label for="id_ignore_subdomain"><span class="labelTitle">Ignore Site Subdomain? </span><span>Check this if you want Antenna to see all subdomains -- www.yoursite.com, m.yoursite.com, etc -- as the same site with the same content.</span></label>
             </div>
+            <div class="formRow" style="margin: 10px 0;">
+                {{ form.media_url_ignore_query }}{{ form.media_url_ignore_query.errors }}
+                <label for="id_media_url_ignore_query"><span class="labelTitle">Ignore Media Query URL? </span><span>Check this if you want Antenna to ignore the query parameter of media URLs.</span></label>
+            </div>
             <div class="formRow tld_options {% if group.show_recirc == True %}visible{% endif %}">
                 <label for="id_page_tld">
-                    <span class="labelTitle">Page TLD</span>
-                    <span>What TLD should your page URLs have?</span>
-                    <span class="formInputExample">If you want pages at www.yoursite.com and m.yoursite.com to have the same TLD, but your site's HTML makes them different.</span>
+                    <span class="labelTitle">Page Domain</span>
+                    <span>What Domain should your page URLs have?</span>
+                    <span class="formInputExample">If you want pages at www.yoursite.com and m.yoursite.com to have the same Domain, but your site's HTML makes them different.</span>
                 </label>
                 {{ form.page_tld }}{{ form.page_tld.errors }}
             </div>
         </section>
+        {% if group.name == "bustle.com" or group.name == "local.antenna.is:8081" %}
+        <section class="configurationSection">
+            <h3>Read More</h3>
+            <div class="formRow">
+                {{ form.show_readmore}}{{ form.show_readmore.errors }}
+                <label for="id_show_readmore">
+                    <span class="labelTitle">Show Read More?</span>
+                </label>
+            </div>
+            <div class="readmore_options {% if group.show_readmore == True %}visible{% endif %}">
+                <div class="formRow">
+                    <label for="id_readmore_label">
+                        <span class="labelTitle">Read More Label</span>
+                        <span>What should the Read More button say? (default is "Read More")</span>
+                    </label>
+                    {{ form.readmore_label }}{{ form.readmore_label.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_readmore_selector">
+                        <span class="labelTitle">Read More Selector (jQuery selector)</span>
+                        <span>What element should the Read More button apply to? (i.e. Which element should have its height modified?)</span>
+                    </label>
+                    {{ form.readmore_selector }}{{ form.readmore_selector.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_readmore_crop_selector">
+                        <span class="labelTitle">Read More Crop Selector (jQuery selector)</span>
+                        <span>Which elements should Read More consider when cropping? (Default is P tags.)</span>
+                    </label>
+                    {{ form.readmore_crop_selector }}{{ form.readmore_crop_selector.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_readmore_crop_min"><span class="labelTitle">Read More Min Height </span><span>What is the minimum height of content to show before cropping (in pixels)?</span></label>
+                    {{ form.readmore_crop_min }}{{ form.readmore_crop_min.errors }}
+                </div>
+            </div>
+        </section>
+        {% else %}
+            {{ form.show_readmore.as_hidden }}
+            {{ form.readmore_label.as_hidden }}
+            {{ form.readmore_selector.as_hidden }}
+            {{ form.readmore_crop_selector.as_hidden }}
+            {{ form.readmore_crop_min.as_hidden }}
+        {% endif %}
     </div>
 {% comment %}
   {{ form.as_p }}
@@ -487,6 +551,8 @@
     .recirc_options             { height:0; overflow:hidden; }
     .tld_options.visible,
     .recirc_options.visible     { height:auto; overflow:visible; }
+    .readmore_options             { height:0; overflow:hidden; }
+    .readmore_options.visible         { height:auto; overflow:visible; }
     </style>
     <script>
         $(function(){
@@ -533,6 +599,10 @@
 
             $('#id_show_recirc').change( function() {
                 $('.recirc_options').toggleClass('visible')
+            });
+
+            $('#id_show_readmore').change( function() {
+                $('.readmore_options').toggleClass('visible')
             });
 
             $('#id_ignore_subdomain').change( function() {

@@ -6,10 +6,27 @@
 
 .antenna-contentrec-header {
     text-transform: uppercase;
+    margin-bottom: 20px;
 }
 
 .antenna-contentrec-entry {
-    margin-top: 20px;
+    display: block;
+    vertical-align: top;
+}
+
+.antenna-contentrec-entry.antenna-desktop {
+    display: inline-block;
+}
+
+.antenna-contentrec-entry-inner {
+    padding: 5px 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    .antenna-contentrec-entry.antenna-desktop {
+        display: block;
+        width: 100% !important;
+    }
 }
 
 .antenna-contentrec-entry-header {
@@ -34,6 +51,7 @@
 .antenna-contentrec-reaction-indicator {
     display: inline-block;
     font-size: 0.65em;
+    white-space: nowrap;
 }
 
 .antenna-contentrec-reaction-count {
@@ -50,6 +68,10 @@
     line-height: 1.4em;
     max-height: 7.1em; /* 5 lines */ /* Keep in sync with body-image height */
     overflow-y: hidden;
+}
+
+.antenna-contentrec-entry.antenna-desktop .antenna-contentrec-body-text {
+    height: 7.1em; /* Stable height for desktop entries since they're in the same row. */ /* Keep in sync with body-image height */
 }
 
 .antenna-contentrec-body-text strong {

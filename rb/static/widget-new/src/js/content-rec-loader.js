@@ -1,4 +1,5 @@
 var AjaxClient = require('./utils/ajax-client');
+var URLs = require('./utils/urls');
 
 var contentFetchTriggerSize = 0; // The size of the pool at which we'll proactively fetch more content.
 var freshContentPool = [];
@@ -22,18 +23,19 @@ function getRecommendedContent(count, pageData, groupSettings, callback) {
 }
 
 function fetchRecommendedContent(groupSettings, callback) {
-    // TODO: Extract URL
-    AjaxClient.getJSONPNative('/api/contentrec', { group_id: groupSettings.groupId()} , function(response) {
-        if (response.status !== 'fail' && response.data) {
-            // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
-            var contentData = massageContent(response.data);
-            var newArray = shuffleArray(contentData);
-            for (var i = 0; i < freshContentPool.length; i++) {
-                newArray.push(freshContentPool[i]);
-            }
-            freshContentPool = newArray;
-            if (callback) { callback(groupSettings); }
+    AjaxClient.getJSONP(URLs.fetchContentRecommendationUrl(), { group_id: groupSettings.groupId()} , function(jsonData) {
+        // Update the fresh content pool with the new data. Append any existing content to the end, so it is pulled first.
+        var contentData = jsonData || [];
+        contentData = massageContent(contentData);
+        var newArray = shuffleArray(contentData);
+        for (var i = 0; i < freshContentPool.length; i++) {
+            newArray.push(freshContentPool[i]);
         }
+        freshContentPool = newArray;
+        if (callback) { callback(groupSettings); }
+    }, function(errorMessage) {
+        /* TODO: Error handling */
+        console.log('An error occurred fetching recommended content: ' + errorMessage);
     });
 }
 
@@ -68,11 +70,13 @@ function serveContent(pageData, groupSettings, preventLoop/*only used recursivel
     for (var i = 0; i < pendingCallbacks.length; i++) {
         var entry = pendingCallbacks[i];
         var chosenContent = [];
+        var urlsToAvoid = [ pageData.canonicalUrl ];
         for (var j = 0; j < entry.count; j++) {
             var preferredType = j % 2 === 0 ? 'image':'text';
-            var data = chooseContent(preferredType, pageData);
+            var data = chooseContent(preferredType, urlsToAvoid);
             if (data) {
                 chosenContent.push(data);
+                urlsToAvoid.push(data.page.url); // don't link to the same page twice
             }
         }
         if (chosenContent.length >= entry.count) {
@@ -91,11 +95,11 @@ function serveContent(pageData, groupSettings, preventLoop/*only used recursivel
     pendingCallbacks = pendingCallbacks.splice(i); // Trim any callbacks that we notified.
 }
 
-function chooseContent(preferredType, pageData) {
+function chooseContent(preferredType, urlsToAvoid) {
     var alternateIndex;
     for (var i = freshContentPool.length-1; i >= 0; i--) {
         var contentData = freshContentPool[i];
-        if (contentData.page.url !== pageData.canonicalUrl) {
+        if (!arrayContains(urlsToAvoid, contentData.page.url)) {
             if (contentData.content.type === preferredType) {
                 return freshContentPool.splice(i, 1)[0];
             }
@@ -105,6 +109,15 @@ function chooseContent(preferredType, pageData) {
     if (alternateIndex !== undefined) {
         return freshContentPool.splice(alternateIndex, 1)[0];
     }
+}
+
+function arrayContains(array, element) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === element) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Durstenfeld shuffle algorithm from: http://stackoverflow.com/a/12646864/4135431

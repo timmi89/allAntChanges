@@ -152,9 +152,8 @@
     width: 50%;
     height: 66px;
 }
-.antenna-reaction.antenna-half:only-child {
+.antenna-half.antenna-stretch {
     width: 100%;
-    height: 50px;
 }
 
 .antenna-reaction.antenna-full {
@@ -187,9 +186,8 @@
     white-space: nowrap;
     font-size: 24px;
 }
-.antenna-reaction.antenna-half  .antenna-reaction-text {
+.antenna-reaction.antenna-half .antenna-reaction-text {
     font-size: 15px;
-    margin-bottom: 6px;
 }
 
 .antenna-text-logo {

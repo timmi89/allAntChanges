@@ -1,4 +1,5 @@
 var AppMode = require('./app-mode');
+var JSONUtils = require('./json-utils');
 var URLConstants = require('./url-constants');
 
 function getGroupSettingsUrl() {
@@ -25,8 +26,16 @@ function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
 }
 
+function getFetchContentRecommendationUrl() {
+    return '/api/contentrec';
+}
+
 function getShareReactionUrl() {
     return '/api/share/;'
+}
+
+function getCreateTempUserUrl() {
+    return '/api/tempuser';
 }
 
 function getShareWindowUrl() {
@@ -37,11 +46,15 @@ function getEventUrl() {
     return '/insert'; // Note that this URL is for the event server, not the app server.
 }
 
-function getLoginPageUrl() {
-    return '/static/widget-new/fb_login.html';
+function antennaLoginUrl() {
+    return '/ant_login/';
 }
 
 function computeImageUrl($element, groupSettings) {
+    var transform = getImageURLTransform(groupSettings);
+    if (transform) {
+        return transform($element.get(0));
+    }
     if (groupSettings.legacyBehavior()) {
         return legacyComputeImageUrl($element);
     }
@@ -59,6 +72,18 @@ function computeImageUrl($element, groupSettings) {
         }
     }
     return content;
+}
+
+function getImageURLTransform(groupSettings) {
+    if (groupSettings.groupName().indexOf('.about.com') !== -1) {
+        var pattern = /(http:\/\/f\.tqn\.com\/y\/[^\/]*\/1)\/[LW]\/([^\/]\/[^\/]\/[^\/]\/[^\/]\/[^\/]*)/gi;
+        return function(element) {
+            var src = element.getAttribute('src');
+            if (src) {
+                return src.replace(pattern, '$1/S/$2');
+            }
+        }
+    }
 }
 
 // Legacy implementation which maintains the old behavior of engage_full
@@ -111,6 +136,11 @@ function legacyComputeMediaUrl($element) {
     return content;
 }
 
+// Returns a URL for content rec which will take the user to the target url and record the given click event
+function computeContentRecUrl(targetUrl, clickEvent) {
+    return appServerUrl() + '/cr/?targetUrl=' + encodeURIComponent(targetUrl) + '&event=' + encodeURIComponent(JSONUtils.stringify(clickEvent))
+}
+
 function antennaStaticUrl() {
     return URLConstants.ANTENNA_STATIC;
 }
@@ -139,10 +169,13 @@ module.exports = {
     createCommentUrl: getCreateCommentUrl,
     fetchCommentUrl: getFetchCommentUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
+    fetchContentRecommendationUrl: getFetchContentRecommendationUrl,
     shareReactionUrl: getShareReactionUrl,
+    createTempUserUrl: getCreateTempUserUrl,
     shareWindowUrl: getShareWindowUrl,
-    loginPageUrl: getLoginPageUrl,
+    antennaLoginUrl: antennaLoginUrl,
     computeImageUrl: computeImageUrl,
     computeMediaUrl: computeMediaUrl,
+    computeContentRecUrl: computeContentRecUrl,
     eventUrl: getEventUrl
 };

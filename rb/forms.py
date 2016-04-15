@@ -421,12 +421,22 @@ class GroupForm(forms.ModelForm):
             'image_selector',
             'image_attribute',
             'ignore_subdomain',
+            'media_url_ignore_query',
             'page_tld',
             'show_recirc',
             'recirc_selector',
             'recirc_title',
             'recirc_background',
-            'recirc_jquery_method'
+            'recirc_jquery_method',
+            'recirc_count_desktop',
+            'recirc_count_mobile',
+            'recirc_rowcount_desktop',
+            'recirc_rowcount_mobile',
+            'show_readmore',
+            'readmore_label',
+            'readmore_selector',
+            'readmore_crop_selector',
+            'readmore_crop_min'
         )
 
 

@@ -10,7 +10,7 @@
     margin-top: 5px;
     opacity: 0.85;
     font-weight: 100;
-    font-size: 14px;
+    font-size: 12px;
 }
 .antenna-reaction.half .antenna-reaction-count {
     font-size: 12px;
@@ -81,7 +81,7 @@
     white-space: nowrap;
     opacity: 0.85;
     font-weight: 100;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .antenna-reaction-box:hover .antenna-plusone {

@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
+var JSONUtils = require('./utils/json-utils');
 var Messages = require('./utils/messages');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
@@ -42,7 +43,7 @@ function openReactionsWidget(options, elementOrCoords) {
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
     // make a local copy of it to avoid unexpectedly changing data out from under one of the clients
-    var contentData = JSON.parse(JSON.stringify(options.contentData));
+    var contentData = JSON.parse(JSONUtils.stringify(options.contentData));
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var ractive = Ractive({
@@ -201,7 +202,7 @@ function openReactionsWidget(options, elementOrCoords) {
             console.log('An error occurred fetching comments: ' + message);
             showGenericErrorPage(backPageSelector);
         };
-        AjaxClient.getComments(reaction, success, error);
+        AjaxClient.getComments(reaction, groupSettings, success, error);
     }
 
     function showLocations(reaction, backPageSelector) {
@@ -233,7 +234,7 @@ function openReactionsWidget(options, elementOrCoords) {
             console.log('An error occurred fetching content bodies: ' + message);
             showGenericErrorPage(backPageSelector);
         };
-        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, success, error);
+        AjaxClient.fetchLocationDetails(reactionLocationData, pageData, groupSettings, success, error);
     }
 
     // Shows the login page, with a prompt to go Back to the page specified by the given page selector.

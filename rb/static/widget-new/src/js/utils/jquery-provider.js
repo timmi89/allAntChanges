@@ -4,7 +4,7 @@ var callbacks = [];
 
 // Notifies the jQuery provider that we've loaded the jQuery library.
 function loaded() {
-    loadedjQuery = jQuery.noConflict();
+    loadedjQuery = jQuery.noConflict(true);
     notifyCallbacks();
 }
 

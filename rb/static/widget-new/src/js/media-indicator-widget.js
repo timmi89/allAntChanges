@@ -136,17 +136,21 @@ function setupPositioning($containerElement, groupSettings, ractive) {
 
     var lastContainerOffset = $containerElement.offset();
     var lastContainerHeight = $containerElement.height();
+    var lastContainerVisibility = Visibility.isVisible($containerElement.get(0));
 
     function positionIfNeeded() {
         var containerOffset = $containerElement.offset();
         var containerHeight = $containerElement.height();
+        var containerVisibility = Visibility.isVisible($containerElement.get(0));
         if (containerOffset.top === lastContainerOffset.top &&
             containerOffset.left === lastContainerOffset.left &&
-            containerHeight === lastContainerHeight) {
+            containerHeight === lastContainerHeight &&
+            containerVisibility === lastContainerVisibility) {
             return;
         }
         lastContainerOffset = containerOffset;
         lastContainerHeight = containerHeight;
+        lastContainerVisibility = containerVisibility;
         positionIndicator();
     }
 

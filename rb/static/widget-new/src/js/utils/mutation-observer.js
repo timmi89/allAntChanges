@@ -60,6 +60,12 @@ function addRemovalListener(callback) {
     removalListener.addCallback(callback);
 }
 
+function removeRemovalListener(callback) {
+    if (removalListener) {
+        removalListener.removeCallback(callback);
+    }
+}
+
 function createRemovalListener() {
     var callbackSupport = CallbackSupport.create();
     var observer = new MutationObserver(function(mutationRecords) {
@@ -111,6 +117,19 @@ function filteredElements(nodeList) {
     return filtered;
 }
 
+function addOneTimeElementRemovalListener(node, callback) {
+    var listener = function(removedElements) {
+        for (var i = 0; i < removedElements.length; i++) {
+            var removedElement = removedElements[i].get(0);
+            if (removedElement.contains(node)) {
+                removeRemovalListener(listener);
+                callback();
+            }
+        }
+    };
+    addRemovalListener(listener);
+}
+
 function addOneTimeAttributeListener(node, attributes, callback) {
     var observer = new MutationObserver(function(mutationRecords) {
         for (var i = 0; i < mutationRecords.length; i++) {
@@ -152,6 +171,7 @@ function teardown() {
 module.exports = {
     addAdditionListener: addAdditionListener,
     addRemovalListener: addRemovalListener,
+    addOneTimeElementRemovalListener: addOneTimeElementRemovalListener,
     addOneTimeAttributeListener: addOneTimeAttributeListener,
     teardown: teardown
 };

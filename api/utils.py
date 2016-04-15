@@ -201,7 +201,14 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 pass
             else:
                 raise JSONException(u"sign in required for organic reactions")
-        
+
+    is_new_tag = False
+    if kind == 'tag':
+        all_tags = AllTag.objects.filter(node=interaction_node)
+        is_new_tag = len(all_tags) is 0
+        if not is_new_tag and not approveOnCreate:
+            approveOnCreate = all_tags[0].approved
+
     try:
         new_interaction = Interaction(
             page=page,
@@ -214,29 +221,23 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             rank = int(time.time()*1000),
             approved = approveOnCreate
         )
+        new_interaction.save()
     except Exception as e:
         raise JSONException(u"Error creating interaction object")
 
-    new_interaction.save()
     try:
-        is_new_tag = True
-        if new_interaction.kind == 'tag':
-            for alltag in page.site.group.all_tags.all():
-                if alltag.body == new_interaction.interaction_node.body:
-                    is_new_tag = False
-            if is_new_tag:
-                logger.info("Creating all tag")
-                AllTag.objects.create(group=page.site.group, 
-                                      node = new_interaction.interaction_node, 
-                                      order=len(page.site.group.all_tags.all()),
-                                      approved=approveOnCreate)
-                try:
-                    notification = AsynchNewGroupNodeNotification()
-                    t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
-                    t.start()
-                except Exception, ex:
-                    logger.warn(ex)
-            
+        if new_interaction.kind == 'tag' and is_new_tag:
+            logger.info("Creating all tag")
+            AllTag.objects.create(group=page.site.group,
+                                  node = new_interaction.interaction_node,
+                                  order=page.site.group.all_tags.count(),
+                                  approved=approveOnCreate)
+            try:
+                notification = AsynchNewGroupNodeNotification()
+                t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                t.start()
+            except Exception, ex:
+                logger.warn(ex)
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
         

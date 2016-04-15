@@ -50,5 +50,12 @@ module.exports = {
     'tap_helper__prompt': 'Tap any paragraph to respond!',
     'tap_helper__close': 'Close',
 
-    'content_rec_widget__title': 'Reader Reactions'
+    'content_rec_widget__title': 'Reader Reactions',
+
+    'login_page__message_1': '<span class="antenna-login-group">{0}</span> uses <a href="http://www.antenna.is/" target="_blank">Antenna</a> so you can react to content easily and safely.',
+    'login_page__message_2': 'To keep participating, just log in:',
+    'login_page__privacy': 'Antenna values your privacy. <a href="http://www.antenna.is/faq/" target="_blank">Learn more</a>.',
+    'login_page__pending_pre': 'You might need to ',
+    'login_page__pending_click': 'click here',
+    'login_page__pending_post': ' once you\'ve logged in.'
 };

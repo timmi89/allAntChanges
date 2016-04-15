@@ -2,19 +2,46 @@
 // by page for the blog roll case, where multiple pages of data can be loaded at once.
 var pages = {};
 
+// This module provides a get/set interface, but it allows multiple elements with the same key. This applies for image
+// elements, where we allow multiple instances on the same page with the same hash.
+
 function getElement(containerHash, pageHash) {
     var containers = pages[pageHash];
     if (containers) {
-        return containers[containerHash];
+        var elements = containers[containerHash];
+        if (elements) {
+            return elements[0];
+        }
     }
 }
 
-function setElement(containerHash, pageHash, element) {
+function setElement(containerHash, pageHash, $element) {
     var containers = pages[pageHash];
     if (!containers) {
         containers = pages[pageHash] = {};
     }
-    containers[containerHash] = element;
+    containers[containerHash] = containers[containerHash] || [];
+    var elements = containers[containerHash];
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].get(0) === $element.get(0)) {
+            return; // We've already got this association
+        }
+    }
+    elements.push($element);
+}
+
+function removeElement(containerHash, pageHash, $element) {
+    var containers = pages[pageHash] || {};
+    var elements = containers[containerHash] || [];
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].get(0) === $element.get(0)) {
+            elements.splice(i, 1);
+            if (elements.length === 0) {
+                delete containers[containerHash];
+            }
+            return;
+        }
+    }
 }
 
 // When we first scan a page, the "hash" is just the URL while we wait to hear back from the server, then it's updated
@@ -32,6 +59,7 @@ function teardown() {
 module.exports = {
     getElement: getElement,
     setElement: setElement,
+    removeElement: removeElement,
     updatePageHash: updatePageHash,
     teardown: teardown
 };

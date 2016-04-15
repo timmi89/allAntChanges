@@ -1,5 +1,8 @@
 var AjaxClient = require('./utils/ajax-client');
 var BrowserMetrics = require('./utils/browser-metrics');
+var Logging = require('./utils/logging');
+var Segment = require('./utils/segment');
+var SessionData = require('./utils/session-data');
 var User = require('./utils/user');
 
 function postGroupSettingsLoaded(groupSettings) {
@@ -12,7 +15,8 @@ function postGroupSettingsLoaded(groupSettings) {
 function postPageDataLoaded(pageData, groupSettings) {
     var event = createEvent(eventTypes.pageDataLoaded, '', groupSettings);
     appendPageDataParams(event, pageData);
-    event[attributes.contentAttributes] = pageData.metrics.isMultiPage ? eventValues.multiplePages : eventValues.singlePage;
+    // TODO: recording of single/multi is disabled so we can instead record A/B/C segment data
+    // event[attributes.contentAttributes] = pageData.metrics.isMultiPage ? eventValues.multiplePages : eventValues.singlePage;
     postEvent(event);
 }
 
@@ -23,6 +27,9 @@ function postReactionWidgetOpened(isShowReactions, pageData, containerData, cont
     event[attributes.containerHash] = containerData.hash;
     event[attributes.containerKind] = contentData.type;
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.reactionView);
+    emitEvent(customEvent);
 }
 
 function postSummaryOpened(isShowReactions, pageData, groupSettings) {
@@ -30,6 +37,9 @@ function postSummaryOpened(isShowReactions, pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValue, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.reactionView);
+    emitEvent(customEvent);
 }
 
 function postReactionCreated(pageData, containerData, reactionData, groupSettings) {
@@ -38,6 +48,26 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+
+    var eventDetail = {
+        reaction: reactionData.text,
+        content: reactionData.content.body,
+    };
+    switch (reactionData.content.kind) { // Map our internal content types to better values for consumers
+        case 'txt':
+            eventDetail.contentType = 'text';
+            break;
+        case 'img':
+            eventDetail.contentType = 'image';
+            break;
+        case 'med':
+            eventDetail.contentType = 'media';
+            break;
+        default:
+            eventDetail.contentType = reactionData.content.kind;
+    }
+    var customEvent = createCustomEvent(emitEventTypes.reactionCreate, eventDetail);
+    emitEvent(customEvent);
 }
 
 function postReactionShared(target, pageData, containerData, reactionData, groupSettings) {
@@ -47,12 +77,18 @@ function postReactionShared(target, pageData, containerData, reactionData, group
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.reactionShare);
+    emitEvent(customEvent);
 }
 
 function postLocationsViewed(pageData, groupSettings) {
     var event = createEvent(eventTypes.summaryWidget, eventValues.locationsViewed, groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.contentWithReactionView);
+    emitEvent(customEvent);
 }
 
 function postContentViewed(pageData, containerData, locationData, groupSettings) {
@@ -62,6 +98,9 @@ function postContentViewed(pageData, containerData, locationData, groupSettings)
     event[attributes.contentId] = locationData.contentId;
     event[attributes.contentLocation] = locationData.location;
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.contentWithReactionFind);
+    emitEvent(customEvent);
 }
 
 function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
@@ -70,6 +109,9 @@ function postCommentsViewed(pageData, containerData, reactionData, groupSettings
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.commentView);
+    emitEvent(customEvent);
 }
 
 function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
@@ -78,6 +120,9 @@ function postCommentCreated(pageData, containerData, reactionData, comment, grou
     appendContainerDataParams(event, containerData);
     appendReactionDataParams(event, reactionData);
     postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.commentCreate);
+    emitEvent(customEvent);
 }
 
 function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
@@ -98,10 +143,65 @@ function postContentRecVisible(pageData, groupSettings) {
     postEvent(event);
 }
 
-function postContentRecClicked(pageData, targetUrl, groupSettings) {
+function postContentRecClicked(pageData, targetUrl, contentId, groupSettings) {
     var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
+    event[attributes.contentId] = contentId;
     appendPageDataParams(event, pageData);
     postEvent(event, true);
+}
+
+function createContentRecClickedEvent(pageData, targetUrl, contentId, groupSettings) {
+    var event = createEvent(eventTypes.contentRecClicked, targetUrl, groupSettings);
+    event[attributes.contentId] = contentId;
+    appendPageDataParams(event, pageData);
+    return event;
+}
+
+function postReadMoreLoaded(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreLoaded, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.readMoreLoad);
+    emitEvent(customEvent);
+}
+
+function postReadMoreVisible(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreVisible, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.readMoreView);
+    emitEvent(customEvent);
+}
+
+function postReadMoreClicked(pageData, groupSettings) {
+    var event = createEvent(eventTypes.readMoreClicked, '', groupSettings);
+    appendPageDataParams(event, pageData);
+    postEvent(event);
+
+    var customEvent = createCustomEvent(emitEventTypes.readMoreClick);
+    emitEvent(customEvent);
+}
+
+function postFacebookLoginStart(groupSettings) {
+    var event = createEvent(eventTypes.facebookLoginAttempt, eventValues.start, groupSettings);
+    postEvent(event);
+}
+
+function postFacebookLoginFail(groupSettings) {
+    var event = createEvent(eventTypes.facebookLoginAttempt, eventValues.fail, groupSettings);
+    postEvent(event);
+}
+
+function postAntennaLoginStart(groupSettings) {
+    var event = createEvent(eventTypes.antennaLoginAttempt, eventValues.start, groupSettings);
+    postEvent(event);
+}
+
+function postAntennaLoginFail(groupSettings) {
+    var event = createEvent(eventTypes.antennaLoginAttempt, eventValues.fail, groupSettings);
+    postEvent(event);
 }
 
 function appendPageDataParams(event, pageData) {
@@ -135,30 +235,53 @@ function createEvent(eventType, eventValue, groupSettings) {
     event[attributes.eventType] = eventType;
     event[attributes.eventValue] = eventValue;
     event[attributes.groupId] = groupSettings.groupId();
-    event[attributes.shortTermSession] = getShortTermSessionId();
-    event[attributes.longTermSession] = getLongTermSessionId();
+    event[attributes.shortTermSession] = SessionData.getShortTermSession();
+    event[attributes.longTermSession] = SessionData.getLongTermSession();
     event[attributes.referrerUrl] = referrerDomain;
     event[attributes.isTouchBrowser] = BrowserMetrics.supportsTouch();
     event[attributes.screenWidth] = screen.width;
     event[attributes.screenHeight] = screen.height;
     event[attributes.pixelDensity] = window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth); // TODO: review this engage_full code, which doesn't seem correct
     event[attributes.userAgent] = navigator.userAgent;
+    var segment = Segment.getSegment(groupSettings);
+    if (segment) {
+        event[attributes.contentAttributes] = segment;
+    }
     return event;
 }
 
 function postEvent(event, sendAsTrackingEvent) {
-    User.cachedUser(function(userInfo) { // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
-        if (userInfo) {
-            event[attributes.userId] = userInfo.user_id;
-        }
-        fillInMissingProperties(event);
-        // Send the event to BigQuery
-        if (sendAsTrackingEvent) {
-            AjaxClient.postTrackingEvent(event);
-        } else {
-            AjaxClient.postEvent(event);
-        }
-    });
+    var userInfo = User.cachedUser(); // We don't want to create users just for events (e.g. every script load), but add user info if we have it already.
+    if (userInfo) {
+        event[attributes.userId] = userInfo.user_id;
+    }
+    fillInMissingProperties(event);
+    // Send the event to BigQuery
+    if (sendAsTrackingEvent) {
+        AjaxClient.postTrackingEvent(event);
+    } else {
+        AjaxClient.postEvent(event);
+    }
+}
+
+function createCustomEvent(eventType, eventDetail) {
+    eventDetail = eventDetail || {};
+    eventDetail.userId = SessionData.getLongTermSession();
+
+    var customEvent;
+    if (typeof window.CustomEvent === "function" ) {
+        customEvent = new CustomEvent(eventType, { detail: eventDetail });
+    } else {
+        // Deprecated API for backwards compatibility + IE
+        customEvent = document.createEvent('CustomEvent');
+        customEvent.initCustomEvent(eventType, true, true, eventDetail);
+    }
+    Logging.debugMessage('Emitting event. type: ' + eventType + ' detail: ' + JSON.stringify(eventDetail));
+    return customEvent;
+}
+
+function emitEvent(customEvent) {
+    document.dispatchEvent(customEvent);
 }
 
 // Fill in any optional properties with null values.
@@ -168,53 +291,6 @@ function fillInMissingProperties(event) {
             event[attributes[attr]] = null;
         }
     }
-}
-
-function getLongTermSessionId() {
-    var guid = localStorage.getItem('ant_lts');
-    if (!guid) {
-        guid = createGuid();
-        try {
-            localStorage.setItem('ant_lts', guid);
-        } catch(error) {
-            // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-            // Nothing we can do about it. Just fall through and return the value we generated.
-        }
-    }
-    return guid;
-}
-
-function getShortTermSessionId() {
-    var session;
-    var json = localStorage.getItem('ant_sts');
-    if (json) {
-        session = JSON.parse(json);
-        if (Date.now() > session.expires) {
-            session = null;
-        }
-    }
-    if (!session) {
-        var minutes = 15;
-        session = {
-            guid: createGuid(),
-            expires: Date.now() + minutes * 60000
-        };
-    }
-    try {
-        localStorage.setItem('ant_sts', JSON.stringify(session));
-    } catch(error) {
-        // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-        // Nothing we can do about it. Just fall through and return the value we generated.
-    }
-    return session.guid;
-}
-
-function createGuid() {
-    // Code copied from engage_full (originally, http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript)
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
 }
 
 var attributes = {
@@ -258,7 +334,12 @@ var eventTypes = {
     recircClicked: 'rc',
     contentRecLoaded: 'crl',
     contentRecVisible: 'crv',
-    contentRecClicked: 'crc'
+    contentRecClicked: 'crc',
+    readMoreLoaded: 'rml',
+    readMoreVisible: 'rmv',
+    readMoreClicked: 'rmc',
+    facebookLoginAttempt: 'login attempt facebook',
+    antennaLoginAttempt: 'login attempt antenna'
 };
 
 var eventValues = {
@@ -269,7 +350,22 @@ var eventValues = {
     singlePage: 'si',
     multiplePages: 'mu',
     viewReactions: 'vw',
-    viewDefaults: 'ad'
+    viewDefaults: 'ad',
+    start: 'start',
+    fail: 'fail'
+};
+
+var emitEventTypes = {
+    reactionView: 'antenna.reactionView',
+    reactionCreate: 'antenna.reactionCreate',
+    reactionShare: 'antenna.reactionShare',
+    contentWithReactionView: 'antenna.contentWithReactionView',
+    contentWithReactionFind: 'antenna.contentWithReactionFind',
+    commentView: 'antenna.commentView',
+    commentCreate: 'antenna.commentCreate',
+    readMoreLoad: 'antenna.readMoreLoad',
+    readMoreView: 'antenna.readMoreView',
+    readMoreClick: 'antenna.readMoreClick'
 };
 
 //noinspection JSUnresolvedVariable
@@ -287,5 +383,13 @@ module.exports = {
     postLegacyRecircClicked: postLegacyRecircClicked,
     postContentRecLoaded: postContentRecLoaded,
     postContentRecVisible: postContentRecVisible,
-    postContentRecClicked: postContentRecClicked
+    postContentRecClicked: postContentRecClicked,
+    createContentRecClickedEvent: createContentRecClickedEvent,
+    postReadMoreLoaded: postReadMoreLoaded,
+    postReadMoreVisible: postReadMoreVisible,
+    postReadMoreClicked: postReadMoreClicked,
+    postFacebookLoginStart: postFacebookLoginStart,
+    postFacebookLoginFail: postFacebookLoginFail,
+    postAntennaLoginStart: postAntennaLoginStart,
+    postAntennaLoginFail: postAntennaLoginFail
 };

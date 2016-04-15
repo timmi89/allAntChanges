@@ -1,4 +1,5 @@
 var URLConstants = require('./url-constants');
+var URLParams = require('./url-params');
 
 function computeCurrentScriptSrc() {
     if (document.currentScript) {
@@ -24,7 +25,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    offline: currentScriptSrc.indexOf(URLConstants.DEV_ANTENNA) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA) !== -1,
-    test: currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA) !== -1,
-    debug: currentScriptSrc.indexOf('?debug') !== -1
+    offline: currentScriptSrc.indexOf(URLConstants.DEV_ANTENNA_URL) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA_URL) !== -1,
+    test: currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA_URL) !== -1,
+    debug: URLParams.getUrlParam('antennaDebug') === 'true'
 };

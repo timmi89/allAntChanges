@@ -1,6 +1,9 @@
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var BrowserMetrics = require('./utils/browser-metrics');
+var JSONUtils = require('./utils/json-utils');
 var Messages = require('./utils/messages');
 var ThrottledEvents = require('./utils/throttled-events');
+var URLs = require('./utils/urls');
 
 var ContentRecLoader = require('./content-rec-loader');
 var Events = require('./events');
@@ -12,7 +15,9 @@ function createContentRec(pageData, groupSettings) {
     // We can't really request content until the full page data is loaded (because we need to know the server-side computed
     // canonical URL), but we can start prefetching the content pool for the group.
     ContentRecLoader.prefetchIfNeeded(groupSettings);
-    var numEntries = 2;
+    var numEntries = BrowserMetrics.isMobile() ? groupSettings.contentRecCountMobile() : groupSettings.contentRecCountDesktop();
+    var numEntriesPerRow = BrowserMetrics.isMobile() ? groupSettings.contentRecRowCountMobile() : groupSettings.contentRecRowCountDesktop();
+    var entryWidth = Math.floor(100/numEntriesPerRow) + '%';
     var contentData = { entries: undefined }; // Need to stub out the data so Ractive can bind to it
     var ractive = Ractive({
         el: contentRecContainer,
@@ -23,17 +28,19 @@ function createContentRec(pageData, groupSettings) {
             pageData: pageData,
             contentData: contentData,
             populateContentEntries: populateContentEntries(numEntries, contentData, pageData, groupSettings),
-            colors: pickColors(numEntries, groupSettings)
+            colors: pickColors(numEntries, groupSettings),
+            isMobile: BrowserMetrics.isMobile(),
+            entryWidth: entryWidth,
+            computeEntryUrl: computeEntryUrl
         },
         template: require('../templates/content-rec-widget.hbs.html'),
         partials: {
             logo: SVGs.logo
         },
         decorators: {
-            'rendertext': renderText
+            renderText: renderText
         }
     });
-    ractive.on('navigate', handleNavigate);
     setupVisibilityHandler();
 
     return {
@@ -41,9 +48,11 @@ function createContentRec(pageData, groupSettings) {
         teardown: function() { ractive.teardown(); }
     };
 
-    function handleNavigate(ractiveEvent) {
-        var targetUrl = ractiveEvent.context.page.url;
-        Events.postContentRecClicked(pageData, targetUrl, groupSettings);
+    function computeEntryUrl(contentEntry) {
+        var targetUrl = contentEntry.page.url;
+        var contentId = contentEntry.content.id;
+        var event = Events.createContentRecClickedEvent(pageData, targetUrl, contentId, groupSettings);
+        return URLs.computeContentRecUrl(targetUrl, event);
     }
 
     function setupVisibilityHandler() {
@@ -142,10 +151,10 @@ function renderText(node) {
 
     function applyBolding(text) {
         var boldStartPoint = Math.floor(text.length * .25);
-        var boldEndPoint = Math.floor(text.length *.66);
+        var boldEndPoint = Math.floor(text.length *.8);
         var matches = text.substring(boldStartPoint, boldEndPoint).match(/,|\.|\?|"/gi);
         if (matches) {
-            var boldPoint = text.lastIndexOf(matches[matches.length - 1], boldEndPoint);
+            var boldPoint = text.lastIndexOf(matches[matches.length - 1], boldEndPoint) + 1;
             text = '<strong>' + text.substring(0, boldPoint) + '</strong>' + text.substring(boldPoint);
         }
         return text;
@@ -153,20 +162,37 @@ function renderText(node) {
 }
 
 function pickColors(count, groupSettings) {
-    var colorPallete = [ // TODO: get this from groupsettings
-        { background: '#41e7d0', foreground: '#FFFFFF' },
-        { background: '#86bbfd', foreground: '#FFFFFF' },
-        { background: '#FF6666', foreground: '#FFFFFF' }
-        // { background: '#979797', foreground: '#FFFFFF' }
-    ];
-    var colors = shuffleArray(colorPallete); // shuffleArray(groupSettings.whatever())
-    if (count < colors.length) {
-        return colors.slice(0, count);
+    var colorPallete = [];
+    var colorData = groupSettings.contentRecColors();
+    if (colorData) {
+        var colorPairs = colorData.split(';');
+        for (var i = 0; i < colorPairs.length; i++) {
+            var colors = colorPairs[i].split('/');
+            if (colors.length === 2) {
+                colorPallete.push({ background: colors[0], foreground: colors[1] });
+            }
+        }
+    }
+    if (colorPallete.length === 0) {
+        colorPallete.push({ background: '#000000', foreground: '#FFFFFF' });
+    }
+    if (count < colorPallete.length) {
+        return shuffleArray(colorPallete).slice(0, count);
     } else { // If we're asking for more colors than we have, just repeat the same colors as necessary.
         var output = [];
+        var chosenIndex;
         for (var i = 0; i < count; i++) {
-            output.push(colors[i%colors.length]);
+            chosenIndex = randomIndex(chosenIndex);
+            output.push(colorPallete[chosenIndex]);
         }
+        return output;
+    }
+
+    function randomIndex(avoid) {
+        do {
+            var picked = Math.floor(Math.random() * colorPallete.length);
+        } while (picked === avoid && colorPallete.length > 1);
+        return picked;
     }
 }
 

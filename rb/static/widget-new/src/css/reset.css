@@ -6,6 +6,8 @@
     border-collapse: collapse;
     border-spacing: 0;
     box-sizing: border-box;
+    min-height: initial;
+    min-width: initial;
     word-wrap: initial;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     font-style: normal;
@@ -17,6 +19,7 @@
     text-decoration: none;
     line-height: 1em;
     transition: initial;
+    position: initial;
     overflow: visible;
     -ms-overflow-style: none; /* Tell IE to never show their ugly element scroll bars */
 }

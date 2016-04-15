@@ -4,6 +4,7 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
+var Segment = require('./utils/segment');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
@@ -14,6 +15,7 @@ var HashedElements = require('./hashed-elements');
 var MediaIndicatorWidget = require('./media-indicator-widget');
 var PageData = require('./page-data');
 var PageDataLoader = require('./page-data-loader');
+var ReadMoreEvents = require('./readmore-events');
 var SummaryWidget = require('./summary-widget');
 var TextIndicatorWidget = require('./text-indicator-widget');
 var TextReactions = require('./text-reactions');
@@ -57,6 +59,7 @@ function scanPage($page, groupSettings, isMultiPage) {
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
     scanForSummaries($page, pageData, groupSettings); // Summary widget may be on the page, but outside the active section
+    scanForReadMore($page, pageData, groupSettings);
     scanForContentRec($page, pageData, groupSettings);
     $activeSections.each(function() {
         var $section = $(this);
@@ -108,8 +111,13 @@ function scanForSummaries($element, pageData, groupSettings) {
     });
 }
 
+function scanForReadMore($element, pageData, groupSettings) {
+    ReadMoreEvents.setupReadMoreEvents($element.get(0), pageData, groupSettings);
+}
+
 function scanForContentRec($element, pageData, groupSettings) {
-    if (groupSettings.isShowContentRec() && BrowserMetrics.isMobile()) {
+    if (groupSettings.isShowContentRec() &&
+            (BrowserMetrics.isMobile() || AppMode.debug)) {
         var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
         for (var i = 0; i < $contentRecLocations.length; i++) {
             var contentRecLocation = $contentRecLocations[i];
@@ -268,6 +276,12 @@ function scanText($textElement, pageData, groupSettings) {
                 excludeNode: $indicatorElement.get(0)
             });
             createdWidgets.push(textReactions);
+
+            MutationObserver.addOneTimeElementRemovalListener($textElement.get(0), function() {
+                HashedElements.removeElement(hash, pageData.pageHash, $textElement);
+                textIndicator.teardown();
+                textReactions.teardown();
+            });
         }
     }
 
@@ -344,6 +358,11 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
                     }
                 );
                 createdWidgets.push(indicator);
+
+                MutationObserver.addOneTimeElementRemovalListener($mediaElement.get(0), function() {
+                    HashedElements.removeElement(hash, pageData.pageHash, $mediaElement);
+                    indicator.teardown();
+                });
             }
         }
     }
@@ -513,12 +532,16 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     var pageData = PageData.getPageDataByURL(url);
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
+                    scanForReadMore($element, pageData, groupSettings);
+                    scanForContentRec($element, pageData, groupSettings);
                     // Next, see if any entire active sections were added
-                    var $activeSections = find($element, groupSettings.activeSections());
+                    var $activeSections = find($element, groupSettings.activeSections(), true);
                     if ($activeSections.length > 0) {
                         $activeSections.each(function () {
-                            createAutoCallsToAction($(this), pageData, groupSettings);
+                            var $section = $(this);
+                            createAutoCallsToAction($section, pageData, groupSettings);
                         });
+                        scanForCallsToAction($element, pageData, groupSettings);
                         $activeSections.each(function () {
                             var $section = $(this);
                             scanActiveElement($section, pageData, groupSettings);
@@ -528,6 +551,7 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                         var $activeSection = $element.closest(groupSettings.activeSections());
                         if ($activeSection.length > 0) {
                             createAutoCallsToAction($element, pageData, groupSettings);
+                            scanForCallsToAction($element, pageData, groupSettings);
                             scanActiveElement($element, pageData, groupSettings);
                         } else {
                             // If the element is added outside an active section, just check it for CTAs
