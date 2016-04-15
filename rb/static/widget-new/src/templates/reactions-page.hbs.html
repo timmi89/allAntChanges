@@ -13,7 +13,7 @@
                         <div class="antenna-plusone">
                             +1
                         </div>
-                        {{#if isSummary}}
+                        {{#if isSummary && this.count}}
                             <div on-tap="showlocations" class="antenna-reaction-location">
                                 {{>locationIcon}}
                             </div>
