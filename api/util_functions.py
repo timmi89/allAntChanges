@@ -564,7 +564,7 @@ def getRecommendedContent(group_id):
     for node in InteractionNode.objects.filter(id__in=top_node_ids).values('id','body'):
         node_dict[node['id']] = node
     page_dict = {}
-    for page in Page.objects.filter(id__in=page_ids).values('id','title'):
+    for page in Page.objects.filter(id__in=page_ids).values('id','title','image'):
         page_dict[page['id']] = page
     page_reaction_counts = {}
     for page_id in page_ids:
@@ -588,7 +588,8 @@ def getRecommendedContent(group_id):
                     },
                     'page': {
                         'url': content_entry['url'],
-                        'title': page_dict[page_id]['title']
+                        'title': page_dict[page_id]['title'],
+                        'image': page_dict[page_id].get('image')
                     },
                     'reaction_count': page_reaction_counts[page_id],
                     'top_reaction': {
