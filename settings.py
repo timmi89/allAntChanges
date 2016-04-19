@@ -178,10 +178,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.99.122',
+            'HOST':     '104.154.19.86',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': './db/master.key',
+                    'cert': './db/master.cert',
+                    'ca': './db/master.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -195,10 +200,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.245.89',
+            'HOST':     '146.148.101.140',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': './db/replica.key',
+                    'cert': './db/replica.cert',
+                    'ca': './db/replica.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -212,10 +222,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.4.119',
+            'HOST':     '146.148.101.140',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': './db/replica.key',
+                    'cert': './db/replica.cert',
+                    'ca': './db/replica.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
