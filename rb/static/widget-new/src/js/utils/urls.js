@@ -27,7 +27,7 @@ function getFetchContentBodiesUrl() {
 }
 
 function getFetchContentRecommendationUrl() {
-    return '/api/contentrec';
+    return '/api/contentrec/';
 }
 
 function getShareReactionUrl() {
@@ -35,7 +35,7 @@ function getShareReactionUrl() {
 }
 
 function getCreateTempUserUrl() {
-    return '/api/tempuser';
+    return '/api/tempuser/';
 }
 
 function getShareWindowUrl() {

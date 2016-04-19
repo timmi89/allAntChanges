@@ -5,6 +5,7 @@
     border: 0;
     border-collapse: collapse;
     border-spacing: 0;
+    border-radius: initial;
     box-sizing: border-box;
     min-height: initial;
     min-width: initial;

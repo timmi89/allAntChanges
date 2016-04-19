@@ -147,7 +147,6 @@ function commentSuccess(reactionData, containerData, pageData, callback) {
 
 function plusOneSuccess(reactionData, containerData, pageData, callback) {
     return function(response) {
-        // TODO: Do we care about response.existing anymore (we used to show different feedback in the UI, but no longer...)
         var reactionCreated = !response.existing;
         if (reactionCreated) {
             // TODO: we should get back a response with data in the "new format" and update the model from the response
@@ -158,7 +157,7 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
                 return b.count - a.count;
             });
         }
-        callback(reactionData);
+        callback(reactionData, response.existing);
     }
 }
 

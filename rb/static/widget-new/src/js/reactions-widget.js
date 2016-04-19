@@ -6,6 +6,7 @@ var Messages = require('./utils/messages');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
+var Segment = require('./utils/segment');
 var TouchSupport = require('./utils/touch-support');
 var TransitionUtil = require('./utils/transition-util');
 var User = require('./utils/user');
@@ -103,14 +104,26 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showReactions(animate) {
+        var includeDefaults = Segment.isOnePage(groupSettings);
+        if (includeDefaults && containerElement && !contentData.location && !contentData.body) {
+            Range.grabNode(containerElement.get(0), function (text, location) {
+                contentData.location = location;
+                contentData.body = text;
+            });
+        }
         var options = {
             isSummary: isSummary,
             reactionsData: reactionsData,
+            defaultReactions: defaultReactions,
+            includeDefaults: includeDefaults,
             pageData: pageData,
             groupSettings: groupSettings,
             containerData: containerData,
+            contentData: contentData,
             containerElement: containerElement,
             showConfirmation: showConfirmation,
+            showPendingApproval: showPendingApproval,
+            showProgress: showProgressPage,
             showDefaults: function() { showDefaultReactionsPage(true) },
             showComments: showComments,
             showLocations: showLocations,

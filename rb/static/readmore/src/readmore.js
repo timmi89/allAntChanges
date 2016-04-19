@@ -1,7 +1,7 @@
 (function() {
 
     function fetchGroupSettings(callback) {
-        fetchJSONP('/api/settings', {}, function(json) {
+        fetchJSONP('/api/settings/', {}, function(json) {
             var groupSettings = GroupSettings.create(json);
             callback(groupSettings);
         });
