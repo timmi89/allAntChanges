@@ -39,6 +39,4 @@ rb/static/widget-new/antenna.min.js
 rb/static/widget-new/debug/temp.css
 rb/static/widget-new/debug/reset_temp.css
 rb/static/widget-new/antenna.css
-rb/static/widget-new/ant_user.min.js
-rb/static/widget-new/xdm.html
-rb/static/widget-new/fb_login.html
+rb/static/widget-new/xdm-new.html

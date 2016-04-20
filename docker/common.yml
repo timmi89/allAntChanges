@@ -10,8 +10,8 @@ python_environment:
     RABBITMQ_HOST: 'rabbitmq'
     ANTENNA_URL: 'http://antenna.docker'
     ANTENNA_STATIC_URL: 'http://antenna-static.docker'
-    ANTENNA_STATIC_HOST: 'static:8081'
-    EVENTS_URL: 'http://events.docker'
+    ANTENNA_INTERNAL_STATIC_URL: 'http://static:8081'
+    EVENTS_URL: 'http://nodebq.docker'
     VIRTUAL_ENV: '/code/antenna/virtualenvs/docker'
     PYTHONPATH: '/code'
     PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
@@ -29,7 +29,6 @@ node_environment:
     RABBITMQ_HOST: 'rabbitmq'
     ANTENNA_URL: 'http://antenna.docker'
     ANTENNA_STATIC_URL: 'http://antenna-static.docker'
-    ANTENNA_INTERNAL_STATIC_URL: 'http://static:8081'
     EVENTS_URL: 'http://events.docker'
     PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
   volumes:

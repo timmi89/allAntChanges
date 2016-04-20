@@ -5,7 +5,7 @@ web-pycharm:
   build: docker/pycharm_development
   environment:
     VIRTUAL_HOST: antenna.docker
-    VIRTUAL_PORT: 80881
+    VIRTUAL_PORT: 8081
   ports:
     - "8081:8081"
     - "2222:22"
@@ -13,6 +13,7 @@ web-pycharm:
     - db
     - memcached
     - rabbitmq
+    - static
 static:
   extends:
     file: ./docker/common.yml
