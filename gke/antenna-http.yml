@@ -72,17 +72,6 @@ spec:
               value: /secrets/slave1-client-cert.pem
             - name: DATABASE_SSL_SLAVE1_SERVER_CA
               value: /secrets/slave1-server-ca.pem
-            - name: DATABASE_HOST_SLAVE2
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-ssl-secret
-                  key: database-host-slave2
-            - name: DATABASE_SSL_SLAVE2_CLIENT_KEY
-              value: /secrets/slave1-client-key.pem
-            - name: DATABASE_SSL_SLAVE2_CLIENT_CERT
-              value: /secrets/slave1-client-cert.pem
-            - name: DATABASE_SSL_SLAVE2_SERVER_CA
-              value: /secrets/slave1-server-ca.pem
             - name: MEMCACHED_HOST_DEFAULT
               value: memcached-default
             - name: MEMCACHED_HOST_REDUNDANT
