@@ -104,7 +104,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showReactions(animate) {
-        var includeDefaults = Segment.isOnePage(groupSettings);
+        var includeDefaults = true;//Segment.isOnePage(groupSettings);
         if (includeDefaults && containerElement && !contentData.location && !contentData.body) {
             Range.grabNode(containerElement.get(0), function (text, location) {
                 contentData.location = location;

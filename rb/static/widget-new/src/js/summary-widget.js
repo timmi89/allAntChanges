@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var BrowserMetrics = require('./utils/browser-metrics');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var Segment = require('./utils/segment');
 var TouchSupport = require('./utils/touch-support');
 
 var ReactionsWidget = require('./reactions-widget');
@@ -55,7 +56,7 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
 }
 
 function shouldUseExpandedSummary(groupSettings) {
-    return groupSettings.isExpandedMobileSummary() && BrowserMetrics.isMobile();
+    return BrowserMetrics.isMobile() && (groupSettings.isExpandedMobileSummary() || Segment.isExpandedSummarySegment(groupSettings));
 }
 
 function computeExpandedReactions(groupSettings) {

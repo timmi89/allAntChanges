@@ -10,19 +10,19 @@ function getSegment(groupSettings) {
 }
 
 function computeSegment(groupSettings) {
-    var segments = [ '2p', '1p' ];
-    if (groupSettings.groupId() === 3714) {
-        segments = [ '250', '400', '700' ];
-    }
+    var segments = [ 'sw', 'xsw' ];
     var segmentOverride = UrlParams.getUrlParam('antennaSegment');
     if (segmentOverride) {
         storeSegment(segmentOverride);
         return segmentOverride;
     }
-    var segment = readSegment();
-    if (!segment && groupSettings.groupId() === 3714 || groupSettings.groupId() === 2 || groupSettings.groupId() === 2504 || groupSettings.groupId() === 2471) {
-        segment = createSegment(groupSettings);
-        segment = storeSegment(segment);
+    var segment;
+    if (isSegmentGroup()) {
+        segment = readSegment();
+        if (!segment) {
+            segment = createSegment(groupSettings);
+            segment = storeSegment(segment);
+        }
     }
     return segment;
 
@@ -52,13 +52,24 @@ function computeSegment(groupSettings) {
         }
         return segment;
     }
+
+    function isSegmentGroup() {
+        var groupName = groupSettings.groupName();
+        var testGroups = [ 'bustle.com', 'local.antenna.is:8081' ];
+        for (var i = 0; i < testGroups.length; i++) {
+            if (testGroups[i] === groupName) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
-function isInOnePageSegment(groupSettings) {
-    return getSegment(groupSettings) === '1p';
+function isExpandedSummarySegment(groupSettings) {
+    return getSegment(groupSettings) === 'xsw';
 }
 
 module.exports = {
     getSegment: getSegment,
-    isOnePage: isInOnePageSegment
+    isExpandedSummarySegment: isExpandedSummarySegment
 };
