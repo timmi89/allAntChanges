@@ -2,9 +2,9 @@
     <div class="antenna-body">
         {{#if reactions}}
             {{#reactions:index}}
-                <div on-tap="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index)}}">
+                <div on-tap="react" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index)}}">
                     <div class="antenna-reaction-box">
-                        <div class="antenna-reaction-text" decorator="sizetofit">
+                        <div class="antenna-reaction-text {{^this.count}}antenna-reaction-zero{{/this.count}}" decorator="sizetofit">
                             {{ this.text }}
                         </div>
                         <div class="antenna-reaction-count">
@@ -13,7 +13,7 @@
                         <div class="antenna-plusone">
                             +1
                         </div>
-                        {{#if isSummary}}
+                        {{#if isSummary && this.count}}
                             <div on-tap="showlocations" class="antenna-reaction-location">
                                 {{>locationIcon}}
                             </div>
@@ -23,12 +23,6 @@
                                     {{>commentsIcon}}
                                     {{this.commentCount}}
                                 </div>
-                            {{else}}
-                                {{#if !hideCommentInput}}
-                                    <div class="antenna-reaction-comments">
-                                        {{>commentsIcon}}
-                                    </div>
-                                {{/if}}
                             {{/if}}
                         {{/if}}
                     </div>
@@ -36,12 +30,22 @@
             {{/reactions:index}}
         {{/if}}
     </div>
-    <div class="antenna-footer antenna-reactions-footer">
-        {{#if reactions}}
-            <div on-tap="showdefault" class="antenna-think">{{getMessage('reactions_page__think')}}</div>
-        {{else}}
-            <div class="antenna-no-reactions">{{getMessage('reactions_page__no_reactions')}}</div>
-        {{/if}}
-        <div class="antenna-text-logo"><a href="//www.antenna.is" target="_blank">Antenna</a></div>
-    </div>
+    {{#if includeDefaults}}
+        <div class="antenna-footer antenna-defaults-footer">
+            <div class="antenna-custom-area">
+                <input on-focus="customfocus" on-keydown="inputkeydown" on-blur="customblur" value="{{getMessage('defaults_page__add')}}" maxlength="25">
+                <button on-tap="newcustom">{{getMessage('defaults_page__ok')}}</button>
+            </div>
+            <div class="antenna-text-logo"><a href="//www.antenna.is">Antenna</a></div>
+        </div>
+    {{else}}
+        <div class="antenna-footer antenna-reactions-footer">
+            {{#if reactions}}
+                <div on-tap="showdefault" class="antenna-think">{{getMessage('reactions_page__think')}}</div>
+            {{else}}
+                <div class="antenna-no-reactions">{{getMessage('reactions_page__no_reactions')}}</div>
+            {{/if}}
+            <div class="antenna-text-logo"><a href="//www.antenna.is" target="_blank">Antenna</a></div>
+        </div>
+    {{/if}}
 </div>

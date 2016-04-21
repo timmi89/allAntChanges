@@ -69,7 +69,7 @@ if DEBUG:
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -85,7 +85,7 @@ if DEBUG:
             }
         },
         'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -101,7 +101,7 @@ if DEBUG:
             }
         },
         'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -169,19 +169,25 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    EVENTS_URL = 'http://events.antenna.is'
+    EVENTS_URL = 'https://events.antenna.is'
     DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.99.122',
+            'HOST':     '104.197.217.109',
             'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
+            'CONN_MAX_AGE':  None,
             'OPTIONS': {
+                'sa_pool_key': 'readrboard-master',
+                'ssl': {
+                    'key': '/home/broadcaster/antenna/db/master.key',
+                    'cert': '/home/broadcaster/antenna/db/master.cert',
+                    'ca': '/home/broadcaster/antenna/db/master.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -191,14 +197,20 @@ else:
             }
         },
         'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.245.89',
+            'HOST':     '104.197.50.126',
             'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
+            'CONN_MAX_AGE':  None,
             'OPTIONS': {
+                'sa_pool_key': 'readrboard-replica',
+                'ssl': {
+                    'key': '/home/broadcaster/antenna/db/replica.key',
+                    'cert': '/home/broadcaster/antenna/db/replica.cert',
+                    'ca': '/home/broadcaster/antenna/db/replica.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -208,14 +220,20 @@ else:
             }
         },
         'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.4.119',
+            'HOST':     '130.211.158.192',
             'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
+            'CONN_MAX_AGE':  None,
             'OPTIONS': {
+                'sa_pool_key': 'readrboard-replica',
+                'ssl': {
+                    'key': '/home/broadcaster/antenna/db/replica2.key',
+                    'cert': '/home/broadcaster/antenna/db/replica2.cert',
+                    'ca': '/home/broadcaster/antenna/db/replica2.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -372,7 +390,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'south',
+    # 'south',
     'api',
     'rb',
     'chronos',

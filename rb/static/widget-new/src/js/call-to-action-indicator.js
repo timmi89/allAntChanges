@@ -57,7 +57,7 @@ function createIndicatorWidget(options) {
 
     if ($ctaExpandedReactions) {
         for (var i = 0; i < $ctaExpandedReactions.length; i++) {
-            createdWidgets.push(CallToActionExpandedReactions.create($ctaExpandedReactions[i], $ctaElement, containerData, groupSettings));
+            createdWidgets.push(CallToActionExpandedReactions.create($ctaExpandedReactions[i], $containerElement, containerData, groupSettings));
         }
     }
 

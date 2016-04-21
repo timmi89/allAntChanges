@@ -471,6 +471,10 @@
                 {{ form.ignore_subdomain }}{{ form.ignore_subdomain.errors }}
                 <label for="id_ignore_subdomain"><span class="labelTitle">Ignore Site Subdomain? </span><span>Check this if you want Antenna to see all subdomains -- www.yoursite.com, m.yoursite.com, etc -- as the same site with the same content.</span></label>
             </div>
+            <div class="formRow" style="margin: 10px 0;">
+                {{ form.media_url_ignore_query }}{{ form.media_url_ignore_query.errors }}
+                <label for="id_media_url_ignore_query"><span class="labelTitle">Ignore Media Query URL? </span><span>Check this if you want Antenna to ignore the query parameter of media URLs.</span></label>
+            </div>
             <div class="formRow tld_options {% if group.show_recirc == True %}visible{% endif %}">
                 <label for="id_page_tld">
                     <span class="labelTitle">Page Domain</span>

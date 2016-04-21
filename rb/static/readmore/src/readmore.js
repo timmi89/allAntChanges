@@ -1,14 +1,14 @@
 (function() {
 
     function fetchGroupSettings(callback) {
-        fetchJSONP('/api/settings', {}, function(json) {
+        fetchJSONP('/api/settings/', {}, function(json) {
             var groupSettings = GroupSettings.create(json);
             callback(groupSettings);
         });
     }
 
     function groupSettingsLoaded(groupSettings) {
-        if (SessionData.isInReadMoreSegment(groupSettings) && groupSettings.showReadMore()) {
+        if (groupSettings.showReadMore()) {
             insertReadMore(groupSettings);
             insertCustomCSS(groupSettings);
         }
@@ -101,49 +101,6 @@
             }
         });
     }
-
-    var SessionData = (function() {
-
-        function isInReadMoreSegment(groupSettings) {
-            var segment = getSegment(groupSettings);
-            return segment === 'rm' || segment === 'rm_cr';
-        }
-
-        function getSegment(groupSettings) {
-            var segmentOverride = Utils.getUrlParams()['antennaSegment'];
-            if (segmentOverride) {
-                storeSegment(segmentOverride);
-                return segmentOverride;
-            }
-            var segment = localStorage.getItem('ant_segment');
-            if (!segment && (groupSettings.groupId() === 3714 || groupSettings.groupId() === 2)) {
-                segment = createSegment(groupSettings);
-                segment = storeSegment(segment);
-            }
-            return segment;
-        }
-
-        function createSegment(groupSettings) {
-            // TODO: let group settings control the segments
-            var segments = [ 'ao', 'rm', 'rm_cr' ];
-            return segments[Math.floor(Math.random() * 3)];
-        }
-
-        function storeSegment(segment) {
-            try {
-                localStorage.setItem('ant_segment', segment);
-            } catch(error) {
-                // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-                // If this happens, fall back to a default value that will at least give us stable behavior.
-                return 'ao';
-            }
-        }
-
-        return {
-            getSegment: getSegment,
-            isInReadMoreSegment: isInReadMoreSegment
-        }
-    })();
 
     // Generic browser utils.
     var Utils = (function() {
@@ -290,7 +247,7 @@
             '    left: 0;\n' +
             '    bottom: 0;\n' +
             '    width: 100%;\n' +
-            '    z-index: 9999999;\n' +
+            '    z-index: 999999;\n' +
             '}\n' +
             '.antenna-readmore-fade {\n' +
             '    height: 100px;\n' +
