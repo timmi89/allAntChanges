@@ -182,7 +182,7 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  None,
             'OPTIONS': {
-                'sa_pool_key': 'readrboard',
+                'sa_pool_key': 'readrboard-master',
                 'ssl': {
                     'key': '/home/broadcaster/antenna/db/master.key',
                     'cert': '/home/broadcaster/antenna/db/master.cert',
@@ -205,7 +205,7 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  None,
             'OPTIONS': {
-                'sa_pool_key': 'readrboard',
+                'sa_pool_key': 'readrboard-replica',
                 'ssl': {
                     'key': '/home/broadcaster/antenna/db/replica.key',
                     'cert': '/home/broadcaster/antenna/db/replica.cert',
@@ -228,7 +228,7 @@ else:
             'PORT':     '3306',
             'CONN_MAX_AGE':  None,
             'OPTIONS': {
-                'sa_pool_key': 'readrboard',
+                'sa_pool_key': 'readrboard-replica',
                 'ssl': {
                     'key': '/home/broadcaster/antenna/db/replica2.key',
                     'cert': '/home/broadcaster/antenna/db/replica2.cert',
