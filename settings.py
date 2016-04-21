@@ -178,10 +178,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.99.122',
+            'HOST':     '104.197.217.109',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
+                'ssl': {
+                    'key': '/home/broadcaster/antenna/db/master.key',
+                    'cert': '/home/broadcaster/antenna/db/master.cert',
+                    'ca': '/home/broadcaster/antenna/db/master.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -195,27 +200,15 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.245.89',
+            'HOST':     '104.197.50.126',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'OPTIONS': {
-                'charset': 'utf8',
-                'init_command': '''
-                    SET
-                    default_storage_engine=INNODB,
-                    character_set_connection=utf8
-                '''
-            }
-        },
-        'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '10.240.4.119',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'OPTIONS': {
+                'ssl': {
+                    'key': '/home/broadcaster/antenna/db/replica.key',
+                    'cert': '/home/broadcaster/antenna/db/replica.cert',
+                    'ca': '/home/broadcaster/antenna/db/replica.ca'
+                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
