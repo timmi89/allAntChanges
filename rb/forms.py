@@ -421,6 +421,7 @@ class GroupForm(forms.ModelForm):
             'image_selector',
             'image_attribute',
             'ignore_subdomain',
+            'media_url_ignore_query',
             'page_tld',
             'show_recirc',
             'recirc_selector',

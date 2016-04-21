@@ -1157,9 +1157,9 @@ def manage_groups(request, **kwargs):
     )
 
 
-def gallery(request, example_name):
+def gallery(request, example_name=None):
     if not example_name:
-        example_name="weekly_news"
+        example_name="news_magazine"
 
     cookie_user = checkCookieToken(request)
     context = {

@@ -117,7 +117,6 @@ function scanForReadMore($element, pageData, groupSettings) {
 
 function scanForContentRec($element, pageData, groupSettings) {
     if (groupSettings.isShowContentRec() &&
-            Segment.isInContentRecSegment(groupSettings) &&
             (BrowserMetrics.isMobile() || AppMode.debug)) {
         var $contentRecLocations = find($element, groupSettings.contentRecSelector(), true, true);
         for (var i = 0; i < $contentRecLocations.length; i++) {
