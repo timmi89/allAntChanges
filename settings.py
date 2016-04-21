@@ -69,7 +69,7 @@ if DEBUG:
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -85,7 +85,7 @@ if DEBUG:
             }
         },
         'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -101,7 +101,7 @@ if DEBUG:
             }
         },
         'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -174,7 +174,7 @@ else:
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
@@ -196,7 +196,7 @@ else:
             }
         },
         'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
@@ -218,7 +218,7 @@ else:
             }
         },
         'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
+            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
@@ -387,7 +387,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'south',
+    # 'south',
     'api',
     'rb',
     'chronos',
