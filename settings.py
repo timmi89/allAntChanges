@@ -180,7 +180,6 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '104.197.217.109',
             'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
             'OPTIONS': {
                 'ssl': {
                     'key': '/home/broadcaster/antenna/db/master.key',
@@ -202,7 +201,6 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '104.197.50.126',
             'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
             'OPTIONS': {
                 'ssl': {
                     'key': '/home/broadcaster/antenna/db/replica.key',
