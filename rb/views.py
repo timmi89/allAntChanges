@@ -990,10 +990,13 @@ def click_redirect(request, short):
 
 
 def content_rec_redirect(request):
-    event = json.loads(request.GET['event'])
-    register_event.delay(event)
-    url = request.GET['targetUrl']
-    redirect_response = HttpResponseRedirect(unicode(url))
+    params = request.GET
+    event_param = params.get('event', None)
+    if event_param:
+        event = json.loads(event_param)
+        register_event.delay(event)
+    url_param = params.get('targetURL', BASE_URL)
+    redirect_response = HttpResponseRedirect(unicode(url_param))
     redirect_response['Referer'] = 'www.antenna.is/cr/'
     return redirect_response
 
