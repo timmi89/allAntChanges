@@ -1,5 +1,3 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-
 var Events = require('./events');
 
 var groupSettings;
@@ -101,14 +99,14 @@ function createFromJSON(json) {
         }
     }
 
-    function defaultReactions($element) {
+    function defaultReactions(element) {
         // Default reactions are available in three locations in three data formats:
         // 1. As a comma-separated attribute value on a particular element
         // 2. As an array of strings on the window.antenna_extend property
         // 3. As a json object with a body and id on the group settings
         var reactions = [];
         var reactionStrings;
-        var elementReactions = $element ? $element.attr('ant-reactions') : undefined;
+        var elementReactions = element ? element.getAttribute('ant-reactions') : undefined;
         if (elementReactions) {
             reactionStrings = elementReactions.split(';');
         } else if (window.antenna_extend) {
