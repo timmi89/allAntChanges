@@ -6,7 +6,7 @@ function loadCss() {
     // element that turns off our elements *before* our CSS links. This exploits the cascade rules - our CSS files appear
     // after the inline style in the document, so they take precedence (and make everything appear) once they're loaded.
     injectCss('.antenna{display:none;}');
-    var cssHref = URLs.amazonS3Url() + '/widget-new/antenna.css?v=3';
+    var cssHref = URLs.amazonS3Url() + '/widget-new/antenna.css?v=4';
     if (AppMode.offline) {
         cssHref = URLs.appServerUrl() + '/static/widget-new/antenna.css';
     }

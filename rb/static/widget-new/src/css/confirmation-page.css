@@ -1,18 +1,26 @@
-
-
-.antenna-confirm-reaction {
-    padding: 22px 0;
-    background-color: #eeeeee;
-    color: #666666;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #cccccc;
-    text-align: center;
-    font-weight: 700;
-    font-size: 18px;
+.antenna-confirm-wrapper {
+    display: table;
+    width: 100%;
+    height: 75px;
 }
 
-.antenna-confirm-footer {
-    font-size: 12px;
+.antenna-confirm-reaction {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.antenna-footer.antenna-confirm-footer {
+    display: table;
+    font-size: 11px;
     color: #666666;
     border-top: 1px solid #dddddd;
+}
+
+.antenna-share {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
 }

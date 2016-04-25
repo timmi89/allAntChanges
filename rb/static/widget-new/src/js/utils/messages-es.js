@@ -20,13 +20,6 @@ module.exports = {
 
     'confirmation_page__share': 'Comparte tu reacción:',
 
-    'comments_page__header': '({0}) Comentas:',
-
-    'comment_area__add': 'Comenta',
-    'comment_area__placeholder': 'Añade comentarios o #hashtags',
-    'comment_area__thanks': 'Gracias por tu reacción.',
-    'comment_area__count': 'Quedan <span class="antenna-comment-count"></span> caracteres',
-
     'locations_page__pagelevel': 'A esta página', // TODO: need a translation of "To this whole page"
     'locations_page__count_one': '<span class="antenna-location-count">1</span><br>reacción',
     'locations_page__count_many': '<span class="antenna-location-count">{0}</span><br>reacciones',

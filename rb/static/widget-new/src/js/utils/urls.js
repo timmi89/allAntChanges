@@ -14,14 +14,6 @@ function getCreateReactionUrl() {
     return '/api/tag/create/';
 }
 
-function getCreateCommentUrl() {
-    return '/api/comment/create/';
-}
-
-function getFetchCommentUrl() {
-    return '/api/comment/replies/';
-}
-
 function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
 }
@@ -171,8 +163,6 @@ module.exports = {
     groupSettingsUrl: getGroupSettingsUrl,
     pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,
-    createCommentUrl: getCreateCommentUrl,
-    fetchCommentUrl: getFetchCommentUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     fetchContentRecommendationUrl: getFetchContentRecommendationUrl,
     shareReactionUrl: getShareReactionUrl,

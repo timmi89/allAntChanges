@@ -12,7 +12,6 @@ var User = require('./utils/user');
 var WidgetBucket = require('./utils/widget-bucket');
 
 var BlockedReactionPage = require('./blocked-reaction-page');
-var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var Events = require('./events');
 var GenericErrorPage = require('./generic-error-page');
@@ -110,7 +109,6 @@ function openReactionsWidget(options, elementOrCoords) {
             showConfirmation: showConfirmation,
             showPendingApproval: showPendingApproval,
             showProgress: showProgressPage,
-            showComments: showComments,
             showLocations: showLocations,
             handleReactionError: handleReactionError,
             element: pageContainer(ractive),
@@ -145,40 +143,8 @@ function openReactionsWidget(options, elementOrCoords) {
         showPage('.antenna-progress-page', $rootElement, false, true);
     }
 
-    function showComments(reaction, backPageSelector) {
-        showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
-        var success = function(comments) {
-            var options = {
-                reaction: reaction,
-                comments: comments,
-                element: pageContainer(ractive),
-                goBack: function() {
-                    setWindowTitle(Messages.getMessage('reactions_widget__title'));
-                    goBackToPage(pages, backPageSelector, $rootElement);
-                },
-                containerData: containerData,
-                pageData: pageData,
-                groupSettings: groupSettings
-            };
-            var page = CommentsPage.create(options);
-            pages.push(page);
-
-            // TODO: revisit
-            setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
-                showPage(page.selector, $rootElement, true);
-            }, 1);
-
-            Events.postCommentsViewed(pageData, containerData, reaction, groupSettings);
-        };
-        var error = function(message) {
-            console.log('An error occurred fetching comments: ' + message);
-            showGenericErrorPage(backPageSelector);
-        };
-        AjaxClient.getComments(reaction, groupSettings, success, error);
-    }
-
     function showLocations(reaction, backPageSelector) {
-        showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
+        showProgressPage(); // TODO: provide some way for the user to give up / cancel.
         var reactionLocationData = PageData.getReactionLocationData(reaction, pageData);
         var success = function(locationDetails) {
             PageData.updateReactionLocationData(reactionLocationData, locationDetails);

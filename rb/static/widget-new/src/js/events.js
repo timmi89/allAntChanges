@@ -101,28 +101,6 @@ function postContentViewed(pageData, containerData, locationData, groupSettings)
     emitEvent(customEvent);
 }
 
-function postCommentsViewed(pageData, containerData, reactionData, groupSettings) {
-    var event = createEvent(eventTypes.commentsViewed, '', groupSettings);
-    appendPageDataParams(event, pageData);
-    appendContainerDataParams(event, containerData);
-    appendReactionDataParams(event, reactionData);
-    postEvent(event);
-
-    var customEvent = createCustomEvent(emitEventTypes.commentView);
-    emitEvent(customEvent);
-}
-
-function postCommentCreated(pageData, containerData, reactionData, comment, groupSettings) {
-    var event = createEvent(eventTypes.commentCreated, comment, groupSettings);
-    appendPageDataParams(event, pageData);
-    appendContainerDataParams(event, containerData);
-    appendReactionDataParams(event, reactionData);
-    postEvent(event);
-
-    var customEvent = createCustomEvent(emitEventTypes.commentCreate);
-    emitEvent(customEvent);
-}
-
 function postLegacyRecircClicked(pageData, reactionId, groupSettings) {
     var event = createEvent(eventTypes.recircClicked, reactionId, groupSettings);
     appendPageDataParams(event, pageData);
@@ -326,9 +304,9 @@ var eventTypes = {
     summaryWidget: 'sb',
     reactionWidgetOpened: 'rs',
     pageDataLoaded: 'wl',
-    commentCreated: 'c',
+    // commentCreated: 'c',
     reactionCreated: 're',
-    commentsViewed: 'vcom',
+    // commentsViewed: 'vcom',
     recircClicked: 'rc',
     contentRecLoaded: 'crl',
     contentRecVisible: 'crv',
@@ -359,8 +337,6 @@ var emitEventTypes = {
     reactionShare: 'antenna.reactionShare',
     contentWithReactionView: 'antenna.contentWithReactionView',
     contentWithReactionFind: 'antenna.contentWithReactionFind',
-    commentView: 'antenna.commentView',
-    commentCreate: 'antenna.commentCreate',
     readMoreLoad: 'antenna.readMoreLoad',
     readMoreView: 'antenna.readMoreView',
     readMoreClick: 'antenna.readMoreClick'
@@ -371,8 +347,6 @@ module.exports = {
     postGroupSettingsLoaded: postGroupSettingsLoaded,
     postPageDataLoaded: postPageDataLoaded,
     postSummaryOpened: postSummaryOpened,
-    postCommentsViewed: postCommentsViewed,
-    postCommentCreated: postCommentCreated,
     postReactionWidgetOpened: postReactionWidgetOpened,
     postReactionCreated: postReactionCreated,
     postReactionShared: postReactionShared,

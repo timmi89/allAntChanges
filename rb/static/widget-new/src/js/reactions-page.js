@@ -21,7 +21,6 @@ function createPage(options) {
     var contentData = options.contentData;
     var containerElement = options.containerElement; // optional
     var showConfirmation = options.showConfirmation;
-    var showComments = options.showComments;
     var showLocations = options.showLocations;
     var showPendingApproval = options.showPendingApproval;
     var showProgress = options.showProgress;
@@ -44,8 +43,7 @@ function createPage(options) {
             sizetofit: sizeToFit($reactionsWindow)
         },
         partials: {
-            locationIcon: SVGs.location,
-            commentsIcon: SVGs.comments
+            locationIcon: SVGs.location
         }
     });
 
@@ -65,7 +63,6 @@ function createPage(options) {
     ractive.on('customblur', customReactionBlur);
     ractive.on('pagekeydown', keyboardInput);
     ractive.on('inputkeydown', customReactionInput);
-    ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
     ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
     return {
         selector: pageSelector,

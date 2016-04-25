@@ -17,13 +17,6 @@
                             <div on-tap="showlocations" class="antenna-reaction-location">
                                 {{>locationIcon}}
                             </div>
-                        {{else}}
-                            {{#if this.commentCount}}
-                                <div on-tap="showcomments" class="antenna-reaction-comments hascomments">
-                                    {{>commentsIcon}}
-                                    {{this.commentCount}}
-                                </div>
-                            {{/if}}
                         {{/if}}
                     </div>
                 </div>
