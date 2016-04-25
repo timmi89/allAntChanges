@@ -1,3 +1,8 @@
+.antenna-confirmation-page .antenna-body {
+    /* This rule may be overridden by group settings, which inject custom CSS lower in the page */
+    background-image: linear-gradient(185deg,#333,#777);
+}
+
 .antenna-confirm-wrapper {
     display: table;
     width: 100%;
