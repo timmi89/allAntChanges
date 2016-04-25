@@ -5,21 +5,18 @@ module.exports = {
     'summary_widget__reactions_many': '{0} Reacciones',
 
     'reactions_widget__title': 'Reacciones',
-    'reactions_widget__title_think': '¿Qué piensas?',
     'reactions_widget__title_thanks': '¡Gracias por tu reacción!',
     'reactions_widget__title_signin': 'Es necesario iniciar sesión', // TODO: check translation
     'reactions_widget__title_blocked': 'Reacción bloqueado', // TODO: check translation
     'reactions_widget__title_error': 'Error', // TODO: check translation
     'reactions_widget__back': 'Volver',
-    'reactions_page__no_reactions': '¡No reacciones ya!', // TODO: check translation 
-    'reactions_page__think': '¿Qué piensas?',
 
     'media_indicator__think': '¿Qué piensas?',
 
     'popup_widget__think': '¿Qué piensas?',
 
-    'defaults_page__add': '+ Añade lo tuyo',
-    'defaults_page__ok': 'ok',
+    'reactions_page__add': '+ Añade lo tuyo',
+    'reactions_page__ok': 'ok',
 
     'confirmation_page__share': 'Comparte tu reacción:',
 

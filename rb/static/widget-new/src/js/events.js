@@ -20,9 +20,8 @@ function postPageDataLoaded(pageData, groupSettings) {
     postEvent(event);
 }
 
-function postReactionWidgetOpened(isShowReactions, pageData, containerData, contentData, groupSettings) {
-    var eventValue = isShowReactions ? eventValues.showReactions : eventValues.showDefaults;
-    var event = createEvent(eventTypes.reactionWidgetOpened, eventValue, groupSettings);
+function postReactionWidgetOpened(pageData, containerData, contentData, groupSettings) {
+    var event = createEvent(eventTypes.reactionWidgetOpened, '', groupSettings);
     appendPageDataParams(event, pageData);
     event[attributes.containerHash] = containerData.hash;
     event[attributes.containerKind] = contentData.type;
@@ -32,9 +31,8 @@ function postReactionWidgetOpened(isShowReactions, pageData, containerData, cont
     emitEvent(customEvent);
 }
 
-function postSummaryOpened(isShowReactions, pageData, groupSettings) {
-    var eventValue = isShowReactions ? eventValues.viewReactions : eventValues.viewDefaults;
-    var event = createEvent(eventTypes.summaryWidget, eventValue, groupSettings);
+function postSummaryOpened(pageData, groupSettings) {
+    var event = createEvent(eventTypes.summaryWidget, '', groupSettings);
     appendPageDataParams(event, pageData);
     postEvent(event);
 
@@ -51,7 +49,7 @@ function postReactionCreated(pageData, containerData, reactionData, groupSetting
 
     var eventDetail = {
         reaction: reactionData.text,
-        content: reactionData.content.body,
+        content: reactionData.content.body
     };
     switch (reactionData.content.kind) { // Map our internal content types to better values for consumers
         case 'txt':
@@ -345,8 +343,8 @@ var eventTypes = {
 var eventValues = {
     contentViewed: 'vc', // view_content
     locationsViewed: 'vr', // view_reactions
-    showDefaults: 'wr',
-    showReactions: 'rd',
+    // showDefaults: 'wr',
+    // showReactions: 'rd',
     singlePage: 'si',
     multiplePages: 'mu',
     viewReactions: 'vw',

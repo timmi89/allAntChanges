@@ -102,15 +102,55 @@
     color: #777777;
 }
 
-.antenna-think {
+.antenna-reactions-footer input {
     display: inline-block;
+    height: 2em;
+    width: 65%;
+    font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
+    font-size: 11px;
+    color: #aaaaaa;
     text-align: center;
+    letter-spacing: -.25px;
+    border: none;
     padding: 3px;
-    color: #777777;
     cursor: pointer;
-    font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
-    letter-spacing: 0;
+    height:auto;
+    margin:0 auto;
+    display: inline-block;
+    float: none;
 }
-.antenna-think:hover {
+
+.antenna-reactions-footer input:hover {
     color: #000000;
+}
+
+.antenna-reactions-footer input:focus {
+    color: #000000;
+    cursor: text;
+    outline: none;
+}
+
+.antenna-reactions-footer input.active {
+    border: 1px solid #000000;
+}
+
+.antenna-reactions-footer button {
+    display: none;
+    height: 2em;
+    background-color: #000000;
+    border: 0;
+    border-radius: initial;
+    text-align: center;
+    padding: 6px 8px;
+    margin-left: 5px;
+    color: #ffffff;
+    font-size: 11px;
+}
+
+.antenna-custom-area {
+    text-align: center;
+}
+
+.antenna-footer.antenna-reactions-footer {
+    padding: 3px;
 }

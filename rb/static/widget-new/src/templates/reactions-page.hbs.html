@@ -30,22 +30,11 @@
             {{/reactions:index}}
         {{/if}}
     </div>
-    {{#if includeDefaults}}
-        <div class="antenna-footer antenna-defaults-footer">
-            <div class="antenna-custom-area">
-                <input on-focus="customfocus" on-keydown="inputkeydown" on-blur="customblur" value="{{getMessage('defaults_page__add')}}" maxlength="25">
-                <button on-tap="newcustom">{{getMessage('defaults_page__ok')}}</button>
-            </div>
-            <div class="antenna-text-logo"><a href="//www.antenna.is">Antenna</a></div>
+    <div class="antenna-footer antenna-reactions-footer">
+        <div class="antenna-custom-area">
+            <input on-focus="customfocus" on-keydown="inputkeydown" on-blur="customblur" value="{{getMessage('reactions_page__add')}}" maxlength="25">
+            <button on-tap="newcustom">{{getMessage('reactions_page__ok')}}</button>
         </div>
-    {{else}}
-        <div class="antenna-footer antenna-reactions-footer">
-            {{#if reactions}}
-                <div on-tap="showdefault" class="antenna-think">{{getMessage('reactions_page__think')}}</div>
-            {{else}}
-                <div class="antenna-no-reactions">{{getMessage('reactions_page__no_reactions')}}</div>
-            {{/if}}
-            <div class="antenna-text-logo"><a href="//www.antenna.is" target="_blank">Antenna</a></div>
-        </div>
-    {{/if}}
+        <div class="antenna-text-logo"><a href="//www.antenna.is">Antenna</a></div>
+    </div>
 </div>

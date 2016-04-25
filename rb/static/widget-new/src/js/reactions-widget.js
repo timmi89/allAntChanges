@@ -6,7 +6,6 @@ var Messages = require('./utils/messages');
 var Moveable = require('./utils/moveable');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
-var Segment = require('./utils/segment');
 var TouchSupport = require('./utils/touch-support');
 var TransitionUtil = require('./utils/transition-util');
 var User = require('./utils/user');
@@ -15,7 +14,6 @@ var WidgetBucket = require('./utils/widget-bucket');
 var BlockedReactionPage = require('./blocked-reaction-page');
 var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
-var DefaultsPage = require('./defaults-page');
 var Events = require('./events');
 var GenericErrorPage = require('./generic-error-page');
 var LocationsPage = require('./locations-page');
@@ -24,10 +22,6 @@ var PageData = require('./page-data');
 var PendingReactionPage = require('./pending-reaction-page');
 var ReactionsPage = require('./reactions-page');
 var SVGs = require('./svgs');
-
-var PAGE_REACTIONS = 'reactions';
-var PAGE_DEFAULTS = 'defaults';
-var PAGE_AUTO = 'auto';
 
 var SELECTOR_REACTIONS_WIDGET = '.antenna-reactions-widget';
 
@@ -39,7 +33,6 @@ function openReactionsWidget(options, elementOrCoords) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement; // optional
-    var startPage = options.startPage || PAGE_AUTO; // optional
     var isSummary = options.isSummary === undefined ? false : options.isSummary; // optional
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
@@ -86,16 +79,11 @@ function openReactionsWidget(options, elementOrCoords) {
         }
         $rootElement.stop(true, true).addClass('antenna-reactions-open').css(coords);
 
-        var isShowReactions = startPage === PAGE_REACTIONS || (startPage === PAGE_AUTO && reactionsData.length > 0);
-        if (isShowReactions) {
-            showReactions(false);
-        } else { // startPage === pageDefaults || there are no reactions
-            showDefaultReactionsPage(false);
-        }
+        showReactions(false);
         if (isSummary) {
-            Events.postSummaryOpened(isShowReactions, pageData, groupSettings);
+            Events.postSummaryOpened(pageData, groupSettings);
         } else {
-            Events.postReactionWidgetOpened(isShowReactions, pageData, containerData, contentData, groupSettings);
+            Events.postReactionWidgetOpened(pageData, containerData, contentData, groupSettings);
         }
 
         setupWindowClose(pages, ractive);
@@ -104,8 +92,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showReactions(animate) {
-        var includeDefaults = true;//Segment.isOnePage(groupSettings);
-        if (includeDefaults && containerElement && !contentData.location && !contentData.body) {
+        if (containerElement && !contentData.location && !contentData.body) {
             Range.grabNode(containerElement.get(0), function (text, location) {
                 contentData.location = location;
                 contentData.body = text;
@@ -115,7 +102,6 @@ function openReactionsWidget(options, elementOrCoords) {
             isSummary: isSummary,
             reactionsData: reactionsData,
             defaultReactions: defaultReactions,
-            includeDefaults: includeDefaults,
             pageData: pageData,
             groupSettings: groupSettings,
             containerData: containerData,
@@ -124,7 +110,6 @@ function openReactionsWidget(options, elementOrCoords) {
             showConfirmation: showConfirmation,
             showPendingApproval: showPendingApproval,
             showProgress: showProgressPage,
-            showDefaults: function() { showDefaultReactionsPage(true) },
             showComments: showComments,
             showLocations: showLocations,
             handleReactionError: handleReactionError,
@@ -134,32 +119,6 @@ function openReactionsWidget(options, elementOrCoords) {
         var page = ReactionsPage.create(options);
         pages.push(page);
         showPage(page.selector, $rootElement, animate, false);
-    }
-
-    function showDefaultReactionsPage(animate) {
-        if (containerElement && !contentData.location && !contentData.body) {
-            Range.grabNode(containerElement.get(0), function (text, location) {
-                contentData.location = location;
-                contentData.body = text;
-            });
-        }
-        var options = { // TODO: clean up the number of these "options" objects that we create.
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings,
-            containerData: containerData,
-            contentData: contentData,
-            showConfirmation: showConfirmation,
-            showPendingApproval: showPendingApproval,
-            showProgress: showProgressPage,
-            handleReactionError: handleReactionError,
-            element: pageContainer(ractive),
-            reactionsWindow: $rootElement
-        };
-        setWindowTitle(Messages.getMessage('reactions_widget__title_think'));
-        var page = DefaultsPage.create(options);
-        pages.push(page);
-        showPage(page.selector, $rootElement, animate);
     }
 
     function showConfirmation(reactionData, reactionProvider) {
@@ -417,7 +376,7 @@ function sizeBodyToFit($rootElement, $page, animate) {
     var currentHeight = $pageContainer.css('height');
     $pageContainer.css({ height: '' }); // Clear any previously computed height so we get a fresh computation of the child heights
     var newBodyHeight = Math.min(300, $body.get(0).scrollHeight);
-    $body.css({ height: newBodyHeight }); // TODO: double-check that we can't just set a max-height of 300px on the body.
+    $body.css({ height: newBodyHeight });
     var footerHeight = $page.find('.antenna-footer').outerHeight(); // returns 'null' if there's no footer. added to an integer, 'null' acts like 0
     var newPageHeight = newBodyHeight + footerHeight;
     if (animate) {
@@ -426,7 +385,6 @@ function sizeBodyToFit($rootElement, $page, animate) {
     } else {
         $pageContainer.css({ height: newPageHeight });
     }
-    // TODO: we might not need width resizing at all.
     var minWidth = $page.css('min-width');
     var width = parseInt(minWidth);
     if (width > 0) {
@@ -514,7 +472,6 @@ function isOpenWindow() {
 
 // Prevent scrolling of the document after we scroll to the top/bottom of the reactions window
 // Code copied from: http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
-// TODO: does this work on mobile?
 function preventExtraScroll($rootElement) {
     $rootElement.on('DOMMouseScroll.antenna mousewheel.antenna', '.antenna-body', function(ev) {
         var $this = $(this),
@@ -555,9 +512,6 @@ function preventExtraScroll($rootElement) {
 module.exports = {
     open: openReactionsWidget,
     isOpen: isOpenWindow,
-    PAGE_REACTIONS: PAGE_REACTIONS,
-    PAGE_DEFAULTS: PAGE_DEFAULTS,
-    PAGE_AUTO: PAGE_AUTO,
     selector: SELECTOR_REACTIONS_WIDGET,
     teardown: closeAllWindows
 };

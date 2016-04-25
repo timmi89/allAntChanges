@@ -5,22 +5,18 @@ module.exports = {
     'summary_widget__reactions_many': '{0} Reactions',
 
     'reactions_widget__title': 'Reactions',
-    'reactions_widget__title_think': 'What do you think?',
     'reactions_widget__title_thanks': 'Thanks for your reaction!',
     'reactions_widget__title_signin': 'Sign in Required',
     'reactions_widget__title_blocked': 'Blocked Reaction',
     'reactions_widget__title_error': 'Error',
     'reactions_widget__back': 'Back',
 
-    'reactions_page__no_reactions': 'No reactions yet!',
-    'reactions_page__think': 'What do you think?',
-
     'media_indicator__think': 'What do you think?',
 
     'popup_widget__think': 'What do you think?',
 
-    'defaults_page__add': '+ Add Your Own',
-    'defaults_page__ok': 'ok',
+    'reactions_page__add': '+ Add Your Own',
+    'reactions_page__ok': 'ok',
 
     'confirmation_page__share': 'Share your reaction:',
 
