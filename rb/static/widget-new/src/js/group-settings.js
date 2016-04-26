@@ -1,5 +1,3 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-
 var Events = require('./events');
 
 var groupSettings;
@@ -15,32 +13,16 @@ function updateFromJSON(json) {
     return groupSettings;
 }
 
-
-// TODO: trim trailing commas from any selector values
-
-// TODO: Review. These are just copied from engage_full.
 var defaults = {
-    premium: false,
-    img_selector: "img", // TODO: this is some bogus obsolete property. we shouldn't use it.
-    img_container_selectors:"#primary-photo",
     active_sections: "body",
-    //anno_whitelist: "body p",
-    anno_whitelist: "p", // TODO: The current default is "body p", which makes no sense when we're searching only within the active sections
-    active_sections_with_anno_whitelist:"",
-    media_selector: "embed, video, object, iframe",
-    comment_length: 500,
+    anno_whitelist: "p",
     no_ant: "",
-    img_blacklist: "",
     custom_css: "",
-    //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-    inline_selector: 'img, embed, video, object, iframe',
     paragraph_helper: true,
     media_url_ignore_query: true,
     summary_widget_selector: '.ant-page-summary', // TODO: this wasn't defined as a default in engage_full, but was in code. why?
     summary_widget_method: 'after',
     language: 'en',
-    ab_test_impact: true,
-    ab_test_sample_percentage: 10,
     img_indicator_show_onload: true,
     img_indicator_show_side: 'left',
     tag_box_bg_colors: '',
@@ -51,15 +33,7 @@ var defaults = {
     image_selector: 'meta[property="og:image"]', // TODO: review what this should be (not from engage_full)
     image_attribute: 'content', // TODO: review what this should be (not from engage_full),
     querystring_content: false,
-    initial_pin_limit: 3,
-    //the scope in which to find parents of <br> tags.
-    //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
-    //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
-
-    //example:
-    // br_replace_scope_selector: ".ant_br_replace" //e.g. "#mainsection" or "p"
-
-    br_replace_scope_selector: null //e.g. "#mainsection" or "p"
+    initial_pin_limit: 3
 };
 
 function createFromJSON(json) {
@@ -125,14 +99,14 @@ function createFromJSON(json) {
         }
     }
 
-    function defaultReactions($element) {
+    function defaultReactions(element) {
         // Default reactions are available in three locations in three data formats:
         // 1. As a comma-separated attribute value on a particular element
         // 2. As an array of strings on the window.antenna_extend property
         // 3. As a json object with a body and id on the group settings
         var reactions = [];
         var reactionStrings;
-        var elementReactions = $element ? $element.attr('ant-reactions') : undefined;
+        var elementReactions = element ? element.getAttribute('ant-reactions') : undefined;
         if (elementReactions) {
             reactionStrings = elementReactions.split(';');
         } else if (window.antenna_extend) {
@@ -165,11 +139,11 @@ function createFromJSON(json) {
         // First read any raw custom CSS.
         var customCSS = data('custom_css')();
         // Then append rules for any specific CSS overrides.
-        customCSS += createCustomCSSRule(migrateReactionsBackgroundColorSettings(data('tags_bg_css', '')), '.antenna-reactions-page .antenna-body, .antenna-defaults-page .antenna-body');
+        customCSS += createCustomCSSRule(migrateReactionsBackgroundColorSettings(data('tags_bg_css', '')), '.antenna-reactions-page .antenna-body, .antenna-confirmation-page .antenna-body');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors', ''), '.antenna-reaction-box');
         customCSS += createCustomCSSRule(data('tag_box_bg_colors_hover', ''), '.antenna-reaction:hover > .antenna-reaction-box');
-        customCSS += createCustomCSSRule(migrateTextColorSettings(data('tag_box_text_colors', '')), '.antenna-reaction-box, .antenna-reaction-comments .antenna-comments-path, .antenna-reaction-location .antenna-location-path');
-        customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box .antenna-reset');
+        customCSS += createCustomCSSRule(migrateTextColorSettings(data('tag_box_text_colors', '')), '.antenna-reaction-box, .antenna-reaction-location .antenna-location-path, .antenna-confirm-reaction');
+        customCSS += createCustomCSSRule(migrateFontFamilySetting(data('tag_box_font_family', '')), '.antenna-reaction-box .antenna-reset, .antenna-confirm-reaction');
         return customCSS;
     }
 

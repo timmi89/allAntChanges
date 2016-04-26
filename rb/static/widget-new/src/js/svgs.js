@@ -9,7 +9,6 @@ var templates = {
     logo: require('../templates/svg-logo.hbs.html'),
     // The "selectable" logo defines an inline 'path' rather than a 'use' reference, as a workaround for a Firefox text selection bug.
     logoSelectable: require('../templates/svg-logo-selectable.hbs.html'),
-    comments: require('../templates/svg-comments.hbs.html'),
     location: require('../templates/svg-location.hbs.html'),
     facebook: require('../templates/svg-facebook.hbs.html'),
     twitter: require('../templates/svg-twitter.hbs.html'),
@@ -43,7 +42,6 @@ function getSVG(template) {
 module.exports = {
     logo: getSVG(templates.logo),
     logoSelectable: getSVG(templates.logoSelectable),
-    comments: getSVG(templates.comments),
     location: getSVG(templates.location),
     facebook: getSVG(templates.facebook),
     twitter: getSVG(templates.twitter),

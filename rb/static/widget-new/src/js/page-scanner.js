@@ -103,7 +103,7 @@ function scanForSummaries($element, pageData, groupSettings) {
         var $summary = $(this);
         var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
         containerData.type = 'page'; // TODO: revisit whether it makes sense to set the type here
-        var defaultReactions = groupSettings.defaultReactions($summary); // TODO: do we support customizing the default reactions at this level?
+        var defaultReactions = groupSettings.defaultReactions($summary.get(0)); // TODO: do we support customizing the default reactions at this level?
         var summaryWidget = SummaryWidget.create(containerData, pageData, defaultReactions, groupSettings);
         var $summaryElement = summaryWidget.element;
         insertContent($summary, $summaryElement, groupSettings.summaryMethod());
@@ -198,7 +198,7 @@ function scanForCallsToAction($element, pageData, groupSettings) {
                     ctaLabels: ctaLabels[antItemId],
                     ctaCounters: ctaCounters[antItemId],
                     ctaExpandedReactions: ctaExpandedReactions[antItemId],
-                    defaultReactions: groupSettings.defaultReactions($targetElement),
+                    defaultReactions: groupSettings.defaultReactions($targetElement.get(0)),
                     pageData: pageData,
                     groupSettings: groupSettings
                 });
@@ -249,7 +249,7 @@ function scanText($textElement, pageData, groupSettings) {
         if (hash) {
             var containerData = PageData.getContainerData(pageData, hash);
             containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
-            var defaultReactions = groupSettings.defaultReactions($textElement);
+            var defaultReactions = groupSettings.defaultReactions($textElement.get(0));
             var textIndicator = TextIndicatorWidget.create({
                     containerData: containerData,
                     containerElement: $textElement,
@@ -346,7 +346,7 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
             if (hash) {
                 var containerData = PageData.getContainerData(pageData, hash);
                 containerData.type = type === TYPE_IMAGE ? 'image' : 'media';
-                var defaultReactions = groupSettings.defaultReactions($mediaElement);
+                var defaultReactions = groupSettings.defaultReactions($mediaElement.get(0));
                 indicator = MediaIndicatorWidget.create({
                         element: WidgetBucket.get(),
                         containerData: containerData,

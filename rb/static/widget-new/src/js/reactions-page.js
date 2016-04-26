@@ -15,22 +15,19 @@ function createPage(options) {
     var isSummary = options.isSummary;
     var reactionsData = options.reactionsData;
     var defaultReactions = options.defaultReactions;
-    var includeDefaults = options.includeDefaults;
     var containerData = options.containerData;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var contentData = options.contentData;
     var containerElement = options.containerElement; // optional
     var showConfirmation = options.showConfirmation;
-    var showDefaults = options.showDefaults;
-    var showComments = options.showComments;
     var showLocations = options.showLocations;
     var showPendingApproval = options.showPendingApproval;
     var showProgress = options.showProgress;
     var handleReactionError = options.handleReactionError;
     var element = options.element;
 
-    var combinedReactionsData = includeDefaults ? combineReactionData(reactionsData, defaultReactions) : reactionsData;
+    var combinedReactionsData = combineReactionData(reactionsData, defaultReactions);
     var reactionsLayoutData = ReactionsWidgetLayoutUtils.computeLayoutData(combinedReactionsData);
     var $reactionsWindow = $(options.reactionsWindow);
     var ractive = Ractive({
@@ -38,7 +35,6 @@ function createPage(options) {
         append: true,
         template: require('../templates/reactions-page.hbs.html'),
         data: {
-            includeDefaults: includeDefaults,
             reactions: combinedReactionsData,
             reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
             isSummary: isSummary
@@ -47,8 +43,7 @@ function createPage(options) {
             sizetofit: sizeToFit($reactionsWindow)
         },
         partials: {
-            locationIcon: SVGs.location,
-            commentsIcon: SVGs.comments
+            locationIcon: SVGs.location
         }
     });
 
@@ -63,13 +58,11 @@ function createPage(options) {
             plusOne(ractiveEvent);
         }
     });
-    ractive.on('showdefault', showDefaults);
     ractive.on('newcustom', newCustomReaction);
     ractive.on('customfocus', customReactionFocus);
     ractive.on('customblur', customReactionBlur);
     ractive.on('pagekeydown', keyboardInput);
     ractive.on('inputkeydown', customReactionInput);
-    ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
     ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context, pageSelector); return false; }); // TODO clean up
     return {
         selector: pageSelector,
@@ -127,7 +120,7 @@ function createPage(options) {
     }
 
     function newCustomReaction() {
-        var input = ractive.find('.antenna-defaults-footer input');
+        var input = ractive.find('.antenna-reactions-footer input');
         var body = input.value.trim();
         if (body !== '') {
             showProgress(); // Show progress for custom reactions because the server might reject them for a number of reasons
@@ -173,7 +166,7 @@ function createPage(options) {
 
     function keyboardInput(ractiveEvent) {
         if ($(rootElement(ractive)).hasClass('antenna-page-active')) { // only handle input when this page is active
-            $(rootElement(ractive)).find('.antenna-defaults-footer input').focus();
+            $(rootElement(ractive)).find('.antenna-reactions-footer input').focus();
         }
     }
 
@@ -211,15 +204,15 @@ function highlightContent(containerData, pageData, $containerElement) {
 }
 
 function customReactionFocus(ractiveEvent) {
-    var $footer = $(ractiveEvent.original.target).closest('.antenna-defaults-footer');
+    var $footer = $(ractiveEvent.original.target).closest('.antenna-reactions-footer');
     $footer.find('input').not('.active').val('').addClass('active');
     $footer.find('button').show();
 }
 
 function customReactionBlur(ractiveEvent) {
     var event = ractiveEvent.original;
-    if ($(event.relatedTarget).closest('.antenna-defaults-footer button').size() == 0) { // Don't hide the input when we click on the button
-        var $footer = $(event.target).closest('.antenna-defaults-footer');
+    if ($(event.relatedTarget).closest('.antenna-reactions-footer button').size() == 0) { // Don't hide the input when we click on the button
+        var $footer = $(event.target).closest('.antenna-reactions-footer');
         var input = $footer.find('input');
         if (input.val() === '') {
             $footer.find('button').hide();

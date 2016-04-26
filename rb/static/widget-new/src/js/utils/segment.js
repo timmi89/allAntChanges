@@ -3,7 +3,7 @@ var UrlParams = require('./url-params');
 var segment;
 
 function getSegment(groupSettings) {
-    if (!segment) {
+    if (segment === undefined) { // 'null' is the opt-out value
         segment = computeSegment(groupSettings);
     }
     return segment;
@@ -47,9 +47,10 @@ function computeSegment(groupSettings) {
             localStorage.setItem('ant_segment', segment);
         } catch(error) {
             // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-            // If this happens, fall back to a default value that will at least give us stable behavior.
-            segment = segments[0];
+            // If this happens, opt out of segmenting
+            return null;
         }
+        return null;
         return segment;
     }
 

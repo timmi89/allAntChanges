@@ -13,7 +13,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
         data: {
             pageData: pageData,
             isExpandedSummary: shouldUseExpandedSummary(groupSettings),
-            computeExpandedReactions: computeExpandedReactions(groupSettings)
+            computeExpandedReactions: computeExpandedReactions(defaultReactions)
         },
         magic: true,
         template: require('../templates/summary-widget.hbs.html'),
@@ -59,9 +59,8 @@ function shouldUseExpandedSummary(groupSettings) {
     return BrowserMetrics.isMobile() && (groupSettings.isExpandedMobileSummary() || Segment.isExpandedSummarySegment(groupSettings));
 }
 
-function computeExpandedReactions(groupSettings) {
+function computeExpandedReactions(defaultReactions) {
     return function(reactionsData) {
-        var defaultReactions = groupSettings.defaultReactions();
         var max = 2;
         var expandedReactions = [];
         for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {

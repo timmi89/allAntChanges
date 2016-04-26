@@ -1,4 +1,3 @@
-var AppMode = require('./app-mode');
 var JSONPClient = require('./jsonp-client');
 var JSONUtils = require('./json-utils');
 var Logging = require('./logging');
@@ -87,62 +86,12 @@ function postPlusOne(reactionData, containerData, pageData, groupSettings, succe
     });
 }
 
-function postComment(comment, reactionData, containerData, pageData, groupSettings, success, error) {
-    // TODO: refactor the post functions to eliminate all the copied code
-    User.fetchUser(groupSettings, function(userInfo) {
-        // TODO extract the shape of this data and possibly the whole API call
-        if (!reactionData.content) {
-            // This is a summary reaction. See if we have any container data that we can link to it.
-            var containerReactions = containerData.reactions;
-            for (var i = 0; i < containerReactions.length; i++) {
-                var containerReaction = containerReactions[i];
-                if (containerReaction.id === reactionData.id) {
-                    reactionData.parentID = containerReaction.parentID;
-                    reactionData.content = containerReaction.content;
-                    break;
-                }
-            }
-        }
-        var data = {
-            comment: comment,
-            tag: {
-                parent_id: reactionData.parentID
-            },
-            user_id: userInfo.user_id,
-            ant_token: userInfo.ant_token,
-            page_id: pageData.pageId,
-            group_id: pageData.groupId
-        };
-        getJSONP(URLs.createCommentUrl(), data, commentSuccess(reactionData, containerData, pageData, success), error);
-    });
-}
-
 // TODO: We need to review the API so that it returns/accepts a uniform set of values.
 function contentNodeDataKind(type) {
     if (type === 'image') {
         return 'img';
     }
     return type;
-}
-
-function commentSuccess(reactionData, containerData, pageData, callback) {
-    return function(response) {
-        // TODO: in the case that someone reacts and then immediately comments, we have a race condition where the
-        //       comment response could come back before the reaction. we need to:
-        //       1. Make sure the server only creates a single reaction in this case (not a HUGE deal if it makes two)
-        //       2. Resolve the two responses that both theoretically come back with the same reaction data at the same
-        //          time. Make sure we don't end up with two copies of the same data in the model.
-        var reactionCreated = !response.existing;
-        if (reactionCreated) {
-            if (!reactionData.commentCount) {
-                reactionData.commentCount = 0;
-            }
-            reactionData.commentCount += 1;
-        } else {
-            // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
-        }
-        callback(reactionCreated);
-    }
 }
 
 function plusOneSuccess(reactionData, containerData, pageData, callback) {
@@ -196,19 +145,6 @@ function reactionFromResponse(response, contentLocation) {
     return reaction;
 }
 
-function getComments(reaction, groupSettings, successCallback, errorCallback) {
-    User.fetchUser(groupSettings, function(userInfo) {
-        var data = {
-            reaction_id: reaction.parentID,
-            user_id: userInfo.user_id,
-            ant_token: userInfo.ant_token
-        };
-        getJSONP(URLs.fetchCommentUrl(), data, function(response) {
-            successCallback(commentsFromResponse(response));
-        }, errorCallback);
-    });
-}
-
 function fetchLocationDetails(reactionLocationData, pageData, groupSettings, successCallback, errorCallback) {
     var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
     User.fetchUser(groupSettings, function(userInfo) {
@@ -219,21 +155,6 @@ function fetchLocationDetails(reactionLocationData, pageData, groupSettings, suc
         };
         getJSONP(URLs.fetchContentBodiesUrl(), data, successCallback, errorCallback);
     });
-}
-
-function commentsFromResponse(jsonComments) {
-    var comments = [];
-    for (var i = 0; i < jsonComments.length; i++) {
-        var jsonComment = jsonComments[i];
-        var comment = {
-            text: jsonComment.text,
-            id: jsonComment.id, // TODO: we probably only need this for +1'ing comments
-            contentID: jsonComment.contentID, // TODO: Do we really need this?
-            user: User.fromCommentJSON(jsonComment.user, jsonComment.social_user)
-        };
-        comments.push(comment);
-    }
-    return comments;
 }
 
 function postShareReaction(reactionData, containerData, pageData, groupSettings, success, failure) {
@@ -298,8 +219,6 @@ module.exports = {
     getJSONP: getJSONP,
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
-    postComment: postComment,
-    getComments: getComments,
     postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
     postEvent: postEvent,
