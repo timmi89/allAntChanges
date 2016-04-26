@@ -993,8 +993,12 @@ def content_rec_redirect(request):
     params = request.GET
     event_param = params.get('event', None)
     if event_param:
-        event = json.loads(event_param)
-        register_event.delay(event)
+        try:
+            event = json.loads(event_param)
+            register_event.delay(event)
+        except ValueError:
+            # Gracefully ignore any invalid query params
+            pass
     url_param = params.get('targetURL', BASE_URL)
     redirect_response = HttpResponseRedirect(unicode(url_param))
     redirect_response['Referer'] = 'www.antenna.is/cr/'
