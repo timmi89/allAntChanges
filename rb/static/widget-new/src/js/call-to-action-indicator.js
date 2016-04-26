@@ -23,7 +23,6 @@ function createIndicatorWidget(options) {
         containerElement: $containerElement,
         contentData: contentData,
         defaultReactions: defaultReactions,
-        startPage: computeStartPage($ctaElement),
         pageData: pageData,
         groupSettings: groupSettings
     };
@@ -69,16 +68,6 @@ function createIndicatorWidget(options) {
             }
         }
     }
-}
-
-function computeStartPage($element) {
-    var val = ($element.attr('ant-mode') || '').trim();
-    if (val === 'write') {
-        return ReactionsWidget.PAGE_DEFAULTS;
-    } else if (val === 'read') {
-        return ReactionsWidget.PAGE_REACTIONS;
-    }
-    return ReactionsWidget.PAGE_AUTO;
 }
 
 function openReactionsWindow(reactionOptions, $ctaElement) {

@@ -31,7 +31,7 @@ class MasterSlaveRouter(object):
 
     def db_for_read(self, model, **hints):
         "Point all read operations to a random slave"
-        return random.choice(['default', 'readonly1'])
+        return 'readonly1'
 
     def db_for_write(self, model, **hints):
         "Point all write operations to the master"

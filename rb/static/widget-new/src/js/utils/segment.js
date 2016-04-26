@@ -3,26 +3,26 @@ var UrlParams = require('./url-params');
 var segment;
 
 function getSegment(groupSettings) {
-    if (!segment) {
+    if (segment === undefined) { // 'null' is the opt-out value
         segment = computeSegment(groupSettings);
     }
     return segment;
 }
 
 function computeSegment(groupSettings) {
-    var segments = [ '2p', '1p' ];
-    if (groupSettings.groupId() === 3714) {
-        segments = [ '250', '400', '700' ];
-    }
+    var segments = [ 'sw', 'xsw' ];
     var segmentOverride = UrlParams.getUrlParam('antennaSegment');
     if (segmentOverride) {
         storeSegment(segmentOverride);
         return segmentOverride;
     }
-    var segment = readSegment();
-    if (!segment && groupSettings.groupId() === 3714 || groupSettings.groupId() === 2 || groupSettings.groupId() === 2504 || groupSettings.groupId() === 2471) {
-        segment = createSegment(groupSettings);
-        segment = storeSegment(segment);
+    var segment;
+    if (isSegmentGroup()) {
+        segment = readSegment();
+        if (!segment) {
+            segment = createSegment(groupSettings);
+            segment = storeSegment(segment);
+        }
     }
     return segment;
 
@@ -47,18 +47,30 @@ function computeSegment(groupSettings) {
             localStorage.setItem('ant_segment', segment);
         } catch(error) {
             // Some browsers (mobile Safari) throw an exception when in private browsing mode.
-            // If this happens, fall back to a default value that will at least give us stable behavior.
-            segment = segments[0];
+            // If this happens, opt out of segmenting
+            return null;
         }
+        return null;
         return segment;
+    }
+
+    function isSegmentGroup() {
+        var groupName = groupSettings.groupName();
+        var testGroups = [ 'bustle.com', 'local.antenna.is:8081' ];
+        for (var i = 0; i < testGroups.length; i++) {
+            if (testGroups[i] === groupName) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
-function isInOnePageSegment(groupSettings) {
-    return getSegment(groupSettings) === '1p';
+function isExpandedSummarySegment(groupSettings) {
+    return getSegment(groupSettings) === 'xsw';
 }
 
 module.exports = {
     getSegment: getSegment,
-    isOnePage: isInOnePageSegment
+    isExpandedSummarySegment: isExpandedSummarySegment
 };

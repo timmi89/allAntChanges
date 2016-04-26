@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var BrowserMetrics = require('./utils/browser-metrics');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var Segment = require('./utils/segment');
 var TouchSupport = require('./utils/touch-support');
 
 var ReactionsWidget = require('./reactions-widget');
@@ -12,7 +13,7 @@ function createSummaryWidget(containerData, pageData, defaultReactions, groupSet
         data: {
             pageData: pageData,
             isExpandedSummary: shouldUseExpandedSummary(groupSettings),
-            computeExpandedReactions: computeExpandedReactions(groupSettings)
+            computeExpandedReactions: computeExpandedReactions(defaultReactions)
         },
         magic: true,
         template: require('../templates/summary-widget.hbs.html'),
@@ -55,12 +56,11 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
 }
 
 function shouldUseExpandedSummary(groupSettings) {
-    return groupSettings.isExpandedMobileSummary() && BrowserMetrics.isMobile();
+    return BrowserMetrics.isMobile() && (groupSettings.isExpandedMobileSummary() || Segment.isExpandedSummarySegment(groupSettings));
 }
 
-function computeExpandedReactions(groupSettings) {
+function computeExpandedReactions(defaultReactions) {
     return function(reactionsData) {
-        var defaultReactions = groupSettings.defaultReactions();
         var max = 2;
         var expandedReactions = [];
         for (var i = 0; i < reactionsData.length && expandedReactions.length < max; i++) {

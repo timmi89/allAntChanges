@@ -2,7 +2,6 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var AjaxClient = require('./utils/ajax-client');
 var URLs = require('./utils/urls');
-var CommentAreaPartial = require('./comment-area-partial');
 var Events = require('./events');
 var SVGs = require('./svgs');
 
@@ -18,14 +17,12 @@ function createPage(reactionText, reactionProvider, containerData, pageData, gro
         },
         template: require('../templates/confirmation-page.hbs.html'),
         partials: {
-            commentArea: require('../templates/comment-area-partial.hbs.html'),
             facebookIcon: SVGs.facebook,
             twitterIcon: SVGs.twitter
         }
     });
     ractive.on('share-facebook', shareToFacebook);
     ractive.on('share-twitter', shareToTwitter);
-    CommentAreaPartial.setup(reactionProvider, containerData, pageData, groupSettings, null, ractive);
     return {
         selector: pageSelector,
         teardown: function() {
