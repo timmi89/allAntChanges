@@ -195,17 +195,10 @@ else:
         'default': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     os.getenv('DATABASE_HOST_MASTER'),
-            'PORT':     os.getenv('DATABASE_PORT_MASTER', '3306'),
-            'CONN_MAX_AGE':  60,
+            'USER':     os.getenv('DATABASE_MASTER_USER'),
+            'PASSWORD': os.getenv('DATABASE_MASTER_PASS'),
+            'HOST':     os.getenv('DATABASE_MASTER_HOST'),
             'OPTIONS': {
-                'ssl': {
-                    'key': os.getenv('DATABASE_SSL_MASTER_CLIENT_KEY'),
-                    'cert': os.getenv('DATABASE_SSL_MASTER_CLIENT_CERT'),
-                    'ca': os.getenv('DATABASE_SSL_MASTER_SERVER_CA')
-                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -217,17 +210,10 @@ else:
         'readonly1': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     os.getenv('DATABASE_HOST_SLAVE1'),
-            'PORT':     os.getenv('DATABASE_PORT_SLAVE1', '3306'),
-            'CONN_MAX_AGE':  60,
+            'USER':     os.getenv('DATABASE_REPLICA_USER'),
+            'PASSWORD': os.getenv('DATABASE_REPLICA_PASS'),
+            'HOST':     os.getenv('DATABASE_REPLICA_HOST'),
             'OPTIONS': {
-                'ssl': {
-                    'key': os.getenv('DATABASE_SSL_SLAVE1_CLIENT_KEY'),
-                    'cert': os.getenv('DATABASE_SSL_SLAVE1_CLIENT_CERT'),
-                    'ca': os.getenv('DATABASE_SSL_SLAVE1_SERVER_CA')
-                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET

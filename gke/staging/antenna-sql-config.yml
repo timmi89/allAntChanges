@@ -1,0 +1,123 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: antenna-sql-config
+  namespace: default
+data:
+  proxysql.cnf: |-
+    #file proxysql.cfg
+    
+    # This config file is parsed using libconfig , and its grammar is described in:
+    # http://www.hyperrealm.com/libconfig/libconfig_manual.html#Configuration-File-Grammar
+    # Grammar is also copied at the end of this file
+    
+    datadir = "/var/lib/proxysql"
+    
+    admin_variables:
+    {
+    	admin_credentials="admin:admin"
+      stats_credentials="stats:stats"
+    	mysql_ifaces="/sql/admin"
+    }
+    
+    # create user 'monitor'@'cloudsqlproxy~%' identified by 'monitor';
+    # GRANT SELECT, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT, EVENT, TRIGGER, USAGE ON *.* TO 'monitor'@'cloudsqlproxy~%';
+    mysql_variables:
+    {
+    	threads=4
+    	interfaces="/sql/proxy"
+    	max_connections=2048
+      default_charset="utf8"
+    	default_query_timeout=600000
+    	server_version="5.6"
+      monitor_username="monitor"
+      monitor_password="monitor"
+    	commands_stats=true
+    	sessions_sort=true
+    }
+    
+    
+    mysql_servers:
+    (
+    #	{
+    #		address="127.0.0.1" # no default, required . If port is 0 , address is interpred as a Unix Socket Domain
+    #		port=3306           # no default, required . If port is 0 , address is interpred as a Unix Socket Domain
+    #		hostgroup=0	        # no default, required
+    #		status="ONLINE"     # default: ONLINE
+    #		weight=1            # default: 1
+    #		compression=0       # default: 0
+    #   max_replication_lag=10  # default 0 . If greater than 0 and replication lag passes such threshold, the server is shunned
+    #	},
+    
+      { address="/sql/hosts/antenna-array:us-central1:antenna-staging", port=0, hostgroup=0 },
+      { address="/sql/hosts/antenna-array:us-central1:antenna-staging", port=0, hostgroup=1, max_replication_lag=1 }
+    )
+
+    # create user 'rw'@'cloudsqlproxy~%' identified by 'rw';
+    # GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER, CREATE TABLESPACE ON *.* TO 'rw'@'cloudsqlproxy~%';
+    # create user 'ro'@'cloudsqlproxy~%' identified by 'ro';
+    # GRANT SELECT, RELOAD, PROCESS, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION CLIENT, SHOW VIEW, EVENT, TRIGGER ON *.* TO 'ro'@'cloudsqlproxy~%';
+    mysql_users:
+    (
+    	{
+    		username="rw"
+    		password="rw"
+    		default_hostgroup=0
+    		active=1
+    	},
+    	{
+    		username="ro"
+    		password="ro"
+    		default_hostgroup=1
+    		active=1
+    	}
+    )
+    
+    mysql_query_rules:
+    (
+    #	{
+    #		rule_id=1
+    #		active=1
+    #		match_pattern="^SELECT .* FOR UPDATE$"
+    #		destination_hostgroup=0
+    #		apply=1
+    #	},
+    #	{
+    #		rule_id=2
+    #		active=1
+    #		match_pattern="^SELECT"
+    #		destination_hostgroup=1
+    #		apply=1
+    #	}
+    )
+    
+    # http://www.hyperrealm.com/libconfig/libconfig_manual.html#Configuration-File-Grammar
+    #
+    # Below is the BNF grammar for configuration files. Comments and include directives are not part of the grammar, so they are not included here. 
+    #
+    # configuration = setting-list | empty
+    #
+    # setting-list = setting | setting-list setting
+    #     
+    # setting = name (":" | "=") value (";" | "," | empty)
+    #     
+    # value = scalar-value | array | list | group
+    #     
+    # value-list = value | value-list "," value
+    #     
+    # scalar-value = boolean | integer | integer64 | hex | hex64 | float
+    #                | string
+    #     
+    # scalar-value-list = scalar-value | scalar-value-list "," scalar-value
+    #     
+    # array = "[" (scalar-value-list | empty) "]"
+    #     
+    # list = "(" (value-list | empty) ")"
+    #     
+    # group = "{" (setting-list | empty) "}"
+    #     
+    # empty =
+    #
+     
+

@@ -16,13 +16,6 @@ spec:
       containers:
         - name: antenna-static-http
           image: gcr.io/antenna-array/antenna-static:latest
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "100Mi"
-            limits:
-              cpu: "500m"
-              memory: "250Mi"
           env:
             - name: VIRTUAL_HOST
               value: static.staging.antenna.is
