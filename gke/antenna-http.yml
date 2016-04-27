@@ -63,11 +63,11 @@ spec:
             - name: DATABASE_REPLICA_PASS
               value: ro
             - name: MEMCACHED_HOST_DEFAULT
-              value: memcached-default
+              value: 10.240.9.228
             - name: MEMCACHED_HOST_REDUNDANT
-              value: memcached-redundant
+              value: 10.240.232.254
             - name: RABBITMQ_HOST
-              value: amqp
+              value: 10.240.97.167
             - name: BQ_TABLE_PREFIX
               valueFrom:
                 secretKeyRef:
