@@ -20,7 +20,11 @@ TEST='touch testfile;'
 
 push_sync() {
     local host
-    for host in $1 ; do echo -n "$host - "; rsync -qlor --exclude ".git/*" --exclude "rb/static/grunt/*" --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@$host:/home/broadcaster/  ; done
+    for host in $1 ; do
+        echo -n "$host - ";
+        rsync -qlor --exclude ".git/*" --exclude "rb/static/grunt/*" --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@$host:/home/broadcaster/ &
+    done
+    wait
 }
 
 foreach() {
