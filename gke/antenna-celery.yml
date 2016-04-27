@@ -95,6 +95,11 @@ spec:
                 secretKeyRef:
                   name: email-secret
                   key: email-host
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry-secret
+                  key: dsn
           volumeMounts:
             - name: sql
               mountPath: /sql
