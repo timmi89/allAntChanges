@@ -50,9 +50,9 @@ data:
     #   max_replication_lag=10  # default 0 . If greater than 0 and replication lag passes such threshold, the server is shunned
     #	},
     
-      { address="antenna-array:us-central1:antenna-production-dba", port=0, hostgroup=0 },
-      { address="antenna-array:us-central1:antenna-production-dba-replica-read-1", port=0, hostgroup=1, max_replication_lag=1 },
-      { address="antenna-array:us-central1:antenna-production-dba-replica-read-2", port=0, hostgroup=1, max_replication_lag=1 }
+      { address="/sql/hosts/antenna-array:us-central1:antenna-production-dba", port=0, hostgroup=0 },
+      { address="/sql/hosts/antenna-array:us-central1:antenna-production-dba-replica-read-1", port=0, hostgroup=1, max_replication_lag=1 },
+      { address="/sql/hosts/antenna-array:us-central1:antenna-production-dba-replica-read-2", port=0, hostgroup=1, max_replication_lag=1 }
     )
 
     # create user 'rw'@'cloudsqlproxy~%' identified by 'rw';
