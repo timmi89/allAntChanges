@@ -19,12 +19,16 @@ TEST='touch testfile;'
 #PUSHSYNC='rsync -qlor --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@array-2:/home/broadcaster/'
 
 push_sync() {
+    echo "pushing files to:"
     local host
     for host in $1 ; do
         echo -n "$host - ";
         rsync -qlor --exclude ".git/*" --exclude "rb/static/grunt/*" --exclude "logs/*"  --exclude "nohup.out" /home/broadcaster/antenna broadcaster@$host:/home/broadcaster/ &
     done
+    echo
+    echo "waiting for files to push..."
     wait
+    echo "push complete"
 }
 
 foreach() {
