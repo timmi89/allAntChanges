@@ -15,7 +15,7 @@ function computeProductionServerUrl() {
         { domain: 'www.antenna.is', percentage: 100 },
         { domain: 'mobi.perezhilton.com', percentage: 100 },
         { domain: 'perezhilton.com', percentage: 100 },
-        //{ domain: 'dlisted.com', percentage: 100 },
+        { domain: 'dlisted.com', percentage: 100 },
         //{ domain: 'wral.com', percentage: 100 },
         //{ domain: 'bustle.com', percentage: 100 },
         //{ domain: 'channel3000.com', percentage: 100 },
