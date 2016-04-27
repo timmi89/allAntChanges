@@ -4,7 +4,7 @@
             {{#reactions:index}}
                 <div on-tap="react" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index)}}">
                     <div class="antenna-reaction-box">
-                        <div class="antenna-reaction-text {{^this.count}}antenna-reaction-zero{{/this.count}}" decorator="sizetofit">
+                        <div class="antenna-reaction-text {{#if !this.count && hasReactions}}antenna-reaction-zero{{/if}}" decorator="sizetofit">
                             {{ this.text }}
                         </div>
                         <div class="antenna-reaction-count">
