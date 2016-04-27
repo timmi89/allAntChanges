@@ -9,6 +9,7 @@ python_environment:
     MEMCACHED_HOST: 'memcached'
     RABBITMQ_HOST: 'rabbitmq'
     ANTENNA_URL: 'http://antenna.docker'
+    ANTENNA_API_URL: 'http://antenna.docker'
     ANTENNA_STATIC_URL: 'http://antenna-static.docker'
     ANTENNA_INTERNAL_STATIC_URL: 'http://static:8081'
     EVENTS_URL: 'http://nodebq.docker'
@@ -23,13 +24,9 @@ node_environment:
   environment:
     DEBUG: 'true'
     BQ_TABLE_PREFIX: 'docker_dev'
-    DJANGO_LOG_LEVEL: 'DEBUG'
-    DATABASE_HOST: 'db'
-    MEMCACHED_HOST: 'memcached'
-    RABBITMQ_HOST: 'rabbitmq'
     ANTENNA_URL: 'http://antenna.docker'
+    ANTENNA_API_URL: 'http://antenna.docker'
     ANTENNA_STATIC_URL: 'http://antenna-static.docker'
     EVENTS_URL: 'http://events.docker'
-    PATH: '/code/antenna/virtualenvs/docker/bin:$PATH'
   volumes:
     - ..:/code/antenna

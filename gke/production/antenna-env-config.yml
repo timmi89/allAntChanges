@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: antenna-env-secret
+  namespace: default
+data:
+  virtual-host: www.antenna.is
+  antenna-url: https://www.antenna.is
+  antenna-api-url: https://api.antenna.is
+  antenna-static-url: https://cdn.antenna.is
+  antenna-internal-static-url: https://cdn.antenna.is
+  events-url: https://events.antenna.is

@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: antenna-env-secret
+  namespace: default
+data:
+  virtual-host: www.staging.antenna.is
+  antenna-url: https://www.staging.antenna.is
+  antenna-api-url: https://api.staging.antenna.is
+  antenna-static-url: https://static.staging.antenna.is
+  antenna-internal-static-url: http://antenna-static-http
+  events-url: https://events.static.antenna.is

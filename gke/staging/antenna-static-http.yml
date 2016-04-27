@@ -21,6 +21,8 @@ spec:
               value: static.staging.antenna.is
             - name: ANTENNA_URL
               value: https://www.staging.antenna.is
+            - name: ANTENNA_API_URL
+              value: https://api.staging.antenna.is
             - name: ANTENNA_STATIC_URL
               value: https://static.staging.antenna.is
             - name: EVENTS_URL

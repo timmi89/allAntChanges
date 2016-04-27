@@ -27,28 +27,33 @@ spec:
               value: DEBUG
             - name: VIRTUAL_HOST
               valueFrom:
-                secretKeyRef:
-                  name: antenna-env-secret
+                configMapKeyRef:
+                  name: antenna-env-config
                   key: virtual-host
             - name: ANTENNA_URL
               valueFrom:
-                secretKeyRef:
-                  name: antenna-env-secret
+                configMapKeyRef:
+                  name: antenna-env-config
                   key: antenna-url
+            - name: ANTENNA_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-api-url
             - name: ANTENNA_STATIC_URL
               valueFrom:
-                secretKeyRef:
-                  name: antenna-env-secret
+                configMapKeyRef:
+                  name: antenna-env-config
                   key: antenna-static-url
             - name: ANTENNA_INTERNAL_STATIC_URL
               valueFrom:
-                secretKeyRef:
-                  name: antenna-env-secret
+                configMapKeyRef:
+                  name: antenna-env-config
                   key: antenna-internal-static-url
             - name: EVENTS_URL
               valueFrom:
-                secretKeyRef:
-                  name: antenna-env-secret
+                configMapKeyRef:
+                  name: antenna-env-config
                   key: events-url
             - name: DATABASE_MASTER_HOST
               value: /sql/proxy
