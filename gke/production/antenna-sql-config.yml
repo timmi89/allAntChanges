@@ -51,7 +51,7 @@ data:
     #	},
     
       { address="antenna-array:us-central1:antenna-production-dba", port=0, hostgroup=0 },
-      { address="antenna-array:us-central1:antenna-production-dba-replica-read-1", port=0, hostgroup=1, max_replication_lag=1 }
+      { address="antenna-array:us-central1:antenna-production-dba-replica-read-1", port=0, hostgroup=1, max_replication_lag=1 },
       { address="antenna-array:us-central1:antenna-production-dba-replica-read-2", port=0, hostgroup=1, max_replication_lag=1 }
     )
 
