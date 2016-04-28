@@ -9,7 +9,7 @@ metadata:
     app: load-balancer
     letsencrypt: 'production'
   annotations:
-    vhosts: www.staging.antenna.is staging.antenna.is
+    vhosts: www.staging.antenna.is api.staging.antenna.is staging.antenna.is
 spec:
   clusterIP: 10.211.250.82
   ports:

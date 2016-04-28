@@ -142,6 +142,13 @@ function appServerUrl() {
     if (AppMode.test) {
         return URLConstants.TEST_ANTENNA;
     }
+    return URLConstants.ANTENNA_API;
+}
+
+function webServerUrl() {
+    if (AppMode.test) {
+        return URLConstants.TEST_ANTENNA;
+    }
     return URLConstants.ANTENNA;
 }
 

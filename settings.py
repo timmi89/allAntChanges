@@ -183,6 +183,7 @@ else:
         "static.antenna.is",
         "staging.antenna.is",
         "www.staging.antenna.is",
+        "api.staging.antenna.is",
         "static.staging.antenna.is",
         "readrboard.com",
         "www.readrboard.com",
