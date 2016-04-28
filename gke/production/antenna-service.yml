@@ -7,9 +7,9 @@ metadata:
     name: antenna
     service: load-balancer
     app: load-balancer
-    letsencrypt: 'production'
+    letsencrypt: production
   annotations:
-    vhosts: api.antenna.is
+    vhosts: api.antenna.is www.antenna.is antenna.is
 spec:
   clusterIP: 10.71.242.148
   ports:

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata: 
-  name: antenna-env-secret
+  name: antenna-env-config
   namespace: default
 data:
   virtual-host: www.staging.antenna.is
