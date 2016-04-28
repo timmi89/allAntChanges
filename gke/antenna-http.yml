@@ -49,6 +49,11 @@ spec:
                 configMapKeyRef:
                   name: antenna-env-config
                   key: antenna-internal-static-url
+            - name: ANTENNA_STATIC_STORAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-static-storage
             - name: EVENTS_URL
               valueFrom:
                 configMapKeyRef:

@@ -77,7 +77,7 @@ INTERNAL_STATIC_URL = os.getenv(
 ) + '/'
 
 static_storage = os.getenv('ANTENNA_STATIC_STORAGE', False)
-if static_storage:
+if static_storage and static_storage.strip():
     STATICFILES_STORAGE = static_storage
     DEFAULT_FILE_STORAGE = static_storage
 
