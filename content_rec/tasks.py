@@ -33,5 +33,6 @@ def refresh_recommended_content():
                     logger.warn(ex)
             else:
                 logger.info('LOCKED RECOMMENDED CONTENT CACHE: ' + str(group_id))
-        except:
-            logger.log('An exception occurred refreshing recommended content for group' + group.short_name)
+        except Exception, ex:
+            logger.info('An exception occurred refreshing recommended content for group' + group.short_name)
+            logger.warn(ex)
