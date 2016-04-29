@@ -145,7 +145,7 @@ class GroupReport():
 
     @property
     def base_url(self):
-        return settings.BASE_URL_SECURE
+        return settings.BASE_URL
 
     def content_by_id(self, content_id):
         try:
