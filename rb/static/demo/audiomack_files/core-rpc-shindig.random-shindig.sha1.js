@@ -193,7 +193,7 @@ for(c=0;
 
 /* [start] feature=core.util.dom */
 gadgets.util=gadgets.util||{};
-(function(){var c="http://www.w3.org/1999/xhtml";
+(function(){var c="https://www.w3.org/1999/xhtml";
 function b(f,e){var h=e||{};
 for(var g in h){if(h.hasOwnProperty(g)){f[g]=h[g]
 }}}function d(g,f){var e=["<",g];

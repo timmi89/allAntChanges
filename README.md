@@ -25,7 +25,6 @@ docker-compose run --rm web pip install -r requirements.txt
 ```sh
 docker-compose run --rm web ./manage.py syncdb --all
 docker-compose run --rm web ./manage.py migrate --fake
-docker-compose run --rm web ./manage.py loaddata seed
 ```
 
 ## Setup hosts file compatible with previous dev environment

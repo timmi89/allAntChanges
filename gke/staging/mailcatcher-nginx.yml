@@ -1,0 +1,58 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: mailcatcher-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: mailcatcher-nginx
+      labels:
+        name: mail
+        service: reverse-proxy
+        app: nginx
+    spec:
+      containers:
+        - name: mailcatcher-nginx
+          image: gcr.io/antenna-array/nginx-ssl-proxy:latest
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: SERVICE_HOST_ENV_NAME
+              value: MAILCATCHER_OAUTH2_PROXY_SERVICE_HOST
+            - name: SERVICE_PORT_ENV_NAME
+              value: MAILCATCHER_OAUTH2_PROXY_SERVICE_PORT_HTTP
+            - name: SSL_PRIVATE_KEY
+              value: /secrets/mail-ssl/privkey.pem
+            - name: SSL_FULLCHAIN
+              value: /secrets/mail-ssl/fullchain.pem
+            - name: SSL_DHPARAM
+              value: /secrets/mail-ssl/dhparam.pem
+            - name: ENABLE_BASIC_AUTH
+              value: 'false'
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+          - mountPath: /secrets/mail-ssl
+            name: mail-ssl
+            readOnly: true
+          - mountPath: /secrets/stackdriver
+            name: stackdriver
+            readOnly: true
+      volumes:
+      - name: mail-ssl
+        secret:
+          secretName: mail-ssl
+      - name: stackdriver
+        secret:
+          secretName: stackdriver
+

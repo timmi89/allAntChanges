@@ -3,8 +3,8 @@
  * (c) 2011-2014 Rico Sta. Cruz
  * MIT Licensed.
  *
- * http://ricostacruz.com/jquery.transit
- * http://github.com/rstacruz/jquery.transit
+ * https://ricostacruz.com/jquery.transit
+ * https://github.com/rstacruz/jquery.transit
  */
 
 /* jshint expr: true */
@@ -92,7 +92,7 @@
   var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
 
   // Populate jQuery's `$.support` with the vendor prefixes we know.
-  // As per [jQuery's cssHooks documentation](http://api.jquery.com/jQuery.cssHooks/),
+  // As per [jQuery's cssHooks documentation](https://api.jquery.com/jQuery.cssHooks/),
   // we set $.support.transition to a string of the actual property name used.
   for (var key in support) {
     if (support.hasOwnProperty(key) && typeof $.support[key] === 'undefined') {
@@ -164,7 +164,7 @@
       // element being scaled extends outside of the viewport.  Thus, we're
       // forcing Chrome to not use the 3d transforms as well.  Not sure if
       // translate is affectede, but not risking it.  Detection code from
-      // http://davidwalsh.name/detecting-google-chrome-javascript
+      // https://davidwalsh.name/detecting-google-chrome-javascript
       if (support.transform === 'WebkitTransform' && !isChrome) {
         elem.style[support.transform] = value.toString(true);
       } else {

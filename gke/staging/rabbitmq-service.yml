@@ -1,0 +1,23 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: amqp
+  labels:
+    name: amqp
+    service: amqp
+spec:
+  clusterIP: 10.211.246.116
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: amqp
+    protocol: TCP
+  - name: amqp-tls
+    port: 5671
+    targetPort: amqp-tls
+    protocol: TCP
+  selector:
+    app: rabbitmq
+    service: amqp
+  type: ClusterIP

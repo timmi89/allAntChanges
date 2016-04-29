@@ -1,0 +1,20 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mailcatcher
+  labels:
+    name: mailcatcher
+    service: smtp-fake
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: smtp
+    port: 25
+    targetPort: smtp
+    protocol: TCP
+  selector:
+    service: smtp-fake

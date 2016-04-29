@@ -66,7 +66,7 @@ function createPage(options) {
             Events.postAntennaLoginStart(groupSettings);
             var windowId = 'antenna_login';
             var windowProperties = computeWindowProperties();
-            antennaLoginWindow = window.open(URLs.appServerUrl() + URLs.antennaLoginUrl(), windowId, windowProperties);
+            antennaLoginWindow = window.open(URLs.webServerUrl() + URLs.antennaLoginUrl(), windowId, windowProperties);
             var interval = setInterval(function() {
                 // Watch for the window to close, then go read the latest cookies.
                 if (antennaLoginWindow && antennaLoginWindow.closed) {

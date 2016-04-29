@@ -1,0 +1,27 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mail
+  labels:
+    name: mail
+    service: load-balancer
+    app: load-balancer
+    letsencrypt: 'production'
+  annotations:
+    vhosts: mail.staging.antenna.is
+spec:
+  clusterIP: 10.211.249.52
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: https
+    protocol: TCP
+  selector:
+    name: mail
+    service: reverse-proxy
+  type: LoadBalancer

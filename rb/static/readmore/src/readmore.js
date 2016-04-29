@@ -94,7 +94,7 @@
     }
 
     function fetchJSONP(relativeUrl, params, callback) {
-        var serverUrl = window.location.host === 'local.antenna.is:8081' ? 'http://local-static.antenna.is:8081' : 'https://www.antenna.is';
+        var serverUrl = process.env.ANTENNA_URL;
         Utils.getJSONP(serverUrl + relativeUrl, params, function(response) {
             if (response.status === 'success') {
                 callback(response.data);
@@ -187,11 +187,7 @@
 
     var GroupSettings = (function() {
 
-        var offline = window.location.host === 'local.antenna.is:8081';
         var defaults = {
-             // TODO: get rid of the site-specific defaults
-            readmore_selector: offline ? undefined : 'article.article-page div.container',
-            readmore_crop_selector: offline ? 'p' : '.post-body p',
             readmore_crop_min: 400
         };
 

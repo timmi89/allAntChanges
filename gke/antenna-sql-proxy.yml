@@ -1,0 +1,47 @@
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: antenna-sql-proxy
+spec:
+  template:
+    metadata:
+      name: antenna-sql-proxy
+      labels:
+        name: antenna-sql-proxy
+    spec:
+      containers:
+        - name: antenna-sql-proxy
+          image: gcr.io/antenna-array/proxysql:latest
+          command: ['/usr/bin/proxysql']
+          args: ['--initial', '--config', '/config/antenna-sql-config/proxysql.cnf', '-f', '-e']
+          volumeMounts:
+            - name: sql
+              mountPath: /sql
+            - name: antenna-sql-config
+              mountPath: /config/antenna-sql-config
+        - name: cloud-sql-proxy
+          image: b.gcr.io/cloudsql-docker/gce-proxy:latest
+          command: ['/cloud_sql_proxy']
+          args: ['-dir=/sql/hosts', '-projects=antenna-array']
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: sql-hosts
+              mountPath: /sql/hosts
+            - name: ca-certs
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+      volumes:
+        - name: sql
+          hostPath:
+            path: /sql
+        - name: sql-hosts
+          hostPath:
+            path: /sql/hosts
+        - name: ca-certs
+          hostPath:
+            path: /etc/ssl/certs/ca-certificates.crt
+        - name: antenna-sql-config
+          configMap:
+            name: antenna-sql-config
+      serviceAccount: cloudsql

@@ -1,0 +1,20 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: antenna-http
+  labels:
+    name: antenna
+    service: http
+    app: antenna
+spec:
+  clusterIP: 10.211.252.225
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  selector:
+    name: antenna
+    service: http
+    app: antenna

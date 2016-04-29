@@ -35,6 +35,7 @@ function createPage(options) {
         append: true,
         template: require('../templates/reactions-page.hbs.html'),
         data: {
+            hasReactions: reactionsData.length > 0,
             reactions: combinedReactionsData,
             reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
             isSummary: isSummary

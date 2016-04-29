@@ -102,7 +102,7 @@ class OAuth2EventsUtility(object):
         return rows[0]['f'][0]['v']
 
     def table_prefix(self):
-        prefix = os.getenv('BQ_TABLE_PREFIX')
+        prefix = os.getenv('BQ_TABLE_PREFIX').strip()
         if prefix:
             return prefix + '_';
         else:

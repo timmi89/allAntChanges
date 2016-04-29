@@ -1,0 +1,119 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: antenna-http
+spec:
+  template:
+    metadata:
+      labels:
+        name: antenna
+        service: http
+        app: antenna
+    spec:
+      containers:
+        - name: antenna-http
+          image: gcr.io/antenna-array/antenna:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "500m"
+              memory: "250Mi"
+          env:
+            - name: DJANGO_LOG_LEVEL
+              value: DEBUG
+            - name: VIRTUAL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: virtual-host
+            - name: ANTENNA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-url
+            - name: ANTENNA_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-api-url
+            - name: ANTENNA_STATIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-static-url
+            - name: ANTENNA_INTERNAL_STATIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-internal-static-url
+            - name: ANTENNA_STATIC_STORAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-static-storage
+            - name: EVENTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: events-url
+            - name: DATABASE_MASTER_HOST
+              value: /sql/proxy
+            - name: DATABASE_MASTER_USER
+              value: rw
+            - name: DATABASE_MASTER_PASS
+              value: rw
+            - name: DATABASE_REPLICA_HOST
+              value: /sql/proxy
+            - name: DATABASE_REPLICA_USER
+              value: ro
+            - name: DATABASE_REPLICA_PASS
+              value: ro
+            - name: MEMCACHED_HOST_DEFAULT
+              value: 10.240.9.228
+            - name: MEMCACHED_HOST_REDUNDANT
+              value: 10.240.232.254
+            - name: RABBITMQ_HOST
+              value: 10.240.97.167
+            - name: BQ_TABLE_PREFIX
+              valueFrom:
+                secretKeyRef:
+                  name: bigquery-secret
+                  key: bq-table-prefix
+            - name: EMAIL_BACKEND
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: email-backend
+            - name: MAILGUN_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: mailgun-access-key
+            - name: MAILGUN_SERVER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: mailgun-server-name
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: email-secret
+                  key: email-host
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry-secret
+                  key: dsn
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: sql
+              mountPath: /sql
+      volumes:
+        - name: sql
+          hostPath:
+            path: /sql

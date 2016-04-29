@@ -416,10 +416,9 @@ if(typeof Parse !== "undefined"){
         		});
         	},
             debugError: function(error){
-                if(!ANTsite.ANT_offline){
-                    return;
-                }
+              {% if DEBUG %}
                 alert("Error: " + error.code + " " + error.message);
+              {% endif %}
             },
             parse: {
                 _hasInited: false,
@@ -434,7 +433,12 @@ if(typeof Parse !== "undefined"){
                     if( typeof Parse === "undefined" ){
                         return;
                     }
-                    var repoName = ANTsite.ANT_offline ? "EventTracking_Dev" : "EventTracking";
+                    var repoName =
+                    {% if DEBUG %}
+                      "EventTracking_Dev";
+                    {% else %}
+                      "EventTracking";
+                    {% endif %}
                     Self.repo = Parse.Object.extend(repoName);
                     Self._hasInited = true;
                 },
@@ -738,13 +742,13 @@ if(typeof Parse !== "undefined"){
 
         /* for links:
 
-        http://local.antenna.is:8081/page/3/?s=not+sure
+        http://antenna.docker/page/3/?s=not+sure
 
-        http://local.antenna.is:8081/group/demo/
-        http://local.antenna.is:8081/group/demo/tags/?s=not+sure
-        http://local.antenna.is:8081/group/demo/shares/?s=not+sure
+        http://antenna.docker/group/demo/
+        http://antenna.docker/group/demo/tags/?s=not+sure
+        http://antenna.docker/group/demo/shares/?s=not+sure
 
-        http://local.antenna.is:8081/user/2/
+        http://antenna.docker/user/2/
 
         Aanlytics links
         Profile stream links (interactions.html)

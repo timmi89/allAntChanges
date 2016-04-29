@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: antenna-static-nginx
+spec:
+  cpuUtilization:
+    targetPercentage: 75
+  maxReplicas: 50
+  minReplicas: 1
+  scaleRef:
+    kind: Deployment
+    apiVersion: extensions/v1beta1
+    name: antenna-static-nginx
+    subresource: scale

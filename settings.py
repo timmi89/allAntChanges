@@ -13,9 +13,17 @@ if DEBUG:
 else:
     SERVER_EMAIL = "server@antenna.is"
 
+version_path = os.getenv('VERSION_PATH', '/VERSION')
+try:
+    with open(version_path, 'r') as version_file:
+        VERSION = version_file.read()
+except:
+    VERSION = 'unknown'
+
 EVENTS_PROJECT_NUMBER = '774436620412'
 EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
-EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@developer.gserviceaccount.com'
+EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@'\
+                               'developer.gserviceaccount.com'
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -26,7 +34,7 @@ AWS_STORAGE_BUCKET_NAME = "readrboard"
 AWS_CALLING_FORMAT = ""
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
-    'Cache-Control': 'public, max-age=25200',
+    'Cache-Control': 'public, max-age=900',
 }
 
 AWS_DEFAULT_ACL = 'public-read'
@@ -59,12 +67,28 @@ STATIC_ROOT = 'rb/static/'
 OTHER_DATACENTER = 'gce.antenna.is'
 CACHE_SYNCBACK = False
 
+URL_NO_PROTO = os.getenv('VIRTUAL_HOST', 'antenna.docker')
+EVENTS_URL = os.getenv('EVENTS_URL', 'http://nodebq.docker')
+STATIC_URL = os.getenv(
+    'ANTENNA_STATIC_URL'
+) + '/'
+INTERNAL_STATIC_URL = os.getenv(
+    'ANTENNA_INTERNAL_STATIC_URL'
+) + '/'
+
+static_storage = os.getenv('ANTENNA_STATIC_STORAGE', False)
+if static_storage and static_storage.strip():
+    STATICFILES_STORAGE = static_storage
+    DEFAULT_FILE_STORAGE = static_storage
+
+BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
+BROKER_URL = BROKER_URL.format(
+    host=os.getenv('RABBITMQ_HOST', 'localhost')
+)
+
 if DEBUG:
-    URL_NO_PROTO = 'local.antenna.is:8081'
-    BASE_URL = 'http://local.antenna.is:8081'
-    BASE_URL_SECURE = 'https://local.antenna.is:8081'
-    STATIC_URL = '//local.antenna.is:8081/static/'
-    EVENTS_URL = 'http://nodebq.docker'
+    BASE_URL = 'http://' + URL_NO_PROTO
+
     DATABASE_ROUTERS = ['routers.DevMasterSlaveRouter']
 
     DATABASES = {
@@ -147,47 +171,35 @@ if DEBUG:
             }
         },
     }
-
-    BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
-    BROKER_URL = BROKER_URL.format(
-        host=os.getenv('RABBITMQ_HOST', 'localhost')
-    )
 else:
+    BASE_URL = 'https://' + URL_NO_PROTO
+    CSRF_COOKIE_SECURE = True
+
     ALLOWED_HOSTS = [
-        "linode.antenna.is",
+        "antenna.is",
         "gce.antenna.is",
         "www.antenna.is",
-        "antenna.is",
+        "api.antenna.is",
         "static.antenna.is",
-        "www.readrboard.com",
+        "staging.antenna.is",
+        "www.staging.antenna.is",
+        "api.staging.antenna.is",
+        "static.staging.antenna.is",
         "readrboard.com",
+        "www.readrboard.com",
         "static.readrboard.com"
     ]
-    URL_NO_PROTO = 'www.antenna.is'
-    BASE_URL = 'http://www.antenna.is'
-    BASE_URL_SECURE = 'https://www.antenna.is'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    EVENTS_URL = 'https://events.antenna.is'
-    DATABASE_ROUTERS = ['routers.CassandraRouter', 'routers.MasterSlaveRouter']
+
+    DATABASE_ROUTERS = ['routers.MasterSlaveRouter']
 
     DATABASES = {
         'default': {
             'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '104.197.217.109',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  None,
+            'USER':     os.getenv('DATABASE_MASTER_USER'),
+            'PASSWORD': os.getenv('DATABASE_MASTER_PASS'),
+            'HOST':     os.getenv('DATABASE_MASTER_HOST'),
             'OPTIONS': {
-                'sa_pool_key': 'readrboard-master',
-                'ssl': {
-                    'key': '/home/broadcaster/antenna/db/master.key',
-                    'cert': '/home/broadcaster/antenna/db/master.cert',
-                    'ca': '/home/broadcaster/antenna/db/master.ca'
-                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -199,41 +211,10 @@ else:
         'readonly1': {
             'ENGINE':   'django_mysqlpool.backends.mysqlpool',
             'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '104.197.50.126',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  None,
+            'USER':     os.getenv('DATABASE_REPLICA_USER'),
+            'PASSWORD': os.getenv('DATABASE_REPLICA_PASS'),
+            'HOST':     os.getenv('DATABASE_REPLICA_HOST'),
             'OPTIONS': {
-                'sa_pool_key': 'readrboard-replica',
-                'ssl': {
-                    'key': '/home/broadcaster/antenna/db/replica.key',
-                    'cert': '/home/broadcaster/antenna/db/replica.cert',
-                    'ca': '/home/broadcaster/antenna/db/replica.ca'
-                },
-                'charset': 'utf8',
-                'init_command': '''
-                    SET
-                    default_storage_engine=INNODB,
-                    character_set_connection=utf8
-                '''
-            }
-        },
-        'readonly2': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
-            'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '130.211.158.192',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  None,
-            'OPTIONS': {
-                'sa_pool_key': 'readrboard-replica',
-                'ssl': {
-                    'key': '/home/broadcaster/antenna/db/replica2.key',
-                    'cert': '/home/broadcaster/antenna/db/replica2.cert',
-                    'ca': '/home/broadcaster/antenna/db/replica2.ca'
-                },
                 'charset': 'utf8',
                 'init_command': '''
                     SET
@@ -247,7 +228,9 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            'LOCATION': ['10.240.9.228:11211'],
+            'LOCATION': os.getenv(
+                'MEMCACHED_HOST_DEFAULT',
+                'localhost') + ':11211',
             'TIMEOUT': 86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
@@ -258,7 +241,9 @@ else:
         },
         'redundant': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            'LOCATION': ['10.240.232.254:11211'],
+            'LOCATION': os.getenv(
+                'MEMCACHED_HOST_REDUNDANT',
+                'localhost') + ':11211',
             'TIMEOUT': 86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
@@ -268,8 +253,6 @@ else:
             }
         }
     }
-
-    BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
 
 
 CELERY_ACCEPT_CONTENT = ['json']
@@ -362,12 +345,23 @@ TEMPLATE_DIRS = (
 RB_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
+env_email_backend = os.getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend')
+
+if env_email_backend == 'django_mailgun.MailgunBackend':
     EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-    MAILGUN_ACCESS_KEY = 'key-d18e972f265717b3b43ecf0317b85cbe'
-    MAILGUN_SERVER_NAME = 'mailgun.antenna.is'
+    MAILGUN_ACCESS_KEY = os.getenv('MAILGUN_ACCESS_KEY')
+    MAILGUN_SERVER_NAME = os.getenv('MAILGN_SERVER_NAME')
+elif env_email_backend == 'django.core.mail.backends.smtp.EmailBackend':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST', '127.0.0.1')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    EMAIL_PORT = os.getenv('EMAIL_PORT', 25)
+    EMAIL_USE_TLS = False
+else:
+    EMAIL_BACKEND = env_email_backend
 
 SEEDERS = [
     119507,
@@ -401,6 +395,14 @@ INSTALLED_APPS = [
     'gunicorn',
     'djcelery',
 ]
+
+sentry_dsn = os.getenv('SENTRY_DSN', False)
+if sentry_dsn:
+    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
+    RAVEN_CONFIG = {
+        'dsn': sentry_dsn,
+        'release': VERSION,
+    }
 
 if DEBUG:
     INSTALLED_APPS.append('devserver')
@@ -441,58 +443,34 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(asctime)s %(levelname)s '
+                      '%(module)s %(thread)d %(message)s'
         },
-    },
-    'filters': {
-
     },
     'handlers': {
-        'null': {
-            'level': 'INFO',
-            'class': 'django.utils.log.NullHandler',
-        },
         'console': {
-            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-        },
-        'rb_standard': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/rb_standard.log',
-            'maxBytes': 1024*1024*10,  # 10 MB
-            'backupCount': 50,
-            'formatter': 'verbose',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': [],
-            'class': 'django.utils.log.AdminEmailHandler',
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['console'],
             'propagate': True,
-            'level': 'INFO',
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
         },
         'django.request': {
-            'handlers': ['mail_admins', 'rb_standard'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'rb.standard': {
-            'handlers': ['console', 'rb_standard'],
-            'level': 'INFO',
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
         },
         'django.db': {
-            'handlers': ['console', 'rb_standard'],
-            'level': 'INFO',
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
+        'httpproxy.views': {
+            'handlers': ['console'],
+            'level': 'INFO'
         }
     }
 }

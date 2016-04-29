@@ -6,7 +6,7 @@
 /* Version: 1.0 Initial Release*/
 /* Build Date: 15-01-2015*/
 /* Author: Unbranded.*/
-/* Website: http://moonart.net.ua/
+/* Website: https://moonart.net.ua/
 /* Copyright: (C) 2015 */
 /*-------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------*/
@@ -22,7 +22,7 @@
 /* 08 - MEDIA QUERYES*/
 /*-------------------------------------------------------------------------------------------------------------------------------*/
 
-@import url(http://fonts.googleapis.com/css?family=Varela+Round);
+@import url(https://fonts.googleapis.com/css?family=Varela+Round);
 
 html {margin:0px; padding:0px; height:100%;}
 body {margin:0px; padding:0px; font-size:100%; height:100%; width:100%; font-family: 'Varela Round', sans-serif; color:#354b5e;  background-color: #f5f8fa; letter-spacing: 0.6px;}

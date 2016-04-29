@@ -1,13 +1,14 @@
 {% extends "group_create.html" %}
 
+{% load custom_filters %}
+
 {% block bodyClass %}embeddedVersion{% endblock bodyClass %}
 
 {% block extendedHead %}
 <link href="/static/css/embedded_version.css" rel="stylesheet" type="text/css" media="all" />
 <script>
-    ANT_offline = document.domain == "local.antenna.is";
-    ANT_baseUrl = ( ANT_offline ) ? "//local.antenna.is:8081":"//www.antenna.is";
-    ANT_staticUrl = ( ANT_offline ) ? window.location.protocol+"//local.antenna.is:8081/static/":window.location.protocol+"//s3.amazonaws.com/readrboard/";
+    ANT_baseUrl = "//{% settings 'URL_NO_PROTO' %}";
+    ANT_staticUrl = "{% settings 'STATIC_URL' %}";
     document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 </script>
 

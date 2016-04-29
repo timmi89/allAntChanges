@@ -1,10 +1,10 @@
 {% extends "base/wide-fixed-right.html" %}
 
-{% block page_title %}Antenna for Retailers{% endblock %}lock%}
+{% block page_title %}Antenna for Retailers{% endblock %}
 {% block page_description %}Structured feedback from online audiences.{%endblock%}
 
 {% block pageHeadAdditions %}
-<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/retailers/{% else %}http://www.antenna.is/retailers/{% endif %}">
+<link rel="canonical" href="{{ BASE_URL }}/retailers/">
 {%endblock%}
 
 {% block bodyClass %}retailers{% endblock %}

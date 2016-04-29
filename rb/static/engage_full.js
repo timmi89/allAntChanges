@@ -19,12 +19,9 @@ if ((function() {
     if (urlParams['antennaNewWidget'] && urlParams['antennaNewWidget'].toLowerCase() === 'true') {
         var head = document.getElementsByTagName('head')[0];
         if (head) {
-            var newScriptUrl = 'https://www.antenna.is/static/widget-new/antenna.min.js';
+            var newScriptUrl = process.env.ANTENNA_URL + '/static/widget-new/antenna.min.js';
             if (urlParams['antennaDebug'] && urlParams['antennaDebug'].toLowerCase() === 'true') {
-                newScriptUrl = 'https://www.antenna.is/static/widget-new/debug/antenna.js';
-            }
-            if (window.location.host === 'local.antenna.is:8081') { // offline
-                newScriptUrl = 'http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js';
+                newScriptUrl = process.env.ANTENNA_URL + '/static/widget-new/debug/antenna.js';
             }
             var scriptTag = document.createElement('script');
             scriptTag.setAttribute('src', newScriptUrl);
@@ -73,21 +70,9 @@ ANT.engageScriptSrc = ANT.engageScript.src;
 var $ANT, //our global $ANT object (jquerified ANT object for attaching data and queues and such)
 $A, //init var: our clone of jQuery
 ANT_scriptPaths = {},
-//check if this script is the offline version
-//note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
-ANT_offline = !!(
-    ANT.engageScriptSrc.indexOf('local-static.antenna.is') != -1 ||
-    ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
-    ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
-    document.domain == "local.antenna.is" //shouldn't need this line anymore
-),
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local-static.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
-
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081": window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = process.env.ANTENNA_URL,
+ANT_staticUrl = process.env.ANTENNA_STATIC_URL,
+ANT_widgetCssStaticUrl = process.env.ANTENNA_STATIC_URL;
 
 // fails on iPhone?
 // var isTouchBrowser = (
@@ -106,12 +91,12 @@ var isMobile = ( isTouchBrowser && ((window.matchMedia("only screen and (max-wid
 // var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
 
 ANT.safeThrow = function(msg){
-    //this will never actually throw in production (if !ANT_offline)
+    //this will never actually throw in production (if !process.env.DEBUG)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
     var debugMode = false;
 
-    if(ANT_offline && debugMode){
+    if(process.env.DEBUG && debugMode){
         // [porter]  changing to log so that acceptable, trivial bugs are not blockers, but do get logged
         console.log(msg);
         // throw msg;
@@ -121,7 +106,7 @@ ANT.safeThrow = function(msg){
 //temp for testing
 function test_antenna_extend(){
     //for saftey
-    if(!ANT_offline){
+    if(! process.env.DEBUG){
         return;
     }
     window.antenna_extend = {
@@ -421,10 +406,7 @@ function antenna($A){
                     var data = $.toJSON( trackData );
 
                     // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
-                    var trackingUrl = "http://nodebq.docker:3000/insert";
-                    if (document.domain != "local.antenna.is") {
-                        var trackingUrl = "https://events.antenna.is/insert";
-                    }
+                    var trackingUrl = process.env.EVENTS_URL;
 
                     $.ajax({
                         url: trackingUrl,
@@ -2666,7 +2648,7 @@ function antenna($A){
 
                 if ( ANT.util.activeAB() && ANT.group.show_recirc && $broadcastSelector.length ) {
                     // local debug, use 2878 or 2350 or 2352
-                    var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
+                    var ajaxUrl = (process.env.DEBUG) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
@@ -9916,9 +9898,9 @@ if ( sendData.kind=="page" ) {
                                 contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
-                                if(ANT_offline){
-                                    content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                                    content = content.replace("local-static.antenna.is:8081", "www.antenna.is");
+                                if(env.process.ANTENNA_URL != "https://www.antenna.is"){
+                                    content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
+                                    content = content.replace(env.process.ANTENNA_URL, "https://www.antenna.is");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -10367,26 +10349,9 @@ function ant_loadScript(attributes, callbackfunction) {
 ANT.ant_loadScript = ant_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $A clone, and revert the client's jquery back
-ANT_scriptPaths.jquery = ANT_offline ?
+ANT_scriptPaths.jquery = process.env.DEBUG ?
     ANT_staticUrl+"widget/js/jquery-1.11.1.min.js" :
-    // ANT_staticUrl+"global/js/jquery-1.7.1.min.js" :
-    // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";
-
-// dont think we use this -- we embedded it below.
-// ANT_scriptPaths.mobileEvents = ANT_staticUrl+"global/js/jquery.mobile-events.js";
-
-// ANT_scriptPaths.jqueryUI = ANT_offline ?
-//     ANT_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
-//     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
-
-// ANT_scriptPaths.jqueryWithJqueryUI = ANT_offline ? 
-//     ANT_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
-//     ANT_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
-
-// ANT_scriptPaths.jqueryUI_CSS = ANT_offline ?
-//     ANT_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
-//     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
 ant_loadScript({src:ANT_scriptPaths.jquery}, function(){
     
@@ -10459,7 +10424,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv36"
+    var widgetCSS = ( process.env.DEBUG ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv36"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -12248,7 +12213,7 @@ function $AFunctions($A){
     //end initPlugins()
 
     //if we're offline, expose stuff to window for testing
-    if(ANT_offline){
+    if(process.env.DEBUG){
         ANT.debug();
     }
 }

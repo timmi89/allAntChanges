@@ -86,7 +86,7 @@
                 $outerContent.append($page);
             }
             function setLocation(relativePath) {
-                var url = 'http://local.antenna.is:8081' + relativePath;
+                var url = 'https://local.antenna.is:8081' + relativePath;
                 history.pushState({}, relativePath, url);
             }
         </script>
@@ -100,6 +100,6 @@
                 };
             })();
         </script>
-        <script src="http://local-static.antenna.is:8081/static/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>
+        <script src="/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>
     </body>
 </html>

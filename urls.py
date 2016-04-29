@@ -1,13 +1,13 @@
-from django.conf.urls.defaults import *
+import os
+from textwrap import dedent
+
 from django.conf import settings
+from django.conf.urls import patterns, url, include
 from django.views.generic import RedirectView
-from django.views.generic import TemplateView
-# Uncomment the next two lines to enable the admin:
-from django.views.generic import RedirectView
-from django.views.generic import TemplateView
+from django.http.response import HttpResponse
+from httpproxy.views import HttpProxy
 
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -95,8 +95,9 @@ urlpatterns = patterns('',
 
 
   # galleries
-  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'),
   url(r'^gallery/$', 'rb.views.gallery'),
+  url(r'^gallery/(?P<example_name>[\w\-\.]+/)$',
+      'rb.views.gallery', name='gallery-show'),
 
   #single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
@@ -177,14 +178,19 @@ urlpatterns = patterns('',
   #url(r'^demo/', settings.STATIC_URL)
 )
 
-from django.conf.urls.static import static
-
-# if settings.DEBUG:
-#     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
-
-urlpatterns += patterns('django.contrib.staticfiles.views',
+if os.getenv('ANTENNA_STATIC_URL', False):
+    urlpatterns += patterns(
+        '',
+        url(r'^static/(?P<url>.*xdm.*)$', HttpProxy.as_view(
+            base_url=settings.INTERNAL_STATIC_URL
+        )),
+        url(r'^static/(?P<path>.*)$', RedirectView.as_view(
+                url=settings.STATIC_URL + '%(path)s',
+                query_string=True
+        ))
+    )
+else:
+    urlpatterns += patterns(
+        'django.contrib.staticfiles.views',
         url(r'^static/(?P<path>.*)$', 'serve'),
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-

@@ -5,8 +5,10 @@ module.exports = function(grunt) {
 
     var paths = {
         engage_js_src: [ rootDir + '/rb/static/engage_full.js' ],
+        engage_js_env: rootDir + '/rb/static/engage_full.env.js',
         engage_js_dest: rootDir + '/rb/static/engage.min.js',
         engage_loader_js_src: [ rootDir + '/rb/static/engage_loader.js' ],
+        engage_loader_js_env: rootDir + '/rb/static/engage_loader.env.js',
         engage_loader_js_dest: rootDir + '/rb/static/engage.js',
         web_css_src: [ rootDir + '/rb/static/site/css/site_sass_compiled.css' ],
         web_css_dest: rootDir + '/rb/static/site/css/styles.min.css',
@@ -56,7 +58,13 @@ module.exports = function(grunt) {
                         rootDir + '/rb/static/site/js/materialize/date_picker/picker.date.js',
                         rootDir + '/rb/static/site/js/materialize/velocity.min.js',
                         rootDir + '/rb/static/widget/js/ant_user.js'],
-        web_js_dest: rootDir + '/rb/static/site/js/antenna-web.min.js'
+        web_js_env: rootDir + '/rb/static/site/js/antenna-web.env.js',
+        web_js_dest: rootDir + '/rb/static/site/js/antenna-web.min.js',
+
+        xdm_env: rootDir + '/rb/static/xdm.env.html',
+        xdm_dest: rootDir + '/rb/static/xdm.html',
+        fb_login_env: rootDir + '/rb/static/fb_login.env.html',
+        fb_login_dest: rootDir + '/rb/static/fb_login.html',
     };
 
   // Project configuration.
@@ -76,6 +84,23 @@ module.exports = function(grunt) {
                 dest: '<%= paths.web_css_dest %>'
             }
         },
+        envify: {
+          web_js: {
+            files: {
+              '<%= paths.web_js_dest %>': paths.web_js_env
+            }
+          },
+          engage_js: {
+            files: {
+              '<%= paths.engage_js_dest %>': paths.engage_js_env
+            }
+          },
+          engage_loader_js: {
+            files: {
+              '<%= paths.engage_loader_js_dest %>': paths.engage_loader_js_env
+            }
+          },
+        },
         uglify: {
             web_js: {
                 options: {
@@ -84,15 +109,15 @@ module.exports = function(grunt) {
                     mangle: false
                 },
                 src: ['<%= paths.web_js_src %>'],
-                dest: '<%= paths.web_js_dest %>'
+                dest: '<%= paths.web_js_env %>'
             },
             engage_js: {
                 src: ['<%= paths.engage_js_src %>'],
-                dest: '<%= paths.engage_js_dest %>'
+                dest: '<%= paths.engage_js_env %>'
             },
             engage_loader_js: {
                 src: ['<%= paths.engage_loader_js_src %>'],
-                dest: '<%= paths.engage_loader_js_dest %>'
+                dest: '<%= paths.engage_loader_js_env %>'
             }
         },
         sass: {
@@ -102,13 +127,26 @@ module.exports = function(grunt) {
                 }
             }
         },
+        preprocess : {
+          options: {
+            type: 'js'
+          },
+          xdm : {
+            src : '<%= paths.xdm_env %>',
+            dest : '<%= paths.xdm_dest %>'
+          },
+          fb_login : {
+            src : '<%= paths.fb_login_env %>',
+            dest : '<%= paths.fb_login_dest %>'
+          }
+        },
         watch: {
             gruntfile: {
                 files: [ 'Gruntfile.js' ]
             },
             web_js: {
                 files: [ '<%= paths.web_js_src %>', '<%= paths.engage_js_src %>' ],
-                tasks: [ 'uglify:web_js', 'uglify:engage_js' ]
+                tasks: [ 'uglify:web_js', 'uglify:engage_js', 'envify:web_js', 'envify:engage_js' ]
             },
             scss: {
                 files: [ '<%= paths.web_scss_watch_src %>' ],
@@ -126,10 +164,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-envify');
+    grunt.loadNpmTasks('grunt-preprocess');
 
     // Default task.
-    grunt.registerTask('default', [ 'uglify:web_js', 'sass', 'cssmin:web_css' ]);
-    grunt.registerTask('engage', [ 'uglify:engage_js' ]);
-    grunt.registerTask('engage_loader', [ 'uglify:engage_loader_js' ]);
-
+    grunt.registerTask('default', [ 'preprocess:fb_login', 'preprocess:xdm', 'uglify:web_js', 'envify:web_js', 'sass', 'cssmin:web_css' ]);
+    grunt.registerTask('engage', [ 'uglify:engage_js', 'envify:engage_js' ]);
+    grunt.registerTask('engage_loader', [ 'uglify:engage_loader_js', 'envify:engage_loader_js' ]);
 };

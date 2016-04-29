@@ -1,0 +1,19 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: memcached-redundant
+  labels:
+    name: memcached-redundant
+    service: memcached
+spec:
+  clusterIP: 10.211.243.49
+  ports:
+  - name: memcached
+    port: 11211
+    targetPort: memcached
+    protocol: TCP
+  selector:
+    name: memcached-redundant
+    service: memcached
+  type: ClusterIP

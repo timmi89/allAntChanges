@@ -993,8 +993,12 @@ def content_rec_redirect(request):
     params = request.GET
     event_param = params.get('event', None)
     if event_param:
-        event = json.loads(event_param)
-        register_event.delay(event)
+        try:
+            event = json.loads(event_param)
+            register_event.delay(event)
+        except ValueError:
+            # Gracefully ignore any invalid query params
+            pass
     url_param = params.get('targetURL', BASE_URL)
     redirect_response = HttpResponseRedirect(unicode(url_param))
     redirect_response['Referer'] = 'www.antenna.is/cr/'
@@ -1104,7 +1108,7 @@ def group_unapproved_tags(request, **kwargs):
     context['group'] = group
     context['hasSubheader'] = True
 
-    
+
     # is this really inefficient?
     unapproved_interaction_node_ids = []
     for tag in AllTag.objects.filter(group=group,approved=False):
@@ -1127,7 +1131,7 @@ def group_unapproved_tags(request, **kwargs):
 
     # print 'blocked_set'
     # print blocked_set
-    
+
     # unapproved_reactions = all_set - blessed_set
     # unapproved_reactions = unapproved_reactions - blocked_set
 
@@ -1174,9 +1178,9 @@ def gallery(request, example_name=None):
         context['cookie_user'] = cookie_user
 
     examples = {
-        'tech_blog':'Tech Blog',
-        'news_magazine':'News Magazine',
-        'food_blog':'Food Blog'
+        'tech_blog/': 'Tech Blog',
+        'news_magazine/': 'News Magazine',
+        'food_blog/': 'Food Blog'
     }
 
     context['examples'] = examples

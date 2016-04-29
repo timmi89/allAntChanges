@@ -2,7 +2,7 @@
 
 {% block title %}Antenna{%endblock%}
 {% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
+<link rel="canonical" href="{{ BASE_URL }}/see/">
 <script>
 // ANTsite.group.short_name = "local-static.antenna.is";
 // ANTsite.group.full_name = "{{ group.name }}";

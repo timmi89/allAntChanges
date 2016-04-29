@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: antenna-http
+spec:
+  cpuUtilization:
+    targetPercentage: 75
+  maxReplicas: 50
+  minReplicas: 1
+  scaleRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: antenna-http
+    subresource: scale

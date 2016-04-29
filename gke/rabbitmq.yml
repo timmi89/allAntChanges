@@ -1,0 +1,61 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+    service: amqp
+    app: rabbitmq
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: rabbitmq
+      labels:
+        name: rabbitmq
+        service: amqp
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3.6.0-management
+          resources:
+            requests:
+              cpu: ".5"
+              memory: "500Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          env:
+            - name: RABBITMQ_ERLANG_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: rabbitmq-erlang-cookie
+            - name: RABBITMQ_DEFAULT_VHOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: rabbitmq-default-vhost
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: rabbitmq-default-user
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: rabbitmq-default-pass
+          ports:
+            - name: amqp
+              containerPort: 5672
+            - name: amqp-tls
+              containerPort: 5671
+            - name: rabbitmq-manage
+              containerPort: 15672
+      volumes:
+        - name: rabbitmq-secret
+          secret:
+            secretName: rabbitmq-secret

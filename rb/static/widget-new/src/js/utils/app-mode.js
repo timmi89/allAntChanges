@@ -25,7 +25,7 @@ var currentScriptSrc = computeCurrentScriptSrc() || '';
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    offline: currentScriptSrc.indexOf(URLConstants.DEVELOPMENT) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
-    test: currentScriptSrc.indexOf(URLConstants.TEST) !== -1,
+    offline: currentScriptSrc.indexOf(URLConstants.DEV_ANTENNA_URL) !== -1 || currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA_URL) !== -1,
+    test: currentScriptSrc.indexOf(URLConstants.TEST_ANTENNA_URL) !== -1,
     debug: URLParams.getUrlParam('antennaDebug') === 'true'
 };
