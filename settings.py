@@ -72,9 +72,12 @@ EVENTS_URL = os.getenv('EVENTS_URL', 'http://nodebq.docker')
 STATIC_URL = os.getenv(
     'ANTENNA_STATIC_URL'
 ) + '/'
+
+# Unlike the rest of djangos url settings, the proxy does not
+# expect a trailing slash, and having one breaks S3
 INTERNAL_STATIC_URL = os.getenv(
     'ANTENNA_INTERNAL_STATIC_URL'
-) + '/'
+)
 
 static_storage = os.getenv('ANTENNA_STATIC_STORAGE', False)
 if static_storage and static_storage.strip():
