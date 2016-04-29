@@ -48,5 +48,5 @@ VERSION=<the version you are creating>
 ./build.sh $VERSION
 
 # Rolling update to the new image
-./deploy.sh $VERSION
+./deploy.sh staging $VERSION
 ```
