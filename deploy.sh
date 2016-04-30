@@ -33,23 +33,3 @@ spec:
 
   kubectl patch deployment/$name -p "$patch"
 done
-
-if [ $ENVIRONMENT == "production" ]; then
-  # stop docker compose
-  docker-compose stop -t 10
-  docker-compose kill
-
-  docker-compose -f docker-compose.production.yml run static-production
-  docker-compose -f docker-compose.production.yml run web-production ./manage.py collectstatic
-else
-  patch="---
-spec:
-  template:
-    spec:
-      containers:
-        - name: antenna-static-http
-          image: gcr.io/antenna-array/antenna-static:$VERSION
-"
-
-  kubectl patch deployment/antenna-static-http -p "$patch"
-fi
