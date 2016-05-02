@@ -11,7 +11,7 @@ spec:
       name: dd-agent
     spec:
       containers:
-      - image: datadog/docker-dd-agent:service-discovery-k8s
+      - image: gcr.io/antenna-array/dd-agent:latest
         imagePullPolicy: Always
         name: dd-agent
         ports:
