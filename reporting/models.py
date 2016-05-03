@@ -157,11 +157,15 @@ class GroupReport():
         start_date = calendar.timegm(self.start_date.timetuple()) * 1000
         end_date = calendar.timegm(self.end_date.timetuple()) * 1000
 
-        res = requests.get(self.host + path, {
-            "json": json.dumps({
-                "gid": self.group.id,
-                "start_date": start_date,
-                "end_date": end_date
-            })
-        })
+        res = requests.get(
+            self.host + path,
+            params={
+                "json": json.dumps({
+                    "gid": self.group.id,
+                    "start_date": start_date,
+                    "end_date": end_date
+                })
+            },
+            timeout=60
+        )
         return res.json()

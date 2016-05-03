@@ -13,8 +13,10 @@ from antenna.reporting.models import GroupReport
 logger = logging.getLogger('rb.standard')
 
 
-@periodic_task(name='reporting.weekly.email.report', ignore_result=True,
-               run_every=(crontab(hour="6", minute="30", day_of_week="monday")))
+@periodic_task(
+    name='reporting.weekly.email.report', ignore_result=True,
+    run_every=(crontab(hour="06", minute="30", day_of_week="monday"))  # EST
+)
 def weekly_email_report():
     end_date = datetime.combine(
         datetime.now().date(), datetime.min.time())

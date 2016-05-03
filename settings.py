@@ -355,7 +355,7 @@ env_email_backend = os.getenv(
 if env_email_backend == 'django_mailgun.MailgunBackend':
     EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
     MAILGUN_ACCESS_KEY = os.getenv('MAILGUN_ACCESS_KEY')
-    MAILGUN_SERVER_NAME = os.getenv('MAILGN_SERVER_NAME')
+    MAILGUN_SERVER_NAME = os.getenv('MAILGUN_SERVER_NAME')
 elif env_email_backend == 'django.core.mail.backends.smtp.EmailBackend':
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('EMAIL_HOST', '127.0.0.1')
