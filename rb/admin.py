@@ -2,9 +2,9 @@ from rb.models import *
 from chronos.models import *
 from analytics.models import *
 from django.contrib import admin
-#from piston.models import Nonce, Consumer, Token 
-#admin.site.unregister(Consumer) 
-#admin.site.unregister(Nonce) 
+#from piston.models import Nonce, Consumer, Token
+#admin.site.unregister(Consumer)
+#admin.site.unregister(Nonce)
 #admin.site.unregister(Token)
 
 admin.site.register(Feature)
@@ -61,11 +61,11 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('show_recirc', 'recirc_selector', 'recirc_title', 'recirc_background', 'recirc_jquery_method')
         }),
         ('Customization', {
-            'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
-                       'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook', 
+            'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade',
+                       'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook',
                        'sharebox_twitter', 'sharebox_stumble', 'sharebox_digg', 'sharebox_reddit', 'sharebox_google',
                        'image_selector', 'image_attribute')
-            
+
         }),
      )
     search_fields = ['name','short_name',]
@@ -148,20 +148,23 @@ class NodeValueAdmin(admin.ModelAdmin):
 
 class GroupAdminAdmin(admin.ModelAdmin):
     list_display = ('group', 'social_user', 'approved')
-    search_fields = ['id','group__name',]
-    
+    search_fields = ['id','group__name','social_user__username']
+    raw_id_fields = ['group', 'social_user']
+
 class GroupBlessedTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
+    raw_id_fields = ['group']
 
 class BlockedTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
+    raw_id_fields = ['group']
 
 class AllTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'approved', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
-
+    raw_id_fields = ['group']
 
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
