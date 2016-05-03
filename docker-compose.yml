@@ -5,7 +5,7 @@ web:
   command: python manage.py runserver 0.0.0.0:8081
   environment:
     VIRTUAL_HOST: antenna.docker
-    VIRTUAL_PORT: 80881
+    VIRTUAL_PORT: 8081
   ports:
     - "8081:8081"
   links:
