@@ -11,4 +11,4 @@ data:
   antenna-static-url: https://static.staging.antenna.is
   antenna-internal-static-url: http://antenna-static-http
   antenna-static-storage: ' '
-  events-url: https://events.static.antenna.is
+  events-url: https://events.staging.antenna.is

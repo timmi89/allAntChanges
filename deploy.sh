@@ -21,7 +21,7 @@ fi
 
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
-for name in antenna-http; do # antenna-celery antenna-celerybeat; do
+for name in antenna-http antenna-celery antenna-celerybeat; do
   patch="---
 spec:
   template:

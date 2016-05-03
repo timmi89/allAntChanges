@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: oauth2-proxy
-          image: a5huynh/oauth2_proxy
+          image: a5huynh/oauth2_proxy:latest
           args:
             - --config=/secrets/oauth2-proxy-cfg/oauth2-proxy.cfg
             - --upstream=http://mailcatcher/
