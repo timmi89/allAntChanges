@@ -73,7 +73,7 @@ instances:
     # include: []
     #
     # Default: include all containers
-    exclude: []
+    exclude: ["docker_image:gcr.io/google_containers/pause"]
     include: []
 
     ## Tagging
