@@ -49,6 +49,31 @@ def update_page_newer_cache(page_id):
     else:
         logger.info('LOCKED PAGE CACHE: ' + str(page_id))
 
+
+@task(name='crosspage.container.cache.update')
+def update_crosspage_container_cache(group_id, container_hash):
+    logger.info('UPDATE CROSSPAGE CONTAINER CACHE: (group: {0}, container: {1}'.format(group_id, container_hash))
+    cache_key = crosspage_container_cache_key(group_id, container_hash)
+    lock_key = 'LOCKED_crosspage_container_data_{0}_{1}'.format(group_id, container_hash)
+    if cache.get(lock_key) is None:
+        cache_data = get_crosspage_container_data(group_id, container_hash)
+        try:
+            cache.set(lock_key, 'locked', 15)
+            cache.set(cache_key, cache_data)
+            cache.delete(lock_key)
+        except Exception, ex:
+            logger.info(ex)
+        try:
+            get_cache('redundant').set(lock_key, 'locked', 15)
+            get_cache('redundant').set(cache_key, cache_data )
+            get_cache('redundant').delete(lock_key)
+        except Exception, ex:
+            logger.info('REDUNDANT CACHE EXCEPTION')
+            logger.warn(ex)
+    else:
+        logger.info('LOCKED CROSSPAGE CONTAINER CACHE: (group: {0}, container: {1})'.format(group_id, container_hash))
+
+
 @task(name='events.register')
 def register_event(event):
     logger.info('REGISTERING EVENT: ' + str(event))

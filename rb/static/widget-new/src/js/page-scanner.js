@@ -4,11 +4,11 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
-var Segment = require('./utils/segment');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
 var AutoCallToAction = require('./auto-call-to-action');
+var AutoQuestions = require('./auto-questions');
 var CallToActionIndicator = require('./call-to-action-indicator');
 var ContentRec = require('./content-rec-widget');
 var HashedElements = require('./hashed-elements');
@@ -23,6 +23,7 @@ var TextReactions = require('./text-reactions');
 var TYPE_TEXT = "text";
 var TYPE_IMAGE = "image";
 var TYPE_MEDIA = "media";
+var TYPE_QUESTION = "question";
 
 var ATTR_HASH = "ant-hash";
 
@@ -61,6 +62,7 @@ function scanPage($page, groupSettings, isMultiPage) {
     scanForSummaries($page, pageData, groupSettings); // Summary widget may be on the page, but outside the active section
     scanForReadMore($page, pageData, groupSettings);
     scanForContentRec($page, pageData, groupSettings);
+    createAutoQuestions($page, pageData, groupSettings);
     $activeSections.each(function() {
         var $section = $(this);
         createAutoCallsToAction($section, pageData, groupSettings);
@@ -218,6 +220,18 @@ function createAutoCallsToAction($section, pageData, groupSettings) {
         $ctaTarget.after(autoCta.element); // TODO: make the insert behavior configurable like the summary
         createdWidgets.push(autoCta);
     });
+}
+
+function createAutoQuestions($page, pageData, groupSettings) {
+    var questionConfig = groupSettings.autoQuestions();
+    if (questionConfig) {
+        var $questionContainer = find($page, questionConfig.auto_questions_selector);
+        if ($questionContainer.length === 1) {
+            var questions = AutoQuestions.createAutoQuestions(pageData, groupSettings);
+            insertContent($questionContainer, questions.element, questionConfig.auto_questions_insert_method);
+            createdWidgets.push(questions);
+        }
+    }
 }
 
 var generateAntItemAttribute = function(index) {
@@ -425,6 +439,12 @@ function computeHash($element, pageData, groupSettings) {
                 hash = Hash.hashText($element, increment++);
             }
             break;
+        case TYPE_QUESTION:
+            // TODO: should we hash the item content for questions like this or should we instead generate
+            // category/question ids that are valid hashes and just use them directly?
+            var content = $element.attr('ant-item-content');
+            // TODO: Move into Hash module?
+            hash = Hash.hashUrl('rdr-qtn-' + content);
     }
     if (hash) {
         HashedElements.setElement(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
@@ -436,19 +456,19 @@ function computeHash($element, pageData, groupSettings) {
 }
 
 function computeContentData($element, groupSettings) {
-    var contentData;
-    switch (computeElementType($element)) {
+    var containerType = computeElementType($element);
+    var contentData = {
+        type: containerType
+    };
+    switch (containerType) {
         case TYPE_IMAGE:
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
             var imageDimensions = {
                 height: parseInt($element.attr('height')) || $element.height() || 0,
                 width: parseInt($element.attr('width')) || $element.width() || 0
             };
-            contentData = {
-                type: 'img',
-                body: imageUrl,
-                dimensions: imageDimensions
-            };
+            contentData.body = imageUrl;
+            contentData.dimensions = imageDimensions;
             break;
         case TYPE_MEDIA:
             var mediaUrl = URLs.computeMediaUrl($element, groupSettings);
@@ -456,14 +476,17 @@ function computeContentData($element, groupSettings) {
                 height: parseInt($element.attr('height')) || $element.height() || 0,
                 width: parseInt($element.attr('width')) || $element.width() || 0
             };
-            contentData = {
-                type: 'media',
-                body: mediaUrl,
-                dimensions: mediaDimensions
-            };
+            contentData.body = mediaUrl;
+            contentData.dimensions = mediaDimensions;
             break;
         case TYPE_TEXT:
-            contentData = { type: 'text' };
+            // The body and location for text are computed later (i.e. when the reaction window opens and we grab the text selection)
+            break;
+        case TYPE_QUESTION:
+            var itemContent = $element.attr('ant-item-content');
+            if (itemContent) {
+                contentData.body = itemContent;
+            }
             break;
     }
     return contentData;

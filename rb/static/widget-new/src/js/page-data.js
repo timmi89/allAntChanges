@@ -32,7 +32,7 @@ function getPageData(hash) {
 function updateAllPageData(jsonPages, groupSettings) {
     var allPages = [];
     for (var i = 0; i < jsonPages.length; i++) {
-        var pageData = updatePageData(jsonPages[i], groupSettings)
+        var pageData = updatePageData(jsonPages[i], groupSettings);
         allPages.push(pageData);
         Events.postPageDataLoaded(pageData, groupSettings);
     }
@@ -53,44 +53,38 @@ function updatePageData(json, groupSettings) {
 
     var summaryReactions = json.summaryReactions;
     pageData.summaryReactions = summaryReactions;
-    setContainers(pageData, json.containers);
+    updateContainerData(pageData, json.containers);
+
+    applyTextIndicatorLimit(pageData, groupSettings);
 
     // We add up the summary reaction total client-side
-    var total = 0;
+    var summaryTotal = 0;
     for (var i = 0; i < summaryReactions.length; i++) {
-        total = total + summaryReactions[i].count;
+        summaryTotal = summaryTotal + summaryReactions[i].count;
     }
-    pageData.summaryTotal = total;
+    pageData.summaryTotal = summaryTotal;
     pageData.summaryLoaded = true;
 
-    // We add up the container reaction totals client-side
-    var total = 0;
-    var containerCounts = [];
-    var containers = pageData.containers;
-    for (var hash in json.containers) {
-        if (containers.hasOwnProperty(hash)) {
-            var container = containers[hash];
-            var total = 0;
-            var containerReactions = container.reactions;
-            if (containerReactions) {
-                for (var i = 0; i < containerReactions.length; i++) {
-                    total = total + containerReactions[i].count;
-                }
-            }
-            container.reactionTotal = total;
-            containerCounts.push({ count: total, container: container });
-        }
-    }
+    return pageData;
+}
+
+function applyTextIndicatorLimit(pageData, groupSettings) {
     var indicatorLimit = groupSettings.textIndicatorLimit();
     if (indicatorLimit) {
         // If an indicator limit is set, sort the containers and mark only the top N to be visible.
+        var containerCounts = [];
+        var containers = pageData.containers;
+        for (var hash in containers) {
+            if (containers.hasOwnProperty(hash)) {
+                var container = containers[hash];
+                containerCounts.push({ count: container.reactionTotal, container: container });
+            }
+        }
         containerCounts.sort(function(a, b) { return b.count - a.count; }); // sort largest count first
-        for (var i = indicatorLimit; i < containerCounts.length; i++) {
-            containerCounts[i].container.suppress = true;
+        for (var k = indicatorLimit; k < containerCounts.length; k++) {
+            containerCounts[k].container.suppress = true;
         }
     }
-
-    return pageData;
 }
 
 function getContainerData(pageData, containerHash) {
@@ -108,24 +102,63 @@ function getContainerData(pageData, containerHash) {
     return containerData;
 }
 
+function mergeCrosspageContainerData(pageData, jsonContainers) {
+    updateContainerData(pageData, jsonContainers, true);
+}
+
 // Merge the given container data into the pageData.containers data. This is necessary because the skeleton of the pageData.containers map
 // is set up and bound to the UI before all the data is fetched from the server and we don't want to break the data binding.
-function setContainers(pageData, jsonContainers) {
+function updateContainerData(pageData, jsonContainers, isCrosspage) {
     for (var hash in jsonContainers) {
         if (jsonContainers.hasOwnProperty(hash)) {
-            var containerData = getContainerData(pageData, hash);
             var fetchedContainerData = jsonContainers[hash];
-            containerData.id = fetchedContainerData.id;
-            for (var i = 0; i < fetchedContainerData.reactions.length; i++) {
-                containerData.reactions.push(fetchedContainerData.reactions[i]);
+            if (fetchedContainerData.id && fetchedContainerData.reactions) {
+                var containerData = getContainerData(pageData, hash);
+                containerData.id = fetchedContainerData.id;
+                for (var i = 0; i < fetchedContainerData.reactions.length; i++) {
+                    var fetchedReaction = fetchedContainerData.reactions[i];
+                    var found = false;
+                    for (var j = 0; j < containerData.reactions.length; j++) {
+                        var existingReaction = containerData.reactions[j];
+                        if (existingReaction.parentID === fetchedReaction.parentID) {
+                            // We can get data about the same reaction from both the page data and from
+                            // crosspage container data. Update the count to show whichever is the max (i.e. the crosspage data).
+                            existingReaction.count = Math.max(fetchedReaction.count, existingReaction.count);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        containerData.reactions.push(fetchedReaction);
+                    }
+                }
+                containerData.loaded = true;
             }
         }
     }
-    var allContainers = pageData.containers;
-    for (var hash in allContainers) {
-        if (allContainers.hasOwnProperty(hash)) {
-            var container = allContainers[hash];
-            container.loaded = true;
+    if (!isCrosspage) {
+        // When the page data has been loaded, mark all containers as loaded (including those with no reactions)
+        var allContainers = pageData.containers;
+        for (var hash in allContainers) {
+            if (allContainers.hasOwnProperty(hash)) {
+                var container = allContainers[hash];
+                container.loaded = true;
+            }
+        }
+    }
+    // Add up the container reaction totals
+    var containers = pageData.containers;
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var container = containers[hash];
+            var containerTotal = 0;
+            var containerReactions = container.reactions;
+            if (containerReactions) {
+                for (var j = 0; j < containerReactions.length; j++) {
+                    containerTotal = containerTotal + containerReactions[j].count;
+                }
+            }
+            container.reactionTotal = containerTotal;
         }
     }
 }
@@ -293,10 +326,11 @@ module.exports = {
     getPageDataByURL: getPageDataByURL,
     getPageData: getPageData,
     updateAllPageData: updateAllPageData,
+    mergeCrosspageContainerData: mergeCrosspageContainerData,
     getContainerData: getContainerData,
     getReactionLocationData: getReactionLocationData,
     updateReactionLocationData: updateReactionLocationData,
     registerReaction: registerReaction,
     clearIndicatorLimit: clearIndicatorLimit,
-    teardown: teardown,
+    teardown: teardown
 };

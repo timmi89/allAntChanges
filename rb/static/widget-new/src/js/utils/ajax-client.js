@@ -157,6 +157,14 @@ function fetchLocationDetails(reactionLocationData, pageData, groupSettings, suc
     });
 }
 
+function fetchCrossPageContainers(crosspageHashes, groupSettings, successCallback, errorCallback) {
+    var data = {
+        container_hashes: crosspageHashes,
+        group_id: groupSettings.groupId()
+    };
+    getJSONP(URLs.fetchCrossPageContainersUrl(), data, successCallback, errorCallback);
+}
+
 function postShareReaction(reactionData, containerData, pageData, groupSettings, success, failure) {
     User.fetchUser(groupSettings, function(userInfo) {
         var contentData = reactionData.content;
@@ -221,6 +229,7 @@ module.exports = {
     postNewReaction: postNewReaction,
     postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
+    fetchCrossPageContainers: fetchCrossPageContainers,
     postEvent: postEvent,
     postTrackingEvent: postTrackingEvent
 };

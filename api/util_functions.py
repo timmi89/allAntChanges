@@ -505,6 +505,88 @@ def getSinglePageDataNewer(page):
     return page_data
 
 
+def get_crosspage_container_data(group_id, container_hash):
+    try:
+        container = Container.objects.get(hash=container_hash)
+    except Container.DoesNotExist:
+        return {}
+
+    interactions = Interaction.objects.filter(container=container, page__site__group=group_id, approved=True).values('id', 'container_id', 'content_id', 'kind', 'interaction_node_id', 'parent_id')
+    content_ids = set()
+    node_ids = set()
+    container_interactions = {}
+    # First, make a pass over the interactions to group them by content, and kind (reactions/comments).
+    # As we go, collect the ids of all the content and interaction_nodes that we need. here's what the map looks like:
+    #   container_interactions = {
+    #       content_id: {
+    #           'reactions': {
+    #               node_id: { 'count': count, interaction_id: id }
+    #           }
+    #       }
+    #   }
+    for interaction in interactions:
+        content_id = interaction['content_id']
+        content_ids.add(content_id)
+        content_interactions = container_interactions.setdefault(content_id, {})
+        kind = interaction['kind']
+        if kind == 'tag':
+            content_reactions = content_interactions.setdefault('reactions', {})
+            node_id = interaction['interaction_node_id']
+            node_ids.add(node_id)
+            content_reaction = content_reactions.setdefault(node_id, {'count': 0})
+            content_reaction['count'] += 1
+            if not interaction['parent_id']:  # this is a 'root' interaction
+                content_reaction['interaction_id'] = interaction['id']
+
+    # Next, fetch all of the content, and interaction_nodes that we need
+    content_dict = {}
+    for content in Content.objects.filter(id__in=content_ids).values('id','kind','location','body'):
+        content_dict[content['id']] = content
+    node_dict = {}
+    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
+        node_dict[node['id']] = node
+
+    # Finally, transform the data into the output format
+    container_id = container.id
+    reactions_data = []
+    for content_id, content_interactions in container_interactions.items():
+        content = content_dict.get(content_id)
+        if content:
+            content_reactions = content_interactions.get('reactions', {})
+            for node_id, content_reaction in content_reactions.items():
+                interaction_id = content_reaction.get('interaction_id')
+                if interaction_id:  # This can be None due to corrupt data in the DB
+                    interaction_node = node_dict.get(node_id)
+                    if interaction_node:
+                        reaction_data = {
+                            'text': interaction_node['body'],
+                            'id': node_id,
+                            'parentID': interaction_id,
+                        # TODO clean up the interaction/interaction_node property names in the API
+                            'count': content_reaction['count'],
+                            'content': {
+                                'id': content_id,
+                                'location': content['location'],
+                                'kind': content['kind'],
+                                'body': content['body']
+                            }
+                        }
+                        reactions_data.append(reaction_data)
+    # return reactions sorted by count (highest to lowest), then id (lowest to highest)
+    reactions_data = sorted(reactions_data, key=lambda x: x['id'])
+    reactions_data = sorted(reactions_data, key=lambda x: x['count'], reverse=True)
+    container_data = {
+        'id': container_id,
+        'hash': container.hash,
+        'reactions': reactions_data
+    }
+    return container_data
+
+
+def crosspage_container_cache_key(group_id, container_hash):
+    return 'crosspage_container_data_{0}_{1}'.format(group_id, container_hash)
+
+
 def getRecommendedContent(group_id):
     # Fetch the popular content from the Event server
     popular_content = getEventsPopularContent(group_id)

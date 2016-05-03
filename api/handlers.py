@@ -773,7 +773,7 @@ class PageDataHandler(AnonymousBaseHandler):
 class PageDataHandlerNewer(AnonymousBaseHandler):
     @status_response
     @json_data
-    def read(self, request, data, pageid=None):
+    def read(self, request, data):
         requested_pages = data['pages']
         host = getHost(request)
 
@@ -812,6 +812,30 @@ class PageDataHandlerNewer(AnonymousBaseHandler):
 
         return pages_data
 
+
+class CrossPageContainerHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        requested_containers = data['container_hashes']
+        group_id = data['group_id']
+        containers_data = {}
+        for requested_hash in requested_containers:
+            cache_key = crosspage_container_cache_key(group_id, requested_hash)
+            container_data = check_and_get_locked_cache(cache_key)
+            if container_data is None:
+                container_data = get_crosspage_container_data(group_id, requested_hash)
+                try:
+                    cache.set(cache_key, container_data)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+                try:
+                    get_cache('redundant').set(cache_key, container_data)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+            containers_data[requested_hash] = container_data
+
+        return containers_data
 
 class ContentRecHandler(AnonymousBaseHandler):
     @status_response

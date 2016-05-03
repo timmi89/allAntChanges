@@ -447,6 +447,7 @@ class Content(DateAwareModel):
         ('txt', 'text'),
         ('img', 'img'),
         ('med', 'media'),
+        ('qtn', 'question')
     )
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='pag')
     location = models.CharField(max_length=255, blank=True, null=True)

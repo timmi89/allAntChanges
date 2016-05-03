@@ -7,6 +7,7 @@ from api.auth_handlers import *
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
 PageDataNewer = Resource(handler=PageDataHandlerNewer)
+CrossPageContainer = Resource(handler=CrossPageContainerHandler)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 ContentBodies = Resource(handler=ContentBodiesHandler)
@@ -89,6 +90,7 @@ urlpatterns = patterns('',
     # Widget
     url(r'^pagenewer/', PageDataNewer),
     url(r'^page/', PageData),
+    url(r'^crosspage/', CrossPageContainer),
     url(r'^containers/create/', CreateContainers),
     url(r'^content/bodies/', ContentBodies),
     url(r'^summary/containers/', Containers),

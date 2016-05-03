@@ -18,6 +18,10 @@ function getFetchContentBodiesUrl() {
     return '/api/content/bodies/';
 }
 
+function getFetchCrossPageContainersUrl() {
+    return '/api/crosspage/';
+}
+
 function getFetchContentRecommendationUrl() {
     return '/api/contentrec/';
 }
@@ -167,6 +171,7 @@ module.exports = {
     createReactionUrl: getCreateReactionUrl,
     fetchContentBodiesUrl: getFetchContentBodiesUrl,
     fetchContentRecommendationUrl: getFetchContentRecommendationUrl,
+    fetchCrossPageContainersUrl: getFetchCrossPageContainersUrl,
     shareReactionUrl: getShareReactionUrl,
     createTempUserUrl: getCreateTempUserUrl,
     shareWindowUrl: getShareWindowUrl,

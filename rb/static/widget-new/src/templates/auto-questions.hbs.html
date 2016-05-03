@@ -1,0 +1,13 @@
+<div class="antenna antenna-auto-questions" decorator="cssreset">
+    {{#questions}}
+        <div class="antenna-question-entry" {{#if wholePrompt}}ant-cta-for="{{@index}}"{{/if}}>
+            <div class="antenna-question-text" ant-item="{{@index}}" ant-item-type="question" ant-reactions="{{this.answers}}" ant-item-content="{{this.itemContent}}">{{this.text}}</div>
+            <br/>
+            <div class="antenna-question-answer" {{#if !wholePrompt}}ant-cta-for="{{@index}}"{{/if}}>
+                {{>logo}}<!--
+            --><span class="antenna-auto-cta-label" ant-reactions-label-for="{{@index}}"></span><!--
+            -->{{#if expandReactions}}<span ant-expanded-reactions-for="{{@index}}"></span>{{/if}}
+            </div>
+        </div>
+    {{/questions}}
+</div>
