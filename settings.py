@@ -96,7 +96,7 @@ if DEBUG:
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
+            'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -112,7 +112,7 @@ if DEBUG:
             }
         },
         'readonly1': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
+            'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -128,7 +128,7 @@ if DEBUG:
             }
         },
         'readonly2': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
+            'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
             'PASSWORD': '0bscur31nt3nt',
@@ -197,7 +197,7 @@ else:
 
     DATABASES = {
         'default': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
+            'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     os.getenv('DATABASE_MASTER_USER'),
             'PASSWORD': os.getenv('DATABASE_MASTER_PASS'),
@@ -212,7 +212,7 @@ else:
             }
         },
         'readonly1': {
-            'ENGINE':   'django_mysqlpool.backends.mysqlpool',
+            'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     os.getenv('DATABASE_REPLICA_USER'),
             'PASSWORD': os.getenv('DATABASE_REPLICA_PASS'),
@@ -387,7 +387,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    # 'south',
+    'south',
     'api',
     'rb',
     'chronos',
