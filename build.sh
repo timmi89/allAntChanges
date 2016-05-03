@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 fail () {
   echo $1
   exit 1

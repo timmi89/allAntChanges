@@ -21,4 +21,4 @@ ADD . /code/antenna
 ADD VERSION /VERSION
 
 EXPOSE 8000
-CMD exec gunicorn --preload -b 0.0.0.0:8000 -w 1 --access-logfile - --log-file - antenna.wsgi
+CMD exec gunicorn --preload -b 0.0.0.0:8000 -w 1 --access-logfile - --log-file - --log-level DEBUG antenna.wsgi
