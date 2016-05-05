@@ -295,6 +295,8 @@ class Group(models.Model):
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
 
+    auto_questions = models.TextField(blank=True)
+
     # css
     custom_css = models.TextField(blank=True)
 

@@ -193,102 +193,13 @@ function createFromJSON(json) {
     }
 
     function autoQuestions() {
-        // TODO: Use the normal data() accessor to read this data.
-        // TODO: Consider granularity - are there parts of this data that we'd want to locally override?
-        var groupName = data('name')();
-        switch (groupName) {
-            case 'crosskix.com':
-                return {
-                    auto_questions_selector: '.product_section .alpha',
-                    auto_questions_insert_method: 'append',
-                    expand_reactions: 'both',
-                    category_selector: '.meta a',
-                    category_attribute: 'href',
-                    categories: [ // Optional. Identify the cross-page categories
-                        {
-                            id: '1234',
-                            category_values: '/collections/all/shoes;/collections/all/spring-2015',
-                            questions: [
-                                {
-                                    id: '1234',
-                                    text: 'How do they fit?',
-                                    answers: 'Snug;Loose;Like a glove... for feet;Wide',
-                                    shared_reactions: true
-                                },
-                                {
-                                    id: '2345',
-                                    text: 'How\'s the color?',
-                                    answers: 'Hot;Slick;So Cool;Simply the Best',
-                                    shared_reactions: false
-                                }
-                            ]
-                        }
-                    ],
-                    general_questions: [
-                        {
-                            id: '1234',
-                            text: 'How is this page?',
-                            answers: 'Great;Awesome',
-                            shared_reactions: false
-                        },
-                       {
-                           id: '2345',
-                           text: 'What do you think of Crosskix?',
-                           answers: 'Love This Brand;So Tight',
-                           shared_reactions: true
-                       }
-                    ]
-                };
-            case 'antenna-static.docker':
-                return {
-                    auto_questions_selector: '.entry-post, .like-wrap',
-                    auto_questions_insert_method: 'before',
-                    expand_reactions: 'both',
-                    category_selector: '.meta a',
-                    category_attribute: 'href',
-                    categories: [ // Optional. Identify the cross-page categories
-                        {
-                            id: '12345',
-                            category_values: '/collections/all/spring-2015',
-                            questions: [
-                                {
-                                    id: '67890',
-                                    text: 'How do they fit?',
-                                    answers: 'Snug;Loose;Like a glove... for feet;Wide',
-                                    shared_reactions: true
-                                }
-                            ]
-                        },
-                        {
-                            id: '09876',
-                            category_values: '/collections/all/spring-2015',
-                            shared_reactions: false,
-                            questions: [
-                                {
-                                    id: '54321',
-                                    text: 'How\'s the color?',
-                                    answers: 'Hot;Slick;So Cool;Simply the Best'
-                                }
-                            ]
-                        }
-                    ],
-                    general_questions: [
-                        {
-                            id: 'qwerty',
-                            text: 'How do they fit?',
-                            answers: 'Snug;Loose;Like a glove... for feet;Wide',
-                            shared_reactions: true
-                        },
-                       {
-                           id: 'asdfgh',
-                           text: 'How\'s the color?',
-                           answers: 'Hot;Slick;So Cool;Simply the Best',
-                           shared_reactions: true
-                       }
-                    ]
-                }
+        var autoQuestions = data('auto_questions')();
+        if (autoQuestions && typeof autoQuestions === 'string') {
+            // This param comes back from the server as a JSON string. But the property can be overridden by an
+            // actual object in local Javascript
+            autoQuestions = JSON.parse(autoQuestions);
         }
-        return {};
+        return autoQuestions;
     }
 
     return {

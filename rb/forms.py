@@ -12,6 +12,7 @@ from settings import RB_SOCIAL_ADMINS
 from PIL import Image
 
 import StringIO
+import json
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -296,6 +297,7 @@ class CreateGroupForm(forms.Form):
 
 class GroupForm(forms.ModelForm):
     blessed_tags = forms.CharField(label='Blessed Tags')
+    admin_user = forms.BooleanField()
     
     # Override init for the form to set blessed tags for group instance
     def __init__(self, *args, **kwargs):
@@ -327,6 +329,15 @@ class GroupForm(forms.ModelForm):
             new_blessed_tags.append(inode)
 
         self.new_blessed_tags = new_blessed_tags
+
+    def clean_auto_questions(self):
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None:
+            try:
+                obj = json.loads(auto_questions)
+            except Exception, ex:
+                raise forms.ValidationError(_("Invalid JSON specified for Q&A config"))
+        return auto_questions
 
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
@@ -436,7 +447,8 @@ class GroupForm(forms.ModelForm):
             'readmore_label',
             'readmore_selector',
             'readmore_crop_selector',
-            'readmore_crop_min'
+            'readmore_crop_min',
+            'auto_questions'
         )
 
 

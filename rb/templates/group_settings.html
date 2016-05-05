@@ -484,7 +484,22 @@
                 {{ form.page_tld }}{{ form.page_tld.errors }}
             </div>
         </section>
-        {% if group.name == "bustle.com" or group.name == "local.antenna.is:8081" %}
+        {% if cookie_user.is_superuser %}
+        <section class="">
+            <h3>Questions &amp; Answers</h3>
+            <div class="formRow">
+                <label for="id_auto_questions"><span class="labelTitle">Q&amp;A JSON</span><span>JSON specifying the Q&A config. Here be dragons!</span></label>
+                {{ form.auto_questions }}
+                <style>
+                #id_auto_questions {
+                    height:200px;
+                    width:100%;
+                }
+                </style>
+            </div>
+        </section>
+        {% endif %}
+        {% if group.name == "bustle.com" or group.name == "antenna.docker" %}
         <section class="configurationSection">
             <h3>Read More</h3>
             <div class="formRow">
