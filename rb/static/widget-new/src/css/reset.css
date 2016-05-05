@@ -9,6 +9,8 @@
     box-sizing: border-box;
     min-height: initial;
     min-width: initial;
+    width: initial;
+    height: initial;
     word-wrap: initial;
     font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
     font-style: normal;

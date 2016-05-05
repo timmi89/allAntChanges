@@ -192,6 +192,16 @@ function createFromJSON(json) {
         }
     }
 
+    function autoQuestions() {
+        var autoQuestions = data('auto_questions')();
+        if (autoQuestions && typeof autoQuestions === 'string') {
+            // This param comes back from the server as a JSON string. But the property can be overridden by an
+            // actual object in local Javascript
+            autoQuestions = JSON.parse(autoQuestions);
+        }
+        return autoQuestions;
+    }
+
     return {
         legacyBehavior: data('legacy_behavior', false), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
         groupId: data('id'),
@@ -241,7 +251,8 @@ function createFromJSON(json) {
         contentRecCountDesktop: data('recirc_count_desktop'),
         contentRecCountMobile: data('recirc_count_mobile'),
         contentRecRowCountDesktop: data('recirc_rowcount_desktop'),
-        contentRecRowCountMobile: data('recirc_rowcount_mobile')
+        contentRecRowCountMobile: data('recirc_rowcount_mobile'),
+        autoQuestions: autoQuestions
     }
 }
 

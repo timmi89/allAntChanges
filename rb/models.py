@@ -295,6 +295,8 @@ class Group(models.Model):
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
 
+    auto_questions = models.TextField(blank=True)
+
     # css
     custom_css = models.TextField(blank=True)
 
@@ -447,6 +449,7 @@ class Content(DateAwareModel):
         ('txt', 'text'),
         ('img', 'img'),
         ('med', 'media'),
+        ('qtn', 'question')
     )
     kind = models.CharField(max_length=3, choices=CONTENT_TYPES, default='pag')
     location = models.CharField(max_length=255, blank=True, null=True)

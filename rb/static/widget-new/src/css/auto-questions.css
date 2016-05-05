@@ -1,0 +1,19 @@
+
+.antenna-auto-questions {
+    padding-bottom: 5px;
+}
+
+.antenna-question-text {
+    display: inline-block;
+    padding: 10px 10px 0 10px;
+    margin: 0 -10px; /* negative horizontal margin to visually offset the extra padding we include for ease of touch */
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.antenna-question-answer {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 -10px; /* negative horizontal margin to visually offset the extra padding we include for ease of touch */
+}

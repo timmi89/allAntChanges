@@ -3,7 +3,7 @@ from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
 from antenna.antenna_celery import app as celery_app
-from antenna.analytics.tasks import update_page_newer_cache, update_page_cache, update_page_container_hash_cache
+from antenna.analytics.tasks import update_page_newer_cache, update_crosspage_container_cache, update_page_cache, update_page_container_hash_cache
 from antenna.api.exceptions import FBException, JSONException
 from django.db.models import Q
 from django.core.cache import cache
@@ -253,6 +253,12 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         update_page_cache.delay(page.id)
         update_page_container_hash_cache.delay(page.id, [container.hash], [])
         update_page_newer_cache.delay(page.id)
+        cache_key = crosspage_container_cache_key(group.id, container.hash)
+        if (cache.get(cache_key) is not None):
+            # The notion of whether a container is cross-page isn't stored in the data model,
+            # so we use the cache to tell if it's cross-page (the cache tells us that someone
+            # has asked for it as a cross-page container)
+            update_crosspage_container_cache.delay(group.id, container.hash)
         
         #notification = AsynchPageNotification()
         #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})

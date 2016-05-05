@@ -1,3 +1,4 @@
+import uuid
 from django import forms
 from rb.models import *
 import re
@@ -12,6 +13,7 @@ from settings import RB_SOCIAL_ADMINS
 from PIL import Image
 
 import StringIO
+import json
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -328,9 +330,40 @@ class GroupForm(forms.ModelForm):
 
         self.new_blessed_tags = new_blessed_tags
 
+    def clean_auto_questions(self):
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None:
+            try:
+                json.loads(auto_questions)
+            except Exception, ex:
+                raise forms.ValidationError(_("Invalid JSON specified for Q&A config"))
+        return auto_questions
+
+    def populate_category_ids(self, categories):
+        for category in categories:
+            current_id = category.get('id', 'new')
+            if current_id == 'new':
+                category['id'] = str(uuid.uuid1())
+            self.populate_question_ids(category.get('questions', []))
+
+    def populate_question_ids(self, questions):
+        for question in questions:
+            current_id = question.get('id', 'new')
+            if current_id == 'new':
+                question['id'] = str(uuid.uuid1())
+
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupForm, self).save(commit=False)
+
+        # Populate any ids for new questions in the Q&A data
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None:
+            questions_obj = json.loads(auto_questions)
+            self.populate_question_ids(questions_obj.get('questions', []))
+            self.populate_category_ids(questions_obj.get('categories', []))
+            m.auto_questions = json.dumps(questions_obj, indent=4, sort_keys=True) # update the model so the data is saved
+            self.data['auto_questions'] = m.auto_questions # update the form so the new data is displayed
         
         # Remove all the old blessed tags
         GroupBlessedTag.objects.filter(group=self.instance).delete()
@@ -436,7 +469,8 @@ class GroupForm(forms.ModelForm):
             'readmore_label',
             'readmore_selector',
             'readmore_crop_selector',
-            'readmore_crop_min'
+            'readmore_crop_min',
+            'auto_questions'
         )
 
 

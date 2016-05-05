@@ -24,8 +24,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, gro
             container_kind: contentType, // One of 'page', 'text', 'media', 'img'
             content_node_data: {
                 body: contentBody,
-                kind: contentType,
-                item_type: '' // TODO: looks unused but TagHandler blows up without it. Current client passes in "page" for page reactions.
+                kind: contentType
             }
         };
         if (contentLocation) {
@@ -70,8 +69,7 @@ function postPlusOne(reactionData, containerData, pageData, groupSettings, succe
             container_kind: containerData.type, // 'page', 'text', 'media', 'img'
             content_node_data: {
                 body: '', // TODO: do we need this for +1s? looks like only the id field is used, if one is set
-                kind: contentNodeDataKind(containerData.type),
-                item_type: '' // TODO: looks unused but TagHandler blows up without it
+                kind: contentNodeDataKind(containerData.type)
             }
         };
         if (reactionData.content) {
@@ -157,6 +155,22 @@ function fetchLocationDetails(reactionLocationData, pageData, groupSettings, suc
     });
 }
 
+function fetchCrossPageContainers(crosspageContainerData, groupSettings, successCallback, errorCallback) {
+    var containersParam = [];
+    for (var i = 0; i < crosspageContainerData.length; i++) {
+        var containerData = crosspageContainerData[i];
+        containersParam.push({
+            hash: containerData.hash,
+            container_kind: containerData.type
+        });
+    }
+    var data = {
+        containers: containersParam,
+        group_id: groupSettings.groupId()
+    };
+    getJSONP(URLs.fetchCrossPageContainersUrl(), data, successCallback, errorCallback);
+}
+
 function postShareReaction(reactionData, containerData, pageData, groupSettings, success, failure) {
     User.fetchUser(groupSettings, function(userInfo) {
         var contentData = reactionData.content;
@@ -221,6 +235,7 @@ module.exports = {
     postNewReaction: postNewReaction,
     postShareReaction: postShareReaction,
     fetchLocationDetails: fetchLocationDetails,
+    fetchCrossPageContainers: fetchCrossPageContainers,
     postEvent: postEvent,
     postTrackingEvent: postTrackingEvent
 };
