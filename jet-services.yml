@@ -1,0 +1,67 @@
+web:
+  build:
+    image: gcr.io/antenna-array/antenna
+    path: ./
+    dockerfile_path: Dockerfile
+  environment:
+    VIRTUAL_HOST: antenna.docker
+    VIRTUAL_PORT: 8081
+  env-file: docker/env/development
+  ports:
+    - "8081:8081"
+  links:
+    - db
+    - memcached
+    - rabbitmq
+    - static
+  volumes:
+    - .:/code/antenna
+static:
+  build:
+    image: gcr.io/antenna-array/antenna-static
+    path: ./
+    dockerfile_path: docker/antenna-static/Dockerfile
+  command: ./grunt/server.sh
+  environment:
+    VIRTUAL_HOST: antenna-static.docker
+  env-file: docker/env/development
+  ports:
+    - "8082:8081"
+celeryd:
+  image: gcr.io/antenna-array/antenna
+  command: ./manage.py celeryd --loglevel=debug --concurrency=1
+  env-file: docker/env/development
+  links:
+    - db
+    - memcached
+    - rabbitmq
+celerybeat:
+  image: gcr.io/antenna-array/antenna
+  command: ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid
+  env-file: docker/env/development
+  links:
+    - db
+    - memcached
+    - rabbitmq
+  volumes:
+    - .:/code/antenna
+db:
+  image: mysql
+  command: '--character-set-server=utf8 --collation-server=utf8_general_ci'
+  environment:
+    MYSQL_ROOT_PASSWORD: '0bscur31nt3nt'
+    MYSQL_DATABASE: 'readrboard'
+    MYSQL_CHARSET: 'utf8'
+memcached:
+  image: memcached
+rabbitmq:
+  image: rabbitmq:management
+  environment:
+    VIRTUAL_HOST: 'rabbitmq.antenna.docker'
+    RABBITMQ_ERLANG_COOKIE: 'development erlang cookie'
+    RABBITMQ_DEFAULT_VHOST: 'antenna_broker'
+    RABBITMQ_DEFAULT_USER: 'broadcast'
+    RABBITMQ_DEFAULT_PASS: '51gn4l5'
+  hostname: 'rabbit'
+  ports:
+    - '15672:15672'
