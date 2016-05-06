@@ -1,3 +1,9 @@
+gcloud:
+  image: codeship/google-cloud-deployment:latest
+  encrypted_env_file: gcloud.env.encrypted
+  add_docker: true
+  volumes:
+    - ./:/code/antenna
 web:
   build:
     image: antenna
@@ -27,24 +33,6 @@ static:
   env-file: docker/env/development
   ports:
     - "8082:8081"
-celeryd:
-  image: antenna
-  command: ./manage.py celeryd --loglevel=debug --concurrency=1
-  env-file: docker/env/development
-  links:
-    - db
-    - memcached
-    - rabbitmq
-celerybeat:
-  image: antenna
-  command: ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid
-  env-file: docker/env/development
-  links:
-    - db
-    - memcached
-    - rabbitmq
-  volumes:
-    - .:/code/antenna
 db:
   image: mysql
   command: '--character-set-server=utf8 --collation-server=utf8_general_ci'

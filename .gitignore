@@ -20,6 +20,8 @@ grunt/website/node_modules
 grunt/widget-new/node_modules
 celerybeat-schedule*
 celerybeat.pid
+codeship.aes
+gcloud.env
 VERSION
 
 # generated static files
