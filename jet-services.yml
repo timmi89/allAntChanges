@@ -1,6 +1,6 @@
 web:
   build:
-    image: gcr.io/antenna-array/antenna
+    image: antenna
     path: ./
     dockerfile_path: Dockerfile
   environment:
@@ -18,7 +18,7 @@ web:
     - .:/code/antenna
 static:
   build:
-    image: gcr.io/antenna-array/antenna-static
+    image: antenna-static
     path: ./
     dockerfile_path: docker/antenna-static/Dockerfile
   command: ./grunt/server.sh
@@ -28,7 +28,7 @@ static:
   ports:
     - "8082:8081"
 celeryd:
-  image: gcr.io/antenna-array/antenna
+  image: antenna
   command: ./manage.py celeryd --loglevel=debug --concurrency=1
   env-file: docker/env/development
   links:
@@ -36,7 +36,7 @@ celeryd:
     - memcached
     - rabbitmq
 celerybeat:
-  image: gcr.io/antenna-array/antenna
+  image: antenna
   command: ./manage.py celerybeat --loglevel=debug --pidfile=/tmp/celerybeat.pid
   env-file: docker/env/development
   links:
