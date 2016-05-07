@@ -1,5 +1,33 @@
 .admin {
-    h1 { margin-top:0; }
+    .admin-sidebar {
+        position: fixed;
+        background:$antenna-lt-blue;
+        height:100%;
+
+        a {
+            color:#fff;
+        }
+    }
+
+    .admin-form {
+        .form-header {
+            position:fixed;background:#fff;border-bottom:1px solid #333;height:90px;padding-top:10px;width:100%;z-index:1;
+
+            .fixed-button-container {
+                right:15px;position: fixed;margin-top:15px;
+
+                .formFeedback {display:inline-block;}
+            }
+        h1 { margin-top:20px; }
+        }
+    
+        .form-fields {
+            padding-top:90px;
+        }
+
+    }
+
+
     label {
         display: block;
         height: auto;

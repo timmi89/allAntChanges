@@ -448,7 +448,7 @@ class GroupForm(forms.ModelForm):
             'readmore_selector',
             'readmore_crop_selector',
             'readmore_crop_min',
-            'auto_questions'
+            # 'auto_questions'
         )
 
 

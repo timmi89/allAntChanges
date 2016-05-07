@@ -775,10 +775,13 @@ def settings(request, **kwargs):
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
+            print "- - - - - - - - FORM IS VALID"
             form.save()
             context['saved'] = True
         else:
-            # print form.errors
+            print "- - - - - - - - FORM IS NOTTTT VALID 1"
+            print form.errors
+            print "- - - - - - - - FORM IS NOTTTT VALID 2"
             pass
 
     else:
