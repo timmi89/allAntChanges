@@ -16,9 +16,13 @@ else
 fi
 
 if [ -z $2 ]; then
-  fail 'Version must be specified'
+  VERSION=`cat VERSION`
 else
   VERSION=$2
+fi
+
+if [ -z $VERSION ]; then
+  fail 'Version must be specified'
 fi
 
 if [ -x /usr/bin/codeship_google ]; then

@@ -1,3 +1,9 @@
 - name: build
   service: gcloud
   command: /code/antenna/build.sh
+- name: deploy-staging
+  service: gcloud
+  command: /code/antenna/deploy.sh staging VERSION
+- name: deploy-static-staging
+  service: gcloud
+  command: /code/antenna/deploy.sh staging VERSION
