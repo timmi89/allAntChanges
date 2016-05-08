@@ -29,7 +29,7 @@ if [ -x /usr/bin/codeship_google ]; then
   /usr/bin/codeship_google authenticate
 fi
 
-yes | gcloud components update
+echo yes | gcloud components update
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
