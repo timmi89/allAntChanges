@@ -15,7 +15,7 @@ else
   ENVIRONMENT=$1
 fi
 
-if [ -z $2 ]; then
+if [ $2 == "VERSION" ]; then
   VERSION=`cat VERSION`
 else
   VERSION=$2
@@ -29,10 +29,33 @@ if [ -x /usr/bin/codeship_google ]; then
   /usr/bin/codeship_google authenticate
 fi
 
+# switch clusters
 echo yes | gcloud components update
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
+# migrate
+sed "s/{{VERSION}}/$VERSION/" gke/antenna-migrate.yml | kubectl create -f -
+
+pod_name=`kubectl get pods -a -l job-name=antenna-migrate -o jsonpath='{.items[*].metadata.name}'`
+while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Pending' ]; do
+  echo Waiting for POD to start
+  sleep 1
+done
+
+kubectl logs -f $pod_name;
+echo POD finished
+
+kubectl get pod $pod_name -o yaml
+
+exit_code=`kubectl get pods $pod_name -o jsonpath='{.status.containerStatuses[*].state.terminated.exitCode}'`
+if [ $exit_code != '0' ]; then
+  exit $exit_code
+fi
+
+kubectl delete job antenna-migrate
+
+# deploy
 for name in antenna-http antenna-celery antenna-celerybeat; do
   patch="---
 spec:
