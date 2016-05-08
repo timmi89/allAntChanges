@@ -47,6 +47,11 @@ done
 kubectl logs -f $pod_name;
 echo POD finished
 
+while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Running' ]; do
+  echo Waiting for POD to shutdown
+  sleep 1
+done
+
 kubectl get pod $pod_name -o yaml
 
 exit_code=`kubectl get pods $pod_name -o jsonpath='{.status.containerStatuses[*].state.terminated.exitCode}'`
