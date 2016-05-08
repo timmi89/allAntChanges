@@ -33,6 +33,7 @@ fi
 echo yes | gcloud components update
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
+echo
 
 # migrate
 sed "s/{{VERSION}}/$VERSION/" gke/antenna-migrate.yml | kubectl create -f -
