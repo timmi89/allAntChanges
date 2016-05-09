@@ -380,6 +380,7 @@ SEEDERS = [
 ]
 
 INSTALLED_APPS = [
+    'collectfast',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -396,7 +397,7 @@ INSTALLED_APPS = [
     'content_rec',
     'storages',
     'gunicorn',
-    'djcelery',
+    'djcelery'
 ]
 
 sentry_dsn = os.getenv('SENTRY_DSN', False)

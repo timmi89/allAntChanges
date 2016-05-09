@@ -5,25 +5,21 @@ set -e
 NPM=`realpath ./grunt/tmp_npm.sh`
 
 pushd grunt/website
-if $DEBUG; then
-  $NPM install
-fi
+$NPM install
 
 grunt default
 
-if $DEBUG; then
+if [ "$DEBUG" == "true" ]; then
   grunt watch &
 fi
 popd
 
 pushd grunt/widget-new
-if $DEBUG; then
-  $NPM install
-fi
+$NPM install
 
 grunt default
 
-if $DEBUG; then
+if [ "$DEBUG" == "true" ]; then
   grunt monitor &
 fi
 popd
