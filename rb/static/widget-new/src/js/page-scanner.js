@@ -181,6 +181,7 @@ function scanForCallsToAction($element, pageData, groupSettings) {
         ctaExpandedReactions[antItemId].push($ctaExpandedReactionArea);
     });
 
+    var crosspageContainers = [];
     var $ctaElements = find($element, '[ant-cta-for]'); // The call to action elements which prompt the user to react
     $ctaElements.each(function() {
         var $ctaElement = $(this);
@@ -205,9 +206,14 @@ function scanForCallsToAction($element, pageData, groupSettings) {
                     groupSettings: groupSettings
                 });
                 createdWidgets.push(callToAction);
+                if ($targetElement.attr('ant-crossPageContent') === 'true') {
+                    crosspageContainers.push(containerData);
+                }
             }
         }
-    })
+    });
+    // If the CTA contained any crosspage containers, kick off the fetching of that data.
+    PageDataLoader.fetchCrosspageContainerData(crosspageContainers, pageData, groupSettings);
 }
 
 function createAutoCallsToAction($section, pageData, groupSettings) {
@@ -225,10 +231,10 @@ function createAutoCallsToAction($section, pageData, groupSettings) {
 function createAutoQuestions($page, pageData, groupSettings) {
     var questionConfig = groupSettings.autoQuestions();
     if (questionConfig) {
-        var $questionContainer = find($page, questionConfig.auto_questions_selector);
+        var $questionContainer = find($page, questionConfig.autoQuestionsSelector);
         if ($questionContainer.length === 1) {
             var questions = AutoQuestions.createAutoQuestions(pageData, groupSettings);
-            insertContent($questionContainer, questions.element, questionConfig.auto_questions_insert_method);
+            insertContent($questionContainer, questions.element, questionConfig.autoQuestionsInsertMethod);
             createdWidgets.push(questions);
         }
     }
@@ -383,8 +389,7 @@ function scanMedia($mediaElement, type, pageData, groupSettings) {
     // Listen for changes to the image attributes which could indicate content changes.
     MutationObserver.addOneTimeAttributeListener($mediaElement.get(0), ['src','ant-item-content','data'], function() {
         if (indicator) {
-            // TODO: update HashedElements to remove the previous hash->element mapping. Consider there could be multiple
-            //       instances of the same element on a page... so we might need to use a counter.
+            HashedElements.removeElement(hash, pageData.pageHash, $mediaElement);
             indicator.teardown();
         }
         scanMedia($mediaElement, type, pageData, groupSettings);
@@ -440,11 +445,16 @@ function computeHash($element, pageData, groupSettings) {
             }
             break;
         case TYPE_QUESTION:
+<<<<<<< HEAD
             // TODO: should we hash the item content for questions like this or should we instead generate
             // category/question ids that are valid hashes and just use them directly?
             var content = $element.attr('ant-item-content');
             // TODO: Move into Hash module?
             hash = Hash.hashUrl('rdr-qtn-' + content);
+=======
+            hash = Hash.hashQuestion($element);
+            break;
+>>>>>>> 68d3f92ff4a838da2df5f27ca59f1a2a3314c839
     }
     if (hash) {
         HashedElements.setElement(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
@@ -557,6 +567,7 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     scanForSummaries($element, pageData, groupSettings);
                     scanForReadMore($element, pageData, groupSettings);
                     scanForContentRec($element, pageData, groupSettings);
+                    createAutoQuestions($element, pageData, groupSettings);
                     // Next, see if any entire active sections were added
                     var $activeSections = find($element, groupSettings.activeSections(), true);
                     if ($activeSections.length > 0) {

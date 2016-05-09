@@ -1,5 +1,6 @@
 .git
 logs/*
+db/*
 *.pyc
 *.DS_Store
 nbproject/
@@ -22,6 +23,7 @@ grunt/website/node_modules
 grunt/widget-new/node_modules
 celerybeat-schedule*
 celerybeat.pid
+codeship-services.yml
 
 # generated static files
 rb/static/engage_full.env.js

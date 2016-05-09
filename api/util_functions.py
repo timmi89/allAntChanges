@@ -505,12 +505,15 @@ def getSinglePageDataNewer(page):
     return page_data
 
 
-def get_crosspage_container_data(group_id, container_hash):
+def get_crosspage_container_data_by_hash(group_id, container_hash):
     try:
         container = Container.objects.get(hash=container_hash)
     except Container.DoesNotExist:
         return {}
+    return get_crosspage_container_data(group_id, container)
 
+
+def get_crosspage_container_data(group_id, container):
     interactions = Interaction.objects.filter(container=container, page__site__group=group_id, approved=True).values('id', 'container_id', 'content_id', 'kind', 'interaction_node_id', 'parent_id')
     content_ids = set()
     node_ids = set()
