@@ -1,18 +1,21 @@
 <div class="antenna antenna-auto-questions" decorator="cssreset">
-    {{#questions}}
-        <div class="antenna-question-entry" {{#if wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
-            <div class="antenna-question-text"
-                 ant-item="{{this.id}}"
-                 ant-item-type="question"
-                 {{#if this.sharedReactions}}ant-crossPageContent="true"{{/if}}
-                 ant-reactions="{{this.answers}}"
-                 ant-item-content="{{this.id}}">{{this.text}}</div>
-            <br/>
-            <div class="antenna-question-answer" {{#if !wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
-                {{>logo}}<!--
-            --><span class="antenna-auto-cta-label" ant-reactions-label-for="{{this.id}}"></span><!--
-            -->{{#if expandReactions}}<span ant-expanded-reactions-for="{{this.id}}"></span>{{/if}}
+    {{#if title}}<div class="antenna-questions-header">{{title}}</div>{{/if}}
+    <div class="antenna-questions-body">
+        {{#questions}}
+            <div class="antenna-question-entry" {{#if wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
+                <div class="antenna-question-text"
+                     ant-item="{{this.id}}"
+                     ant-item-type="question"
+                     {{#if this.sharedReactions}}ant-crossPageContent="true"{{/if}}
+                     ant-reactions="{{this.answers}}"
+                     ant-item-content="{{this.id}}">{{this.text}}</div>
+                <br/>
+                <div class="antenna-question-answer" {{#if !wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
+                    {{>logo}}<!--
+                --><span class="antenna-auto-cta-label" ant-reactions-label-for="{{this.id}}"></span><!--
+                -->{{#if expandReactions}}<span ant-expanded-reactions-for="{{this.id}}"></span>{{/if}}
+                </div>
             </div>
-        </div>
-    {{/questions}}
+        {{/questions}}
+    </div>
 </div>

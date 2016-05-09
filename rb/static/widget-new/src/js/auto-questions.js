@@ -9,6 +9,7 @@ function createAutoQuestions(pageData, groupSettings) {
     var ractive = Ractive({
         el: document.createElement('div'),
         data: {
+            title: questionsConfig.title,
             questions: questionsData,
             expandReactions: shouldExpandReactions(questionsConfig),
             wholePrompt: BrowserMetrics.isMobile()

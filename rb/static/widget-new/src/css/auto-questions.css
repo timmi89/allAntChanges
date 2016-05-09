@@ -3,6 +3,13 @@
     padding-bottom: 5px;
 }
 
+.antenna-questions-header {
+    padding: 10px 0;
+    border-top: 1px solid #aaaaaa;
+    border-bottom: 1px solid #aaaaaa;
+    font-size: 16px;
+}
+
 .antenna-question-text {
     display: inline-block;
     padding: 10px 10px 0 10px;
