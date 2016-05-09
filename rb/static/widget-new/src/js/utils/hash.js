@@ -13,14 +13,21 @@ function getCleanText($element) {
     return text;
 }
 
-function hashText(element, suffix) {
-    var text = getCleanText(element);
+function hashText($element, suffix) {
+    var text = getCleanText($element);
     if (text) {
         var hashText = "rdr-text-" + text;
         if (suffix !== undefined) { // Append the optional suffix
             hashText += '-' + suffix;
         }
         return MD5.hex_md5(hashText);
+    }
+}
+
+function hashQuestion($element) {
+    var content = $element.attr('ant-item-content');
+    if (content) {
+        return MD5.hex_md5('rdr-qtn-' + content);
     }
 }
 
@@ -80,6 +87,7 @@ function fiddleWithImageAndMediaUrls(url, groupSettings) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     hashText: hashText,
+    hashQuestion: hashQuestion,
     hashImage: hashImage,
     hashMedia: hashMedia,
     hashUrl: hashUrl

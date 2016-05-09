@@ -1,5 +1,7 @@
 FROM python:2.7.11
 
+WORKDIR /code/antenna
+
 # Update MySQL libs
 ADD docker/apt/mysql.list /etc/apt/sources.list.d/mysql.list
 RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5 && \
@@ -11,7 +13,6 @@ ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE antenna.settings
 
 RUN mkdir -p /code/antenna
-WORKDIR /code/antenna
 ENV PYTHONPATH=/code
 
 ADD requirements.txt /code/antenna/requirements.txt

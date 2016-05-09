@@ -431,7 +431,7 @@ class TagHandler(InteractionHandler):
         # Get the container
         container = Container.objects.get_or_create(
             hash = container_hash,
-            defaults = {'kind': container_kind,'item_type':content_node_data['item_type']}
+            defaults = {'kind': container_kind}
         )[0]
 
         if parent_id is not None:
@@ -817,14 +817,20 @@ class CrossPageContainerHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data):
-        requested_containers = data['container_hashes']
+        requested_containers = data['containers']
         group_id = data['group_id']
         containers_data = {}
-        for requested_hash in requested_containers:
-            cache_key = crosspage_container_cache_key(group_id, requested_hash)
+        for requested_container in requested_containers:
+            container_hash = requested_container['hash']
+            container_kind = requested_container['container_kind']
+            container = Container.objects.get_or_create(
+                hash=container_hash,
+                defaults={'kind': container_kind}
+            )[0]
+            cache_key = crosspage_container_cache_key(group_id, container_hash)
             container_data = check_and_get_locked_cache(cache_key)
             if container_data is None:
-                container_data = get_crosspage_container_data(group_id, requested_hash)
+                container_data = get_crosspage_container_data(group_id, container)
                 try:
                     cache.set(cache_key, container_data)
                 except Exception, e:
@@ -833,7 +839,7 @@ class CrossPageContainerHandler(AnonymousBaseHandler):
                     get_cache('redundant').set(cache_key, container_data)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))
-            containers_data[requested_hash] = container_data
+            containers_data[container_hash] = container_data
 
         return containers_data
 

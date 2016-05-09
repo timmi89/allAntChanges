@@ -90,8 +90,17 @@ function pagesAdded($pageElements, groupSettings) {
     queuePageDataLoad($pageElements, groupSettings);
 }
 
+function fetchCrosspageContainerData(crosspageContainerData, pageData, groupSettings) {
+    if (crosspageContainerData && crosspageContainerData.length > 0) {
+        AjaxClient.fetchCrossPageContainers(crosspageContainerData, groupSettings, function (containerData) {
+            PageData.mergeCrosspageContainerData(pageData, containerData);
+        });
+    }
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     load: startLoadingPageData,
-    pagesAdded: pagesAdded
+    pagesAdded: pagesAdded,
+    fetchCrosspageContainerData: fetchCrosspageContainerData
 };

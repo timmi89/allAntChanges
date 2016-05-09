@@ -56,7 +56,7 @@ def update_crosspage_container_cache(group_id, container_hash):
     cache_key = crosspage_container_cache_key(group_id, container_hash)
     lock_key = 'LOCKED_crosspage_container_data_{0}_{1}'.format(group_id, container_hash)
     if cache.get(lock_key) is None:
-        cache_data = get_crosspage_container_data(group_id, container_hash)
+        cache_data = get_crosspage_container_data_by_hash(group_id, container_hash)
         try:
             cache.set(lock_key, 'locked', 15)
             cache.set(cache_key, cache_data)
