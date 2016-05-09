@@ -37,6 +37,7 @@ function computeQuestionsData(questionConfig) {
 }
 
 function computeMatchingCategories(questionConfig) {
+    var matchingCategories = [];
     var pageCategories = [];
     var categorySelector = questionConfig.categorySelector;
     if (categorySelector) {
@@ -54,13 +55,14 @@ function computeMatchingCategories(questionConfig) {
                 pageCategories.push(pageCategory);
             }
         }
-    }
-    var allCategories = questionConfig.categories;
-    var matchingCategories = [];
-    for (var j = 0; j < allCategories.length; j++) {
-        var category = allCategories[j];
-        if (isMatchingCategory(category, pageCategories)) {
-            matchingCategories.push(category);
+        var allCategories = questionConfig.categories;
+        if (allCategories) {
+            for (var j = 0; j < allCategories.length; j++) {
+                var category = allCategories[j];
+                if (isMatchingCategory(category, pageCategories)) {
+                    matchingCategories.push(category);
+                }
+            }
         }
     }
     return matchingCategories;
