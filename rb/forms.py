@@ -332,7 +332,7 @@ class GroupForm(forms.ModelForm):
 
     def clean_auto_questions(self):
         auto_questions = self.cleaned_data["auto_questions"]
-        if auto_questions is not None:
+        if auto_questions is not None and len(auto_questions) > 0:
             try:
                 json.loads(auto_questions)
             except Exception, ex:
@@ -358,7 +358,7 @@ class GroupForm(forms.ModelForm):
 
         # Populate any ids for new questions in the Q&A data
         auto_questions = self.cleaned_data["auto_questions"]
-        if auto_questions is not None:
+        if auto_questions is not None and len(auto_questions) > 0:
             questions_obj = json.loads(auto_questions)
             self.populate_question_ids(questions_obj.get('questions', []))
             self.populate_category_ids(questions_obj.get('categories', []))
