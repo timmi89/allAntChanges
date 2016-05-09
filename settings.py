@@ -380,7 +380,6 @@ SEEDERS = [
 ]
 
 INSTALLED_APPS = [
-    'collectfast',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
