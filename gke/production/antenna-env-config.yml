@@ -11,5 +11,5 @@ data:
   antenna-static-url: https://cdn.antenna.is
   antenna-internal-static-url: https://cdn.antenna.is
   antenna-static-storage: storages.backends.s3boto.S3BotoStorage
-  antenna-static-bucket: readrboard
+  antenna-static-bucket: static.antenna.is
   events-url: https://events.antenna.is
