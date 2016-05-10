@@ -42,6 +42,6 @@ fi
 
 echo Building ${IMAGE}-${ENVIRONMENT}:$VERSION
 docker/env/template.sh docker/env/Dockerfile.template | \
-  docker build -qt ${IMAGE}-${ENVIRONMENT}:$VERSION -
+  docker build -t ${IMAGE}-${ENVIRONMENT}:$VERSION -
 echo Pushing ${IMAGE}-${ENVIRONMENT}:$VERSION
 gcloud docker push ${IMAGE}-${ENVIRONMENT}:$VERSION | grep digest
