@@ -21,7 +21,7 @@ if [ -z $1 ]; then
     GIT_BRANCH=$CI_BRANCH
   fi
 
-  if [ $CI_BRANCH != "master" ] && [ $CI_BRANCH != $VERSION ]; then
+  if [[ $CI_BRANCH != "master" ]] && [[ $CI_BRANCH != $VERSION ]]; then
     VERSION=$GIT_BRANCH-$VERSION
   fi
 else
