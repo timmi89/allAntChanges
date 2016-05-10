@@ -8,14 +8,15 @@ nav {
 
   a { color: $navbar-font-color; }
 
-  i,
-  [class^="mdi-"], [class*="mdi-"],
-  i.material-icons {
-    display: block;
-    font-size: 2rem;
-    height: $navbar-height-mobile;
-    line-height: $navbar-height-mobile;
-  }
+  // porter:  what in the world is this for?  strange, materializecss.  strange.
+  // i,
+  // [class^="mdi-"], [class*="mdi-"],
+  // i.material-icons {
+  //   display: block;
+  //   font-size: 2rem;
+  //   height: $navbar-height-mobile;
+  //   line-height: $navbar-height-mobile;
+  // }
 
   .nav-wrapper {
     position: relative;

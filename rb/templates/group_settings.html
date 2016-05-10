@@ -11,7 +11,9 @@
 {% block sidebarContent %}
     {% with group=form.instance %}
     {% with "settings" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
+    {% endwith %}
     {% endwith %}
     {% endwith %}
 {% endblock %}
@@ -23,7 +25,8 @@
   <section class="content" style="padding:0;">
 {% with group=form.instance %}
   <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form admin-form">{% csrf_token %}
-    <div class="form-header">
+    <div class="admin-header">
+      <h1>{{group.name}} Settings</h1>
       <div class="fixed-button-container">
           <div class="formFeedback" data-saved="{{saved}}">
               <span style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.</span>
@@ -31,13 +34,10 @@
           </div>
           <button class="btn submit flat" type="submit">Save Changes</button>
       </div>
-      <h1>
-        {{group.name}} Settings
-      </h1>
     </div>
   
 
-    <div class="form-fields">
+    <div class="form-fields container">
         {{ form.non_field_errors }}
     	<div class="col s12 m5">
             <section class="">

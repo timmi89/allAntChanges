@@ -57,6 +57,14 @@ strong { font-weight:700; }
     z-index:13001;
 }
 
+.navbar-fixed nav.global ul.side-nav {
+    li {
+        padding: 5px 15px;
+
+        a { padding: 5px 15px; }
+    }
+}
+
 
 
 /*Default Phone Color Styles - White*/

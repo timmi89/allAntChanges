@@ -1,10 +1,11 @@
+{% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
 <section class="admin-links">
   <div class="selected_group">
     <!-- Dropdown Trigger -->
-    <a class='dropdown-button btn' href='#' data-activates='group_selector'>{{ group.name }} <i class="material-icons">keyboard_arrow_down</i></a>
+    <a class='dropdown-button btn' href='#' data-activates='group_selector_{{whichGroupList}}'>{{ group.name }} <i class="material-icons">keyboard_arrow_down</i></a>
 
     <!-- Dropdown Structure -->
-    <ul id='group_selector' class='dropdown-content'>
+    <ul id='group_selector_{{whichGroupList}}' class='dropdown-content'>
       {% for group in admin_groups %}
         <li><a href="/group/{{group.short_name}}/settings/">{{group.name}}</a></li>
       {% endfor %}  
@@ -47,3 +48,4 @@
   </div>
 
 </section>
+{% endif %}
