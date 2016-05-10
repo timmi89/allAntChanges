@@ -30,7 +30,7 @@ if [ -z $VERSION ]; then
 fi
 
 echo Compiling static assets for $ENVIRONMENT
-. docker/env/${ENVIRONMENT}.env
+export $(cat docker/env/${ENVIRONMENT}.env | xargs)
 
 echo ANTENNA_URL == $ANTENNA_URL
 grunt/compile.sh
