@@ -62,7 +62,7 @@ echo Pushing $STATIC_IMAGE:$VERSION
 gcloud docker push $STATIC_IMAGE:$VERSION | grep digest
 gcloud docker push $STATIC_IMAGE:latest | grep digest
 
-if [ $CI_BRANCH == "master" ]; then
+if [[ $CI_BRANCH == "master" ]]; then
   export VERSION
 
   time ./docker/env/build.sh staging $IMAGE $VERSION
