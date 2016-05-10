@@ -12,6 +12,7 @@ mkdir -p $TMP_DIR
 
 pushd $TMP_DIR
 
+mkdir -p $ORIG_DIR/node_modules
 rsync --recursive --links --times $ORIG_DIR/node_modules ./
 ln -sf $ORIG_DIR/package.json
 npm $1

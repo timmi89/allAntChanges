@@ -1,3 +1,7 @@
 FROM {{IMAGE}}:{{VERSION}}
 
-RUN bash -c ". docker/env/{{ENVIRONMENT}}.env && grunt/compile.sh"
+RUN ["/bin/bash", "-c", "' \
+    echo Compiling static assets for {{ENVIRONMENT}} && \
+    . docker/env/{{ENVIRONMENT}}.env && \
+    echo ANTENNA_URL == $ANTENNA_URL && \
+    grunt/compile.sh'"]
