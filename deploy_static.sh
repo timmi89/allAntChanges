@@ -33,4 +33,4 @@ echo yes | gcloud components update
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
-docker/env/cmd.sh s3-deploy "['./docker/node/s3-deploy.sh']" gcr.io/antenna-array/antenna-static-$ENVIRONMENT $VERSION
+docker/env/cmd.sh s3-deploy "['./docker/antenna-static/s3-deploy.sh']" gcr.io/antenna-array/antenna-static-$ENVIRONMENT $VERSION

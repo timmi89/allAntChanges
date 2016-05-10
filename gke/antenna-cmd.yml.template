@@ -50,7 +50,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: antenna-env-config
-                  key: antenna-static-buckit
+                  key: antenna-static-bucket
             - name: ANTENNA_STATIC_STORAGE
               valueFrom:
                 configMapKeyRef:

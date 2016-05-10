@@ -1,7 +1,7 @@
 FROM node:5.7
 
 RUN apt-get update &&\
-    apt-get install -y rsync ruby &&\
+    apt-get install -y rsync s3cmd ruby &&\
     gem install sass &&\
     npm install -g grunt-cli
 
