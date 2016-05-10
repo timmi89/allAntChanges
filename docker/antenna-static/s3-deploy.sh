@@ -26,6 +26,7 @@ s3cmd sync \
   --add-header="Expires:Thu, 15 Apr 2020 20:00:00 GMT" \
   --guess-mime-type \
   --exclude="widget-new/lib/*" \
+  --exclude="js/cdn/*" \
   rb/static/ s3://$ANTENNA_STATIC_BUCKET/
 
 # Long term cache
@@ -36,4 +37,5 @@ s3cmd sync \
   --mime-type="application/javascript" \
   --exclude="*" \
   --include="widget-new/lib/*" \
+  --include="js/cdn/*" \
   rb/static/ s3://$ANTENNA_STATIC_BUCKET/
