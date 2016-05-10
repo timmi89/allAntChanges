@@ -24,7 +24,7 @@ s3cmd sync \
   --acl-public \
   --add-header="Cache-Control:public, max-age=900" \
   --add-header="Expires:Thu, 15 Apr 2020 20:00:00 GMT" \
-  --guess-mime-type \
+  --guess-mime-type --no-mime-magic \
   --exclude="widget-new/lib/*" \
   --exclude="js/cdn/*" \
   rb/static/ s3://$ANTENNA_STATIC_BUCKET/
@@ -34,7 +34,7 @@ s3cmd sync \
   --acl-public \
   --add-header="Cache-Control:public, max-age=31536000" \
   --add-header="Expires:Thu, 15 Apr 2020 20:00:00 GMT" \
-  --mime-type="application/javascript" \
+  --guess-mime-type --no-mime-magic \
   --exclude="*" \
   --include="widget-new/lib/*" \
   --include="js/cdn/*" \
