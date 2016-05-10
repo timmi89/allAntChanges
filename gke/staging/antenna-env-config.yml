@@ -8,8 +8,8 @@ data:
   virtual-host: www.staging.antenna.is
   antenna-url: https://www.staging.antenna.is
   antenna-api-url: https://api.staging.antenna.is
-  antenna-static-url: https://static.staging.antenna.is
-  antenna-internal-static-url: https://static.staging.antenna.is
+  antenna-static-url: https://cdn.staging.antenna.is
+  antenna-internal-static-url: https://cdn.staging.antenna.is
   antenna-static-bucket: static.staging.antenna.is
   antenna-static-storage: storages.backends.s3boto.S3BotoStorage
   events-url: https://events.staging.antenna.is
