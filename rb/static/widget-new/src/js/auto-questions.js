@@ -28,12 +28,11 @@ function createAutoQuestions(pageData, groupSettings) {
 
 function computeQuestionsData(questionConfig) {
     var questionsData = [];
-    // This is a little trick to push the contents of an array into another array. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push#Merging_two_arrays
-    Array.prototype.push.apply(questionsData, questionConfig.questions);
     var categories = computeMatchingCategories(questionConfig);
     for (var j = 0; j < categories.length; j++) {
-        Array.prototype.push.apply(questionsData, categories[j].questions);
+        Array.prototype.push.apply(questionsData, categories[j].questions); // This is a little trick to push the contents of an array into another array. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push#Merging_two_arrays
     }
+    Array.prototype.push.apply(questionsData, questionConfig.questions);
     return questionsData;
 }
 
