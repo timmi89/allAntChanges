@@ -1,5 +1,8 @@
 #! /bin/bash
 
+export IMAGE=gcr.io/antenna-array/antenna
+export STATIC_IMAGE=gcr.io/antenna-array/antenna-static
+
 set -e
 
 cd "${0%/*}"
@@ -18,7 +21,7 @@ if [ -z $1 ]; then
     GIT_BRANCH=$CI_BRANCH
   fi
 
-  if [ $CI_BRANCH != "master" && $CI_BRANCH != $VERSION ]; then
+  if [ $CI_BRANCH != "master" ] && [ $CI_BRANCH != $VERSION ]; then
     VERSION=$GIT_BRANCH-$VERSION
   fi
 else
@@ -45,14 +48,27 @@ if [ -x /usr/bin/codeship_google ]; then
   /usr/bin/codeship_google authenticate
 fi
 
-docker build -qt gcr.io/antenna-array/antenna:$VERSION .
-docker tag gcr.io/antenna-array/antenna:$VERSION gcr.io/antenna-array/antenna:latest
-gcloud docker push gcr.io/antenna-array/antenna:$VERSION
-gcloud docker push gcr.io/antenna-array/antenna:latest
+echo Building $IMAGE:$VERSION
+docker build -qt $IMAGE:$VERSION .
+docker tag $IMAGE:$VERSION $IMAGE:latest
+echo Pushing $IMAGE:$VERSION
+gcloud docker push $IMAGE:$VERSION | grep digest
+gcloud docker push $IMAGE:latest | grep digest
 
-docker build -qt gcr.io/antenna-array/antenna-static:$VERSION -f docker/antenna-static/Dockerfile .
-docker tag gcr.io/antenna-array/antenna-static:$VERSION gcr.io/antenna-array/antenna-static:latest
-gcloud docker push gcr.io/antenna-array/antenna-static:$VERSION
-gcloud docker push gcr.io/antenna-array/antenna-static:latest
+echo Building $STATIC_IMAGE:$VERSION
+docker build -qt $STATIC_IMAGE:$VERSION -f docker/antenna-static/Dockerfile .
+docker tag $STATIC_IMAGE:$VERSION $STATIC_IMAGE:latest
+echo Pushing $STATIC_IMAGE:$VERSION
+gcloud docker push $STATIC_IMAGE:$VERSION | grep digest
+gcloud docker push $STATIC_IMAGE:latest | grep digest
+
+if [ $CI_BRANCH == "master" ]; then
+  export VERSION
+
+  time ./docker/env/build.sh staging $IMAGE $VERSION
+  time ./docker/env/build.sh staging $STATIC_IMAGE $VERSION
+  time ./docker/env/build.sh production $IMAGE $VERSION
+  time ./docker/env/build.sh production $STATIC_IMAGE $VERSION
+fi
 
 echo ./deploy.sh staging $VERSION '&&' ./deploy_static.sh staging $VERSION

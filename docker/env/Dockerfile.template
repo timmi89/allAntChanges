@@ -1,0 +1,3 @@
+FROM {{IMAGE}}:{{VERSION}}
+
+RUN bash -c ". docker/env/{{ENVIRONMENT}}.env && grunt/compile.sh"

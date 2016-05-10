@@ -15,6 +15,8 @@ else
   ENVIRONMENT=$1
 fi
 
+export IMAGE=gcr.io/antenna-array/antenna-$ENVIRONMENT
+
 if [ $2 == "VERSION" ]; then
   VERSION=`cat VERSION`
 else
@@ -36,32 +38,10 @@ gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 echo
 
 # migrate
-sed "s/{{VERSION}}/$VERSION/" gke/antenna-migrate.yml | kubectl create -f -
-
-pod_name=`kubectl get pods -a -l job-name=antenna-migrate -o jsonpath='{.items[*].metadata.name}'`
-while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Pending' ]; do
-  echo Waiting for POD to start
-  sleep 1
-done
-
-kubectl logs -f $pod_name;
-echo POD finished
-
-while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Running' ]; do
-  echo Waiting for POD to shutdown
-  sleep 1
-done
-
-kubectl get pod $pod_name -o yaml
-
-exit_code=`kubectl get pods $pod_name -o jsonpath='{.status.containerStatuses[*].state.terminated.exitCode}'`
-if [ $exit_code != '0' ]; then
-  exit $exit_code
-fi
-
-kubectl delete job antenna-migrate
+docker/env/cmd.sh migrate "['./manage.py', 'migrate']" $IMAGE $VERSION
 
 # deploy
+echo Deploying $IMAGE:$VERSION
 for name in antenna-http antenna-celery antenna-celerybeat; do
   patch="---
 spec:
@@ -69,7 +49,7 @@ spec:
     spec:
       containers:
         - name: $name
-          image: gcr.io/antenna-array/antenna:$VERSION
+          image: $IMAGE:$VERSION
 "
 
   kubectl patch deployment/$name -p "$patch"

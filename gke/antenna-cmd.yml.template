@@ -2,7 +2,7 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: antenna-migrate
+  name: antenna-cmd-{{NAME}}
 spec:
   completions: 1
   parallelism: 1
@@ -10,13 +10,14 @@ spec:
     metadata:
       labels:
         name: antenna
-        app: migrate
+        service: cmd
+        app: {{NAME}}
     spec:
       restartPolicy: Never
       containers:
-        - name: antenna-migrate
-          image: gcr.io/antenna-array/antenna:{{VERSION}}
-          command: ['./manage.py', 'migrate']
+        - name: {{NAME}}
+          image: {{IMAGE}}:{{VERSION}}
+          command: {{COMMAND}}
           env:
             - name: DJANGO_LOG_LEVEL
               value: DEBUG
@@ -45,6 +46,11 @@ spec:
                 configMapKeyRef:
                   name: antenna-env-config
                   key: antenna-internal-static-url
+            - name: ANTENNA_STATIC_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-static-buckit
             - name: ANTENNA_STATIC_STORAGE
               valueFrom:
                 configMapKeyRef:
@@ -55,6 +61,10 @@ spec:
                 configMapKeyRef:
                   name: antenna-env-config
                   key: events-url
+            - name: AWS_ACCESS_KEY_ID
+              value: 'AKIAINM2FE35X6K77P2A'
+            - name: AWS_SECRET_ACCESS_KEY
+              value: '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'
             - name: DATABASE_MASTER_HOST
               value: /sql/proxy
             - name: DATABASE_MASTER_USER

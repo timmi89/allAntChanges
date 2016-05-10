@@ -33,22 +33,4 @@ echo yes | gcloud components update
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
-if [ $ENVIRONMENT == "production" ]; then
-  # stop docker compose
-  docker-compose stop -t 10
-  docker-compose kill
-
-  docker-compose -f docker-compose.production.yml run static-production
-  docker-compose -f docker-compose.production.yml run web-production ./manage.py collectstatic
-else
-  patch="---
-spec:
-  template:
-    spec:
-      containers:
-        - name: antenna-static-http
-          image: gcr.io/antenna-array/antenna-static:$VERSION
-"
-
-  kubectl patch deployment/antenna-static-http -p "$patch"
-fi
+docker/env/cmd.sh s3-deploy "['./docker/node/s3-deploy.sh']" gcr.io/antenna-array/antenna-static-$ENVIRONMENT $VERSION

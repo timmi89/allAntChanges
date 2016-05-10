@@ -9,6 +9,12 @@ RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5 && \
     apt-get upgrade -y mysql-client mysql-connector-python-cext && \
     apt-get autoremove -y
 
+# Install node for static assets
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+    apt-get install -y nodejs rsync ruby && \
+    gem install sass &&\
+    npm install -g grunt-cli
+
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE antenna.settings
 
