@@ -9,3 +9,6 @@
   tag: master
   service: gcloud
   command: /code/antenna/deploy_static.sh staging VERSION
+- name: echo-version
+  service: gcloud
+  command: cat /code/antenna/VERSION
