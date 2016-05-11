@@ -48,18 +48,22 @@ echo Running command $COMMAND with name $NAME on $IMAGE:$VERSION
 docker/env/template.sh gke/antenna-cmd.yml.template | kubectl apply -f -
 
 pod_name=`kubectl get pods -a -l job-name=antenna-cmd-$NAME -o jsonpath='{.items[*].metadata.name}'`
+echo Waiting for POD to start
 while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Pending' ]; do
-  echo Waiting for POD to start
+  echo -n \#
   sleep 1
 done
+echo
 
 kubectl logs -f $pod_name;
 echo POD finished
 
+echo Waiting for POD to shutdown
 while [ `kubectl get pods $pod_name -o jsonpath='{.status.phase}'` == 'Running' ]; do
-  echo Waiting for POD to shutdown
+  echo -n \#
   sleep 1
 done
+echo
 
 kubectl get pod $pod_name -o yaml
 
