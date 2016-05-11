@@ -498,6 +498,8 @@
                 </style>
             </div>
         </section>
+        {% else %}
+            {{ form.auto_questions.as_hidden }}
         {% endif %}
         {% if group.name == "bustle.com" or group.name == "antenna.docker" %}
         <section class="configurationSection">
