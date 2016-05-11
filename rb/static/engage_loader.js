@@ -1,49 +1,12 @@
 (function() {
     var urlParams = getUrlParams();
-    var oldWidgetUrl = computeCurrentScriptUrl(urlParams);
-    var newWidgetUrl = computeNewScriptUrl(urlParams);
-    var scriptUrl = newWidgetUrl;
     if (urlParams['antennaDisabled'] === 'true') {
         return;
     }
-    if (urlParams['antennaNewWidget'] === 'true') {
-        // Manual override to use the new widget
-        scriptUrl = newWidgetUrl;
-    } else if (urlParams['antennaOldWidget'] === 'true') {
-        scriptUrl = oldWidgetUrl;
-    } else {
-        // Otherwise, check if we're on one of the sites that's ready and load the new widget some percentage of the time
-        var groups = [
-            //{ domain: 'local.antenna.is', percentage: 100 },
-            //{ domain: 'www.antenna.is', percentage: 100 },
-            //{ domain: 'mobi.perezhilton.com', percentage: 100 },
-            //{ domain: 'perezhilton.com', percentage: 100 },
-            //{ domain: 'dlisted.com', percentage: 100 },
-            //{ domain: 'wral.com', percentage: 100 },
-            //{ domain: 'bustle.com', percentage: 100 },
-            //{ domain: 'channel3000.com', percentage: 100 },
-            //{ domain: 'wktv.com', percentage: 100 },
-            //{ domain: 'fox13news.com', percentage: 100 },
-            //{ domain: 'dukechronicle.com', percentage: 100 },
-            //{ domain: 'kezi.com', percentage: 100 },
-            //{ domain: 'kdrv.com', percentage: 100 },
-            //{ domain: 'ntrsctn.com', percentage: 100 },
-            //{ domain: 'geekwire.com', percentage: 100 },
-            //{ domain: 'blog.antenna.is', percentage: 100 },
-            //{ domain: 'exitevent.com', percentage: 100 }
-        ];
-        var hostname = window.antenna_host || window.location.hostname;
-        for (var i = 0; i < groups.length; i++) {
-            var group = groups[i];
-            if (hostname.indexOf(group.domain) !== -1) {
-                if (Math.random() * 100 < group.percentage) {
-                    scriptUrl = newWidgetUrl;
-                } else {
-                    scriptUrl = oldWidgetUrl;
-                }
-                break;
-            }
-        }
+    var serverUrl = computeServerUrl(urlParams);
+    var scriptUrl = computeNewScriptUrl(serverUrl, urlParams);
+    if (urlParams['antennaOldWidget'] === 'true') {
+        scriptUrl = computeOldScriptUrl(serverUrl, urlParams);
     }
     loadScript(scriptUrl);
 
@@ -70,9 +33,16 @@
         return urlParams;
     }
 
-    function computeNewScriptUrl(urlParams) {
+    function computeServerUrl(urlParams) {
+        var serverUrl = urlParams['antennaUrl'];
+        if (!serverUrl) {
+            serverUrl = process.env.ANTENNA_URL;
+        }
+        return serverUrl;
+    }
+
+    function computeNewScriptUrl(serverUrl, urlParams) {
         var debug = urlParams['antennaDebug'] === 'true';
-        var serverUrl = process.env.ANTENNA_URL;
         if (debug) {
             return serverUrl + '/static/widget-new/debug/antenna.js';
         } else {
@@ -80,9 +50,8 @@
         }
     }
 
-    function computeCurrentScriptUrl(urlParams) {
+    function computeOldScriptUrl(serverUrl, urlParams) {
         var debug = urlParams['antennaDebug'] === 'true';
-        var serverUrl = process.env.ANTENNA_URL;
         if (debug) {
             return serverUrl + '/static/engage_full.js';
         } else {
