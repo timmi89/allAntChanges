@@ -36,7 +36,7 @@
     function computeServerUrl(urlParams) {
         var serverUrl = urlParams['antennaUrl'];
         if (!serverUrl) {
-            serverUrl = process.env.ANTENNA_URL;
+            serverUrl = process.env.ANTENNA_STATIC_URL;
         }
         return serverUrl;
     }
@@ -44,18 +44,18 @@
     function computeNewScriptUrl(serverUrl, urlParams) {
         var debug = urlParams['antennaDebug'] === 'true';
         if (debug) {
-            return serverUrl + '/static/widget-new/debug/antenna.js';
+            return serverUrl + '/widget-new/debug/antenna.js';
         } else {
-            return serverUrl + '/static/widget-new/antenna.min.js';
+            return serverUrl + '/widget-new/antenna.min.js';
         }
     }
 
     function computeOldScriptUrl(serverUrl, urlParams) {
         var debug = urlParams['antennaDebug'] === 'true';
         if (debug) {
-            return serverUrl + '/static/engage_full.js';
+            return serverUrl + '/engage_full.js';
         } else {
-            return serverUrl + '/static/engage.min.js';
+            return serverUrl + '/engage.min.js';
         }
     }
 })();
