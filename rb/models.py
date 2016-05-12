@@ -447,7 +447,7 @@ class Content(DateAwareModel):
     CONTENT_TYPES = (
         ('pag', 'page'),
         ('txt', 'text'),
-        ('img', 'img'),
+        ('img', 'image'),
         ('med', 'media'),
         ('qtn', 'question')
     )
