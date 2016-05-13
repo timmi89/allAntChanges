@@ -11,6 +11,14 @@
     font-size: 16px;
 }
 
+.antenna-questions-header .antenna-logo {
+    margin-right: 5px;
+}
+
+.antenna-questions-header-text {
+    vertical-align: middle;
+}
+
 .antenna-question-text {
     display: inline-block;
     padding: 10px 10px 0 10px;
@@ -24,4 +32,8 @@
     display: inline-block;
     padding: 5px 10px;
     margin: 0 -10px; /* negative horizontal margin to visually offset the extra padding we include for ease of touch */
+}
+
+.antenna-auto-questions .antenna-auto-cta-label {
+    margin: 0;
 }

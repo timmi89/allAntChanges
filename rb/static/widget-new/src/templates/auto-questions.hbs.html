@@ -1,5 +1,5 @@
 <div class="antenna antenna-auto-questions" decorator="cssreset">
-    {{#if title}}<div class="antenna-questions-header">{{title}}</div>{{/if}}
+    {{#if title}}<div class="antenna-questions-header">{{>logo}}<span class="antenna-questions-header-text">{{title}}</span></div>{{/if}}
     <div class="antenna-questions-body">
         {{#questions}}
             <div class="antenna-question-entry" {{#if wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
@@ -11,8 +11,7 @@
                      ant-item-content="{{this.id}}">{{this.text}}</div>
                 <br/>
                 <div class="antenna-question-answer" {{#if !wholePrompt}}ant-cta-for="{{this.id}}"{{/if}}>
-                    {{>logo}}<!--
-                --><span class="antenna-auto-cta-label" ant-reactions-label-for="{{this.id}}"></span><!--
+                    <span class="antenna-auto-cta-label" ant-reactions-label-for="{{this.id}}"></span><!--
                 -->{{#if expandReactions}}<span ant-expanded-reactions-for="{{this.id}}"></span>{{/if}}
                 </div>
             </div>
