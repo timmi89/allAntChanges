@@ -8,6 +8,6 @@ data:
   virtual-host: www.staging.antenna.is
   antenna-url: https://www.staging.antenna.is
   antenna-api-url: https://api.staging.antenna.is
-  antenna-static-bucket: static.antenna.is
+  antenna-static-bucket: static.staging.antenna.is
   antenna-static-url: https://cdn.staging.antenna.is
   events-url: https://events.staging.antenna.is
