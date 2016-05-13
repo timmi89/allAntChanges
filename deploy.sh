@@ -32,7 +32,7 @@ if [ -x /usr/bin/codeship_google ]; then
 fi
 
 # switch clusters
-echo yes | gcloud components update
+echo yes | gcloud components update > /dev/null
 gcloud config set compute/zone us-central1-f
 gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 echo
