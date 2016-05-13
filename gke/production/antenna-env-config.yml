@@ -9,4 +9,5 @@ data:
   antenna-url: https://www.antenna.is
   antenna-api-url: https://api.antenna.is
   antenna-static-url: https://cdn.antenna.is
+  antenna-static-bucket: static.antenna.is
   events-url: https://events.antenna.is

@@ -36,6 +36,11 @@ spec:
                 configMapKeyRef:
                   name: antenna-env-config
                   key: antenna-api-url
+            - name: ANTENNA_STATIC_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: antenna-env-config
+                  key: antenna-static-bucket
             - name: ANTENNA_STATIC_URL
               valueFrom:
                 configMapKeyRef:
