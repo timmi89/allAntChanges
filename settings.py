@@ -25,23 +25,6 @@ EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
 EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@'\
                                'developer.gserviceaccount.com'
 
-# For Amazon web services
-AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
-AWS_SECRET_ACCESS_KEY = '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'
-
-# For S3
-AWS_STORAGE_BUCKET_NAME = "readrboard"
-AWS_CALLING_FORMAT = ""
-AWS_HEADERS = {
-    'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
-    'Cache-Control': 'public, max-age=900',
-}
-
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = True
-AWS_PRELOAD_METADATA = True
-
 # For Facebook
 FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
@@ -72,17 +55,6 @@ EVENTS_URL = os.getenv('EVENTS_URL', 'http://nodebq.docker')
 STATIC_URL = os.getenv(
     'ANTENNA_STATIC_URL'
 ) + '/'
-
-# Unlike the rest of djangos url settings, the proxy does not
-# expect a trailing slash, and having one breaks S3
-INTERNAL_STATIC_URL = os.getenv(
-    'ANTENNA_INTERNAL_STATIC_URL'
-)
-
-static_storage = os.getenv('ANTENNA_STATIC_STORAGE', False)
-if static_storage and static_storage.strip():
-    STATICFILES_STORAGE = static_storage
-    DEFAULT_FILE_STORAGE = static_storage
 
 BROKER_URL = "librabbitmq://broadcast:51gn4l5@{host}:5672/antenna_broker"
 BROKER_URL = BROKER_URL.format(
