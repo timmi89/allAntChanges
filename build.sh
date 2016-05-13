@@ -48,7 +48,7 @@ if [ -x /usr/bin/codeship_google ]; then
   /usr/bin/codeship_google authenticate
 fi
 
-echo yes | gcloud components update > /dev/null
+echo yes | gcloud components update 2> /dev/null
 
 echo Building $IMAGE:$VERSION
 docker build -qt $IMAGE:$VERSION .
