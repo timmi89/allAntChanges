@@ -12,4 +12,3 @@
 - name: echo-version
   service: gcloud
   command: cat /code/antenna/VERSION
-
