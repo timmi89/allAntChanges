@@ -23,8 +23,8 @@ import logging
 import hashlib
 logger = logging.getLogger('rb.standard')
 
-
-
+# Error capture
+from raven.contrib.django.raven_compat.models import client as raven
 
 
 def deleteInteraction(interaction, user):
@@ -46,8 +46,8 @@ def deleteInteraction(interaction, user):
                 update_page_container_hash_cache.delay(interaction.page.id, [interaction.container.hash], [])
                 update_page_newer_cache.delay(interaction.page.id)
             except Exception, e:
-                logger.warning(traceback.format_exc(50))   
-    
+                logger.warning(traceback.format_exc(50))
+
         except:
             raise JSONException("Error deleting the interaction")
         if tempuser: return dict(deleted_interaction=interaction, num_interactions=num_interactions-1)
@@ -116,7 +116,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             for word in interaction_node.body.lower().replace('-', ' ').split(' '):
                 if word.lower() in blacklist:
                     raise JSONException("Group has blocked this tag. Error code 6: " + word.lower() )
-                    
+
                 #### DO ALL THE SAME STUFF FOR EACH 'word'.  should abstract to a function, but not right now.
                 # strip punctuation and whitespace, so that f!u ck is not OK
                 tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', word)
@@ -237,10 +237,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
                 t.start()
             except Exception, ex:
+                raven.captureException(ex)
                 logger.warn(ex)
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
-        
+
     ret = dict(
         interaction=new_interaction,
         content_node=content,
@@ -259,20 +260,20 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             # so we use the cache to tell if it's cross-page (the cache tells us that someone
             # has asked for it as a cross-page container)
             update_crosspage_container_cache.delay(group.id, container.hash)
-        
+
         #notification = AsynchPageNotification()
         #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         #t.start()
-        
+
         #COMMENTING OUT CROSSPAGE TO AVOID RABBITMQ BACKUP WITH OVERLY COMMON CONTAINERS
-        
+
         #if not content.kind == 'pag':
         #    other_interactions = list(Interaction.objects.filter(
         #                container=container,
         #                page__site__group = page.site.group,
         #                approved=True
         #                ))
-    
+
         #    other_pages = set()
         #    for other in other_interactions:
         #        other_pages.add(other.page)
@@ -280,17 +281,17 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         #        logger.info("CACHEUPDATE on OTHER PAGE " + str(container.hash))
         #        update_page_cache.delay(other_page.id)
         #        update_page_container_hash_cache.delay(other_page.id, [container.hash], [])
-            
-            
+
+
         #if not new_interaction.parent or new_interaction.kind == 'com':
         #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
         #    t = Thread(target=global_cache_updater, kwargs={})
         #    t.start()
 
     except Exception, e:
-        logger.warning(traceback.format_exc(50))   
-    
-    if tempuser: 
+        logger.warning(traceback.format_exc(50))
+
+    if tempuser:
         ret['num_interactions']=num_interactions+1
 
     return ret
@@ -301,7 +302,7 @@ def searchBoards(search_term, page_num):
     board_list = []
     boards = Board.objects.all().filter(visible=True)
     if search_term is not None and len(search_term) > 0:
-        boards = Board.objects.filter(Q(title__icontains = search_term) | 
+        boards = Board.objects.filter(Q(title__icontains = search_term) |
                         Q(description__icontains = search_term))
     boards = boards.order_by('-modified')
     board_paginator = Paginator(boards, 20)
@@ -333,46 +334,46 @@ def getGlobalActivity():
     the_past = today + tdelta
     interactions = Interaction.objects.all()
     interactions = interactions.filter(
-        created__gt = the_past, 
-        kind = 'tag', 
-        approved=True, 
+        created__gt = the_past,
+        kind = 'tag',
+        approved=True,
         page__site__group__approved=True
     ).order_by('-created')[:maxInteractions]
-    
+
     users = {}
     pages = {}
     groups = {}
     nodes ={}
     for inter in interactions:
         if not groups.has_key(inter.page.site.group.name):
-            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
+            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group,
                                                                                     fields=['id', 'short_name'])}
         else:
             groups[inter.page.site.group.name]['count'] +=1
-            
+
         if not pages.has_key(inter.page.url):
             pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
         else:
             pages[inter.page.url]['count'] +=1
-        
-        if not inter.user.email.startswith('tempuser'):    
+
+        if not inter.user.email.startswith('tempuser'):
             if not users.has_key(inter.user.id):
-                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
+                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions',
                                                                'last_login', 'date_joined', 'email',
                                                                 'is_superuser', 'is_staff', 'password', 'groups'])
-                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
-                                                                                          'gender', 'provider', 
+                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option',
+                                                                                          'gender', 'provider',
                                                                                           'bio', 'hometown', 'user',
                                                                                           'follow_email_option'])
                 users[inter.user.id] = {'count': 1, "user":user_dict}
             else:
                 users[inter.user.id]['count'] +=1
-            
+
         if not nodes.has_key(inter.interaction_node.body):
             nodes[inter.interaction_node.body] = {'count': 1}
         else:
             nodes[inter.interaction_node.body]['count'] +=1
-        
-            
+
+
     return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
 
