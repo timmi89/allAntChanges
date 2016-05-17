@@ -999,7 +999,7 @@ def content_rec_redirect(request):
         except ValueError:
             # Gracefully ignore any invalid query params
             pass
-    url_param = params.get('targetURL', BASE_URL)
+    url_param = params.get('targetUrl', BASE_URL)
     redirect_response = HttpResponseRedirect(unicode(url_param))
     redirect_response['Referer'] = 'www.antenna.is/cr/'
     return redirect_response
