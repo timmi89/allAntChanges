@@ -24,6 +24,8 @@ spec:
               cpu: "1"
               memory: "1Gi"
           env:
+            - name: SERVER_NAME
+              value: www.antenna.is api.antenna.is
             - name: SERVICE_HOST_ENV_NAME
               value: ANTENNA_HTTP_SERVICE_HOST
             - name: SERVICE_PORT_ENV_NAME
