@@ -55,7 +55,5 @@ spec:
   kubectl patch deployment/$name -p "$patch"
 done
 
-if [ $ENVIRONMENT == 'production' ]; then
-  curl -X POST --data-urlencode 'payload={"channel": "#build", "username": "webhookbot", "text": "Build '"$VERSION"' deployed to '"$ENVIRONMENT"'. Watch it roll out: http://bit.ly/1Ym6LZH", "icon_emoji": ":docker:"}' https://hooks.slack.com/services/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
-  echo
-fi
+curl -X POST --data-urlencode 'payload={"channel": "#build", "username": "webhookbot", "text": "Build '"$VERSION"' deployed to '"$ENVIRONMENT"'. Watch it roll out: http://bit.ly/1Ym6LZH", "icon_emoji": ":docker:"}' https://hooks.slack.com/services/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
+echo
