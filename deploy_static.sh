@@ -35,7 +35,5 @@ gcloud container clusters get-credentials "antenna-$ENVIRONMENT"
 
 docker/env/cmd.sh s3-deploy "['./docker/antenna-static/s3-deploy.sh']" gcr.io/antenna-array/antenna-static-$ENVIRONMENT $VERSION
 
-if [ $ENVIRONMENT == 'production' ]; then
-  curl -X POST --data-urlencode 'payload={"channel": "#build", "username": "webhookbot", "text": "Build '"$VERSION"' static files deployed to '"$ENVIRONMENT"'.", "icon_emoji": ":docker:"}' https://hooks.slack.com/services/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
-  echo
-fi
+curl -X POST --data-urlencode 'payload={"channel": "#build", "username": "webhookbot", "text": "Build '"$VERSION"' static files deployed to '"$ENVIRONMENT"'.", "icon_emoji": ":docker:"}' https://hooks.slack.com/services/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
+echo
