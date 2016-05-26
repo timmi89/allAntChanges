@@ -146,7 +146,7 @@ function updateContainerData(pageData, jsonContainers, isCrosspage) {
             }
         }
     }
-    // Add up the container reaction totals
+    // Add up the container reaction totals and re-sort the reactions (since we may be merging regular page data with crosspage data)
     var containers = pageData.containers;
     for (var hash in containers) {
         if (containers.hasOwnProperty(hash)) {
@@ -159,6 +159,13 @@ function updateContainerData(pageData, jsonContainers, isCrosspage) {
                 }
             }
             container.reactionTotal = containerTotal;
+            container.reactions.sort(function(reactionA, reactionB) {
+                // Sort by reaction count (highest to lowest), then by ID (lowest to highest)
+                if (reactionA.count === reactionB.count) {
+                    return reactionA.id - reactionB.id;
+                }
+                return reactionB.count - reactionA.count;
+            })
         }
     }
 }
