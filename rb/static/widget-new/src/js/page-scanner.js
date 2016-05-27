@@ -4,6 +4,7 @@ var BrowserMetrics = require('./utils/browser-metrics');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
+var Segment = require('./utils/segment');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
@@ -53,6 +54,10 @@ function scanAllPages(groupSettings, reinitializeCallback) {
 function scanPage($page, groupSettings, isMultiPage) {
     var url = PageUtils.computePageUrl($page, groupSettings);
     var pageData = PageData.getPageDataByURL(url);
+    if (Segment.getSegment(groupSettings) === 'rm-o') {
+        scanForReadMore($page, pageData, groupSettings);
+        return;
+    }
     var $activeSections = find($page, groupSettings.activeSections(), true);
 
     // First, scan for elements that would cause us to insert something into the DOM that takes up space.
@@ -555,6 +560,11 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                     }
                     var url = PageUtils.computePageUrl($page, groupSettings);
                     var pageData = PageData.getPageDataByURL(url);
+                    if (Segment.getSegment(groupSettings) === 'rm-o') {
+                        // Only scan for readmore in the readmore-only segment
+                        scanForReadMore($element, pageData, groupSettings);
+                        return;
+                    }
                     // First, check for any new summary widgets...
                     scanForSummaries($element, pageData, groupSettings);
                     scanForReadMore($element, pageData, groupSettings);

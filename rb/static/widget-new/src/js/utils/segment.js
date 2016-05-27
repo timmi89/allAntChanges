@@ -10,7 +10,7 @@ function getSegment(groupSettings) {
 }
 
 function computeSegment(groupSettings) {
-    var segments = [ 'sw', 'xsw' ];
+    var segments = [ 'rm-o', 'rm-a-cr' ];
     var segmentOverride = UrlParams.getUrlParam('antennaSegment');
     if (segmentOverride) {
         storeSegment(segmentOverride);
@@ -50,13 +50,12 @@ function computeSegment(groupSettings) {
             // If this happens, opt out of segmenting
             return null;
         }
-        return null;
         return segment;
     }
 
     function isSegmentGroup() {
         var groupName = groupSettings.groupName();
-        var testGroups = [ 'bustle.com', 'local.antenna.is:8081' ];
+        var testGroups = [ 'bustle.com', 'antenna.docker' ];
         for (var i = 0; i < testGroups.length; i++) {
             if (testGroups[i] === groupName) {
                 return true;
