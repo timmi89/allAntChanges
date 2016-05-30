@@ -43,15 +43,6 @@ urlpatterns = patterns('',
   url(r'^comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^shares/$', 'rb.views.main', kwargs={"view":"shares"}),
 
-  # Client Facing Registration & Settings
-  url(r'^settings/$', 'rb.views.settings'),
-  url(r'^register/$', 'rb.views.group'),
-  url(r'^sites/$', 'rb.views.sites'),
-  # url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
-  # url(r'^(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
-  url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings_wordpress'),
-
 
   # User profile pages
   url(r'^user/(?P<user_id>\d+)/$', 'rb.views.main'),
@@ -82,7 +73,51 @@ urlpatterns = patterns('',
   url(r'^site/(?P<site_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^site/(?P<site_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
 
-  # Specific group
+  # Client Facing Registration & Settings
+  url(r'^register/$', 'rb.views.group'),
+  url(r'^sites/$', 'rb.views.sites'),
+  # url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
+  # url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
+  # url(r'^(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
+  url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings_wordpress'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/site/$', 'rb.views.settings'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/look/$', 'rb.views.settings_look'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/$', 'rb.views.moderation_home'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/configure/$', 'rb.views.moderation_home'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/approved/$', 'rb.views.group_allowed_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/unapproved/$', 'rb.views.group_unapproved_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/blocked/$', 'rb.views.group_blocked_tags'),
+  
+  url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/$', 'rb.views.embeds_home'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/popular-content/$', 'rb.views.embeds_popular_content'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/qa/$', 'rb.views.embeds_qa'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/$', 'rb.views.'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admins/$', 'rb.views.'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admin_requests/$', 'rb.views.'),
+
+  # Group Supporting Pages
+  # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
+  # url(r'^signup/$', 'rb.views.create_group'),
+  url(r'^manage/', 'rb.views.manage_groups'),
+  url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
+  url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_allowed_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$', 'rb.views.group_allowed_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/unapproved_reactions/$', 'rb.views.group_unapproved_tags'),  # unapproved == unblessed
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('antenna.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('antenna.analytics.urls_v1')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/reporting', include('antenna.reporting.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
+
+  # legacy.  may still be in use.
   url(r'^group/(?P<short_name>[\w\-\.]+)/$', 'rb.views.main'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/tags/$', 'rb.views.main', kwargs={"view":"tags"}),
@@ -136,24 +171,6 @@ urlpatterns = patterns('',
   # CHRONS API
   url(r'^chronos/', include('antenna.chronos.urls')),
 
-
-  # Group Supporting Pages
-  # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
-  # url(r'^signup/$', 'rb.views.create_group'),
-  url(r'^manage/', 'rb.views.manage_groups'),
-  url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
-  url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_allowed_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$', 'rb.views.group_allowed_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/unapproved_reactions/$', 'rb.views.group_unapproved_tags'),  # unapproved == unblessed
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('antenna.analytics.urls')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('antenna.analytics.urls_v1')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/reporting', include('antenna.reporting.urls')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
-
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
   #inhouse
   url(r'^analytics', include('antenna.analytics.urls')),

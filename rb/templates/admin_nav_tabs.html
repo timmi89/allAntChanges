@@ -21,6 +21,8 @@
   .settings-links li.top-level-link.active { background:#0A313C; border-color:#dec164; }  /* $antenna-dker-blue: */
   .settings-links li.top-level-link:not(.active):hover { background:#2d5d77; border-color:#dac582; }  /* $antenna-dker-blue: */
   
+  .admin .admin-sidebar .admin-links .settings-links .nested-links { display:none; }
+  .admin .admin-sidebar .admin-links .settings-links .active .nested-links { display:block; }
   .admin .admin-sidebar .admin-links .settings-links .nested-links { padding-left:15px;  }
   .admin .admin-sidebar .admin-links .settings-links .nested-links a { text-transform: none; color:#a3d2ea;  }
   .admin .admin-sidebar .admin-links .settings-links .nested-links a:hover { color:#fff;  }
@@ -28,18 +30,25 @@
   </style>
   <div class="settings-links">
       <ul class="">
-        <li class="top-level-link {% if activeAdminTab == 'settings' %}active{%endif%}">
+        <li class="top-level-link {% if activeAdminTab == 'settings' or activeAdminTab == 'look' %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/settings/">Settings</a>
           <ul class="nested-links">
-            <li class="active"><a href="/group/{{ group.short_name }}/analytics/">Site Configuration</a></li>
-            <li class=""><a href="/group/{{ group.short_name }}/analytics/">Look and Feel</a></li>
+            <li class="{% if activeAdminTab == 'settings' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Site Configuration</a></li>
+            <li class="{% if activeAdminTab == 'look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Look and Feel</a></li>
           </ul>
         </li>
         <li class="top-level-link {% if activeAdminTab == 'analytics' %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/analytics/">Analytics</a>
         </li>
         <li class="top-level-link {% if activeAdminTab == 'manage_reactions' %}active{%endif%}">
-          <a href="/group/{{ group.short_name }}/all_reactions/">Manage Reactions</a>
+          <a href="/group/{{ group.short_name }}/all_reactions/">Moderation</a>
+        </li>
+        <li class="top-level-link {% if activeAdminTab == 'embeds' or activeAdminTab == 'popular_content' or activeAdminTab == 'qa' %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/embeds/">Embeds</a>
+          <ul class="nested-links">
+            <li class="{% if activeAdminTab == 'embeds' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Popular Content</a></li>
+            <li class="{% if activeAdminTab == 'look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Q &amp; A</a></li>
+          </ul>
         </li>
         <li class="top-level-link {% if activeAdminTab == 'admin_requests' %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/admin_approve/">Admin Requests</a>

@@ -445,16 +445,8 @@ function computeHash($element, pageData, groupSettings) {
             }
             break;
         case TYPE_QUESTION:
-<<<<<<< HEAD
-            // TODO: should we hash the item content for questions like this or should we instead generate
-            // category/question ids that are valid hashes and just use them directly?
-            var content = $element.attr('ant-item-content');
-            // TODO: Move into Hash module?
-            hash = Hash.hashUrl('rdr-qtn-' + content);
-=======
             hash = Hash.hashQuestion($element);
             break;
->>>>>>> 68d3f92ff4a838da2df5f27ca59f1a2a3314c839
     }
     if (hash) {
         HashedElements.setElement(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.

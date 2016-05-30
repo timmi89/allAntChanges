@@ -1,7 +1,7 @@
 {% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
-{% block page_title %}{{ form.instance.name }} Settings{%endblock%}
+{% block page_title %}Antenna Settings{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
@@ -26,7 +26,7 @@
 {% with group=form.instance %}
   <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form admin-form">{% csrf_token %}
     <div class="admin-header">
-      <h1>{{group.name}} Settings</h1>
+      <h1>Settings</h1>
       <div class="fixed-button-container">
           <div class="formFeedback" data-saved="{{saved}}">
               <span style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.</span>
@@ -68,6 +68,199 @@
                 {{ form.temp_interact.as_hidden }}
 
         	</section>
+
+            <section class="configurationSection">
+                <h3>Page Attributes</h3>
+                <div class="formRow">
+                    <label for="id_post_title_selector">
+                        <span class="labelTitle">Page Title Selector (jQuery selector)</span>
+                        <span>Where is the title for the page?  (e.g. "article header h1")</span>
+                    </label>
+                    {{ form.post_title_selector }}{{ form.post_title_selector.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_image_selector">
+                        <span class="labelTitle">Page Image Selector (jQuery selector)</span>
+                        <span>Where is the primary image for the page?  (e.g. "article header img.masthead")</span>
+                    </label>
+                    {{ form.image_selector }}{{ form.image_selector.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_image_attribute">
+                        <span class="labelTitle">Page Image URL Attribute</span>
+                        <span>Which attribute contains the Page Image's URL?  Typically, this is <strong>src</strong>.</span>
+                    </label>
+                    {{ form.image_attribute }}{{ form.image_attribute.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="">
+                        <span class="labelTitle">Author(s)</span>
+                        <span>Tell Antenna which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
+                        <span class="formInputExample"><em>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</em></span>
+                    </label>
+                    $('{{ form.author_selector|cssClass:'selector' }}').attr('{{ form.author_attribute|cssClass:'attribute' }}');
+                    {{ form.author_selector.errors }}
+                    {{ form.author_attribute.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="">
+                        <span class="labelTitle">Topics</span>
+                        <span>Tell Antenna which HTML tags on your page contain topic tags.  If there is more than one tag, we'll iterate through and generated a comma-separated list of topic tags. We assume a jQuery selector for the tag, and that the tag is in an attribute.</span>
+                        <span class="formInputExample"><em>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</em></span>
+                    </label>
+                    $('{{ form.topics_selector|cssClass:'selector' }}').attr('{{ form.topics_attribute|cssClass:'attribute' }}');
+                    {{ form.topics_selector.errors }}
+                    {{ form.topics_attribute.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="">
+                        <span class="labelTitle">Site Section(s)</span>
+                        <span>Tell Antenna which HTML tags on your page contain the site section(s) this article is in, such as Politics or News.  If there is more than one tag, we'll iterate through and generated a comma-separated list of sections. We assume a jQuery selector for the tag, and that the section name is in an attribute.</span>
+                        <span class="formInputExample"><em>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</em></span>
+                    </label>
+                    $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
+                    {{ form.section_selector.errors }}
+                    {{ form.section_attribute.errors }}
+                </div>
+            </section>
+
+
+            <section class="">
+                <h3>Mobile Settings</h3>
+                <!-- <div class="formRow" style="margin: 10px 0;">
+                    {{ form.hideOnMobile }}{{ form.hideOnMobile.errors }}
+                    <label for="id_hideOnMobile"><span class="labelTitle">Hide Antenna on Mobile? </span><span>Hide Antenna completely on mobile/touchscreen devices.</span></label>
+                </div>
+                -->
+                <div class="formRow" style="margin: 10px 0;">    
+                    {{ form.hideDoubleTapMessage }}{{ form.hideDoubleTapMessage.errors }}
+                    <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
+                </div>
+                <div class="formRow" style="margin: 10px 0;">
+                    <label for="id_doubleTapMessage"><span class="labelTitle">Mobile Helper Message </span><span>Antenna has a default message telling your visitors that they can tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
+                    {{ form.doubleTapMessage }}{{ form.doubleTapMessage.errors }}
+                </div>
+                <div class="formRow" style="margin: 10px 0;">
+                    <label for="id_doubleTapMessagePosition">
+                        <span class="labelTitle">Mobile Helper Position</span>
+                        <span>The message telling readers that they can tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
+                    </label>
+                    {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
+                    <select id="doubleTapMessagePosition_selector" class="browser-default">
+                        <option {% if group.doubleTapMessagePosition == "bottom" %}selected="selected"{% endif %} value="bottom">Bottom</option>
+                        <option {% if group.doubleTapMessagePosition == "top" %}selected="selected"{% endif %} value="top">Top</option>
+                    </select>
+                </div>
+            </section>
+            
+
+            <!-- <section class="configurationSection">        
+                <h3>Content Recommendation</h3>
+                <div class="formRow">
+                    {{ form.show_recirc}}{{ form.show_recirc.errors }}
+                    <label for="id_show_recirc">
+                        <span class="labelTitle">Show Content Rec?</span>
+                    </label>
+                </div>
+                <div class="recirc_options {% if group.show_recirc == True %}visible{% endif %}">
+                    <div class="formRow">
+                        <label for="id_recirc_title">
+                            <span class="labelTitle">Content Rec Title</span>
+                            <span>What headline should the widget have?</span>
+                        </label>
+                        {{ form.recirc_title }}{{ form.recirc_title.errors }}
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_selector">
+                            <span class="labelTitle">Content Rec Selector (jQuery selector)</span>
+                            <span>Where should the Content Rec be inserted?</span>
+                        </label>
+                        {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_jquery_method">
+                            <span class="labelTitle">Content Rec Insertion Method</span>
+                            <span>How should Antenna insert the Content Rec?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                        </label>
+                        {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
+                        <select id="recirc_jquery_method_selector" class="browser-default">
+                            <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                            <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
+                            <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                            <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                        </select>
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_count_desktop"><span class="labelTitle">Desktop Entry Count </span><span>How many entries to show on desktop.</span></label>
+                        {{ form.recirc_count_desktop }}{{ form.recirc_count_desktop.errors }}
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_count_mobile"><span class="labelTitle">Mobile Entry Count </span><span>How many entries to show on mobile.</span></label>
+                        {{ form.recirc_count_mobile }}{{ form.recirc_count_mobile.errors }}
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_rowcount_desktop"><span class="labelTitle">Desktop Entries per Row </span><span>How many entries to show per row on desktop.</span></label>
+                        {{ form.recirc_rowcount_desktop }}{{ form.recirc_rowcount_desktop.errors }}
+                    </div>
+                    <div class="formRow">
+                        <label for="id_recirc_rowcount_mobile"><span class="labelTitle">Mobile Entries per Row </span><span>How many entries to show per row on mobile.</span></label>
+                        {{ form.recirc_rowcount_mobile }}{{ form.recirc_rowcount_mobile.errors }}
+                    </div>
+                    <div class="formRow text">
+                        <label for="id_recirc_background">
+                            <span class="labelTitle">Content Background Colors</span>
+                            <span>Background/foreground colors for content rec entries. (e.g. "#41e7d0/#FFFFFF;#86bbfd/#FFFFFF")</span>
+                        </label>
+                        {{ form.recirc_background }}{{ form.recirc_background.errors }}
+                    </div>
+                </div>
+            </section> -->
+
+
+
+        </div>
+        <div class="rightColumn col s12 m5 offset-m1">
+            
+
+
+            <!-- <section class="">
+                <h3>Moderation</h3>
+                <div class="formRow" style="margin: 10px 0;">
+                    {{ form.requires_approval }}{{ form.requires_approval.errors }}
+                    <label for="id_requires_approval"><span class="labelTitle">Require approval for custom reactions </span><span>If you want reactions to be approved before they are visible for others to see, check this box.</span></label>
+                </div>
+                <div class="formRow">
+                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
+                    <label for="id_signin_organic_required">
+                        <span class="labelTitle">Require login for custom reactions</span>
+                        <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
+                    </label>
+                </div>
+                <div class="formRow word_blacklist_row">
+
+                    <label for="id_word_blacklist">
+                        <span class="labelTitle">Censored Word List</span>
+                        <span>Comma separated list of words that will be automatically <strong>blocked</strong>.  Only exact matches will be blocked.</span>
+                    </label>
+                    <div id="toggle_word_blacklist_wrap">
+                        <label>
+                            <a href="#" id="toggle_word_blacklist">
+                                <span class="labelTitle word_blacklist_toggle_node" style="font-size: 12px;">Show and edit the list</span>
+                                <span class="labelTitle word_blacklist_toggle_node hide" style="font-size: 12px;">Good heavens, my eyes!</span>
+                            </a>
+                            <span class="floatLeft word_blacklist_toggle_node">Warning: Rated R for Raunchy</span>
+                            <span class="floatLeft word_blacklist_toggle_node hide">Hide this list, it will continue to be censored</span>
+                        </label>
+                    </div>
+                    <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hide">
+                        {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
+                    </div>
+                    <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" readonly="readonly" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
+
+                </div>
+                
+            </section> -->
+
 
             <section class="configurationSection">
                 <h3>Where Antenna Interacts</h3>
@@ -197,189 +390,12 @@
                     <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />
                 {% endif %}
             </section>
-            <section class="configurationSection">
-                <h3>Page Attributes</h3>
-                <div class="formRow">
-                    <label for="id_post_title_selector">
-                        <span class="labelTitle">Page Title Selector (jQuery selector)</span>
-                        <span>Where is the title for the page?  (e.g. "article header h1")</span>
-                    </label>
-                    {{ form.post_title_selector }}{{ form.post_title_selector.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="id_image_selector">
-                        <span class="labelTitle">Page Image Selector (jQuery selector)</span>
-                        <span>Where is the primary image for the page?  (e.g. "article header img.masthead")</span>
-                    </label>
-                    {{ form.image_selector }}{{ form.image_selector.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="id_image_attribute">
-                        <span class="labelTitle">Page Image URL Attribute</span>
-                        <span>Which attribute contains the Page Image's URL?  Typically, this is <strong>src</strong>.</span>
-                    </label>
-                    {{ form.image_attribute }}{{ form.image_attribute.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="">
-                        <span class="labelTitle">Author(s)</span>
-                        <span>Tell Antenna which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
-                        <span class="formInputExample"><em>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</em></span>
-                    </label>
-                    $('{{ form.author_selector|cssClass:'selector' }}').attr('{{ form.author_attribute|cssClass:'attribute' }}');
-                    {{ form.author_selector.errors }}
-                    {{ form.author_attribute.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="">
-                        <span class="labelTitle">Topics</span>
-                        <span>Tell Antenna which HTML tags on your page contain topic tags.  If there is more than one tag, we'll iterate through and generated a comma-separated list of topic tags. We assume a jQuery selector for the tag, and that the tag is in an attribute.</span>
-                        <span class="formInputExample"><em>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</em></span>
-                    </label>
-                    $('{{ form.topics_selector|cssClass:'selector' }}').attr('{{ form.topics_attribute|cssClass:'attribute' }}');
-                    {{ form.topics_selector.errors }}
-                    {{ form.topics_attribute.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="">
-                        <span class="labelTitle">Site Section(s)</span>
-                        <span>Tell Antenna which HTML tags on your page contain the site section(s) this article is in, such as Politics or News.  If there is more than one tag, we'll iterate through and generated a comma-separated list of sections. We assume a jQuery selector for the tag, and that the section name is in an attribute.</span>
-                        <span class="formInputExample"><em>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</em></span>
-                    </label>
-                    $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
-                    {{ form.section_selector.errors }}
-                    {{ form.section_attribute.errors }}
-                </div>
-            </section>
-            <section class="configurationSection">        
-                <h3>Content Recommendation</h3>
-                <div class="formRow">
-                    {{ form.show_recirc}}{{ form.show_recirc.errors }}
-                    <label for="id_show_recirc">
-                        <span class="labelTitle">Show Content Rec?</span>
-                        <!-- <span>Simply ch</span> -->
-                    </label>
-                </div>
-                <div class="recirc_options {% if group.show_recirc == True %}visible{% endif %}">
-                    <div class="formRow">
-                        <label for="id_recirc_title">
-                            <span class="labelTitle">Content Rec Title</span>
-                            <span>What headline should the widget have?</span>
-                        </label>
-                        {{ form.recirc_title }}{{ form.recirc_title.errors }}
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_selector">
-                            <span class="labelTitle">Content Rec Selector (jQuery selector)</span>
-                            <span>Where should the Content Rec be inserted?</span>
-                        </label>
-                        {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_jquery_method">
-                            <span class="labelTitle">Content Rec Insertion Method</span>
-                            <span>How should Antenna insert the Content Rec?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
-                        </label>
-                        {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
-                        <select id="recirc_jquery_method_selector" class="browser-default">
-                            <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
-                            <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
-                            <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
-                            <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
-                        </select>
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_count_desktop"><span class="labelTitle">Desktop Entry Count </span><span>How many entries to show on desktop.</span></label>
-                        {{ form.recirc_count_desktop }}{{ form.recirc_count_desktop.errors }}
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_count_mobile"><span class="labelTitle">Mobile Entry Count </span><span>How many entries to show on mobile.</span></label>
-                        {{ form.recirc_count_mobile }}{{ form.recirc_count_mobile.errors }}
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_rowcount_desktop"><span class="labelTitle">Desktop Entries per Row </span><span>How many entries to show per row on desktop.</span></label>
-                        {{ form.recirc_rowcount_desktop }}{{ form.recirc_rowcount_desktop.errors }}
-                    </div>
-                    <div class="formRow">
-                        <label for="id_recirc_rowcount_mobile"><span class="labelTitle">Mobile Entries per Row </span><span>How many entries to show per row on mobile.</span></label>
-                        {{ form.recirc_rowcount_mobile }}{{ form.recirc_rowcount_mobile.errors }}
-                    </div>
-                    <div class="formRow text">
-                        <label for="id_recirc_background">
-                            <span class="labelTitle">Content Background Colors</span>
-                            <span>Background/foreground colors for content rec entries. (e.g. "#41e7d0/#FFFFFF;#86bbfd/#FFFFFF")</span>
-                        </label>
-                        {{ form.recirc_background }}{{ form.recirc_background.errors }}
-                    </div>
-                </div>
-            </section>
-        </div>
-        <div class="rightColumn col s12 m5 offset-m1">
-            <section class="">
-                <h3>Moderation</h3>
-                <div class="formRow" style="margin: 10px 0;">
-                    {{ form.requires_approval }}{{ form.requires_approval.errors }}
-                    <label for="id_requires_approval"><span class="labelTitle">Require approval for custom reactions </span><span>If you want reactions to be approved before they are visible for others to see, check this box.</span></label>
-                </div>
-                <div class="formRow">
-                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
-                    <label for="id_signin_organic_required">
-                        <span class="labelTitle">Require login for custom reactions</span>
-                        <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
-                    </label>
-                </div>
-                <div class="formRow word_blacklist_row">
 
-                    <label for="id_word_blacklist">
-                        <span class="labelTitle">Censored Word List</span>
-                        <span>Comma separated list of words that will be automatically <strong>blocked</strong>.  Only exact matches will be blocked.</span>
-                    </label>
-                    <div id="toggle_word_blacklist_wrap">
-                        <label>
-                            <a href="#" id="toggle_word_blacklist">
-                                <span class="labelTitle word_blacklist_toggle_node" style="font-size: 12px;">Show and edit the list</span>
-                                <span class="labelTitle word_blacklist_toggle_node hide" style="font-size: 12px;">Good heavens, my eyes!</span>
-                            </a>
-                            <span class="floatLeft word_blacklist_toggle_node">Warning: Rated R for Raunchy</span>
-                            <span class="floatLeft word_blacklist_toggle_node hide">Hide this list, it will continue to be censored</span>
-                        </label>
-                    </div>
-                    <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hide">
-                        {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
-                    </div>
-                    <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" readonly="readonly" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
 
-                </div>
-                
-            </section>
-            <section class="">
-                <h3>Mobile Settings</h3>
-                <div class="formRow" style="margin: 10px 0;">
-                    {{ form.hideOnMobile }}{{ form.hideOnMobile.errors }}
-                    <label for="id_hideOnMobile"><span class="labelTitle">Hide Antenna on Mobile? </span><span>Hide Antenna completely on mobile/touchscreen devices.</span></label>
-                </div>
 
-                <div class="formRow" style="margin: 10px 0;">    
-                    {{ form.hideDoubleTapMessage }}{{ form.hideDoubleTapMessage.errors }}
-                    <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
-                </div>
-                <div class="formRow" style="margin: 10px 0;">
-                    <label for="id_doubleTapMessage"><span class="labelTitle">Mobile Helper Message </span><span>Antenna has a default message telling your visitors that they can tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
-                    {{ form.doubleTapMessage }}{{ form.doubleTapMessage.errors }}
-                </div>
-                <div class="formRow" style="margin: 10px 0;">
-                    <label for="id_doubleTapMessagePosition">
-                        <span class="labelTitle">Mobile Helper Position</span>
-                        <span>The message telling readers that they can tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
-                    </label>
-                    {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
-                    <select id="doubleTapMessagePosition_selector" class="browser-default">
-                        <option {% if group.doubleTapMessagePosition == "bottom" %}selected="selected"{% endif %} value="bottom">Bottom</option>
-                        <option {% if group.doubleTapMessagePosition == "top" %}selected="selected"{% endif %} value="top">Top</option>
-                    </select>
-                </div>
-            </section>
-            <section class="">
+
+
+            <!-- <section class="">
                 <h3>Look &amp; Feel</h3>
             
                 <div class="formRow">
@@ -444,10 +460,6 @@
                     <label for="id_tag_box_bg_colors_hover"><span class="labelTitle">CSS: Background for Reaction box HOVER STATE </span><span>CSS rule that applies to each "box" containing a reaction.  Triggers when you mouse over.  Mainly used for background colors.  If empty, the default is <strong><code>background:rgba(0,0,0,0.1);</code></strong></span></label>
                     {{ form.tag_box_bg_colors_hover }}{{ form.tag_box_bg_colors_hover.errors }}
                 </div>
-                <!-- <div class="formRow text">
-                    <label for="id_tag_box_gradient"><span class="labelTitle">CSS: Gradient for Reaction Boxes </span><span>Provide a CSS background-image rule if you want to apply a gradient to your reaction boxes. e.g. linear-gradient(to right, rgba(250,250,250,0.5), rgba(150,150,150,0.2) );</span></label>
-                    {{ form.tag_box_gradient }}{{ form.tag_box_gradient.errors }}
-                </div> -->
                 <div class="formRow text">
                     <label for="id_tag_box_text_colors"><span class="labelTitle">CSS: Text Colors for Reaction boxes </span><span>CSS rule that applies to the text and icons inside a reaction box.  If empty, the default is <strong><code>color:#fff;</code></strong></span></label>
                     {{ form.tag_box_text_colors }}{{ form.tag_box_text_colors.errors }}
@@ -456,22 +468,10 @@
                     <label for="id_tag_box_font_family"><span class="labelTitle">CSS: Font for Reaction boxes </span><span>Provide a CSS font-family definition for your reactions.  The font must be available on your pages already.  If empty, the default is <strong><code>'Helvetica Neue',Helvetica,Arial,sans-serif;</code></strong></span></label>
                     {{ form.tag_box_font_family }}{{ form.tag_box_font_family.errors }}
                 </div>
-                
+            </section> -->
 
-                <!-- <div class="formRow">
-                    <label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
-                    {{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="id_logo_url_med"><span class="labelTitle">Medium Logo </span><span>URL to a medium logo file (max 100x50)</span></label>
-                    {{ form.logo_url_med }}{{ form.logo_url_med.errors }}
-                </div>
-                <div class="formRow">
-                    <label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
-                    {{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
-                </div> -->
 
-            </section>
+
             <section class="">
                 <h3>Miscellaneous</h3>
                 <div class="formRow" style="margin: 10px 0;">
@@ -491,6 +491,10 @@
                     {{ form.page_tld }}{{ form.page_tld.errors }}
                 </div>
             </section>
+
+            
+
+            <!-- 
             {% if cookie_user.is_superuser %}
             <section class="">
                 <h3>Questions &amp; Answers</h3>
@@ -505,7 +509,10 @@
                     </style>
                 </div>
             </section>
-            {% endif %}
+            {% endif %} -->
+
+
+
             {% if group.name == "bustle.com" or group.name == "antenna.docker" %}
             <section class="configurationSection">
                 <h3>Read More</h3>

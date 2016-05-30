@@ -1,0 +1,221 @@
+{% extends "base/site-admin.html" %}
+{% load custom_filters %}
+
+{% block page_title %}Antenna Look &amp; Feel{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+
+
+
+{% block sidebarContent %}
+    {% with group=form.instance %}
+    {% with "look" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
+    {% include "admin_nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+
+
+
+{% block page_content %}
+  <section class="content" style="padding:0;">
+{% with group=form.instance %}
+  <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/look/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form admin-form">{% csrf_token %}
+    <div class="admin-header">
+      <h1>Look &amp Feel</h1>
+      <div class="fixed-button-container">
+          <div class="formFeedback" data-saved="{{saved}}">
+              <span style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.</span>
+              <span style="display: none;" class="success" >Changes saved</span>
+          </div>
+          <button class="btn submit flat" type="submit">Save Changes</button>
+      </div>
+    </div>
+  
+
+    <div class="form-fields container">
+        {{ form.non_field_errors }}
+    	<div class="col s12 m5">
+            <section class="">
+                <!-- <h3>Look &amp; Feel</h3> -->
+            
+                <div class="formRow">
+                    <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
+                    {{ form.custom_css }}
+                    <style>
+
+                    #fake_hidden_word_blacklist {
+                        cursor: pointer;
+                    }
+
+                    textarea {
+                        font-family: 'Courier', 'Courier New';
+                        font-size: 12px;
+                        color: #777;
+                    }
+                    #id_custom_css {
+                        height:200px;
+                        width:100%;
+                    }
+
+                    .formRow.text textarea { width:100%; height:75px; }
+                    </style>
+                </div>
+                {% if group.premium == True %}
+                <div class="formRow">
+                    {{ form.send_notifications}}{{ form.send_notifications.errors }}
+                    <label for="id_send_notifications">
+                        <span class="labelTitle">Send Email Notifications?</span>
+                        <span>For users with a Antenna account, send them occasional notices when others react on the same pages they do.  (We don't send them every time, just periodically.)</span>
+                    </label>
+                </div>
+                {% endif %}
+                <div class="formRow">
+                    {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
+                    <label for="id_paragraph_helper">
+                        <span class="labelTitle">Paragraph Tooltips</span>
+                        <span>Paragraphs with no reactions will display an icon when you hover over them.  When you hover over the icon it explains how to select text and react with Antenna.</span>
+                    </label>
+                </div>
+                <hr/>
+                <div class="formRow">
+                    {{ form.img_indicator_show_onload}}{{ form.img_indicator_show_onload.errors }}
+                    <label for="id_img_indicator_show_onload">
+                        <span class="labelTitle">Show call-to-action for images at page load? </span>
+                        <span>If so, a small Antenna logo will appear on images to encourage interaction.</span>
+                    </label>
+                </div>
+                <div class="formRow text">
+                    <label for="id_img_indicator_show_side"><span class="labelTitle">Images Call-to-Action: which corner? </span><span>Display the call-to-action for images on the <strong>bottom left</strong>, <strong>bottom right</strong>, <strong>top left</strong>, or <strong>top right</strong>?.  Default is bottom left.</span></label>
+                    {{ form.img_indicator_show_side }}{{ form.img_indicator_show_side.errors }}
+                </div>
+                <div class="formRow text">
+                    <label for="id_tags_bg_css"><span class="labelTitle">CSS: Background for Reaction "Window" </span><span>CSS rule that defines the what shows behind the entire treemap of reactions.  If empty, the default is <strong><code>background-image: linear-gradient(185deg,#333,#777);</code> </strong> </span></label>
+                    {{ form.tags_bg_css }}{{ form.tags_bg_css.errors }}
+                </div>
+                <div class="formRow text">
+                    <label for="id_tag_box_bg_colors"><span class="labelTitle">CSS: Background for Reaction boxes </span><span>CSS rule that applies to each "box" containing a reaction.  Mainly used for background colors.  If empty, the default is <strong><code>background:rgba(0,0,0,0.25);</code></strong></span></label>
+                    {{ form.tag_box_bg_colors }}{{ form.tag_box_bg_colors.errors }}
+                </div>
+                <div class="formRow text">
+                    <label for="id_tag_box_bg_colors_hover"><span class="labelTitle">CSS: Background for Reaction box HOVER STATE </span><span>CSS rule that applies to each "box" containing a reaction.  Triggers when you mouse over.  Mainly used for background colors.  If empty, the default is <strong><code>background:rgba(0,0,0,0.1);</code></strong></span></label>
+                    {{ form.tag_box_bg_colors_hover }}{{ form.tag_box_bg_colors_hover.errors }}
+                </div>
+                <div class="formRow text">
+                    <label for="id_tag_box_text_colors"><span class="labelTitle">CSS: Text Colors for Reaction boxes </span><span>CSS rule that applies to the text and icons inside a reaction box.  If empty, the default is <strong><code>color:#fff;</code></strong></span></label>
+                    {{ form.tag_box_text_colors }}{{ form.tag_box_text_colors.errors }}
+                </div>
+                <div class="formRow text">
+                    <label for="id_tag_box_font_family"><span class="labelTitle">CSS: Font for Reaction boxes </span><span>Provide a CSS font-family definition for your reactions.  The font must be available on your pages already.  If empty, the default is <strong><code>'Helvetica Neue',Helvetica,Arial,sans-serif;</code></strong></span></label>
+                    {{ form.tag_box_font_family }}{{ form.tag_box_font_family.errors }}
+                </div>
+            </section>
+        </div>
+        <div class="rightColumn col s12 m5 offset-m1">
+            
+            
+            
+        </div>  <!-- /right column -->
+    </div> <!-- /form fields -->
+{% comment %}
+  {{ form.as_p }}
+{% endcomment %}
+    <div style="clear:both;">
+        <button class="btn submit flat" type="submit">Save Changes</button>
+    </div>
+  </form>
+{% endwith %}
+    </section>
+
+{% endblock page_content %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block page_js %}
+    <style>
+    .tld_options,
+    .recirc_options             { height:0; overflow:hidden; }
+    .tld_options.visible,
+    .recirc_options.visible     { height:auto; overflow:visible; }
+    .readmore_options             { height:0; overflow:hidden; }
+    .readmore_options.visible         { height:auto; overflow:visible; }
+    #id_auto_questions           { display: none; }
+    #id_auto_questions.visible    { display: initial; }
+    #initialize_auto_questions_json           { visibility: hidden; }
+    #initialize_auto_questions_json.visible    { visibility: visible; }
+    </style>
+    <script>
+        $(function(){
+
+            var hasErrors = $('.errorlist').length;
+            
+            if(hasErrors){
+                $('.error').show();
+            }else{
+                var wasSaved = $('.formFeedback').data('saved');
+                if(wasSaved){
+                    $('.success').show();
+                }
+            }
+
+            $('#groupSettings input').bind('keypress', function(){
+                $(this).closest('.formRow').removeClass('error');
+                $(this).closest('form').find('.error').hide();
+                $(this).closest('form').find('.success').hide();
+            });
+
+            $('#toggle_word_blacklist, #fake_hidden_word_blacklist').click(function(){
+                $('.word_blacklist_toggle_node').each(function(){
+                    $(this).toggleClass('hide');
+                });
+                return false;
+            });
+
+            var questionsConfigured = $('#id_auto_questions').val().length > 0;
+            $('#id_auto_questions').toggleClass('visible', questionsConfigured); // Default the field to visible if there's configured data.
+            $('#initialize_auto_questions_json').toggleClass('visible', !questionsConfigured); // Default the init button to visible if there's no data.
+            $('#initialize_auto_questions_json').click(function() {
+                var textArea = $('#id_auto_questions');
+                if (textArea.val().length === 0) {
+                    textArea.val('{\n    "autoQuestionsInsertMethod": "append", \n    "autoQuestionsSelector": "", \n    "expandReactions": "both", \n    "questions": [\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        },\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        }\n    ],\n    "categories": [\n        {\n            "categoryValues": "x;y", \n            "id": "new", \n            "questions": [\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                },\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                }\n            ]\n        }\n    ], \n    "categoryAttribute": "", \n    "categorySelector": ""\n}');
+                    $('#id_auto_questions, #initialize_auto_questions_json').toggleClass('visible');
+                }
+                return false;
+            });
+
+            $('#summary_widget_method_selector').change( function() {
+                $('#id_summary_widget_method').val( $(this).val() );
+            });
+
+            $('#separate_cta_expanded_selector').change( function() {
+                $('#id_separate_cta_expanded').val( $(this).val() );
+            });
+
+            $('#recirc_jquery_method_selector').change( function() {
+                $('#id_recirc_jquery_method').val( $(this).val() );
+            });
+
+            $('#doubleTapMessagePosition_selector').change( function() {
+                $('#id_doubleTapMessagePosition').val( $(this).val() );
+            });
+
+            $('#id_show_recirc').change( function() {
+                $('.recirc_options').toggleClass('visible')
+            });
+
+            $('#id_show_readmore').change( function() {
+                $('.readmore_options').toggleClass('visible')
+            });
+
+            $('#id_ignore_subdomain').change( function() {
+                $('.tld_options').toggleClass('visible')
+            });
+
+        });
+    </script>
+{% endblock %}
