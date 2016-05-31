@@ -215,7 +215,7 @@ else:
             }
         },
         'redundant': {
-            'BACKEND': 'memcachepool.cache.UMemcacheCache',
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': os.getenv(
                 'MEMCACHED_LOCATION_REDUNDANT',
                 'localhost:11211'),
