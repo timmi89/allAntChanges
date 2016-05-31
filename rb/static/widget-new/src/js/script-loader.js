@@ -12,9 +12,9 @@ var scripts = [
 if (AppMode.offline) {
     // Use the offline versions of the libraries for development.
     scripts = [
-        {src: URLs.antennaStaticUrl() + '/static/js/cdn/jquery/2.1.4/jquery.js', callback: JQueryProvider.loaded},
-        {src: URLs.antennaStaticUrl() + '/static/widget-new/lib/ractive.runtime-0.7.3.js', callback: RactiveProvider.loaded, aboutToLoad: RactiveProvider.aboutToLoad},
-        {src: URLs.antennaStaticUrl() + '/static/widget-new/lib/rangy.compiled-1.3.0.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad}
+        {src: URLs.antennaStaticUrl() + '/js/cdn/jquery/2.1.4/jquery.js', callback: JQueryProvider.loaded},
+        {src: URLs.antennaStaticUrl() + '/widget-new/lib/ractive.runtime-0.7.3.js', callback: RactiveProvider.loaded, aboutToLoad: RactiveProvider.aboutToLoad},
+        {src: URLs.antennaStaticUrl() + '/widget-new/lib/rangy.compiled-1.3.0.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad}
     ];
 }
 
