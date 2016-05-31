@@ -204,8 +204,8 @@ else:
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
             'LOCATION': os.getenv(
-                'MEMCACHED_HOST_DEFAULT',
-                'localhost') + ':11211',
+                'MEMCACHED_LOCATION_DEFAULT',
+                'localhost:11211'),
             'TIMEOUT': 86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
@@ -217,8 +217,8 @@ else:
         'redundant': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
             'LOCATION': os.getenv(
-                'MEMCACHED_HOST_REDUNDANT',
-                'localhost') + ':11211',
+                'MEMCACHED_LOCATION_REDUNDANT',
+                'localhost:11211'),
             'TIMEOUT': 86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
