@@ -1,59 +1,55 @@
-{% extends "base/wide.html" %}
+{% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
 {% block page_title %}{{ form.instance.name }} Reaction Management{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
-{% block subheaderContent %}
-<section role="subheader">
-    {% with "manage_reactions" as activeAdminTab %} 
+{% block sidebarContent %}
+    {% with "moderation_blocked" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
     {% endwith %}
-</section>
+    {% endwith %}
 {% endblock %}
 
 {% block page_content %}
-<div class="container row settings">
   <section role="panels" class="content">
-	<!-- <h1>Blocked Reactions</h1> -->
+	<div class="admin-header">
+        <h1>Blocked Reactions</h1>
+    </div>
 
-    <nav>
-      <div class="nav-wrapper blue-grey">
-        <ul id="nav-mobile" class="left">
-          <li><a href="../all_reactions">Approved Reactions</a></li>
-          <li><a href="../unapproved_reactions">Unapproved Reactions</a></li>
-          <li class="active"><a href="../blocked_reactions">Blocked Reactions</a></li>
-        </ul>
-      </div>
-    </nav>
+    <div class="admin-content">
 
+    	<div class="card-panel">
+    		<p>These are the reactions on your site that you have <strong>blocked</strong>.  This means if anyone tries to react using an exact much of the reactions listed below, Antenna won't let the react get created on your site.</p>
+    	</div>
 
+    	{% if group.blocked_tags.all|length > 0 %}
+            <table role="unblock_tags">
+        		<thead>
+        			<tr>
+        				<th>Reaction</th>
+        				<th>Action</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+            {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
+            		<tr>
+            			<td width="300">{{blocked.body}}</td>
+            			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
+            		</tr>
+            {% endfor %}  
+        		</tbody>
+        	</table>
 
-	<div class="card-panel">
-		<p>These are the reactions on your site that you have <strong>blocked</strong>.  This means if anyone tries to react using an exact much of the reactions listed below, Antenna won't let the react get created on your site.</p>
-	</div>
-
-    <h2>Blocked Reactions</h2>
-	<table role="unblock_tags">
-		<thead>
-			<tr>
-				<th>Reaction</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-    {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
-    		<tr>
-    			<td width="300">{{blocked.body}}</td>
-    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
-    		</tr>
-    {% endfor %}  
-		</tbody>
-	</table>
+        {% else %}
+            <div><p>You have no blocked reactions at this time.</p></div>
+        {% endif %}
+    </div>
 
 </section>
-</div>
+
 
 <script>
 // bind an "unblock" event to each button

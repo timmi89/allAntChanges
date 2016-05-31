@@ -85,14 +85,14 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/settings/site/$', 'rb.views.settings'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/settings/look/$', 'rb.views.settings_look'),
 
-  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/$', 'rb.views.moderation_home'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/configure/$', 'rb.views.moderation_home'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/$', 'rb.views.group_moderation_home'),
+  # url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/configure/$', 'rb.views.group_moderation_home'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/approved/$', 'rb.views.group_allowed_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/unapproved/$', 'rb.views.group_unapproved_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/moderation/blocked/$', 'rb.views.group_blocked_tags'),
   
   url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/$', 'rb.views.embeds_home'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/popular-content/$', 'rb.views.embeds_popular_content'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/popular_content/$', 'rb.views.embeds_popular_content'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/qa/$', 'rb.views.embeds_qa'),
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/users/$', 'rb.views.'),

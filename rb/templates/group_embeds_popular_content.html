@@ -1,0 +1,200 @@
+{% extends "base/site-admin.html" %}
+{% load custom_filters %}
+
+{% block page_title %}Antenna Settings{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+{% block sidebarContent %}
+    {% with group=form.instance %}
+    {% with "embed_popular_content" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
+    {% include "admin_nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+{% block page_content %}
+  <section class="content">
+{% with group=form.instance %}
+  <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/embeds/popular_content/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form admin-form">{% csrf_token %}
+    <div class="admin-header">
+      <h1>Content Recommendation</h1>
+      <div class="fixed-button-container">
+          <div class="formFeedback" data-saved="{{saved}}">
+              <span style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.</span>
+              <span style="display: none;" class="success" >Changes saved</span>
+          </div>
+          <button class="btn submit flat" type="submit">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+  
+        <div class="form-fields">
+            {{ form.non_field_errors }}
+        	<div class="col s12 m5">
+                <section class="configurationSection">        
+                    <div class="formRow">
+                        {{ form.show_recirc}}{{ form.show_recirc.errors }}
+                        <label for="id_show_recirc">
+                            <span class="labelTitle">Show Content Rec?</span>
+                        </label>
+                    </div>
+                    <div class="recirc_options {% if group.show_recirc == True %}visible{% endif %}">
+                        <div class="formRow">
+                            <label for="id_recirc_title">
+                                <span class="labelTitle">Content Rec Title</span>
+                                <span>What headline should the widget have?</span>
+                            </label>
+                            {{ form.recirc_title }}{{ form.recirc_title.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_selector">
+                                <span class="labelTitle">Content Rec Selector (jQuery selector)</span>
+                                <span>Where should the Content Rec be inserted?</span>
+                            </label>
+                            {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_jquery_method">
+                                <span class="labelTitle">Content Rec Insertion Method</span>
+                                <span>How should Antenna insert the Content Rec?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                            </label>
+                            {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
+                            <select id="recirc_jquery_method_selector" class="browser-default">
+                                <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                                <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
+                                <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                                <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                            </select>
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_count_desktop"><span class="labelTitle">Desktop Entry Count </span><span>How many entries to show on desktop.</span></label>
+                            {{ form.recirc_count_desktop }}{{ form.recirc_count_desktop.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_count_mobile"><span class="labelTitle">Mobile Entry Count </span><span>How many entries to show on mobile.</span></label>
+                            {{ form.recirc_count_mobile }}{{ form.recirc_count_mobile.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_rowcount_desktop"><span class="labelTitle">Desktop Entries per Row </span><span>How many entries to show per row on desktop.</span></label>
+                            {{ form.recirc_rowcount_desktop }}{{ form.recirc_rowcount_desktop.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_recirc_rowcount_mobile"><span class="labelTitle">Mobile Entries per Row </span><span>How many entries to show per row on mobile.</span></label>
+                            {{ form.recirc_rowcount_mobile }}{{ form.recirc_rowcount_mobile.errors }}
+                        </div>
+                        <div class="formRow text">
+                            <label for="id_recirc_background">
+                                <span class="labelTitle">Content Background Colors</span>
+                                <span>Background/foreground colors for content rec entries. (e.g. "#41e7d0/#FFFFFF;#86bbfd/#FFFFFF")</span>
+                            </label>
+                            {{ form.recirc_background }}{{ form.recirc_background.errors }}
+                        </div>
+                    </div>
+                </section>
+
+
+
+            </div>
+            <div class="rightColumn col s12 m5 offset-m1">
+
+
+                {% if group.name == "bustle.com" or group.name == "antenna.docker" %}
+                <section class="configurationSection">
+                    <h3>Read More</h3>
+                    <div class="formRow">
+                        {{ form.show_readmore}}{{ form.show_readmore.errors }}
+                        <label for="id_show_readmore">
+                            <span class="labelTitle">Show Read More?</span>
+                        </label>
+                    </div>
+                    <div class="readmore_options {% if group.show_readmore == True %}visible{% endif %}">
+                        <div class="formRow">
+                            <label for="id_readmore_label">
+                                <span class="labelTitle">Read More Label</span>
+                                <span>What should the Read More button say? (default is "Read More")</span>
+                            </label>
+                            {{ form.readmore_label }}{{ form.readmore_label.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_readmore_selector">
+                                <span class="labelTitle">Read More Selector (jQuery selector)</span>
+                                <span>What element should the Read More button apply to? (i.e. Which element should have its height modified?)</span>
+                            </label>
+                            {{ form.readmore_selector }}{{ form.readmore_selector.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_readmore_crop_selector">
+                                <span class="labelTitle">Read More Crop Selector (jQuery selector)</span>
+                                <span>Which elements should Read More consider when cropping? (Default is P tags.)</span>
+                            </label>
+                            {{ form.readmore_crop_selector }}{{ form.readmore_crop_selector.errors }}
+                        </div>
+                        <div class="formRow">
+                            <label for="id_readmore_crop_min"><span class="labelTitle">Read More Min Height </span><span>What is the minimum height of content to show before cropping (in pixels)?</span></label>
+                            {{ form.readmore_crop_min }}{{ form.readmore_crop_min.errors }}
+                        </div>
+                    </div>
+                </section>
+                {% else %}
+                    {{ form.show_readmore.as_hidden }}
+                    {{ form.readmore_label.as_hidden }}
+                    {{ form.readmore_selector.as_hidden }}
+                    {{ form.readmore_crop_selector.as_hidden }}
+                    {{ form.readmore_crop_min.as_hidden }}
+                {% endif %}
+            </div>  <!-- /right column -->
+        </div> <!-- /form fields -->
+    {% comment %}
+      {{ form.as_p }}
+    {% endcomment %}
+        <div style="clear:both;">
+            <button class="btn submit flat" type="submit">Save Changes</button>
+        </div>
+      </form>
+    {% endwith %}
+    </div>
+</section>
+
+{% endblock page_content %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block page_js %}
+    <style>
+    .tld_options,
+    .recirc_options             { height:0; overflow:hidden; }
+    .tld_options.visible,
+    .recirc_options.visible     { height:auto; overflow:visible; }
+    .readmore_options             { height:0; overflow:hidden; }
+    .readmore_options.visible         { height:auto; overflow:visible; }
+    #id_auto_questions           { display: none; }
+    #id_auto_questions.visible    { display: initial; }
+    #initialize_auto_questions_json           { visibility: hidden; }
+    #initialize_auto_questions_json.visible    { visibility: visible; }
+    </style>
+    <script>
+        $(function(){
+
+            var hasErrors = $('.errorlist').length;
+            
+            if(hasErrors){
+                $('.error').show();
+            }else{
+                var wasSaved = $('.formFeedback').data('saved');
+                if(wasSaved){
+                    $('.success').show();
+                }
+            }
+
+            $('#id_show_recirc').change( function() {
+                $('.recirc_options').toggleClass('visible')
+            });
+
+        });
+    </script>
+{% endblock %}

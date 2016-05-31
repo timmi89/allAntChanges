@@ -26,28 +26,34 @@
   .admin .admin-sidebar .admin-links .settings-links .nested-links { padding-left:15px;  }
   .admin .admin-sidebar .admin-links .settings-links .nested-links a { text-transform: none; color:#a3d2ea;  }
   .admin .admin-sidebar .admin-links .settings-links .nested-links a:hover { color:#fff;  }
-  .admin .admin-sidebar .admin-links .settings-links .nested-links .active a { font-weight: bold;}
+  .admin .admin-sidebar .admin-links .settings-links .nested-links .active a { font-weight: bold; color: #dcbf63;}
   </style>
   <div class="settings-links">
       <ul class="">
-        <li class="top-level-link {% if activeAdminTab == 'settings' or activeAdminTab == 'look' %}active{%endif%}">
+        <li class="top-level-link {% if 'settings' in activeAdminTab  %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/settings/">Settings</a>
           <ul class="nested-links">
             <li class="{% if activeAdminTab == 'settings' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Site Configuration</a></li>
-            <li class="{% if activeAdminTab == 'look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Look and Feel</a></li>
+            <li class="{% if activeAdminTab == 'settings_look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Look and Feel</a></li>
           </ul>
         </li>
         <li class="top-level-link {% if activeAdminTab == 'analytics' %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/analytics/">Analytics</a>
         </li>
-        <li class="top-level-link {% if activeAdminTab == 'manage_reactions' %}active{%endif%}">
-          <a href="/group/{{ group.short_name }}/all_reactions/">Moderation</a>
+        <li class="top-level-link {% if 'moderation' in activeAdminTab %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/moderation/">Moderation</a>
+          <ul class="nested-links">
+            <li class="{% if activeAdminTab == 'moderation' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/">Configure</a></li>
+            <li class="{% if activeAdminTab == 'moderation_approved' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/approved/">Approved Reactions</a></li>
+            <li class="{% if activeAdminTab == 'moderation_unapproved' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/unapproved/">Unapproved Reactions</a></li>
+            <li class="{% if activeAdminTab == 'moderation_blocked' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/blocked/">Blocked Reactions</a></li>
+          </ul>
         </li>
-        <li class="top-level-link {% if activeAdminTab == 'embeds' or activeAdminTab == 'popular_content' or activeAdminTab == 'qa' %}active{%endif%}">
+        <li class="top-level-link {% if 'embed' in activeAdminTab %}active{%endif%}">
           <a href="/group/{{ group.short_name }}/embeds/">Embeds</a>
           <ul class="nested-links">
-            <li class="{% if activeAdminTab == 'embeds' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Popular Content</a></li>
-            <li class="{% if activeAdminTab == 'look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Q &amp; A</a></li>
+            <li class="{% if activeAdminTab == 'embed_popular_content' %}active{%endif%}"><a href="/group/{{ group.short_name }}/embeds/popular_content/">Popular Content</a></li>
+            <li class="{% if activeAdminTab == 'embed_qa' %}active{%endif%}"><a href="/group/{{ group.short_name }}/embeds/qa/">Q &amp; A</a></li>
           </ul>
         </li>
         <li class="top-level-link {% if activeAdminTab == 'admin_requests' %}active{%endif%}">

@@ -453,10 +453,67 @@ class GroupSettingsForm(forms.ModelForm):
 
 
 class GroupLookFeelForm(forms.ModelForm):
-    
+
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupLookFeelForm, self).save(commit=False)
+
+        site = Site.objects.get(group=self.instance.id)
+
+        cache_data = getSettingsDict(self.instance, site)
+
+        m.save()
+
+        try:
+            cache.set('group_settings_'+ str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+        try:
+            get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+
+        if settings.CACHE_SYNCBACK:
+
+            try:
+                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
+                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
+                hcon.request('GET', url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
+        
+
+        return m
+            
+    
+    class Meta:
+        model = Group
+        fields = (
+            'custom_css',
+            'paragraph_helper',
+            'hideOnMobile',
+            'img_indicator_show_onload',
+            'img_indicator_show_side',
+            'tag_box_bg_colors',
+            'tag_box_bg_colors_hover',
+            'tag_box_text_colors',
+            'tag_box_font_family',
+            'tag_box_gradient',
+            'tags_bg_css',
+            'image_selector',
+            'image_attribute',
+        )
+
+
+
+class GroupModerationConfigureForm(forms.ModelForm):
+    
+    # Write the many to many relationships
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(GroupModerationConfigureForm, self).save(commit=False)
 
         site = Site.objects.get(group=self.instance.id)
 
@@ -493,20 +550,116 @@ class GroupLookFeelForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = (
-            'custom_css',
-            'paragraph_helper',
-            'hideOnMobile',
-            'img_indicator_show_onload',
-            'img_indicator_show_side',
-            'tag_box_bg_colors',
-            'tag_box_bg_colors_hover',
-            'tag_box_text_colors',
-            'tag_box_font_family',
-            'tag_box_gradient',
-            'tags_bg_css',
-            'image_selector',
-            'image_attribute',
+            'requires_approval',
+            'signin_organic_required',
+            'word_blacklist',
+            # '',
         )
+
+
+
+class GroupPopularContentForm(forms.ModelForm):
+    
+    # Write the many to many relationships
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(GroupPopularContentForm, self).save(commit=False)
+
+        site = Site.objects.get(group=self.instance.id)
+
+        cache_data = getSettingsDict(self.instance, site)
+
+        m.save()
+
+        try:
+            cache.set('group_settings_'+ str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+        try:
+            get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+
+        if settings.CACHE_SYNCBACK:
+
+            try:
+                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
+                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
+                hcon.request('GET', url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
+        
+
+        return m
+            
+    
+    class Meta:
+        model = Group
+        fields = (
+            'show_recirc',
+            'recirc_selector',
+            'recirc_title',
+            'recirc_background',
+            'recirc_jquery_method',
+            'recirc_count_desktop',
+            'recirc_count_mobile',
+            'recirc_rowcount_desktop',
+            'recirc_rowcount_mobile',
+            'show_readmore',
+            'readmore_label',
+            'readmore_selector',
+            'readmore_crop_selector',
+            'readmore_crop_min',
+        )
+
+
+class GroupQAForm(forms.ModelForm):
+    
+    def clean_auto_questions(self):
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None and len(auto_questions) > 0:
+            try:
+                json.loads(auto_questions)
+            except Exception, ex:
+                raise forms.ValidationError(_("Invalid JSON specified for Q&A config"))
+        return auto_questions
+
+    def populate_category_ids(self, categories):
+        for category in categories:
+            current_id = category.get('id', 'new')
+            if current_id == 'new':
+                category['id'] = str(uuid.uuid1())
+            self.populate_question_ids(category.get('questions', []))
+
+    def populate_question_ids(self, questions):
+        for question in questions:
+            current_id = question.get('id', 'new')
+            if current_id == 'new':
+                question['id'] = str(uuid.uuid1())
+
+    # Write the many to many relationships
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(GroupQAForm, self).save(commit=False)
+
+        # Populate any ids for new questions in the Q&A data
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None and len(auto_questions) > 0:
+            questions_obj = json.loads(auto_questions)
+            self.populate_question_ids(questions_obj.get('questions', []))
+            self.populate_category_ids(questions_obj.get('categories', []))
+            m.auto_questions = json.dumps(questions_obj, indent=4, sort_keys=True) # update the model so the data is saved
+            self.data['auto_questions'] = m.auto_questions # update the form so the new data is displayed
+        
+            
+    
+    class Meta:
+        model = Group
+        fields = (
+            'auto_questions',
+        )
+
 
 
 
@@ -546,14 +699,14 @@ class GroupSettingsFormOld(forms.ModelForm):
 
         self.new_blessed_tags = new_blessed_tags
 
-    # def clean_auto_questions(self):
-    #     auto_questions = self.cleaned_data["auto_questions"]
-    #     if auto_questions is not None and len(auto_questions) > 0:
-    #         try:
-    #             json.loads(auto_questions)
-    #         except Exception, ex:
-    #             raise forms.ValidationError(_("Invalid JSON specified for Q&A config"))
-    #     return auto_questions
+    def clean_auto_questions(self):
+        auto_questions = self.cleaned_data["auto_questions"]
+        if auto_questions is not None and len(auto_questions) > 0:
+            try:
+                json.loads(auto_questions)
+            except Exception, ex:
+                raise forms.ValidationError(_("Invalid JSON specified for Q&A config"))
+        return auto_questions
 
     def populate_category_ids(self, categories):
         for category in categories:

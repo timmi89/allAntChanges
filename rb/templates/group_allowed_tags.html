@@ -6,7 +6,7 @@
 {% block bodyClass %}admin{% endblock %}
 
 {% block sidebarContent %}
-    {% with "manage_reactions" as activeAdminTab %} 
+    {% with "moderation_approved" as activeAdminTab %} 
     {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
     {% endwith %}
@@ -14,46 +14,41 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="container row settings">
   <section role="panels" class="content">
-
-    <nav>
-      <div class="nav-wrapper blue-grey">
-        <ul id="nav-mobile" class="left">
-          <li class="active"><a href="../all_reactions">Approved Reactions</a></li>
-          <li><a href="../unapproved_reactions">Unapproved Reactions</a></li>
-          <li><a href="../blocked_reactions">Blocked Reactions</a></li>
-        </ul>
-      </div>
-    </nav>
-
-
-    <div class="card-panel">
-        <p>These are reactions that currently appear on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>
-        <p>Blocking a reaction will remove all current instances of it on your site, and prevent any more from being made.</p>
+    <div class="admin-header">
+        <h1>Approved Reactions</h1>
     </div>
 
-    <h2>Approved Reactions</h2>
+    <div class="admin-content">
 
-    <table role="block_tags">
-		<thead>
-			<tr>
-				<th>Reaction</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-    {% for tag in all_unblocked|dictsortreversed:"id" %}
-    		<tr>
-    			<td width="300">{{tag.body}}</td>
-    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
-    		</tr>
-    {% endfor %}  
-		</tbody>
-	</table>
-	
+        <div class="card-panel">
+            <p>These are reactions that currently appear on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>
+            <p>Blocking a reaction will remove all current instances of it on your site, and prevent any more from being made.</p>
+        </div>
+
+        {% if all_unblocked|length > 0 %}
+            <table role="block_tags">
+        		<thead>
+        			<tr>
+        				<th>Reaction</th>
+        				<th>Action</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+            {% for tag in all_unblocked|dictsortreversed:"id" %}
+            		<tr>
+            			<td width="300">{{tag.body}}</td>
+            			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
+            		</tr>
+            {% endfor %}  
+        		</tbody>
+        	</table>
+
+        {% else %}
+            <div>You have no approved reactions at this time.</div>
+        {% endif %}
+	</div>
 </section>
-</div>
 
 <script>
 // bind a "block" event to each button
