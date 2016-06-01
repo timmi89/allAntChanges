@@ -10,9 +10,9 @@ function createIndicatorWidget(options) {
     var $containerElement = options.containerElement;
     var contentData = options.contentData;
     var $ctaElement = options.ctaElement;
-    var $ctaLabels = options.ctaLabels; // optional
-    var $ctaCounters = options.ctaCounters; // optional
-    var $ctaExpandedReactions = options.ctaExpandedReactions; // optional
+    var ctaLabels = options.ctaLabels; // optional
+    var ctaCounters = options.ctaCounters; // optional
+    var ctaExpandedReactions = options.ctaExpandedReactions; // optional
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
@@ -42,30 +42,32 @@ function createIndicatorWidget(options) {
 
     var createdWidgets = [];
 
-    if ($ctaLabels) {
-        for (var i = 0; i < $ctaLabels.length; i++) {
-            createdWidgets.push(CallToActionLabel.create($ctaLabels[i], containerData));
+    if (ctaLabels) {
+        for (var i = 0; i < ctaLabels.length; i++) {
+            createdWidgets.push(CallToActionLabel.create(ctaLabels[i], containerData));
         }
     }
 
-    if ($ctaCounters) {
-        for (var i = 0; i < $ctaCounters.length; i++) {
-            createdWidgets.push(CallToActionCounter.create($ctaCounters[i], containerData));
+    if (ctaCounters) {
+        for (var i = 0; i < ctaCounters.length; i++) {
+            createdWidgets.push(CallToActionCounter.create(ctaCounters[i], containerData));
         }
     }
 
-    if ($ctaExpandedReactions) {
-        for (var i = 0; i < $ctaExpandedReactions.length; i++) {
-            createdWidgets.push(CallToActionExpandedReactions.create($ctaExpandedReactions[i], $containerElement, containerData, groupSettings));
+    if (ctaExpandedReactions) {
+        for (var i = 0; i < ctaExpandedReactions.length; i++) {
+            createdWidgets.push(CallToActionExpandedReactions.create(ctaExpandedReactions[i], $containerElement[0], containerData, groupSettings));
         }
     }
 
+    $containerElement.addClass('no-ant'); // Add the no-ant class on cta targets so we don't add normal indicators
     return {
         teardown: function() {
             $ctaElement.off('.antenna');
             for (var i = 0; i < createdWidgets.length; i++) {
                 createdWidgets[i].teardown();
             }
+            $containerElement.removeClass('no-ant');
         }
     }
 }

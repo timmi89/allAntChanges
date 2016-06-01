@@ -154,36 +154,32 @@ function scanForCallsToAction($element, pageData, groupSettings) {
     var ctaTargets = {}; // The elements that the call to actions act on (e.g. the image or video)
     find($element, '[ant-item]', true).each(function() {
         var $ctaTarget = $(this);
-        $ctaTarget.addClass('no-ant'); // don't show the normal reaction affordance on a cta target
         var antItemId = $ctaTarget.attr('ant-item').trim();
         ctaTargets[antItemId] = $ctaTarget;
     });
 
     var ctaLabels = {}; // Optional elements that report the number of reactions to the cta (e.g. "1 reaction")
     find($element, '[ant-reactions-label-for]', true).each(function() {
-        var $ctaLabel = $(this);
-        $ctaLabel.addClass('no-ant'); // don't show the normal reaction affordance on a cta label
-        var antItemId = $ctaLabel.attr('ant-reactions-label-for').trim();
+        var ctaLabel = this;
+        var antItemId = ctaLabel.getAttribute('ant-reactions-label-for');
         ctaLabels[antItemId] = ctaLabels[antItemId] || [];
-        ctaLabels[antItemId].push($ctaLabel);
+        ctaLabels[antItemId].push(ctaLabel);
     });
 
     var ctaCounters = {}; // Optional elements that report only the count of reaction to a cta (e.g. "1")
     find($element, '[ant-counter-for]', true).each(function() {
-        var $ctaCounter = $(this);
-        $ctaCounter.addClass('no-ant'); // don't show the normal reaction affordance on a cta counter
-        var antItemId = $ctaCounter.attr('ant-counter-for').trim();
+        var ctaCounter = this;
+        var antItemId = ctaCounter.getAttribute('ant-counter-for');
         ctaCounters[antItemId] = ctaCounters[antItemId] || [];
-        ctaCounters[antItemId].push($ctaCounter);
+        ctaCounters[antItemId].push(ctaCounter);
     });
 
     var ctaExpandedReactions = {}; // Optional elements that show expanded reactions for the cta (e.g. "Interesting (15) No thanks (10)")
     find($element, '[ant-expanded-reactions-for]', true).each(function() {
-        var $ctaExpandedReactionArea = $(this);
-        $ctaExpandedReactionArea.addClass('no-ant'); // don't show the normal reaction affordance on a cta counter
-        var antItemId = $ctaExpandedReactionArea.attr('ant-expanded-reactions-for').trim();
+        var ctaExpandedReactionArea = this;
+        var antItemId = ctaExpandedReactionArea.getAttribute('ant-expanded-reactions-for');
         ctaExpandedReactions[antItemId] = ctaExpandedReactions[antItemId] || [];
-        ctaExpandedReactions[antItemId].push($ctaExpandedReactionArea);
+        ctaExpandedReactions[antItemId].push(ctaExpandedReactionArea);
     });
 
     var crosspageContainers = [];
@@ -229,7 +225,7 @@ function createAutoCallsToAction($section, pageData, groupSettings) {
         $ctaTarget.attr('ant-item', antItemId);
         var autoCta = AutoCallToAction.create(antItemId, pageData, groupSettings);
         $ctaTarget.after(autoCta.element); // TODO: make the insert behavior configurable like the summary
-        createdWidgets.push(autoCta);
+        createdWidgets.push({element: $(autoCta.element), teardown: autoCta.teardown});
     });
 }
 

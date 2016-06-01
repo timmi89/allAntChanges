@@ -1,11 +1,10 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var BrowserMetrics = require('./utils/browser-metrics');
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive=loadedRactive; });
 var SVGs = require('./svgs');
 
 function createCallToAction(antItemId, pageData, groupSettings) {
     var ractive = Ractive({
-        el: $('<div>'),
+        el: document.createElement('div'),
         data: {
             antItemId: antItemId,
             expandReactions: shouldExpandReactions(groupSettings)
@@ -16,7 +15,7 @@ function createCallToAction(antItemId, pageData, groupSettings) {
         }
     });
     return {
-        element: $(ractive.find('.antenna-auto-cta')),
+        element: ractive.find('.antenna-auto-cta'),
         teardown: function() { ractive.teardown(); }
     };
 }
