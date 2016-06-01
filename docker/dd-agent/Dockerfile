@@ -7,3 +7,4 @@ COPY docker_daemon.py   /opt/datadog-agent/agent/checks.d/docker_daemon.py
 # Auto config
 COPY nginx.yaml /etc/dd-agent/conf.d/auto_conf/nginx.yaml
 COPY rabbitmq.yaml /etc/dd-agent/conf.d/auto_conf/rabbitmq.yaml
+COPY mcache.yaml /etc/dd-agent/conf.d/auto_conf/mcache.yaml
