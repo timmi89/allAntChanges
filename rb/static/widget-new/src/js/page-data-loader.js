@@ -15,7 +15,7 @@ function computePagesParam($pageElementArray, groupSettings) {
         var $pageElement = $pageElementArray[i];
         pages.push({
             group_id: groupId,
-            url: PageUtils.computePageUrl($pageElement, groupSettings),
+            url: PageUtils.computePageUrl($pageElement[0], groupSettings),
             title: PageUtils.computePageTitle($pageElement[0], groupSettings)
         });
     }

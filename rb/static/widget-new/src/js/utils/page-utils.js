@@ -1,4 +1,4 @@
-var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var DomUtils = require('./dom-utils');
 
 function computePageTitle(pageElement, groupSettings) {
     var titleSelector = groupSettings.pageTitleSelector();
@@ -47,38 +47,39 @@ function getAttributeValue(elementSelector, attributeSelector) {
 }
 
 function computeTopLevelCanonicalUrl(groupSettings) {
-    var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
-    var $canonicalLink = $('link[rel="canonical"]');
-    if ($canonicalLink.length > 0 && $canonicalLink.attr('href')) {
-        var overrideUrl = $canonicalLink.attr('href').trim().toLowerCase();
-        var domain = (window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
-        if (overrideUrl !== domain) { // fastco fix (since they sometimes rewrite their canonical to simply be their domain.)
-            canonicalUrl = overrideUrl;
-        }
+    var canonicalUrl = getAttributeValue('link[rel="canonical"]', 'href').toLowerCase();
+    // Check for invalid value (seen in the wild where a site wrote all canonical url links as their domain)
+    var domain = (window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
+    if (!canonicalUrl || canonicalUrl === domain) {
+        canonicalUrl = window.location.href.split('#')[0].toLowerCase();
     }
     return removeSubdomainFromPageUrl(canonicalUrl, groupSettings);
 }
 
-function computePageElementUrl($pageElement, groupSettings) {
+function computePageElementUrl(pageElement, groupSettings) {
     var pageUrlSelector = groupSettings.pageUrlSelector();
-    var $pageUrlElement = $pageElement.find(pageUrlSelector);
-    if (pageUrlSelector) { // with an undefined selector, addBack will match and always return the input element (unlike find() which returns an empty match)
-        $pageUrlElement = $pageUrlElement.addBack(pageUrlSelector);
-    }
-    var url = $pageUrlElement.attr(groupSettings.pageUrlAttribute());
-    if (url) {
-        url = removeSubdomainFromPageUrl(url, groupSettings);
-        var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
-        if (url.indexOf(origin) !== 0 && // Not an absolute URL
-                !url.substr(0,2) !== '//' && // Not protocol relative
-                !groupSettings.url.ignoreSubdomain()) { // And we weren't not ignoring the subdomain
-            if (url.substr(0,1) == '/') {
-                url = origin + url;
-            } else {
-                url = origin + window.location.pathname + url;
+    if (pageUrlSelector) {
+        var pageUrlElement = pageElement.querySelector(pageUrlSelector);
+        if (!pageUrlElement && DomUtils.matchesSelector(pageElement, pageUrlSelector)) {
+            pageUrlElement = pageElement;
+        }
+        if (pageUrlElement) {
+            var url = pageUrlElement.getAttribute(groupSettings.pageUrlAttribute());
+            if (url) {
+                url = removeSubdomainFromPageUrl(url, groupSettings);
+                var origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+                if (url.indexOf(origin) !== 0 && // Not an absolute URL
+                        !url.substr(0,2) !== '//' && // Not protocol relative
+                        !groupSettings.url.ignoreSubdomain()) { // And we weren't not ignoring the subdomain
+                    if (url.substr(0,1) == '/') {
+                        url = origin + url;
+                    } else {
+                        url = origin + window.location.pathname + url;
+                    }
+                }
+                return url;
             }
         }
-        return url;
     }
     return computeTopLevelCanonicalUrl(groupSettings);
 }

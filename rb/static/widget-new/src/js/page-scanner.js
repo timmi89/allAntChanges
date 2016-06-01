@@ -52,7 +52,7 @@ function scanAllPages(groupSettings, reinitializeCallback) {
 // 2. Compute hashes for each container.
 // 3. Insert widget affordances for each which are bound to the data model by the hashes.
 function scanPage($page, groupSettings, isMultiPage) {
-    var url = PageUtils.computePageUrl($page, groupSettings);
+    var url = PageUtils.computePageUrl($page[0], groupSettings);
     var pageData = PageData.getPageDataByURL(url);
     if (Segment.getSegment(groupSettings) === 'rm-o') {
         scanForReadMore($page, pageData, groupSettings);
@@ -558,7 +558,7 @@ function setupMutationObserver(groupSettings, reinitializeCallback) {
                             }
                         }
                     }
-                    var url = PageUtils.computePageUrl($page, groupSettings);
+                    var url = PageUtils.computePageUrl($page[0], groupSettings);
                     var pageData = PageData.getPageDataByURL(url);
                     if (Segment.getSegment(groupSettings) === 'rm-o') {
                         // Only scan for readmore in the readmore-only segment
