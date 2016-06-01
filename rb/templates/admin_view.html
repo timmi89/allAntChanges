@@ -1,0 +1,40 @@
+{% extends "base/site-admin.html" %}
+{% load custom_filters %}
+
+{% block page_title %}{{ form.instance.name }} -- Manage Administrators{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+{% block sidebarContent %}
+    {% with "admin_view" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
+    {% include "admin_nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+{% block page_content %}
+<section class="content">
+  <div class="admin-header">
+      <h1>Group Administrators</h1>
+    </div>
+
+    <div class="admin-content">
+      <div class="notice info">
+        To have someone request Admin access to {{group.name}}, have them create a Antenna account and then send them to <a href="/group/{{group.short_name}}/admin_request/" target="_blank">www.antenna.is/group/{{group.short_name}}/admin_request/</a>.
+      </div>
+      {% regroup admin_requests by group as groups %}
+          {% for group in groups %}
+            Admin Requests for {{ group.grouper.name }}
+            <ul>
+              {% for request in group.list %}
+                <li>{{ request.social_user.full_name }} <a href="/group/{{ group.grouper.short_name }}/admin_approve/{{ request.id }}"><button>Approve</button></a></li>
+              {% endfor %}
+            </ul>
+          {% empty %}
+              <h2>Nobody to approve!</h2>
+          {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

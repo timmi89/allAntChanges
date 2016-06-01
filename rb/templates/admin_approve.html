@@ -1,16 +1,16 @@
-{% extends "base/wide.html" %}
+{% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
 {% block page_title %}{{ form.instance.name }} -- Approve Administrators{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
-{% block subheaderContent %}
-<section role="subheader">
+{% block sidebarContent %}
     {% with "admin_requests" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
     {% endwith %}
-</section>
+    {% endwith %}
 {% endblock %}
 
 {% block page_content %}

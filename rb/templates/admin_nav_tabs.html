@@ -56,8 +56,8 @@
             <li class="{% if activeAdminTab == 'embed_qa' %}active{%endif%}"><a href="/group/{{ group.short_name }}/embeds/qa/">Q &amp; A</a></li>
           </ul>
         </li>
-        <li class="top-level-link {% if activeAdminTab == 'admin_requests' %}active{%endif%}">
-          <a href="/group/{{ group.short_name }}/admin_approve/">Admin Requests</a>
+        <li class="top-level-link {% if 'admin' in activeAdminTab %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/users/admins/">Administrators</a>
         </li>
       </ul>
   </div>

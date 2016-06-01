@@ -652,6 +652,7 @@ class GroupQAForm(forms.ModelForm):
             m.auto_questions = json.dumps(questions_obj, indent=4, sort_keys=True) # update the model so the data is saved
             self.data['auto_questions'] = m.auto_questions # update the form so the new data is displayed
         
+        m.save()
             
     
     class Meta:

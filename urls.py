@@ -95,9 +95,9 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/popular_content/$', 'rb.views.embeds_popular_content'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/embeds/qa/$', 'rb.views.embeds_qa'),
 
-  url(r'^group/(?P<short_name>[\w\-\.]+)/users/$', 'rb.views.'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admins/$', 'rb.views.'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admin_requests/$', 'rb.views.'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/$', 'rb.views.admin_view'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admins/$', 'rb.views.admin_view'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/users/admin_requests/$', 'rb.views.admin_request'),
 
   # Group Supporting Pages
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.

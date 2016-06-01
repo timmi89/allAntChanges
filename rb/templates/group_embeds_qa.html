@@ -1,7 +1,7 @@
 {% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
-{% block page_title %}Antenna Settings{%endblock%}
+{% block page_title %}Antenna Q &amp; A{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
@@ -41,12 +41,6 @@
                     <div class="formRow">
                         <label for="id_auto_questions"><span class="labelTitle">Q&amp;A JSON</span><span>JSON specifying the Q&A config. Here be dragons!</span>&nbsp;&nbsp;<a href="#" id="initialize_auto_questions_json">(Init)</a></label>
                         {{ form.auto_questions }}
-                        <style>
-                        #id_auto_questions {
-                            height:300px;
-                            width:100%;
-                        }
-                        </style>
                     </div>
                 </section>
 
@@ -73,18 +67,6 @@
     {% endblock %}
 
 {% block page_js %}
-    <style>
-    .tld_options,
-    .recirc_options             { height:0; overflow:hidden; }
-    .tld_options.visible,
-    .recirc_options.visible     { height:auto; overflow:visible; }
-    .readmore_options             { height:0; overflow:hidden; }
-    .readmore_options.visible         { height:auto; overflow:visible; }
-    #id_auto_questions           { display: none; }
-    #id_auto_questions.visible    { display: initial; }
-    #initialize_auto_questions_json           { visibility: hidden; }
-    #initialize_auto_questions_json.visible    { visibility: visible; }
-    </style>
     <script>
         $(function(){
 

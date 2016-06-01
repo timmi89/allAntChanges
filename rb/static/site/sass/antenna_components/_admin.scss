@@ -108,6 +108,18 @@
         .card-panel {
             margin: 20px;
         }
+
+        // pasted in from some in-line styles.
+        .tld_options,
+        .recirc_options             { height:0; overflow:hidden; }
+        .tld_options.visible,
+        .recirc_options.visible     { height:auto; overflow:visible; }
+        .readmore_options             { height:0; overflow:hidden; }
+        .readmore_options.visible         { height:auto; overflow:visible; }
+        #id_auto_questions           { display: none; height:300px; width:100%;}
+        #id_auto_questions.visible    { display: initial; }
+        #initialize_auto_questions_json           { visibility: hidden; }
+        #initialize_auto_questions_json.visible    { visibility: visible; }
     }
 
     @media (max-width: $screen-sm-max) {

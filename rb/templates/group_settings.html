@@ -603,24 +603,6 @@
                 $(this).closest('form').find('.success').hide();
             });
 
-            $('#toggle_word_blacklist, #fake_hidden_word_blacklist').click(function(){
-                $('.word_blacklist_toggle_node').each(function(){
-                    $(this).toggleClass('hide');
-                });
-                return false;
-            });
-
-            var questionsConfigured = $('#id_auto_questions').val().length > 0;
-            $('#id_auto_questions').toggleClass('visible', questionsConfigured); // Default the field to visible if there's configured data.
-            $('#initialize_auto_questions_json').toggleClass('visible', !questionsConfigured); // Default the init button to visible if there's no data.
-            $('#initialize_auto_questions_json').click(function() {
-                var textArea = $('#id_auto_questions');
-                if (textArea.val().length === 0) {
-                    textArea.val('{\n    "autoQuestionsInsertMethod": "append", \n    "autoQuestionsSelector": "", \n    "expandReactions": "both", \n    "questions": [\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        },\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        }\n    ],\n    "categories": [\n        {\n            "categoryValues": "x;y", \n            "id": "new", \n            "questions": [\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                },\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                }\n            ]\n        }\n    ], \n    "categoryAttribute": "", \n    "categorySelector": ""\n}');
-                    $('#id_auto_questions, #initialize_auto_questions_json').toggleClass('visible');
-                }
-                return false;
-            });
 
             $('#summary_widget_method_selector').change( function() {
                 $('#id_summary_widget_method').val( $(this).val() );
@@ -636,14 +618,6 @@
 
             $('#doubleTapMessagePosition_selector').change( function() {
                 $('#id_doubleTapMessagePosition').val( $(this).val() );
-            });
-
-            $('#id_show_recirc').change( function() {
-                $('.recirc_options').toggleClass('visible')
-            });
-
-            $('#id_show_readmore').change( function() {
-                $('.readmore_options').toggleClass('visible')
             });
 
             $('#id_ignore_subdomain').change( function() {

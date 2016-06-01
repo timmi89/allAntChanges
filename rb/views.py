@@ -178,7 +178,6 @@ def retailers(request):
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
-    # context['hasSubheader'] = True
 
     if cookie_user:
         context['cookie_user'] = cookie_user
@@ -942,11 +941,56 @@ def settings_wordpress(request, **kwargs):
 
 
 @requires_admin
+def admin_view(request, short_name=None, request_id=None, **kwargs):
+    context = {}
+    cookie_user = kwargs['cookie_user']
+    context['cookie_user'] = cookie_user
+
+    context = admin_helper(request,context)
+
+    # Get the Group and related group admins
+    group = Group.objects.get(
+        short_name=short_name
+    )
+    context['group'] = group
+
+    groups = context['admin_groups']  # context['admin_groups'] should've been defined in the admin_helper
+
+    admins = GroupAdmin.objects.filter(
+        group__in=groups,
+        approved=True
+    ).exclude(social_user=cookie_user.social_user)
+
+    admin_requests = GroupAdmin.objects.filter(
+        group__in=groups,
+        approved=False
+    ).exclude(social_user=cookie_user.social_user)
+
+    try:
+        if request_id:
+            admin_request = admin_requests.get(id=request_id)
+            admin_request.approved = True
+            admin_request.save()
+            admin_requests.exclude(id=request_id)
+    except Exception, ex:
+        pass
+
+    context['admins'] = admins
+    context['admin_requests'] = admin_requests
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    return render_to_response(
+        "admin_view.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+@requires_admin
+#deprecated?
 def admin_approve(request, short_name=None, request_id=None, **kwargs):
     context = {}
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
-    context['hasSubheader'] = True
 
     context = admin_helper(request,context)
 
@@ -1186,7 +1230,6 @@ def group_blocked_tags(request, **kwargs):
 
     context = admin_helper(request,context)
 
-    context['hasSubheader'] = True
     return render_to_response(
         "group_blocked_tags.html",
         context,
@@ -1199,7 +1242,6 @@ def group_moderation_home(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
 
     context = admin_helper(request,context)
 
@@ -1230,7 +1272,6 @@ def group_allowed_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
 
     context = admin_helper(request,context)
 
@@ -1272,7 +1313,6 @@ def group_unapproved_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
 
     context = admin_helper(request,context)
 
@@ -1372,7 +1412,6 @@ def analytics(request, short_name=None, **kwargs):
     context['group'] = Group.objects.get(short_name=short_name)
     context['fb_client_id'] = FACEBOOK_APP_ID
     context['cookie_user'] = kwargs['cookie_user']
-    context['hasSubheader'] = True
 
     context = admin_helper(request,context)
 
