@@ -1,5 +1,10 @@
 (function() {
 
+    if (window.AntennaReadMore) { // Prevent against being loaded twice.
+        return;
+    }
+    window.AntennaReadMore = true;
+
     function fetchGroupSettings(callback) {
         fetchJSONP('/api/settings/', {}, function(json) {
             var groupSettings = GroupSettings.create(json);
@@ -21,7 +26,6 @@
         if (customCSS) {
             var styleTag = document.createElement('style');
             styleTag.setAttribute('type', 'text/css');
-            styleTag.id = 'antenna-readmore-styles';
             styleTag.innerHTML = customCSS;
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(styleTag);
         }
@@ -340,15 +344,8 @@
         };
     })();
 
-
     // Check browser requirements
     if (!document.querySelector || !Element.prototype.addEventListener || !('classList' in document.createElement('div')) || !Utils.isMobile()) {
-        return;
-    }
-
-    // check that we haven't already loaded this
-    // crappy check by PB.
-    if ( document.querySelector('#antenna-readmore-styles') ) {
         return;
     }
 
