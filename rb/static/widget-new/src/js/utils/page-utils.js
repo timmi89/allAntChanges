@@ -1,15 +1,22 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
-function computePageTitle($page, groupSettings) {
+function computePageTitle(pageElement, groupSettings) {
     var titleSelector = groupSettings.pageTitleSelector();
     if (!titleSelector) {
         // Backwards compatibility for sites which deployed before we had a separate title selector.
         titleSelector = groupSettings.pageUrlSelector();
     }
-    var pageTitle = $page.find(titleSelector).text().trim();
-    if (pageTitle === '') {
+    var titleElement = pageElement.querySelector(titleSelector);
+    var pageTitle = titleElement ? titleElement.innerText.trim() : '';
+    if (!pageTitle) {
         // If we couldn't find a title based on the group settings, fallback to some hard-coded behavior.
-        pageTitle = getAttributeValue('meta[property="og:title"]', 'content') || $('title').text().trim();
+        pageTitle = getAttributeValue('meta[property="og:title"]', 'content');
+        if (!pageTitle) {
+            var titleElements = document.getElementsByTagName('title');
+            for (var i = 0; i < titleElements.length; i++) {
+                pageTitle = pageTitle || titleElements[i].innerText.trim();
+            }
+        }
     }
     return pageTitle;
 }
@@ -33,7 +40,8 @@ function computePageSiteSection(groupSettings) {
 function getAttributeValue(elementSelector, attributeSelector) {
     var value = '';
     if (elementSelector && attributeSelector) {
-        value = $(elementSelector).attr(attributeSelector) || '';
+        var element = document.querySelector(elementSelector);
+        value = element ? element.getAttribute(attributeSelector) : '';
     }
     return value.trim();
 }

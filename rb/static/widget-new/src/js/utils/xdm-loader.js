@@ -1,4 +1,3 @@
-var AppMode = require('./app-mode');
 var URLConstants = require('./url-constants');
 var WidgetBucket = require('./widget-bucket');
 
