@@ -9,7 +9,7 @@ instances:
   # optional: 'rabbitmq_user' (default: guest), 'rabbitmq_pass' (default: guest),
   # and 'tag_families' (default: false) to tag queue "families" based off of regex
   # matching.
-  - rabbitmq_api_url: http://%%host%%:%%port%%/api/
+  - rabbitmq_api_url: http://%%host%%:%%port_3%%/api/
     rabbitmq_user: broadcast
     rabbitmq_pass: 51gn4l5
     # tag_families: true
