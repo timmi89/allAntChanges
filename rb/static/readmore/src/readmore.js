@@ -9,8 +9,10 @@
 
     function groupSettingsLoaded(groupSettings) {
         if (groupSettings.showReadMore()) {
+            insertReadMoreCSS(groupSettings);
             insertReadMore(groupSettings);
             insertCustomCSS(groupSettings);
+            setupMutationObserver(groupSettings);
         }
     }
 
@@ -32,7 +34,6 @@
             if (container) {
                 var cropHeight = computeCropHeight(container, groupSettings);
                 if (cropHeight) {
-                    insertReadMoreCSS(groupSettings);
                     Utils.setStyles(container, { maxHeight: cropHeight + 'px' });
                     Utils.addClass(container, 'antenna-readmore-crop');
                     var readMoreElement = createReadMoreElement(groupSettings);
@@ -40,9 +41,7 @@
                     var readMoreAction = readMoreElement.querySelector('.antenna-readmore-action');
                     if (readMoreAction) {
                         readMoreAction.addEventListener('click', function () {
-                            Utils.setStyles(container, { maxHeight: '' });
-                            Utils.removeClass(container, 'antenna-readmore-crop');
-                            readMoreElement.parentNode.removeChild(readMoreElement);
+                            teardownReadMore(groupSettings);
                         });
                     }
                 }
@@ -58,6 +57,18 @@
             dummy.querySelector('.antenna-readmore-action').innerHTML = customLabel;
         }
         return dummy.firstChild;
+    }
+
+    function teardownReadMore(groupSettings) {
+        var container = document.querySelector('.antenna-readmore-crop');
+        if (container) {
+            Utils.removeClass(container, 'antenna-readmore-crop');
+            Utils.setStyles(container, { maxHeight: '' });
+        }
+        var readMoreElement = document.querySelector('.antenna-readmore');
+        if (readMoreElement) {
+            readMoreElement.parentNode.removeChild(readMoreElement);
+        }
     }
 
     function computeCropHeight(container, groupSettings) {
@@ -100,6 +111,59 @@
                 callback(response.data);
             }
         });
+    }
+
+    function setupMutationObserver(groupSettings) {
+        if (window.MutationObserver) {
+            var originalPathname = window.location.pathname;
+            var originalSearch = window.location.search;
+            var observer = new MutationObserver(function(mutationRecords) {
+                for (var i = 0; i < mutationRecords.length; i++) {
+                    var addedElements = filteredElements(mutationRecords[i].addedNodes);
+                    if (addedElements.length > 0 && shouldReinitializeForLocationChange()) {
+                        originalPathname = window.location.pathname;
+                        originalSearch = window.location.search;
+                        teardownReadMore(groupSettings);
+                        insertReadMore(groupSettings);
+                    }
+                }
+            });
+            var body = document.getElementsByTagName('body')[0];
+            observer.observe(body, {
+                childList: true,
+                attributes: false,
+                characterData: false,
+                subtree: true,
+                attributeOldValue: false,
+                characterDataOldValue: false
+            });
+        }
+
+        function shouldReinitializeForLocationChange() {
+            // Reinitialize when the location changes in a way that we believe is meaningful.
+            // The heuristic we use is that either:
+            // 1. The query string changes and we're on a site that says the query string matters or
+            // 2. The path changes...
+            //    2a. But not if the change is an extension of the path.
+            //        2aa. Unless we're going from an empty path ('/') to some other path.
+            var newLocationPathname = window.location.pathname;
+            return groupSettings.includeQueryString() && originalSearch != window.location.search ||
+                    newLocationPathname != originalPathname && (originalPathname === '/' || newLocationPathname.indexOf(originalPathname) === -1);
+        }
+
+        // Filter the set of nodes to eliminate anything inside our own DOM elements (otherwise, we generate a ton of chatter)
+        function filteredElements(nodeList) {
+            var filtered = [];
+            for (var i = 0; i < nodeList.length; i++) {
+                var node = nodeList[i];
+                if (node.nodeType === 1) { // Only element nodes. (https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType)
+                    if (!node.classList.contains('antenna') && !node.classList.contains('antenna-reset')) {
+                        filtered.push(node);
+                    }
+                }
+            }
+            return filtered;
+        }
     }
 
     // Generic browser utils.
@@ -214,6 +278,7 @@
 
             return {
                 groupId: data('id'),
+                includeQueryString: data('querystring_content'),
                 showReadMore: data('show_readmore'),
                 readMoreSelector: data('readmore_selector'),
                 readMoreLabel: data('readmore_label'),
