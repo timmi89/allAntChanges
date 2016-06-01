@@ -1,20 +1,19 @@
-var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var DomUtils = require('./dom-utils');
 var MD5 = require('./md5');
 
-function getCleanText($element) {
-    var $clone = $element.clone();
+function getCleanText(element) {
+    var clone = element.cloneNode(true);
     // Remove any elements that we don't want included in the text calculation
-    $clone.find('iframe, img, script, video, .antenna, .no-ant').remove().end();
-    // Then manually convert any <br> tags into spaces (otherwise, words will get appended by the text() call)
-    var html = $clone.html().replace(/<\Sbr\S\/?>/gi, ' ');
-    // Put the HTML back into a div and call text(), which does most of the heavy lifting
-    var text = $('<div>' + html + '</div>').text().toLowerCase().trim();
+    DomUtils.removeElements(clone, 'iframe, img, script, video, .antenna, .no-ant');
+    // Then manually convert any <br> tags into spaces (otherwise, words will get appended by the innerText call)
+    clone.innerHTML = clone.innerHTML.replace(/<br\S*\/?>/gi, ' ');
+    var text = clone.innerText.toLowerCase().trim();
     text = text.replace(/[\n\r\t]/gi, ' '); // Replace any newlines/tabs with spaces
     return text;
 }
 
-function hashText($element, suffix) {
-    var text = getCleanText($element);
+function hashText(element, suffix) {
+    var text = getCleanText(element);
     if (text) {
         var hashText = "rdr-text-" + text;
         if (suffix !== undefined) { // Append the optional suffix
@@ -24,8 +23,8 @@ function hashText($element, suffix) {
     }
 }
 
-function hashQuestion($element) {
-    var content = $element.attr('ant-item-content');
+function hashQuestion(element) {
+    var content = element.getAttribute('ant-item-content');
     if (content) {
         return MD5.hex_md5('rdr-qtn-' + content);
     }

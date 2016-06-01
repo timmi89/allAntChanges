@@ -443,14 +443,14 @@ function computeHash($element, pageData, groupSettings) {
             hash = Hash.hashMedia(mediaUrl, groupSettings);
             break;
         case TYPE_TEXT:
-            hash = Hash.hashText($element);
+            hash = Hash.hashText($element[0]);
             var increment = 1;
             while (hash && HashedElements.getElement(hash, pageData.pageHash)) {
-                hash = Hash.hashText($element, increment++);
+                hash = Hash.hashText($element[0], increment++);
             }
             break;
         case TYPE_QUESTION:
-            hash = Hash.hashQuestion($element);
+            hash = Hash.hashQuestion($element[0]);
             break;
     }
     if (hash) {
