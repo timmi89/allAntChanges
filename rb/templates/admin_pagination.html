@@ -1,0 +1,30 @@
+{% comment %}
+  Load this macro using:
+  {% load macros %}
+  {% loadmacro "admin_pagination.html" %}
+
+  Then use the macro using:
+  {% usemacro pagination %}
+{% endcomment %}
+
+{% load macros %}
+
+{% macro pagination %}
+    {% block pagination %}
+        <div class="admin-pagination">
+            <span class="step-links">
+                {% if current_page.has_previous %}
+                    <a class="previous btn btn-small" href="?page={{ current_page.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
+                </span>
+
+                {% if current_page.has_next %}
+                    <a class="next btn btn-small" href="?page={{ current_page.next_page_number }}">Next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endblock %}
+{% endmacro %}

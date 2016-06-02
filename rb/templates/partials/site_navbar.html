@@ -149,15 +149,21 @@
         </li>
 
         {% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
-        {% block sidebarContent %}
-            {% with group=cookie_user.social_user.admin_group %}
-            {% with "settings" as activeAdminTab %} 
-            {% with "mobile" as whichGroupList %} 
-            {% include "admin_nav_tabs.html" %}
-            {% endwith %}
-            {% endwith %}
-            {% endwith %}
-        {% endblock %}
+            {% block sidebarContent %}
+                {% with "settings" as activeAdminTab %}
+                {% with "mobile" as whichGroupList %}
+                {% if group %}
+                  {% with group=group %}
+                  {% include "admin_nav_tabs.html" %}
+                  {% endwith %}
+                {% else %}
+                  {% with group=cookie_user.social_user.admin_group %}
+                  {% include "admin_nav_tabs.html" %}
+                  {% endwith %}
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+            {% endblock %}
         {% endif %}
 
         <li class="divider"></li>

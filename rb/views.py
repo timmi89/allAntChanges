@@ -37,6 +37,8 @@ from antenna.analytics.tasks import register_event
 import json
 import random
 import hashlib
+from itertools import chain
+from itertools import groupby
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -54,18 +56,20 @@ def widgetCss(request):
       context_instance=RequestContext(request),
       mimetype = 'text/css')
 
-def home(request):
-    cookie_user = checkCookieToken(request)
+def createContext(request):
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
+    # add the context_user and admin groups, if any
+    context = admin_helper(request, context)
+    return context
+
+def home(request):
+    context = createContext(request)
 
     multi_options = ['platform','perspective','community','voice','national','genre']
     context['multi_adjective'] = random.choice(multi_options)
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
 
     return render_to_response(
       "home.html",
@@ -74,14 +78,7 @@ def home(request):
     )
 
 def old_demo(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
       "old_demo.html",
@@ -91,14 +88,7 @@ def old_demo(request):
     # return HttpResponseRedirect('/learn/')
 
 def team(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
         "team.html",
@@ -107,14 +97,7 @@ def team(request):
     )
 
 def faq(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
         "faq.html",
@@ -123,14 +106,7 @@ def faq(request):
     )
 
 def terms(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
       "terms.html",
@@ -139,14 +115,7 @@ def terms(request):
     )
 
 def privacy(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
       "privacy.html",
@@ -155,14 +124,7 @@ def privacy(request):
     )
 
 def publishers(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
       "publishers.html",
@@ -173,14 +135,7 @@ def publishers(request):
     # return HttpResponseRedirect('/')
 
 def retailers(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    context = createContext(request)
 
     return render_to_response(
       "retailers.html",
@@ -221,10 +176,8 @@ def fb_channel(request):
     )
 
 def login(request):
-    context = {}
-    context['fb_client_id'] = FACEBOOK_APP_ID
-    cookie_user = checkCookieToken(request)
-    context['cookie_user'] = cookie_user
+    context = createContext(request)
+    cookie_user = context.get('cookie_user')
     if cookie_user and request.META.get('HTTP_REFERER'):
         # return HttpResponseRedirect(request.META['HTTP_REFERER'])
         return request.META.get('HTTP_REFERER', '')
@@ -1223,21 +1176,6 @@ def follow_interactions(request, user_id):
 
 
 @requires_admin
-def group_blocked_tags(request, **kwargs):
-    context = kwargs.get('context', {})
-    group = Group.objects.get(short_name=kwargs['short_name'])
-    context['group'] = group
-
-    context = admin_helper(request,context)
-
-    return render_to_response(
-        "group_blocked_tags.html",
-        context,
-        context_instance=RequestContext(request)
-    )
-
-
-@requires_admin
 def group_moderation_home(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
@@ -1280,27 +1218,30 @@ def group_allowed_tags(request, **kwargs):
     for tag in AllTag.objects.filter(group=group,approved=True):
         approved_interaction_node_ids.append(tag.node.id)
 
-    tag_set = set( InteractionNode.objects.filter(id__in=approved_interaction_node_ids)  )
+    blocked_tags = group.blocked_tags.all()
+    approved_tags = InteractionNode.objects.filter(id__in=approved_interaction_node_ids).exclude(id__in=blocked_tags)
+    blessed_tags = group.blessed_tags.all().exclude(id__in=blocked_tags)
 
-    blessed_set = set(group.blessed_tags.all())
-    blocked_set = set(group.blocked_tags.all())
+    # combine approved and blessed tags, sorted by newest (highest ID) first
+    combined_tags = sorted(list(chain(approved_tags, blessed_tags)), key=lambda tag: tag.id, reverse=True)
+    # filter duplicates by ID
+    all_unblocked = [rows.next() for (key, rows) in groupby(combined_tags, key=lambda obj: obj.id)]
 
-    all_unblocked = (tag_set | blessed_set) - blocked_set
+    page_num = request.GET.get('page', 1)
+    try:
+        page_number = int(page_num)
+    except ValueError:
+        page_number = 1
 
-    ## PAGINATOR NO WORKIE
-    # paginator = Paginator(all_unblocked, 5)
+    paginator = Paginator(all_unblocked, 50)
+    try:
+        current_page = paginator.page(page_number)
+    except InvalidPage:
+        current_page = paginator.page(1)
+    except EmptyPage:
+        current_page = paginator.page(paginator.num_pages)
 
-    # page_num = request.GET.get('page_num', 1)
-    # try: page_number = int(page_num)
-    # except ValueError: page_number = 1
-
-    # try: current_page = paginator.page(page_number)
-    # except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
-
-    # context['current_page'] = current_page
-    # context['all_unblocked'] = paginator.page(1)
-
-    context['all_unblocked'] = all_unblocked
+    context['current_page'] = current_page
 
     return render_to_response(
         "group_allowed_tags.html",
@@ -1322,31 +1263,67 @@ def group_unapproved_tags(request, **kwargs):
     for tag in AllTag.objects.filter(group=group,approved=False):
         unapproved_interaction_node_ids.append(tag.node.id)
 
-    tag_set = set( InteractionNode.objects.filter(id__in=unapproved_interaction_node_ids)  )
+    blocked_tags = group.blocked_tags.all()
+    blessed_tags = group.blessed_tags.all().exclude(id__in=blocked_tags)
 
-    # unapproved_tags = AllTag.objects.filter(group=group,approved=False)
-    # print 'unapproved_tags'
-    # print unapproved_tags
+    unapproved_tags = InteractionNode.objects.filter(id__in=unapproved_interaction_node_ids).exclude(id__in=blocked_tags).exclude(id__in=blessed_tags)
 
-    # tag_set = set( InteractionNode.objects.filter(id__in=unapproved_tags) )
+    # combine approved and blessed tags, sorted by newest (highest ID) first
+    sorted_tags = sorted(list(unapproved_tags), key=lambda tag: tag.id, reverse=True)
+    # filter duplicates by ID
+    all_unapproved = [rows.next() for (key, rows) in groupby(sorted_tags, key=lambda obj: obj.id)]
 
-    # print 'tag_set'
-    # print tag_set
+    page_num = request.GET.get('page', 1)
+    try:
+        page_number = int(page_num)
+    except ValueError:
+        page_number = 1
 
-    # all_set = set(group.all_tags.all())
-    blessed_set = set(group.blessed_tags.all())
-    blocked_set = set(group.blocked_tags.all())
+    paginator = Paginator(all_unapproved, 50)
+    try:
+        current_page = paginator.page(page_number)
+    except InvalidPage:
+        current_page = paginator.page(1)
+    except EmptyPage:
+        current_page = paginator.page(paginator.num_pages)
 
-    # print 'blocked_set'
-    # print blocked_set
-
-    # unapproved_reactions = all_set - blessed_set
-    # unapproved_reactions = unapproved_reactions - blocked_set
-
-    context['unapproved_reactions'] = tag_set - blessed_set - blocked_set
+    context['current_page'] = current_page
 
     return render_to_response(
         "group_unapproved_tags.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+@requires_admin
+def group_blocked_tags(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+
+    context = admin_helper(request,context)
+
+    blocked_tags = group.blocked_tags.all()
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page_number = int(page_num)
+    except ValueError:
+        page_number = 1
+
+    paginator = Paginator(blocked_tags, 50)
+    try:
+        current_page = paginator.page(page_number)
+    except InvalidPage:
+        current_page = paginator.page(1)
+    except EmptyPage:
+        current_page = paginator.page(paginator.num_pages)
+
+    context['current_page'] = current_page
+
+    return render_to_response(
+        "group_blocked_tags.html",
         context,
         context_instance=RequestContext(request)
     )

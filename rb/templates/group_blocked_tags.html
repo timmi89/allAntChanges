@@ -13,6 +13,9 @@
     {% endwith %}
 {% endblock %}
 
+{% load macros %}
+{% loadmacros "admin_pagination.html" %}
+
 {% block page_content %}
   <section role="panels" class="content">
 	<div class="admin-header">
@@ -25,7 +28,8 @@
     		<p>These are the reactions on your site that you have <strong>blocked</strong>.  This means if anyone tries to react using an exact much of the reactions listed below, Antenna won't let the react get created on your site.</p>
     	</div>
 
-    	{% if group.blocked_tags.all|length > 0 %}
+        {% if current_page.paginator.count > 0 %}
+            {% usemacro pagination %}
             <table role="unblock_tags">
         		<thead>
         			<tr>
@@ -34,7 +38,7 @@
         			</tr>
         		</thead>
         		<tbody>
-            {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
+            {% for blocked in current_page %}
             		<tr>
             			<td width="300">{{blocked.body}}</td>
             			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
@@ -42,6 +46,9 @@
             {% endfor %}  
         		</tbody>
         	</table>
+            {% if current_page.paginator.num_pages > 1 %}
+                {% usemacro pagination %}
+            {% endif %}
 
         {% else %}
             <div><p>You have no blocked reactions at this time.</p></div>

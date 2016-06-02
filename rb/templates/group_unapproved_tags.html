@@ -13,6 +13,9 @@
     {% endwith %}
 {% endblock %}
 
+{% load macros %}
+{% loadmacros "admin_pagination.html" %}
+
 {% block page_content %}
   <section role="panels" class="content">
     <div class="admin-header">
@@ -27,7 +30,8 @@
             <p><strong>Blocking</strong> a reaction will prevent any more from being made.</p>
         </div>
 
-        {% if unapproved_reactions|length > 0 %}
+        {% if current_page.paginator.count > 0 %}
+            {% usemacro pagination %}
             <table role="approve_tags">
         		<thead>
         			<tr>
@@ -36,7 +40,7 @@
         			</tr>
         		</thead>
         		<tbody>
-            {% for tag in unapproved_reactions|dictsortreversed:"id" %}
+            {% for tag in current_page %}
             		<tr>
             			<td width="300">{{tag.body}}</td>
                         <td>
@@ -48,6 +52,9 @@
             {% endfor %}  
                 </tbody>
             </table>
+            {% if current_page.paginator.num_pages > 1 %}
+                {% usemacro pagination %}
+            {% endif %}
         {% else %}
             <div>You have no unapproved reactions at this time.</div>
         {% endif %}
