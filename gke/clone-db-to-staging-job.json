@@ -1,0 +1,29 @@
+{
+  "apiVersion": "batch/v1",
+  "spec": {
+    "template": {
+      "spec": {
+        "containers": [{
+          "name": "clone-db-to-staging",
+          "args": ["./antenna_clone_db_to_staging.sh"],
+          "image": "gcr.io/antenna-array/antenna:latest",
+          "imagePullPolicy": "Always",
+          "stdin": true,
+          "stdinOnce": true,
+          "tty": true,
+          "terminationMessagePath": "/dev/termination-log",
+          "volumeMounts": [{
+            "name": "sql",
+            "mountPath": "/sql"
+          }]
+        }],
+        "volumes": [{
+          "name": "sql",
+          "hostPath": {
+            "path": "/sql"
+          }
+        }]
+      }
+    }
+  }
+}
