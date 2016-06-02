@@ -123,13 +123,20 @@
     }
 
     @media (max-width: $screen-sm-max) {
-        .admin-header {
-            height: auto;
-            position: static;
+        .content {
+            padding-top:30px;
+            
+            .admin-header {
+                top: 56px;
+                height: 60px;
+                padding-top: 0;
+                padding-left: 20px;
+                width: 100%;
 
-            h1 { font-size:14px; max-width:200px; }
-            .fixed-button-container { font-size:11px; margin-top:-28px; padding:0; }
-            .fixed-button-container .btn { padding: 10px; height: 30px; line-height: 100%; }
+                h1 { font-size:14px; max-width:200px; }
+                .fixed-button-container { font-size:11px; margin-top:-28px; padding:0; }
+                .fixed-button-container .btn { padding: 10px; height: 30px; line-height: 100%; }
+            }
         }
     }
     .admin-form {
