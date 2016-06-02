@@ -148,8 +148,9 @@
           <svg class="icon-antenna-text"><use xlink:href="#ant-antenna-text"></use></svg>
         </li>
 
+        {% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
         {% block sidebarContent %}
-            {% with group=form.instance %}
+            {% with group=cookie_user.social_user.admin_group %}
             {% with "settings" as activeAdminTab %} 
             {% with "mobile" as whichGroupList %} 
             {% include "admin_nav_tabs.html" %}
@@ -157,6 +158,7 @@
             {% endwith %}
             {% endwith %}
         {% endblock %}
+        {% endif %}
 
         <li class="divider"></li>
         <li><h3>Find Out More</h3></li>
