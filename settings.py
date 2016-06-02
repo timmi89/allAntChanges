@@ -206,26 +206,14 @@ else:
             'LOCATION': os.getenv(
                 'MEMCACHED_LOCATION_DEFAULT',
                 'localhost:11211'),
-            'TIMEOUT': 86400,
-            'OPTIONS': {
-                'MAX_POOL_SIZE': 100,
-                'BLACKLIST_TIME': 20,
-                'SOCKET_TIMEOUT': 5,
-                'MAX_ITEM_SIZE': 1000*100,
-            }
+            'TIMEOUT': 86400
         },
         'redundant': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': os.getenv(
                 'MEMCACHED_LOCATION_REDUNDANT',
                 'localhost:11211'),
-            'TIMEOUT': 86400,
-            'OPTIONS': {
-                'MAX_POOL_SIZE': 100,
-                'BLACKLIST_TIME': 20,
-                'SOCKET_TIMEOUT': 5,
-                'MAX_ITEM_SIZE': 1000*100,
-            }
+            'TIMEOUT': 86400
         }
     }
 
