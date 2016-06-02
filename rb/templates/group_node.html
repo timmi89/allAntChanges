@@ -6,13 +6,13 @@
 </p>
 {% if group.requires_approval == False %}
 <p>
-    <strong>If this reaction is inappropriate, visit your <a href="http://antenna.is/group/{{ group.short_name }}/all_reactions/">Approved Reactions</a> page and block it to remove it from your site, forever.</strong>  (You must be logged in to view that page.)
+    <strong>If this reaction is inappropriate, visit your <a href="http://antenna.is/group/{{ group.short_name }}/moderation/approved/">Approved Reactions</a> page and block it to remove it from your site, forever.</strong>  (You must be logged in to view that page.)
 </p>
 {% endif %}
 {% if group.requires_approval == True %}
 <p>This reaction is not yet approved, so will not show up on your site unless you approve it.</p>
 <p>
-    <strong>If this reaction is appropriate, visit your <a href="http://antenna.is/group/{{ group.short_name }}/unapproved_reactions/">Unapproved Reactions</a> page and block it to remove it from your site, forever.</strong>  (You must be logged in to view that page.)
+    <strong>If this reaction is appropriate, visit your <a href="http://antenna.is/group/{{ group.short_name }}/moderation/unapproved/">Unapproved Reactions</a> page and block it to remove it from your site, forever.</strong>  (You must be logged in to view that page.)
 </p>
 {% endif  %}
 <p>
