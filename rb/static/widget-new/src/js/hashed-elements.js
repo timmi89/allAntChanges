@@ -15,6 +15,13 @@ function getElement(containerHash, pageHash) {
     }
 }
 
+function getNativeElement(containerHash, pageHash) {
+    var $element = getElement(containerHash, pageHash);
+    if ($element) {
+        return $element[0];
+    }
+}
+
 function setElement(containerHash, pageHash, $element) {
     var containers = pages[pageHash];
     if (!containers) {
@@ -58,6 +65,7 @@ function teardown() {
 //noinspection JSUnresolvedVariable
 module.exports = {
     getElement: getElement,
+    getNativeElement: getNativeElement,
     setElement: setElement,
     removeElement: removeElement,
     updatePageHash: updatePageHash,

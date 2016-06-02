@@ -1,4 +1,3 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var AjaxClient = require('./utils/ajax-client');
 var URLs = require('./utils/urls');

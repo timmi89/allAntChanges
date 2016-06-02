@@ -1,5 +1,5 @@
-var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var AnimationUtil = require('./utils/animation-util');
 var Range = require('./utils/range');
 
 var Events = require('./events');
@@ -45,24 +45,26 @@ function createPage(options) {
 
     function revealContent(ractiveEvent) {
         var locationData = ractiveEvent.context;
-        var element = HashedElements.getElement(locationData.containerHash, pageData.pageHash);
+        var element = HashedElements.getNativeElement(locationData.containerHash, pageData.pageHash);
         if (element) {
             var event = ractiveEvent.original;
             event.preventDefault();
             event.stopPropagation();
             closeWindow();
-            var targetScrollTop = $(element).offset().top - 130;
-            $('html,body').animate({scrollTop: targetScrollTop}, 1000);
+            var targetScrollTop = document.body.scrollTop + element.getBoundingClientRect().top - 130;
+            AnimationUtil.scrollTo(targetScrollTop, 1000);
             if (locationData.kind === 'txt') { // TODO: something better than a string compare. fix this along with the same issue in page-data
-                Range.highlight(element.get(0), locationData.location);
-                $(document).on('click.antenna', function() {
-                    Range.clearHighlights();
-                    $(document).off('click.antenna');
-                });
+                Range.highlight(element, locationData.location);
+                document.addEventListener('click', clearHighlights);
             }
             var containerData = PageData.getContainerData(pageData, locationData.containerHash);
             Events.postContentViewed(pageData, containerData,locationData, groupSettings);
         }
+    }
+
+    function clearHighlights() {
+        Range.clearHighlights();
+        document.removeEventListener('click', clearHighlights);
     }
 }
 
