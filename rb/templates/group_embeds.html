@@ -1,0 +1,49 @@
+{% extends "base/site-admin.html" %}
+{% load custom_filters %}
+
+{% block page_title %}Embeds{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+{% block sidebarContent %}
+    {% with "embeds" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
+    {% include "admin_nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+{% block page_content %}
+  <section class="content">
+    <div class="admin-header">
+      <h1>Embeds</h1>
+    </div>
+
+    <div class="admin-content">
+      <div class="card_link notice">
+          <h3><a href="/group/{{group.short_name}}/embeds/popular_content/">Popular Content</a></h3>
+          <em class="">
+            <strong>BETA</strong>
+            <br/>
+            Embed a stream of the specific content -- text, images, videos, etc -- your audience engages with the most using Antenna.  
+          </em>
+      </div>
+      <div class="card_link notice">
+          <h3><a href="/group/{{group.short_name}}/embeds/qa/">Q &amp; A</a></h3>
+          <em class="">
+            <strong>BETA</strong>
+            <br/>
+            Antenna-powered Q&amp;A.  Use Antenna to embed questions, with custom responses, on your pages.  Highly configurable.
+          </em>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block page_js %}
+    
+{% endblock %}

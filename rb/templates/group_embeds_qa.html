@@ -1,0 +1,98 @@
+{% extends "base/site-admin.html" %}
+{% load custom_filters %}
+
+{% block page_title %}Antenna Q &amp; A{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+{% block sidebarContent %}
+    {% with group=form.instance %}
+    {% with "embed_qa" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
+    {% include "admin_nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+{% block page_content %}
+  <section class="content">
+{% with group=form.instance %}
+  <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/embeds/qa/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form admin-form">{% csrf_token %}
+    <div class="admin-header">
+      <h1>Q &amp; A</h1>
+      <div class="fixed-button-container">
+          <div class="formFeedback" data-saved="{{saved}}">
+              <span style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.</span>
+              <span style="display: none;" class="success" >Changes saved</span>
+          </div>
+          <button class="btn submit flat" type="submit">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+  
+        <div class="form-fields">
+            {{ form.non_field_errors }}
+        	<div class="col s12 m12">
+
+
+                <section class="">
+                    <div class="formRow">
+                        <label for="id_auto_questions"><span class="labelTitle">Q&amp;A JSON</span><span>JSON specifying the Q&A config. Here be dragons!</span>&nbsp;&nbsp;<a href="#" id="initialize_auto_questions_json">(Init)</a></label>
+                        {{ form.auto_questions }}
+                    </div>
+                </section>
+
+            </div>
+            <div class="rightColumn col s12 m5 offset-m1">
+
+
+            </div>  <!-- /right column -->
+        </div> <!-- /form fields -->
+    {% comment %}
+      {{ form.as_p }}
+    {% endcomment %}
+        <div style="clear:both;">
+            <button class="btn submit flat" type="submit">Save Changes</button>
+        </div>
+      </form>
+    {% endwith %}
+    </div>
+</section>
+
+{% endblock page_content %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block page_js %}
+    <script>
+        $(function(){
+
+            var hasErrors = $('.errorlist').length;
+            
+            if(hasErrors){
+                $('.error').show();
+            }else{
+                var wasSaved = $('.formFeedback').data('saved');
+                if(wasSaved){
+                    $('.success').show();
+                }
+            }
+
+            var questionsConfigured = $('#id_auto_questions').val().length > 0;
+            $('#id_auto_questions').toggleClass('visible', questionsConfigured); // Default the field to visible if there's configured data.
+            $('#initialize_auto_questions_json').toggleClass('visible', !questionsConfigured); // Default the init button to visible if there's no data.
+            $('#initialize_auto_questions_json').click(function() {
+                var textArea = $('#id_auto_questions');
+                if (textArea.val().length === 0) {
+                    textArea.val('{\n    "autoQuestionsInsertMethod": "append", \n    "autoQuestionsSelector": "", \n    "expandReactions": "both", \n    "questions": [\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        },\n        {\n            "answers": "A;B;C;D", \n            "id": "new", \n            "sharedReactions": false, \n            "text": "???"\n        }\n    ],\n    "categories": [\n        {\n            "categoryValues": "x;y", \n            "id": "new", \n            "questions": [\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                },\n                {\n                    "answers": "A;B;C;D", \n                    "id": "new", \n                    "sharedReactions": false, \n                    "text": "???"\n                }\n            ]\n        }\n    ], \n    "categoryAttribute": "", \n    "categorySelector": ""\n}');
+                    $('#id_auto_questions, #initialize_auto_questions_json').toggleClass('visible');
+                }
+                return false;
+            });
+
+        });
+    </script>
+{% endblock %}

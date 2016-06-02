@@ -1,33 +1,32 @@
-{% extends "base/wide.html" %}
+{% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
 {% block page_title %}{{ form.instance.name }} Analytics{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
-{% block subheaderContent %}
-<section role="subheader">
+{% block sidebarContent %}
     {% with "analytics" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
     {% endwith %}
-</section>
+    {% endwith %}
 {% endblock %}
 
 {% block page_content %}
-<section class="analytics">
-  <div class="container">
-    <div class="row">
-      <div class="col m12">
-        <div class="right datepickers">
-            <label>Start Date</label>
-            <input type="date" class="datepicker" name="start_date" />
-            <label>End Date</label>
-            <input type="date" class="datepicker" name="end_date" />
-            <button class="update btn btn-small">Update</button>
-        </div>
-        <h1>{{group.name}} Analytics</h1>
-      </div>
+<section class="analytics content">
+  <div class="admin-header">
+    <h1>{{group.name}} Analytics</h1>
+    <div class="right datepickers">
+        <label>Start Date</label>
+        <input type="date" class="datepicker" name="start_date" />
+        <label>End Date</label>
+        <input type="date" class="datepicker" name="end_date" />
+        <button class="update btn btn-small">Update</button>
     </div>
+  </div>
+
+  <div class="container">
     <div class="row no-ant">
       <div class="col s12 m3 center-align total-reactions-count">
         <h4>Total Reactions</h4>

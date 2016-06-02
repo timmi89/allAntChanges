@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+{% load custom_filters %}
+
+{% block layoutHeadAdditions %}{% endblock %}
+{% block pageHeadAdditions %}{% endblock %}
+
+{% block bodyClass %}{% endblock %}
+
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
+
+{% block layout %}
+
+<div class="row settings">
+    <div class="col m2 hide-on-small-only admin-sidebar">
+        {% block sidebarContent %}
+        {% endblock %}
+    </div>
+    <div class="col m10 push-m2 s12 page-content">
+    {% block page_content %}{% endblock %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+  {% include "partials/site_footer.html" %}
+{% endblock footer %}
+
+
+{% block page_js %}
+{% endblock %}
+
+{% block layout_js %}
+{% endblock %}

@@ -1,19 +1,66 @@
-<div class="container row subheader">
-  <div class="col s6">
-    {{ group.name }} Administration
+{% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
+<section class="admin-links">
+  <div class="selected_group">
+    <!-- Dropdown Trigger -->
+    <a class='dropdown-button btn' href='#' data-activates='group_selector_{{whichGroupList}}'>{{ group.name }} <i class="material-icons">keyboard_arrow_down</i></a>
+
+    <!-- Dropdown Structure -->
+    <ul id='group_selector_{{whichGroupList}}' class='dropdown-content'>
+      {% for group in admin_groups %}
+        <li><a href="/group/{{group.short_name}}/settings/">{{group.name}}</a></li>
+      {% endfor %}  
+    </ul>
   </div>
-  <div class="col s6 right-align">
-    <a href="/manage/">Back to Group Management</a>
-    <a href="/group/{{ group.short_name }}/" class="view_stream">View your stream of reactions</a>
+
+  <style>
+  .settings-links { font-size:13px; }
+  .settings-links ul { margin:0; padding:0; }
+  .settings-links li.top-level-link { margin:0; padding:10px 0; border-left:7px solid #4b7185; color:#a3d2ea; display:block;}  /* $antenna-lt-blue: */  /* $antenna-lter-blue: */
+  .settings-links li.top-level-link a { display:block; padding:5px 15px;  }  /* $antenna-lt-blue: */  /* $antenna-lter-blue: */
+  .settings-links li.top-level-link > a { text-transform: uppercase; font-weight:bold;}
+  .settings-links li.top-level-link.active { background:#0A313C; border-color:#dec164; }  /* $antenna-dker-blue: */
+  .settings-links li.top-level-link:not(.active):hover { background:#2d5d77; border-color:#dac582; }  /* $antenna-dker-blue: */
+  
+  .admin .admin-sidebar .admin-links .settings-links .nested-links { display:none; }
+  .admin .admin-sidebar .admin-links .settings-links .active .nested-links { display:block; }
+  .admin .admin-sidebar .admin-links .settings-links .nested-links { padding-left:15px;  }
+  .admin .admin-sidebar .admin-links .settings-links .nested-links a { text-transform: none; color:#a3d2ea;  }
+  .admin .admin-sidebar .admin-links .settings-links .nested-links a:hover { color:#fff;  }
+  .admin .admin-sidebar .admin-links .settings-links .nested-links .active a { font-weight: bold; color: #dcbf63;}
+  </style>
+  <div class="settings-links">
+      <ul class="">
+        <li class="top-level-link {% if 'settings' in activeAdminTab  %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/settings/">Settings</a>
+          <ul class="nested-links">
+            <li class="{% if activeAdminTab == 'settings' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Site Configuration</a></li>
+            <li class="{% if activeAdminTab == 'settings_look' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/look/">Look and Feel</a></li>
+          </ul>
+        </li>
+        <li class="top-level-link {% if activeAdminTab == 'analytics' %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/analytics/">Analytics</a>
+        </li>
+        <li class="top-level-link {% if 'moderation' in activeAdminTab %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/moderation/">Moderation</a>
+          <ul class="nested-links">
+            <li class="{% if activeAdminTab == 'moderation' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/">Configure</a></li>
+            <li class="{% if activeAdminTab == 'moderation_approved' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/approved/">Approved Reactions</a></li>
+            <li class="{% if activeAdminTab == 'moderation_unapproved' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/unapproved/">Unapproved Reactions</a></li>
+            <li class="{% if activeAdminTab == 'moderation_blocked' %}active{%endif%}"><a href="/group/{{ group.short_name }}/moderation/blocked/">Blocked Reactions</a></li>
+          </ul>
+        </li>
+        <li class="top-level-link {% if 'embed' in activeAdminTab %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/embeds/">Embeds</a>
+          <ul class="nested-links">
+            <li class="{% if activeAdminTab == 'embed_popular_content' %}active{%endif%}"><a href="/group/{{ group.short_name }}/embeds/popular_content/">Popular Content</a></li>
+            <li class="{% if activeAdminTab == 'embed_qa' %}active{%endif%}"><a href="/group/{{ group.short_name }}/embeds/qa/">Q &amp; A</a></li>
+          </ul>
+        </li>
+        <li class="top-level-link {% if 'admin' in activeAdminTab %}active{%endif%}">
+          <a href="/group/{{ group.short_name }}/users/admins/">Administrators</a>
+        </li>
+      </ul>
   </div>
-</div>
-<div class="admin_tabs container row content">
-    <div class="col s12 padded">
-        <ul class="tabs">
-          <li class="tab {% if activeAdminTab == 'settings' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Settings</a></li>
-          <li class="tab {% if activeAdminTab == 'analytics' %}active{%endif%}"><a href="/group/{{ group.short_name }}/analytics/">Analytics</a></li>
-          <li class="tab {% if activeAdminTab == 'manage_reactions' %}active{%endif%}"><a href="/group/{{ group.short_name }}/all_reactions/">Manage Reactions</a></li>
-          <li class="tab {% if activeAdminTab == 'admin_requests' %}active{%endif%}"><a href="/group/{{ group.short_name }}/admin_approve/">Admin Requests</a></li>
-        </ul>
-    </div>
-</div>
+
+</section>
+{% endif %}

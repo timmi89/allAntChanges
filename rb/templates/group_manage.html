@@ -8,7 +8,6 @@
   <section role="panels" class="content s12">
 
     {% for group in admin_groups %}
-        {% block settingsHeader %}    
           <h1>{{group.name}} Settings</h1>
 
           <style>
@@ -64,7 +63,6 @@
                 Click to see existing requests to become a Group Admin for your Antenna account.  <br/><br/>
               </em>
           </div>
-        {% endblock settingsHeader %}  
     {% endfor %}  
   </section>
 </div>

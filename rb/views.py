@@ -178,7 +178,6 @@ def retailers(request):
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
-    # context['hasSubheader'] = True
 
     if cookie_user:
         context['cookie_user'] = cookie_user
@@ -768,24 +767,25 @@ def reset_rb_password(request):
 def settings(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['short_name'] = group.short_name
     context['cookie_user'] = kwargs['cookie_user']
-    context['hasSubheader'] = True
+    context = admin_helper(request,context)
 
     # todo move wordpress stuff
     if request.method == 'POST':
-        form = GroupForm(request.POST, request.FILES, instance=group)
+        form = GroupSettingsForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
             context['saved'] = True
         else:
-            # print form.errors
+            print form.errors
             pass
 
     else:
-        form = GroupForm(instance=group)
+        form = GroupSettingsForm(instance=group)
 
     context['form'] = form
-    context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
 
     return render_to_response(
@@ -793,6 +793,117 @@ def settings(request, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
+
+@requires_admin
+def settings_look(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['short_name'] = group.short_name
+    context['cookie_user'] = kwargs['cookie_user']
+    context = admin_helper(request,context)
+
+    # todo move wordpress stuff
+    if request.method == 'POST':
+        form = GroupLookFeelForm(request.POST, request.FILES, instance=group)
+        if form.is_valid():
+            form.save()
+            context['saved'] = True
+        else:
+            print form.errors
+            pass
+
+    else:
+        form = GroupLookFeelForm(instance=group)
+
+    context['form'] = form
+    context['short_name'] = group.short_name
+    context['fb_client_id'] = FACEBOOK_APP_ID
+
+    return render_to_response(
+        "group_settings_look.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+@requires_admin
+def embeds_home(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['short_name'] = group.short_name
+    context['cookie_user'] = kwargs['cookie_user']
+    context = admin_helper(request,context)
+
+    return render_to_response(
+        "group_embeds.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+@requires_admin    
+def embeds_popular_content(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['short_name'] = group.short_name
+    context['cookie_user'] = kwargs['cookie_user']
+    context = admin_helper(request,context)
+
+    # todo move wordpress stuff
+    if request.method == 'POST':
+        form = GroupPopularContentForm(request.POST, request.FILES, instance=group)
+        if form.is_valid():
+            form.save()
+            context['saved'] = True
+        else:
+            print form.errors
+            pass
+
+    else:
+        form = GroupPopularContentForm(instance=group)
+
+    context['form'] = form
+    context['fb_client_id'] = FACEBOOK_APP_ID
+
+    return render_to_response(
+        "group_embeds_popular_content.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+@requires_admin    
+def embeds_qa(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    context['short_name'] = group.short_name
+    context['cookie_user'] = kwargs['cookie_user']
+    context = admin_helper(request,context)
+
+    # todo move wordpress stuff
+    if request.method == 'POST':
+        form = GroupQAForm(request.POST, request.FILES, instance=group)
+        if form.is_valid():
+            form.save()
+            context['saved'] = True
+        else:
+            print form.errors
+            pass
+
+    else:
+        form = GroupQAForm(instance=group)
+
+    context['form'] = form
+    context['fb_client_id'] = FACEBOOK_APP_ID
+
+    return render_to_response(
+        "group_embeds_qa.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 @requires_admin_wordpress
 def settings_wordpress(request, **kwargs):
@@ -830,11 +941,58 @@ def settings_wordpress(request, **kwargs):
 
 
 @requires_admin
+def admin_view(request, short_name=None, request_id=None, **kwargs):
+    context = {}
+    cookie_user = kwargs['cookie_user']
+    context['cookie_user'] = cookie_user
+
+    context = admin_helper(request,context)
+
+    # Get the Group and related group admins
+    group = Group.objects.get(
+        short_name=short_name
+    )
+    context['group'] = group
+
+    groups = context['admin_groups']  # context['admin_groups'] should've been defined in the admin_helper
+
+    admins = GroupAdmin.objects.filter(
+        group__in=groups,
+        approved=True
+    ).exclude(social_user=cookie_user.social_user)
+
+    admin_requests = GroupAdmin.objects.filter(
+        group__in=groups,
+        approved=False
+    ).exclude(social_user=cookie_user.social_user)
+
+    try:
+        if request_id:
+            admin_request = admin_requests.get(id=request_id)
+            admin_request.approved = True
+            admin_request.save()
+            admin_requests.exclude(id=request_id)
+    except Exception, ex:
+        pass
+
+    context['admins'] = admins
+    context['admin_requests'] = admin_requests
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    return render_to_response(
+        "admin_view.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+@requires_admin
+#deprecated?
 def admin_approve(request, short_name=None, request_id=None, **kwargs):
     context = {}
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
-    context['hasSubheader'] = True
+
+    context = admin_helper(request,context)
 
     # Get the Group and related group admins
     group = Group.objects.get(
@@ -871,6 +1029,8 @@ def admin_request(request, short_name=None):
     context['requested'] = False
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
+
+    context = admin_helper(request,context)
 
     # Get the Group and related group admins
     group = Group.objects.get(
@@ -1067,7 +1227,9 @@ def group_blocked_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
+
+    context = admin_helper(request,context)
+
     return render_to_response(
         "group_blocked_tags.html",
         context,
@@ -1075,13 +1237,43 @@ def group_blocked_tags(request, **kwargs):
     )
 
 
+@requires_admin
+def group_moderation_home(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+
+    context = admin_helper(request,context)
+
+    # todo move wordpress stuff
+    if request.method == 'POST':
+        form = GroupModerationConfigureForm(request.POST, request.FILES, instance=group)
+        if form.is_valid():
+            form.save()
+            context['saved'] = True
+        else:
+            print form.errors
+            pass
+
+    else:
+        form = GroupModerationConfigureForm(instance=group)
+
+    context['form'] = form
+
+    return render_to_response(
+        "group_moderation_home.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 @requires_admin
 def group_allowed_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
+
+    context = admin_helper(request,context)
 
     # is this really inefficient?
     approved_interaction_node_ids = []
@@ -1093,7 +1285,22 @@ def group_allowed_tags(request, **kwargs):
     blessed_set = set(group.blessed_tags.all())
     blocked_set = set(group.blocked_tags.all())
 
-    context['all_unblocked'] = (tag_set | blessed_set) - blocked_set
+    all_unblocked = (tag_set | blessed_set) - blocked_set
+
+    ## PAGINATOR NO WORKIE
+    # paginator = Paginator(all_unblocked, 5)
+
+    # page_num = request.GET.get('page_num', 1)
+    # try: page_number = int(page_num)
+    # except ValueError: page_number = 1
+
+    # try: current_page = paginator.page(page_number)
+    # except (EmptyPage, InvalidPage): current_page = paginator.page(paginator.num_pages)
+
+    # context['current_page'] = current_page
+    # context['all_unblocked'] = paginator.page(1)
+
+    context['all_unblocked'] = all_unblocked
 
     return render_to_response(
         "group_allowed_tags.html",
@@ -1106,7 +1313,8 @@ def group_unapproved_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-    context['hasSubheader'] = True
+
+    context = admin_helper(request,context)
 
 
     # is this really inefficient?
@@ -1122,8 +1330,8 @@ def group_unapproved_tags(request, **kwargs):
 
     # tag_set = set( InteractionNode.objects.filter(id__in=unapproved_tags) )
 
-    print 'tag_set'
-    print tag_set
+    # print 'tag_set'
+    # print tag_set
 
     # all_set = set(group.all_tags.all())
     blessed_set = set(group.blessed_tags.all())
@@ -1147,6 +1355,9 @@ def group_unapproved_tags(request, **kwargs):
 def manage_groups(request, **kwargs):
     context = kwargs.get('context', {})
     cookie_user = checkCookieToken(request)
+
+    context = admin_helper(request,context)
+
     if cookie_user:
         if len(SocialUser.objects.filter(user=cookie_user)) == 1:
             admin_groups = cookie_user.social_user.admin_groups()
@@ -1201,7 +1412,8 @@ def analytics(request, short_name=None, **kwargs):
     context['group'] = Group.objects.get(short_name=short_name)
     context['fb_client_id'] = FACEBOOK_APP_ID
     context['cookie_user'] = kwargs['cookie_user']
-    context['hasSubheader'] = True
+
+    context = admin_helper(request,context)
 
     return render_to_response(
         "analytics.html",

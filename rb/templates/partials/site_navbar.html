@@ -1,6 +1,6 @@
 <div class="navbar-fixed no-ant">
 <nav class="global">
-  <div class="nav-wrapper container">
+  <div class="nav-wrapper">
 
       <!-- navbar content -->
       <a href="/" class="logo">
@@ -62,7 +62,7 @@
           <a class="user-dropdown-button-desktop" href="#!" data-activates="desktop-user-dropdown">
             {% if cookie_user.social_user %}
               {% if cookie_user.social_user.img_url %}
-              <img src="{{ cookie_user.social_user.img_url }}?type=square" class="circle" />
+              <img src="{{ cookie_user.social_user.img_url }}?type=square" class="" />
               {% endif %}
               <h4>{{ cookie_user.social_user.full_name }}</h4>
             {% else %}
@@ -147,6 +147,20 @@
           <svg class="icon-antenna-icon"><use xlink:href="#ant-antenna-logo"></use></svg>
           <svg class="icon-antenna-text"><use xlink:href="#ant-antenna-text"></use></svg>
         </li>
+
+        {% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
+        {% block sidebarContent %}
+            {% with group=cookie_user.social_user.admin_group %}
+            {% with "settings" as activeAdminTab %} 
+            {% with "mobile" as whichGroupList %} 
+            {% include "admin_nav_tabs.html" %}
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+        {% endblock %}
+        {% endif %}
+
+        <li class="divider"></li>
         <li><h3>Find Out More</h3></li>
         <li><a href="/publishers/">For Publishers</a></li>
         <li><a href="/retailers/">For Retailers</a></li>
@@ -161,9 +175,7 @@
         <li><a href="/user/{{ cookie_user.id }}">Profile</a></li>
         <li><a href="/user/{{ cookie_user.id }}">My Activity</a></li>
         <li><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></li>
-        <li>
-          {% include "group_nav.html" %}
-        </li>
+
         <li class="divider"></li>
         <li><a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a></li>
         {% endif %}

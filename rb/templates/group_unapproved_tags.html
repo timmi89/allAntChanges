@@ -1,64 +1,59 @@
-{% extends "base/wide.html" %}
+{% extends "base/site-admin.html" %}
 {% load custom_filters %}
 
 {% block page_title %}{{ form.instance.name }} Reaction Management{%endblock%}
 
 {% block bodyClass %}admin{% endblock %}
 
-{% block subheaderContent %}
-<section role="subheader">
-    {% with "manage_reactions" as activeAdminTab %} 
+{% block sidebarContent %}
+    {% with "moderation_unapproved" as activeAdminTab %} 
+    {% with "desktop" as whichGroupList %} 
     {% include "admin_nav_tabs.html" %}
     {% endwith %}
-</section>
+    {% endwith %}
 {% endblock %}
 
 {% block page_content %}
-<div class="container row settings">
   <section role="panels" class="content">
-
-    <nav>
-      <div class="nav-wrapper blue-grey">
-        <ul id="nav-mobile" class="left">
-          <li><a href="../all_reactions">Approved Reactions</a></li>
-          <li class="active"><a href="../unapproved_reactions">Unapproved Reactions</a></li>
-          <li><a href="../blocked_reactions">Blocked Reactions</a></li>
-        </ul>
-      </div>
-    </nav>
-
-
-    <div class="card-panel">
-        <p>These are reactions that currently <strong>do not</strong> appear on your site.</p>
-        <p><strong>Approving</strong> a reaction will allow this reaction to appear on your site, and will retroactively enable previous matching reactions to be visible on your site.</p>
-        <p><strong>Blocking</strong> a reaction will prevent any more from being made.</p>
+    <div class="admin-header">
+        <h1>Unapproved Reactions</h1>
     </div>
 
-    <h2>Unapproved Reactions</h2>
+    <div class="admin-content">
 
-    <table role="approve_tags">
-		<thead>
-			<tr>
-				<th>Reaction</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-    {% for tag in unapproved_reactions|dictsortreversed:"id" %}
-    		<tr>
-    			<td width="300">{{tag.body}}</td>
-                <td>
-                    <button class="approve" data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Approve</button>
-                    &nbsp;
-    			    <button class="block" data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button>
-                </td>
-    		</tr>
-    {% endfor %}  
-		</tbody>
-	</table>
-	
+        <div class="card-panel">
+            <p>These are reactions that currently <strong>do not</strong> appear on your site.</p>
+            <p><strong>Approving</strong> a reaction will allow this reaction to appear on your site, and will retroactively enable previous matching reactions to be visible on your site.</p>
+            <p><strong>Blocking</strong> a reaction will prevent any more from being made.</p>
+        </div>
+
+        {% if unapproved_reactions|length > 0 %}
+            <table role="approve_tags">
+        		<thead>
+        			<tr>
+        				<th>Reaction</th>
+        				<th>Action</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+            {% for tag in unapproved_reactions|dictsortreversed:"id" %}
+            		<tr>
+            			<td width="300">{{tag.body}}</td>
+                        <td>
+                            <button class="approve" data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Approve</button>
+                            &nbsp;
+            			    <button class="block" data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button>
+                        </td>
+            		</tr>
+            {% endfor %}  
+                </tbody>
+            </table>
+        {% else %}
+            <div>You have no unapproved reactions at this time.</div>
+        {% endif %}
+	</div>
 </section>
-</div>
+
 
 <script>
 // bind a "block" event to each button
