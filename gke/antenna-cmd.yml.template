@@ -67,10 +67,10 @@ spec:
               value: ro
             - name: DATABASE_REPLICA_PASS
               value: ro
-            - name: MEMCACHED_HOST_DEFAULT
+            - name: MEMCACHED_LOCATION_DEFAULT
               value: 10.240.9.228
-            - name: MEMCACHED_HOST_REDUNDANT
-              value: 10.240.232.254
+            - name: MEMCACHED_LOCATION_REDUNDANT
+              value: unix:/memcached/router
             - name: RABBITMQ_HOST
               value: amqp
             - name: BQ_TABLE_PREFIX
