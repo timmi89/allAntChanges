@@ -334,15 +334,6 @@ class GroupSettingsForm(forms.ModelForm):
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupSettingsForm, self).save(commit=False)
 
-        # Populate any ids for new questions in the Q&A data
-        # auto_questions = self.cleaned_data["auto_questions"]
-        # if auto_questions is not None and len(auto_questions) > 0:
-        #     questions_obj = json.loads(auto_questions)
-        #     self.populate_question_ids(questions_obj.get('questions', []))
-        #     self.populate_category_ids(questions_obj.get('categories', []))
-        #     m.auto_questions = json.dumps(questions_obj, indent=4, sort_keys=True) # update the model so the data is saved
-        #     self.data['auto_questions'] = m.auto_questions # update the form so the new data is displayed
-        
         # Remove all the old blessed tags
         GroupBlessedTag.objects.filter(group=self.instance).delete()
         
@@ -351,6 +342,7 @@ class GroupSettingsForm(forms.ModelForm):
             GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
+
         site = Site.objects.get(group=self.instance.id)
         cache_data = getSettingsDict(self.instance, site, self.new_blessed_tags)
         try:
@@ -362,16 +354,6 @@ class GroupSettingsForm(forms.ModelForm):
         except Exception, e:
             logger.warning(e)
 
-        if settings.CACHE_SYNCBACK:
-            try:
-                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
-                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
-                hcon.request('GET', url)
-                resp = hcon.getresponse()
-                lines = resp.read()
-                hcon.close()
-            except Exception, e:
-                logger.info("Other datacenter refresh: " + str(e))
         return m
             
     
@@ -382,7 +364,7 @@ class GroupSettingsForm(forms.ModelForm):
             'short_name', 
             'twitter',
             'active_sections',
-            # 'anno_whitelist',
+            'anno_whitelist',
             'separate_cta',
             'separate_cta_expanded',
             'no_readr',
@@ -457,11 +439,8 @@ class GroupLookFeelForm(forms.ModelForm):
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupLookFeelForm, self).save(commit=False)
-
         site = Site.objects.get(group=self.instance.id)
-
         cache_data = getSettingsDict(self.instance, site)
-
         m.save()
 
         try:
@@ -472,19 +451,6 @@ class GroupLookFeelForm(forms.ModelForm):
             get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:
             logger.warning(e)
-
-        if settings.CACHE_SYNCBACK:
-
-            try:
-                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
-                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
-                hcon.request('GET', url)
-                resp = hcon.getresponse()
-                lines = resp.read()
-                hcon.close()
-            except Exception, e:
-                logger.info("Other datacenter refresh: " + str(e))
-        
 
         return m
             
@@ -516,7 +482,6 @@ class GroupModerationConfigureForm(forms.ModelForm):
         m = super(GroupModerationConfigureForm, self).save(commit=False)
 
         site = Site.objects.get(group=self.instance.id)
-
         cache_data = getSettingsDict(self.instance, site)
 
         m.save()
@@ -529,20 +494,6 @@ class GroupModerationConfigureForm(forms.ModelForm):
             get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:
             logger.warning(e)
-
-        if settings.CACHE_SYNCBACK:
-
-            try:
-
-                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
-                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
-                hcon.request('GET', url)
-                resp = hcon.getresponse()
-                lines = resp.read()
-                hcon.close()
-            except Exception, e:
-                logger.info("Other datacenter refresh: " + str(e))
-        
 
         return m
             
@@ -578,19 +529,6 @@ class GroupPopularContentForm(forms.ModelForm):
             get_cache('redundant').set('group_settings_'+ str(site.domain), cache_data)
         except Exception, e:
             logger.warning(e)
-
-        if settings.CACHE_SYNCBACK:
-
-            try:
-                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
-                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
-                hcon.request('GET', url)
-                resp = hcon.getresponse()
-                lines = resp.read()
-                hcon.close()
-            except Exception, e:
-                logger.info("Other datacenter refresh: " + str(e))
-        
 
         return m
             
@@ -651,8 +589,22 @@ class GroupQAForm(forms.ModelForm):
             self.populate_category_ids(questions_obj.get('categories', []))
             m.auto_questions = json.dumps(questions_obj, indent=4, sort_keys=True) # update the model so the data is saved
             self.data['auto_questions'] = m.auto_questions # update the form so the new data is displayed
-        
+
+        site = Site.objects.get(group=self.instance.id)
+        cache_data = getSettingsDict(self.instance, site)
+
         m.save()
+
+        try:
+            cache.set('group_settings_' + str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+        try:
+            get_cache('redundant').set('group_settings_' + str(site.domain), cache_data)
+        except Exception, e:
+            logger.warning(e)
+
+        return m
             
     
     class Meta:
