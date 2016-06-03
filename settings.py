@@ -418,6 +418,11 @@ LOGGING = {
         }
     },
     'loggers': {
+        'rb.standard': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
         'django': {
             'handlers': ['console'],
             'propagate': True,
