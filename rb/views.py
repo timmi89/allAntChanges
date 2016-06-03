@@ -1218,21 +1218,28 @@ def group_allowed_tags(request, **kwargs):
     for tag in AllTag.objects.filter(group=group,approved=True):
         approved_interaction_node_ids.append(tag.node.id)
 
+    logger.debug('group_allowed_tags 1')
     blocked_tags = group.blocked_tags.all()
+    logger.debug('group_allowed_tags 2')
     approved_tags = InteractionNode.objects.filter(id__in=approved_interaction_node_ids).exclude(id__in=blocked_tags)
+    logger.debug('group_allowed_tags 3')
     blessed_tags = group.blessed_tags.all().exclude(id__in=blocked_tags)
 
     # combine approved and blessed tags, sorted by newest (highest ID) first
+    logger.debug('group_allowed_tags 4')
     combined_tags = sorted(list(chain(approved_tags, blessed_tags)), key=lambda tag: tag.id, reverse=True)
     # filter duplicates by ID
+    logger.debug('group_allowed_tags 5')
     all_unblocked = [rows.next() for (key, rows) in groupby(combined_tags, key=lambda obj: obj.id)]
 
+    logger.debug('group_allowed_tags 6')
     page_num = request.GET.get('page', 1)
     try:
         page_number = int(page_num)
     except ValueError:
         page_number = 1
 
+    logger.debug('group_allowed_tags 7')
     paginator = Paginator(all_unblocked, 50)
     try:
         current_page = paginator.page(page_number)
@@ -1243,6 +1250,7 @@ def group_allowed_tags(request, **kwargs):
 
     context['current_page'] = current_page
 
+    logger.debug('group_allowed_tags 8')
     return render_to_response(
         "group_allowed_tags.html",
         context,
