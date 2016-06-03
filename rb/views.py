@@ -1213,34 +1213,22 @@ def group_allowed_tags(request, **kwargs):
 
     context = admin_helper(request,context)
 
-    # is this really inefficient?
-    approved_interaction_node_ids = []
-    for tag in AllTag.objects.filter(group=group,approved=True):
-        approved_interaction_node_ids.append(tag.node.id)
-
-    logger.debug('group_allowed_tags 1')
+    approved_tags = AllTag.objects.filter(group=group,approved=True)
+    blessed_tags = group.blessed_tags.all()
     blocked_tags = group.blocked_tags.all()
-    logger.debug('group_allowed_tags 2')
-    approved_tags = InteractionNode.objects.filter(id__in=approved_interaction_node_ids).exclude(id__in=blocked_tags)
-    logger.debug('group_allowed_tags 3')
-    blessed_tags = group.blessed_tags.all().exclude(id__in=blocked_tags)
 
-    # combine approved and blessed tags, sorted by newest (highest ID) first
-    logger.debug('group_allowed_tags 4')
-    combined_tags = sorted(list(chain(approved_tags, blessed_tags)), key=lambda tag: tag.id, reverse=True)
-    # filter duplicates by ID
-    logger.debug('group_allowed_tags 5')
-    all_unblocked = [rows.next() for (key, rows) in groupby(combined_tags, key=lambda obj: obj.id)]
+    allowed_tags = InteractionNode.objects\
+                        .filter(Q(id__in=approved_tags) | Q(id__in=blessed_tags))\
+                        .exclude(id__in=blocked_tags)\
+                        .order_by('-id')
 
-    logger.debug('group_allowed_tags 6')
     page_num = request.GET.get('page', 1)
     try:
         page_number = int(page_num)
     except ValueError:
         page_number = 1
 
-    logger.debug('group_allowed_tags 7')
-    paginator = Paginator(all_unblocked, 50)
+    paginator = Paginator(allowed_tags, 50)
     try:
         current_page = paginator.page(page_number)
     except InvalidPage:
@@ -1250,12 +1238,12 @@ def group_allowed_tags(request, **kwargs):
 
     context['current_page'] = current_page
 
-    logger.debug('group_allowed_tags 8')
     return render_to_response(
         "group_allowed_tags.html",
         context,
         context_instance=RequestContext(request)
     )
+
 
 @requires_admin
 def group_unapproved_tags(request, **kwargs):
@@ -1265,21 +1253,15 @@ def group_unapproved_tags(request, **kwargs):
 
     context = admin_helper(request,context)
 
-
-    # is this really inefficient?
-    unapproved_interaction_node_ids = []
-    for tag in AllTag.objects.filter(group=group,approved=False):
-        unapproved_interaction_node_ids.append(tag.node.id)
-
+    all_unapproved = AllTag.objects.filter(group=group,approved=False)
     blocked_tags = group.blocked_tags.all()
-    blessed_tags = group.blessed_tags.all().exclude(id__in=blocked_tags)
+    blessed_tags = group.blessed_tags.all()
 
-    unapproved_tags = InteractionNode.objects.filter(id__in=unapproved_interaction_node_ids).exclude(id__in=blocked_tags).exclude(id__in=blessed_tags)
-
-    # combine approved and blessed tags, sorted by newest (highest ID) first
-    sorted_tags = sorted(list(unapproved_tags), key=lambda tag: tag.id, reverse=True)
-    # filter duplicates by ID
-    all_unapproved = [rows.next() for (key, rows) in groupby(sorted_tags, key=lambda obj: obj.id)]
+    unapproved_tags = InteractionNode.objects\
+        .filter(id__in=all_unapproved)\
+        .exclude(id__in=blocked_tags)\
+        .exclude(id__in=blessed_tags)\
+        .order_by('-id')
 
     page_num = request.GET.get('page', 1)
     try:
@@ -1287,7 +1269,7 @@ def group_unapproved_tags(request, **kwargs):
     except ValueError:
         page_number = 1
 
-    paginator = Paginator(all_unapproved, 50)
+    paginator = Paginator(unapproved_tags, 50)
     try:
         current_page = paginator.page(page_number)
     except InvalidPage:
