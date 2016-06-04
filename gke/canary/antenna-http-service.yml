@@ -1,0 +1,19 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: antenna-canary-http
+  labels:
+    app: antenna
+    role: canary
+    service: http
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  selector:
+    app: antenna
+    role: canary
+    service: http

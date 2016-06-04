@@ -1,0 +1,61 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: antenna-canary-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: antenna-canary-nginx
+      labels:
+        app: antenna
+        role: canary
+        service: reverse-proxy
+        package: nginx
+    spec:
+      containers:
+        - name: antenna-nginx
+          image: gcr.io/antenna-array/nginx-ssl-proxy:latest
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "50Mi"
+            limits:
+              cpu: ".5"
+              memory: "100Mi"
+          env:
+            - name: SERVER_NAME
+              value: www.antenna.is api.antenna.is
+            - name: SERVICE_HOST_ENV_NAME
+              value: ANTENNA_CANARY_HTTP_SERVICE_HOST
+            - name: SERVICE_PORT_ENV_NAME
+              value: ANTENNA_CANARY_HTTP_SERVICE_PORT
+            - name: SSL_PRIVATE_KEY
+              value: /secrets/antenna-ssl/privkey.pem
+            - name: SSL_FULLCHAIN
+              value: /secrets/antenna-ssl/fullchain.pem
+            - name: SSL_DHPARAM
+              value: /secrets/antenna-ssl/dhparam.pem
+            - name: ENABLE_BASIC_AUTH
+              value: 'false'
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+          - mountPath: /secrets/antenna-ssl
+            name: antenna-ssl
+            readOnly: true
+          - mountPath: /secrets/stackdriver
+            name: stackdriver
+            readOnly: true
+      volumes:
+      - name: antenna-ssl
+        secret:
+          secretName: antenna-ssl
+      - name: stackdriver
+        secret:
+          secretName: stackdriver
+
