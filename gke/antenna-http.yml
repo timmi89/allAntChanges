@@ -7,9 +7,9 @@ spec:
   template:
     metadata:
       labels:
-        name: antenna
-        service: http
         app: antenna
+        role: primary
+        service: http
     spec:
       containers:
         - name: antenna-http
@@ -17,7 +17,7 @@ spec:
           resources:
             requests:
               cpu: "100m"
-              memory: "100Mi"
+              memory: "120Mi"
             limits:
               cpu: "500m"
               memory: "500Mi"

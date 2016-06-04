@@ -9,9 +9,10 @@ spec:
     metadata:
       name: antenna-nginx
       labels:
-        name: antenna
+        app: antenna
+        role: primary
         service: reverse-proxy
-        app: nginx
+        package: nginx
     spec:
       containers:
         - name: antenna-nginx

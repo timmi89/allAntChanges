@@ -4,9 +4,9 @@ apiVersion: v1
 metadata:
   name: antenna-http
   labels:
-    name: antenna
-    service: http
     app: antenna
+    role: primary
+    service: http
 spec:
   clusterIP: 10.71.254.178
   ports:
@@ -15,6 +15,6 @@ spec:
     targetPort: http
     protocol: TCP
   selector:
-    name: antenna
-    service: http
     app: antenna
+    role: primary
+    service: http

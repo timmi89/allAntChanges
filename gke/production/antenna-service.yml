@@ -4,9 +4,9 @@ apiVersion: v1
 metadata:
   name: antenna
   labels:
-    name: antenna
+    app: antenna
+    role: primary
     service: load-balancer
-    app: load-balancer
     letsencrypt: production
   annotations:
     vhosts: api.antenna.is www.antenna.is antenna.is
@@ -22,6 +22,7 @@ spec:
     targetPort: https
     protocol: TCP
   selector:
-    name: antenna
+    app: antenna
+    role: primary
     service: reverse-proxy
   type: LoadBalancer
