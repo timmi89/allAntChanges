@@ -1319,21 +1319,12 @@ def group_blocked_tags(request, **kwargs):
     )
 
 
+@requires_admin
 def manage_groups(request, **kwargs):
     context = kwargs.get('context', {})
     cookie_user = checkCookieToken(request)
 
     context = admin_helper(request,context)
-
-    if cookie_user:
-        if len(SocialUser.objects.filter(user=cookie_user)) == 1:
-            admin_groups = cookie_user.social_user.admin_groups()
-            if not len(admin_groups) > 0:
-                return HttpResponseRedirect('/')
-            context['admin_groups'] = admin_groups
-            context['cookie_user'] = cookie_user
-        else:
-            return HttpResponseRedirect('/')
 
     return render_to_response(
         "group_manage.html",

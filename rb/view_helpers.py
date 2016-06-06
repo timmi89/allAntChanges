@@ -184,9 +184,8 @@ def admin_helper(request,context):
     if cookie_user:
         if len(SocialUser.objects.filter(user=cookie_user)) == 1:
             admin_groups = cookie_user.social_user.admin_groups()
-            if not len(admin_groups) > 0:
-                return HttpResponseRedirect('/')
-            context['admin_groups'] = admin_groups
+            if len(admin_groups) > 0:
+                context['admin_groups'] = admin_groups
         context['cookie_user'] = cookie_user
 
     return context
