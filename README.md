@@ -5,15 +5,20 @@
 ```sh
 # Install dependencies from homebrew
 brew update
-brew install caskroom/cask/brew-cask
 brew cask install virtualbox
 brew cask install virtualbox-extension-pack
-brew install https://github.com/codekitchen/dinghy/raw/latest/dinghy.rb
+brew tap codekitchen/dinghy
+brew install dinghy
 brew install docker docker-compose
 
 # Create docker VM with 8GB of memory, do less if you have less
 dinghy create --memory=8192 --provider=virtualbox
+```
 
+Copy the environment variables that get printed to the console into your `~/.bash_profile` or `~/bashrc file`
+e.g. `export DOCKER_HOST=xyz`
+
+```
 # Build docker containers
 docker-compose build
 docker-compose run --rm web virtualenv virtualenvs/docker
