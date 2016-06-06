@@ -187,8 +187,7 @@ def admin_helper(request,context):
             if not len(admin_groups) > 0:
                 return HttpResponseRedirect('/')
             context['admin_groups'] = admin_groups
-
-    context['cookie_user'] = cookie_user
+        context['cookie_user'] = cookie_user
 
     return context
 
