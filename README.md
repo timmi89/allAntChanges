@@ -32,15 +32,6 @@ docker-compose run --rm web ./manage.py syncdb --all
 docker-compose run --rm web ./manage.py migrate --fake
 ```
 
-## Setup hosts file compatible with previous dev environment
-
-Add the following entries to `/etc/hosts`
-
-```
-192.168.99.100 local-static.antenna.is
-192.168.99.100 local.antenna.is
-```
-
 ## Run it
 
 ```sh
