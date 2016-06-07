@@ -133,7 +133,7 @@ def requires_admin(func):
         # If a user is registered and logged in
         if cookie_user:
             if len(SocialUser.objects.filter(user=cookie_user)) == 1:
-                if cookie_user.email in RB_SOCIAL_ADMINS:
+                if cookie_user.is_superuser or cookie_user.email in RB_SOCIAL_ADMINS:
                     return func(*args, **kwargs)
 
                 admin_groups = cookie_user.social_user.admin_groups()
