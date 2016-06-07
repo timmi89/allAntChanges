@@ -11,7 +11,7 @@ function createReactableText(options) {
     var containerData = options.containerData;
     var excludeNode = options.excludeNode;
     var reactionsWidgetOptions = {
-        reactionsData: [], // Always open with the default reactions
+        //reactionsData: containerData.reactions, Reactions data is set/unset in the functions that open the widget
         containerData: containerData,
         contentData: { type: 'text' },
         containerElement: $containerElement,
@@ -47,6 +47,8 @@ function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, exclude
         Range.grabSelection(node, function(text, location) {
             reactionsWidgetOptions.contentData.location = location;
             reactionsWidgetOptions.contentData.body = text;
+            // Don't show existing reactions when opening for a specific text selection.
+            reactionsWidgetOptions.reactionsData = [];
             ReactionsWidget.open(reactionsWidgetOptions, coordinates);
         }, excludeNode);
     }
@@ -56,6 +58,8 @@ function grabNodeAndOpen(node, reactionsWidgetOptions, coords) {
     Range.grabNode(node, function(text, location) {
         reactionsWidgetOptions.contentData.location = location;
         reactionsWidgetOptions.contentData.body = text;
+        // Show existing reactions when opening for the entire node.
+        reactionsWidgetOptions.reactionsData = reactionsWidgetOptions.containerData.reactions;
         ReactionsWidget.open(reactionsWidgetOptions, coords);
     });
 }
