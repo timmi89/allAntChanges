@@ -51,3 +51,29 @@ VERSION=<the version you are creating>
 ./deploy.sh staging $VERSION
 ./deploy_static.sh staging $VERSION
 ```
+
+## Upgrade Node Pool
+
+Create a new Node Pool for the new version
+
+```sh
+NAME=v1-2-4
+CLUSTER=antenna-production
+gcloud container node-pools create $NAME --cluster $CLUSTER --zone us-central1-f --disk-size 100 --machine-type n1-standard-4 --scopes bigquery,compute-rw,storage-full,logging-write,monitoring,sql-admin,taskqueue
+
+INSTANCE_GROUP=$(gcloud compute instance-groups managed list --regexp ".*$CLUSTER-$NAME.*" | tail -n 1 | cut -f 1 -d' ')
+gcloud compute instance-groups managed set-autoscaling $INSTANCE_GROUP --zone us-central1-f --max-num-replicas 25 --min-num-replicas 3 --scale-based-on-cpu --target-cpu-utilization .70
+```
+
+Wait a moment for things to stabilize and then delete the old Node Pool
+
+```sh
+OLD_NAME=v1-2-3
+CLUSTER=antenna-production
+
+for node in $(kubectl get nodes -o name | grep "$CLUSTER-$OLD_NAME"); do
+  kubectl drain $node --ignore-daemonsets
+done
+
+gcloud container node-pools delete $OLD_NAME --cluster $CLUSTER --zone us-central1-f --wait
+```
