@@ -1213,12 +1213,12 @@ def group_allowed_tags(request, **kwargs):
 
     context = admin_helper(request,context)
 
-    approved_tags = AllTag.objects.filter(group=group,approved=True)
+    approved_node_ids = AllTag.objects.filter(group=group,approved=True).values('node_id')
     blessed_tags = group.blessed_tags.all()
     blocked_tags = group.blocked_tags.all()
 
     allowed_tags = InteractionNode.objects\
-                        .filter(Q(id__in=approved_tags) | Q(id__in=blessed_tags))\
+                        .filter(Q(id__in=approved_node_ids) | Q(id__in=blessed_tags))\
                         .exclude(id__in=blocked_tags)\
                         .order_by('-id')
 
