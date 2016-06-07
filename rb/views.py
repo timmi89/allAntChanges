@@ -1253,7 +1253,7 @@ def group_unapproved_tags(request, **kwargs):
 
     context = admin_helper(request,context)
 
-    all_unapproved = AllTag.objects.filter(group=group,approved=False)
+    all_unapproved = AllTag.objects.filter(group=group,approved=False).values('node_id')
     blocked_tags = group.blocked_tags.all()
     blessed_tags = group.blessed_tags.all()
 
