@@ -52,9 +52,9 @@ spec:
                   name: antenna-env-config
                   key: events-url
             - name: AWS_ACCESS_KEY_ID
-              value: 'AKIAINM2FE35X6K77P2A'
+              value: 'AKIAJV2WOX4FJWC2OYWQ'
             - name: AWS_SECRET_ACCESS_KEY
-              value: '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'
+              value: 'FHM8QWgrB+6VXnuyP59ile+4b6HsW2yYvDEe+/c9'
             - name: DATABASE_MASTER_HOST
               value: /sql/proxy
             - name: DATABASE_MASTER_USER
